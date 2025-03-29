@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+- Keep in mind we are working in Codesandbox so we have some limitations when it comes to terminal commands
+- Since we are working in Codesandbox if you need to install anything let me know about yarn command and I'll exacute it 

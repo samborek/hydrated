@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <style>@font-face {
   font-family: Gazpacho;
   src: url("GazpachoMedium.6828d164.woff2") format("woff2");
@@ -51,7 +52,6 @@ body {
 
 .svg-container {
   opacity: 0;
-  background-color: #000;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
@@ -61,6 +61,24 @@ body {
   position: absolute;
   top: 0;
   left: 0;
+  overflow: hidden;
+}
+
+.physics-world {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.svg-ball {
+  visibility: hidden;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  position: absolute;
 }
 
 .svg-row {
@@ -176,12 +194,48 @@ body {
 .black-overlay {
   opacity: 0;
   z-index: 10;
-  background-color: #000;
+  background-color: #0000001a;
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.force-field-indicator {
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0;
+  position: fixed;
+  transform: translate(-50%, -50%);
+}
+
+.available-section {
+  opacity: 0;
+  background-color: #f6297c;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.available-text {
+  color: #fff;
+  opacity: 0;
+  margin-bottom: 2rem;
+  font-family: Gazpacho, sans-serif;
+  font-size: clamp(1.5rem, 3vw, 3rem);
+  transform: translateY(30px);
+}
+
+.avalanche-logo {
+  opacity: 0;
+  transform: scale(.8);
 }
 </style>
   </head>
@@ -191,30 +245,22 @@ body {
 
     <script>gsap.registerPlugin(ScrollTrigger);
 window.addEventListener("load", ()=>{
+    // Configuration constants
+    const config = {
+        numDuplicates: 10,
+        maxBalls: 100,
+        maxFillPercentage: 50,
+        numGidadotLayers: 5,
+        physicsScrollRange: {
+            start: 0.5,
+            end: 0.9,
+            fadePoint: 0.8
+        }
+    };
     const container = document.querySelector(".scroll-container");
-    const numDuplicates = 10;
     const gigaTexts = [];
     const dotTexts = [];
-    // Create GIDADOT container and text
-    const gidadotContainer = document.createElement("div");
-    gidadotContainer.className = "gidadot-container";
-    container.appendChild(gidadotContainer);
-    // Create background transition overlay
-    const bgTransition = document.createElement("div");
-    bgTransition.className = "bg-transition";
-    gidadotContainer.appendChild(bgTransition);
-    // Create multiple layers of GIDADOT for wave effect
-    const numLayers = 5;
-    const gidadotLayers = [];
-    for(let i = 0; i < numLayers; i++){
-        const layer = document.createElement("div");
-        layer.className = "gidadot-text";
-        layer.textContent = "GIDADOT";
-        layer.style.position = 'absolute';
-        gidadotContainer.appendChild(layer);
-        gidadotLayers.push(layer);
-    }
-    // SVG markup for icons
+    // SVG markup for icons - used in multiple places
     const svgMarkup = `<svg width="58" height="60" viewBox="-14.5 -15 58 60" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M14.1555 0.818359C22.0713 0.818359 28.4867 7.23375 28.4867 15.1496C28.4867 23.0654 22.0713 29.4808 14.1555 29.4808C6.23961 29.4808 -0.175781 23.0654 -0.175781 15.1496C-0.175781 7.23375 6.23961 0.818359 14.1555 0.818359Z" fill="black"/>
           <path d="M14.3063 6.48803C15.5497 6.15489 16.7131 6.47157 16.907 7.19511C17.1008 7.91865 16.2495 8.77516 15.0083 9.10775C13.7649 9.4409 12.6015 9.12422 12.4076 8.40068C12.2137 7.67714 13.065 6.82063 14.3063 6.48803Z" fill="white"/>
@@ -230,95 +276,317 @@ window.addEventListener("load", ()=>{
           <path d="M14.4041 12.4313C14.933 11.9019 16.099 12.2112 17.0092 13.1216C17.9195 14.032 18.2273 15.1975 17.6984 15.7269C17.1695 16.2564 16.0036 15.9471 15.0933 15.0366C14.1831 14.1262 13.8752 12.9608 14.4041 12.4313Z" fill="#979FAA"/>
           <path d="M16.9499 16.3484C18.1932 16.0152 19.3566 16.3319 19.5505 17.0555C19.7444 17.779 18.8931 18.6355 17.6518 18.9681C16.4085 19.3012 15.2451 18.9846 15.0512 18.261C14.8573 17.5375 15.7086 16.681 16.9499 16.3484Z" fill="white"/>
         </svg>`;
-    // Create GIGA text elements
-    for(let i = 0; i < numDuplicates; i++){
-        const text = document.createElement("div");
-        text.className = "text giga-text";
-        text.textContent = "GIGA";
-        container.appendChild(text);
-        gigaTexts.push(text);
-    }
-    // Create DOT text elements (initially hidden)
-    for(let i = 0; i < numDuplicates; i++){
-        const text = document.createElement("div");
-        text.className = "text dot-text";
-        text.textContent = "DOT";
-        text.style.position = "absolute";
-        text.style.opacity = "0";
-        container.appendChild(text);
-        dotTexts.push(text);
-    }
-    // Create SVG container for the third animation
-    const svgContainer = document.createElement("div");
-    svgContainer.className = "svg-container";
-    container.appendChild(svgContainer);
-    // Create rows of SVGs
-    const numRows = 8;
-    const svgRows = [];
-    const svgItems = [];
-    for(let i = 0; i < numRows; i++){
-        const row = document.createElement("div");
-        row.className = "svg-row";
-        svgContainer.appendChild(row);
-        svgRows.push(row);
-        // Calculate number of SVGs per row based on screen width
-        const itemWidth = 140; // SVG width + margins (increased)
-        const numItemsPerRow = Math.ceil(window.innerWidth / itemWidth);
-        const rowItems = [];
-        for(let j = 0; j < numItemsPerRow; j++){
-            const item = document.createElement("div");
-            item.className = "svg-item";
-            item.innerHTML = svgMarkup;
-            row.appendChild(item);
-            rowItems.push(item);
-            svgItems.push(item);
-            // Add subtle flickering animation to each SVG
-            const flickerTimeline = gsap.timeline({
-                repeat: -1,
-                yoyo: true
+    // Helper function to create elements with attributes
+    function createElement(tag, className, parent, properties = {}) {
+        const element = document.createElement(tag);
+        if (className) element.className = className;
+        if (parent) parent.appendChild(element);
+        // Set additional properties
+        Object.entries(properties).forEach(([key, value])=>{
+            if (key === "style") Object.entries(value).forEach(([styleKey, styleValue])=>{
+                element.style[styleKey] = styleValue;
             });
-            // Random flicker parameters for each SVG
-            const flickerSpeed = 0.05 + Math.random() * 0.2; // Random duration between 0.05 and 0.25s
-            const flickerDelay = Math.random() * 1.5; // Random start delay
-            const flickerOpacity = 0.7 + Math.random() * 0.3; // Opacity fluctuation
-            const flickerRotation = -2 + Math.random() * 4; // Small random rotation -2 to 2 degrees
-            const flickerScale = 0.95 + Math.random() * 0.1; // Subtle scale change
-            // Create a small randomized flicker animation that runs continuously
-            flickerTimeline.to(item.querySelector('svg'), {
-                opacity: flickerOpacity,
-                rotation: flickerRotation,
-                scale: flickerScale,
-                duration: flickerSpeed,
-                ease: "none"
-            }).to(item.querySelector('svg'), {
-                opacity: 1,
-                rotation: 0,
-                scale: 1,
-                duration: flickerSpeed * 1.2,
-                ease: "none"
+            else if (key === "attributes") Object.entries(value).forEach(([attrKey, attrValue])=>{
+                element.setAttribute(attrKey, attrValue);
             });
-            // Start the flicker animation with a random delay
-            flickerTimeline.progress(Math.random()).timeScale(0.7 + Math.random() * 0.6);
+            else element[key] = value;
+        });
+        return element;
+    }
+    // Setup containers and elements
+    const gidadotContainer = createElement("div", "gidadot-container", container);
+    const bgTransition = createElement("div", "bg-transition", gidadotContainer);
+    // Create GIDADOT text layers
+    const gidadotLayers = [];
+    for(let i = 0; i < config.numGidadotLayers; i++){
+        const layer = createElement("div", "gidadot-text", gidadotContainer, {
+            textContent: "GIDADOT",
+            style: {
+                position: "absolute"
+            }
+        });
+        gidadotLayers.push(layer);
+    }
+    // Create GIGA and DOT text elements
+    for(let i = 0; i < config.numDuplicates; i++){
+        const gigaText = createElement("div", "text giga-text", container, {
+            textContent: "GIGA"
+        });
+        gigaTexts.push(gigaText);
+        const dotText = createElement("div", "text dot-text", container, {
+            textContent: "DOT",
+            style: {
+                position: "absolute",
+                opacity: "0"
+            }
+        });
+        dotTexts.push(dotText);
+    }
+    // Create physics container
+    const svgContainer = createElement("div", "svg-container", container);
+    const physicsWorld = createElement("div", "physics-world", svgContainer);
+    // Initialize physics variables
+    let engine, render, world;
+    let balls = [];
+    let ballCount = 0;
+    let isPhysicsRunning = false;
+    let wasInView = false;
+    // Force field variables
+    let attractiveForce = 0.0005; // Strength of attraction
+    let attractionRadius = 400; // Fixed radius
+    let mousePosition = {
+        x: 0,
+        y: 0
+    };
+    let isAttracting = true;
+    let isForceFieldActive = false;
+    // Create force field indicator (invisible, just for tracking)
+    const forceFieldIndicator = createElement('div', 'force-field-indicator', document.body);
+    // Track mouse position
+    document.addEventListener('mousemove', (event)=>{
+        mousePosition.x = event.clientX;
+        mousePosition.y = event.clientY;
+        if (forceFieldIndicator) {
+            forceFieldIndicator.style.left = mousePosition.x + 'px';
+            forceFieldIndicator.style.top = mousePosition.y + 'px';
         }
-        // Set initial transform for alternating rows
-        const isEven = i % 2 === 0;
-        rowItems.forEach((item, index)=>{
-            gsap.set(item, {
-                opacity: 0,
-                scale: 1,
-                clipPath: isEven ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)" // Clip from sides
-            });
+    });
+    // Toggle attraction/repulsion with click
+    document.addEventListener('click', ()=>{
+        if (!isForceFieldActive) return;
+        isAttracting = !isAttracting;
+        attractiveForce = isAttracting ? Math.abs(attractiveForce) : -Math.abs(attractiveForce);
+    });
+    // Physics setup function
+    function setupPhysics() {
+        // Create engine with reduced gravity
+        engine = Matter.Engine.create({
+            gravity: {
+                x: 0,
+                y: 1,
+                scale: 0.001
+            }
+        });
+        world = engine.world;
+        // Create invisible renderer for collision detection
+        render = Matter.Render.create({
+            element: physicsWorld,
+            engine: engine,
+            options: {
+                width: window.innerWidth,
+                height: window.innerHeight,
+                wireframes: true,
+                showCollisions: false,
+                showAngleIndicator: false,
+                visible: false
+            }
+        });
+        // Create wall options - low bounciness
+        const wallOptions = {
+            isStatic: true,
+            restitution: 0.3,
+            friction: 0.2
+        };
+        // Create container walls
+        const walls = [
+            // Bottom wall
+            Matter.Bodies.rectangle(window.innerWidth / 2, window.innerHeight + 50, window.innerWidth * 2, 100, wallOptions),
+            // Left wall
+            Matter.Bodies.rectangle(-50, window.innerHeight / 2, 100, window.innerHeight * 2, wallOptions),
+            // Right wall
+            Matter.Bodies.rectangle(window.innerWidth + 50, window.innerHeight / 2, 100, window.innerHeight * 2, wallOptions)
+        ];
+        Matter.Composite.add(world, walls);
+        // Add mouse interaction
+        const mouse = Matter.Mouse.create(render.canvas);
+        const mouseConstraint = Matter.MouseConstraint.create(engine, {
+            mouse: mouse,
+            constraint: {
+                stiffness: 0.2,
+                render: {
+                    visible: false
+                }
+            }
+        });
+        Matter.Composite.add(world, mouseConstraint);
+        Matter.Runner.run(engine);
+        isPhysicsRunning = true;
+        requestAnimationFrame(updateSvgPositions);
+    }
+    // Create a new physics ball
+    function createBall() {
+        if (ballCount >= config.maxBalls) return null;
+        // Random properties for variety
+        const radius = 30 + Math.random() * 20;
+        const x = Math.random() * (window.innerWidth - radius * 2) + radius;
+        const y = -radius * 2; // Start above viewport
+        // Create physics body with low bounce
+        const ball = Matter.Bodies.circle(x, y, radius, {
+            restitution: 0.3 + Math.random() * 0.2,
+            friction: 0.1 + Math.random() * 0.1,
+            density: 0.001 + Math.random() * 0.002,
+            frictionAir: 0.001 + Math.random() * 0.003
+        });
+        Matter.Composite.add(world, ball);
+        // Create and style SVG element
+        const svgElement = createElement("div", "svg-ball", physicsWorld, {
+            innerHTML: svgMarkup,
+            style: {
+                width: `${radius * 2}px`,
+                height: `${radius * 2}px`,
+                transform: `rotate(${Math.random() * 360}deg)`
+            }
+        });
+        // Scale SVG viewBox with element size
+        const svg = svgElement.querySelector("svg");
+        svg.setAttribute("width", `${radius * 2}px`);
+        svg.setAttribute("height", `${radius * 2}px`);
+        svg.setAttribute("viewBox", "-14.5 -15 58 60");
+        // Store ball data
+        balls.push({
+            body: ball,
+            element: svgElement,
+            radius: radius
+        });
+        ballCount++;
+        return ball;
+    }
+    // Update SVG positions based on physics
+    function updateSvgPositions() {
+        if (!isPhysicsRunning) return;
+        balls.forEach((ball)=>{
+            const pos = ball.body.position;
+            // Set position
+            ball.element.style.left = `${pos.x - ball.radius}px`;
+            ball.element.style.top = `${pos.y - ball.radius}px`;
+            ball.element.style.visibility = 'visible';
+            // Update rotation from physics
+            const rotation = ball.body.angle * (180 / Math.PI);
+            const currentTransform = ball.element.style.transform;
+            const newTransform = currentTransform.includes('rotate') ? currentTransform.replace(/rotate\([^)]+\)/, `rotate(${rotation}deg)`) : `${currentTransform} rotate(${rotation}deg)`;
+            ball.element.style.transform = newTransform;
+        });
+        // Apply force field if active
+        if (isForceFieldActive && isPhysicsRunning) applyForceField();
+        requestAnimationFrame(updateSvgPositions);
+    }
+    // Apply force field to physics objects
+    function applyForceField() {
+        balls.forEach((ball)=>{
+            const body = ball.body;
+            const pos = body.position;
+            // Calculate distance to cursor
+            const dx = mousePosition.x - pos.x;
+            const dy = mousePosition.y - pos.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            // Apply force if within attraction radius
+            if (distance < attractionRadius) {
+                // Strength increases as objects get closer to cursor
+                const forceMagnitude = attractiveForce * (1 - distance / attractionRadius);
+                Matter.Body.applyForce(body, pos, {
+                    x: dx * forceMagnitude,
+                    y: dy * forceMagnitude
+                });
+            }
         });
     }
-    // Position DOT texts at the same positions as GIGA texts
+    // Calculate viewport fill percentage
+    function getViewportFillPercentage() {
+        let totalBallArea = 0;
+        const viewportArea = window.innerWidth * window.innerHeight;
+        balls.forEach((ball)=>{
+            const pos = ball.body.position;
+            // Check if in viewport
+            if (pos.y + ball.radius > 0 && pos.y - ball.radius < window.innerHeight && pos.x + ball.radius > 0 && pos.x - ball.radius < window.innerWidth) totalBallArea += Math.PI * ball.radius * ball.radius;
+        });
+        return totalBallArea / viewportArea * 100;
+    }
+    // Clean up physics bodies and elements
+    function resetPhysics() {
+        balls.forEach((ball)=>{
+            Matter.Composite.remove(world, ball.body);
+            if (ball.element && ball.element.parentNode) ball.element.parentNode.removeChild(ball.element);
+        });
+        balls = [];
+        ballCount = 0;
+    }
+    // Handle physics section with scroll
+    function handleScrollPhysics(scrollProgress) {
+        const { start, end, fadePoint } = config.physicsScrollRange;
+        const inPhysicsSection = scrollProgress >= start && scrollProgress <= end;
+        if (inPhysicsSection) {
+            // Show container and initialize physics
+            gsap.to(svgContainer, {
+                opacity: 1,
+                duration: 0.3
+            });
+            // Show force field indicator when in physics section
+            if (!isForceFieldActive) {
+                isForceFieldActive = true;
+                gsap.set(forceFieldIndicator, {
+                    width: attractionRadius * 2,
+                    height: attractionRadius * 2
+                });
+            }
+            if (!isPhysicsRunning) setupPhysics();
+            // Calculate section progress
+            const sectionProgress = (scrollProgress - start) / (end - start);
+            const fillPercentage = getViewportFillPercentage();
+            const targetBallCount = Math.ceil(config.maxBalls * sectionProgress * 1.5);
+            const shouldFade = sectionProgress > fadePoint;
+            if (!shouldFade) {
+                // Generate balls phase
+                if (fillPercentage < config.maxFillPercentage && ballCount < Math.min(targetBallCount, config.maxBalls)) // Gradual generation
+                {
+                    if (Math.random() < 0.3) createBall();
+                }
+            } else {
+                // Fade out phase
+                const fadeProgress = (sectionProgress - fadePoint) / (1 - fadePoint);
+                // Apply effects to each ball
+                balls.forEach((ball)=>{
+                    const targetOpacity = 1 - fadeProgress;
+                    const blurAmount = fadeProgress * 10;
+                    const scaleAmount = 1 - fadeProgress * 0.3;
+                    ball.element.style.opacity = Math.max(0, targetOpacity);
+                    ball.element.style.filter = `blur(${blurAmount}px)`;
+                    // Extract rotation safely
+                    let rotation = 0;
+                    const currentTransform = ball.element.style.transform;
+                    const rotateMatch = currentTransform.match(/rotate\(([^)]+)\)/);
+                    if (rotateMatch && rotateMatch[1]) rotation = rotateMatch[1];
+                    else rotation = ball.body.angle * (180 / Math.PI) + "deg";
+                    ball.element.style.transform = `rotate(${rotation}) scale(${scaleAmount})`;
+                });
+            }
+            wasInView = true;
+        } else // Clean up when leaving section
+        if (wasInView) {
+            resetPhysics();
+            isPhysicsRunning = false;
+            gsap.to(svgContainer, {
+                opacity: 0,
+                duration: 0.3
+            });
+            // Hide force field indicator when leaving physics section
+            if (isForceFieldActive) {
+                isForceFieldActive = false;
+                gsap.set(forceFieldIndicator, {
+                    width: 0,
+                    height: 0
+                });
+            }
+            wasInView = false;
+        }
+    }
+    // Position DOT texts to match GIGA positions
     function updateDotPositions() {
         gigaTexts.forEach((giga, index)=>{
             const rect = giga.getBoundingClientRect();
-            const dot = dotTexts[index];
-            dot.style.top = `${rect.top}px`;
+            dotTexts[index].style.top = `${rect.top}px`;
         });
     }
-    // Set up scroll-based timeline
+    // Set up scroll timeline
     const tl = gsap.timeline({
         scrollTrigger: {
             trigger: ".spacer",
@@ -326,7 +594,10 @@ window.addEventListener("load", ()=>{
             end: "bottom bottom",
             scrub: 1,
             pin: ".scroll-container",
-            onUpdate: updateDotPositions
+            onUpdate: function(self) {
+                updateDotPositions();
+                handleScrollPhysics(self.progress);
+            }
         }
     });
     // Initial states
@@ -341,13 +612,15 @@ window.addEventListener("load", ()=>{
     gsap.set(svgContainer, {
         opacity: 0
     });
-    // First third - GIGA animation
+    // Animate GIGA text
     gigaTexts.forEach((text, index)=>{
+        // Fade in
         tl.to(text, {
             opacity: 1,
             y: 0,
             duration: 0.3
         }, index * 0.1);
+        // Clip out
         tl.to(text, {
             clipPath: "inset(100% 0 0 0)",
             opacity: 0,
@@ -355,14 +628,16 @@ window.addEventListener("load", ()=>{
             ease: "power2.in"
         }, ">+0.2");
     });
-    // Second third - DOT animation
+    // Animate DOT text
     dotTexts.forEach((text, index)=>{
+        // Fade in
         tl.to(text, {
             opacity: 1,
             clipPath: "inset(0 0 0 0)",
             duration: 0.3,
             ease: "power2.out"
         }, ">-0.1");
+        // Clip out
         tl.to(text, {
             clipPath: "inset(0 0 100% 0)",
             opacity: 0,
@@ -370,39 +645,36 @@ window.addEventListener("load", ()=>{
             ease: "power2.in"
         }, ">+0.2");
     });
-    // After DOT animation and before SVG animation
+    // GIDADOT animation
     tl.to(gidadotContainer, {
         opacity: 1,
         duration: 0.3
     });
-    // Fade in white background
     tl.to(bgTransition, {
         opacity: 1,
         duration: 0.5,
         ease: "power2.inOut"
     }, ">");
-    // Initial burst animation and individual layer animations
+    // Animate GIDADOT layers
     gidadotLayers.forEach((layer, index)=>{
-        // Set initial state
+        // Initial state
         gsap.set(layer, {
             scale: 0.5,
             opacity: 0,
             color: "white"
         });
-        // Burst animation with color change
+        // Animation sequence
         tl.to(layer, {
             scale: 1 + index * 0.5,
             opacity: 1,
             duration: 0.4,
             ease: "power2.out"
         }, `>-${index * 0.1}`);
-        // Change to black with the background
         tl.to(layer, {
             color: "#000000",
             duration: 0.4,
             ease: "none"
-        }, "<"); // Sync with burst
-        // Add quick blinks (keeping black color)
+        }, "<");
         tl.to(layer, {
             opacity: 1,
             duration: 0.1,
@@ -410,20 +682,17 @@ window.addEventListener("load", ()=>{
             yoyo: true,
             ease: "none"
         }, ">");
-        // Wave effect (still black)
         tl.to(layer, {
             scale: 2 + index,
             rotation: index % 2 ? 5 : -5,
             duration: 0.6,
             ease: "power1.inOut"
         }, ">");
-        // Change back to white before fade out
         tl.to(layer, {
             color: "white",
             duration: 0.2,
             ease: "none"
         }, ">-0.2");
-        // Individual blur and fade out
         tl.to(layer, {
             scale: 4 + index,
             opacity: 0,
@@ -433,104 +702,60 @@ window.addEventListener("load", ()=>{
             ease: "power2.inOut"
         }, ">-0.3");
     });
-    // Fade out white background (slightly later)
+    // Fade transitions
     tl.to(bgTransition, {
         opacity: 0,
         duration: 1,
         ease: "power2.inOut"
     }, "<0.5");
-    // Clean up before SVG animation
     tl.to(gidadotContainer, {
         opacity: 0,
         duration: 0.3
-    });
-    // Continue with SVG animation
-    tl.to(svgContainer, {
-        opacity: 1,
-        duration: 0.5,
-        onStart: function() {
-            document.body.style.backgroundColor = "#000000";
-        }
-    });
-    // Animate all rows in parallel with alternating directions
-    const evenRows = svgRows.filter((_, i)=>i % 2 === 0);
-    const oddRows = svgRows.filter((_, i)=>i % 2 !== 0);
-    // Even rows from left to right
-    tl.to(evenRows.map((row)=>Array.from(row.children)).flat(), {
-        opacity: 1,
-        clipPath: "inset(0 0 0 0)",
-        duration: 0.8,
-        stagger: {
-            each: 0.05,
-            from: "start"
-        },
-        ease: "power2.out"
-    }, ">");
-    // Odd rows from right to left (in parallel)
-    tl.to(oddRows.map((row)=>Array.from(row.children)).flat(), {
-        opacity: 1,
-        clipPath: "inset(0 0 0 0)",
-        duration: 0.8,
-        stagger: {
-            each: 0.05,
-            from: "end"
-        },
-        ease: "power2.out"
-    }, "<" // Start at the same time as even rows
-    );
-    // Hold for a moment
+    }, "<0.3");
+    // Reserve space for physics animation
     tl.to({}, {
-        duration: 0.5
+        duration: 1
     });
-    // Clean up animation - clip SVGs out in alternating directions
-    tl.to(evenRows.map((row)=>Array.from(row.children)).flat(), {
-        clipPath: "inset(100% 0 0 0)",
-        opacity: 0,
-        scale: 0.8,
-        duration: 0.8,
-        stagger: {
-            each: 0.03,
-            from: "start"
-        },
-        ease: "power2.in"
-    }, ">");
-    tl.to(oddRows.map((row)=>Array.from(row.children)).flat(), {
-        clipPath: "inset(0 0 100% 0)",
-        opacity: 0,
-        scale: 0.8,
-        duration: 0.8,
-        stagger: {
-            each: 0.03,
-            from: "end"
-        },
-        ease: "power2.in"
-    }, "<" // Start at the same time as even rows
-    );
-    // Final fade out
-    tl.to(svgContainer, {
-        opacity: 0,
-        duration: 0.5,
-        onComplete: function() {
-            document.body.style.backgroundColor = "rgb(19, 19, 19)";
-        }
+    // Create spiral animation elements
+    const spiralContainer = createElement("div", "spiral-container", container);
+    const blackOverlay = createElement("div", "black-overlay", container);
+    const spiralWrapper = createElement("div", "spiral-svg-wrapper", spiralContainer);
+    // Create available section elements
+    const availableSection = createElement("div", "available-section", container);
+    const availableText = createElement("div", "available-text", availableSection, {
+        textContent: "Available on"
     });
-    // Add final spiral SVG animation
-    const spiralContainer = document.createElement("div");
-    spiralContainer.className = "spiral-container";
-    container.appendChild(spiralContainer);
-    // Add black overlay for final transition
-    const blackOverlay = document.createElement("div");
-    blackOverlay.className = "black-overlay";
-    container.appendChild(blackOverlay);
-    const spiralWrapper = document.createElement("div");
-    spiralWrapper.className = "spiral-svg-wrapper";
-    spiralContainer.appendChild(spiralWrapper);
-    // SVG paths separated into individual elements
-    // First item is the background circle, rest are the irregular dots
+    const avalancheLogo = createElement("div", "avalanche-logo", availableSection);
+    avalancheLogo.innerHTML = `<svg width="102" height="20" viewBox="0 0 102 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_783_23413)">
+          <path d="M36.9886 15.5855C36.9886 15.712 36.8937 15.7753 36.6876 15.76C35.5481 15.6967 34.631 15.6967 33.4915 15.76C33.2854 15.7753 33.1906 15.712 33.1906 15.5855C33.1906 15.507 33.2854 15.4111 33.4752 15.3325C33.7445 15.2214 33.8077 14.9684 33.8077 14.3359V10.9816H28.9855V14.3359C28.9855 14.9694 29.0488 15.2224 29.3181 15.3325C29.5078 15.4111 29.6027 15.507 29.6027 15.5855C29.6027 15.712 29.5078 15.7753 29.3018 15.76C28.1622 15.6967 27.2451 15.6967 26.1056 15.76C25.8996 15.7753 25.8047 15.712 25.8047 15.5855C25.8047 15.507 25.8996 15.4274 26.074 15.3325C26.375 15.2214 26.4219 14.9684 26.4219 14.3359V5.71153C26.4219 5.07904 26.375 4.82502 26.074 4.71485C25.8996 4.63528 25.8047 4.5404 25.8047 4.46185C25.8047 4.33535 25.8996 4.2721 26.1056 4.28741C27.2451 4.35066 28.1622 4.35066 29.3018 4.28741C29.5078 4.2721 29.6027 4.33535 29.6027 4.46185C29.6027 4.54142 29.5078 4.6363 29.3181 4.71485C29.0488 4.82502 28.9855 5.07904 28.9855 5.71153V10.3318H33.8077V5.71153C33.8077 5.07904 33.7445 4.82502 33.4752 4.71485C33.2854 4.63528 33.1906 4.5404 33.1906 4.46185C33.1906 4.33535 33.2854 4.2721 33.4915 4.28741C34.631 4.35066 35.5481 4.35066 36.6876 4.28741C36.8937 4.2721 36.9886 4.33535 36.9886 4.46185C36.9886 4.54142 36.8937 4.6363 36.7039 4.71485C36.4346 4.82502 36.3714 5.07904 36.3714 5.71153V14.3348C36.3714 14.9684 36.4346 15.2214 36.7039 15.3315C36.8937 15.4101 36.9886 15.506 36.9886 15.5845V15.5855Z" fill="white"/>
+          <path d="M46.4032 6.89895C46.4032 7.02545 46.3246 7.10502 46.1655 7.15195C45.8013 7.2152 45.4534 7.64264 45.1525 8.44958L42.3042 15.6182C42.0981 16.1088 41.9247 16.4883 41.7819 16.7893C41.6391 17.0902 41.434 17.4065 41.1963 17.739C40.7056 18.4195 40.0885 18.7357 39.3131 18.799C38.5225 18.8775 37.9686 18.6725 37.6513 18.1818C37.4136 17.8176 37.4136 17.485 37.6513 17.1851C37.7299 17.0902 37.8258 17.0107 37.9523 16.9474C38.5858 16.7097 38.7276 16.8209 39.1703 17.026C39.408 17.1372 39.5814 17.2004 39.7243 17.2157C40.4047 17.279 40.9739 16.8199 41.4014 15.8548L37.9839 8.16495C37.7309 7.59571 37.6993 7.50084 37.5565 7.35802C37.4932 7.27947 37.4136 7.2152 37.3198 7.16827C37.13 7.0887 37.0352 6.99382 37.0352 6.89895C37.0352 6.78775 37.13 6.72451 37.3361 6.74083C38.5389 6.80408 39.3611 6.80408 40.5638 6.74083C40.7699 6.72451 40.8648 6.78775 40.8648 6.89895C40.8648 6.99382 40.7699 7.0887 40.5802 7.16827C40.2792 7.27947 40.2955 7.53246 40.5485 8.16495L42.4634 13.1647C43.6182 10.3011 44.2354 8.71889 44.3466 8.44958C44.6628 7.67426 44.5996 7.24682 44.1568 7.16827C43.7773 7.05707 43.7773 6.74083 44.1731 6.74083C44.7107 6.77245 45.0586 6.78775 45.2014 6.78775C45.3126 6.78775 45.6126 6.77245 46.1196 6.74083C46.3093 6.72451 46.4042 6.78775 46.4042 6.89895H46.4032Z" fill="white"/>
+          <path d="M55.5017 15.4594C55.5017 15.5706 55.4068 15.6339 55.2008 15.6339C54.1092 15.6655 53.3023 15.7124 52.7636 15.7767C52.5739 15.8083 52.479 15.7134 52.479 15.5074V14.3046C51.8935 15.4125 50.9437 15.9654 49.6471 15.9654C48.429 15.9654 47.4477 15.5064 46.7356 14.5892C46.0235 13.6711 45.691 12.4214 45.7389 10.8555C45.7869 9.41506 46.2296 8.3082 47.0835 7.53288C47.9536 6.75757 49.0136 6.44133 50.2959 6.58313C51.2926 6.69432 52.021 7.18399 52.48 8.03888V6.47193C52.48 5.90269 52.3688 5.57012 52.1475 5.47525C51.9577 5.39669 51.8629 5.31712 51.8629 5.20593C51.8629 5.09473 51.9577 4.99986 52.1322 4.93661C53.0187 4.77848 53.8409 4.50917 54.5846 4.12967C54.7274 4.0501 54.8692 4.11335 54.8692 4.28779V14.2251C54.8692 14.8422 54.9488 15.0952 55.2171 15.2064C55.4068 15.285 55.5017 15.3809 55.5017 15.4594ZM52.5106 11.5043V10.7759C52.4474 8.48162 51.5456 7.27887 50.2 7.34212C49.5665 7.35742 49.0768 7.75324 48.7126 8.51325C48.3484 9.27326 48.1903 10.222 48.2066 11.3615C48.223 12.5163 48.4443 13.4028 48.8871 14.0516C49.3298 14.6851 49.8685 14.9851 50.501 14.9534C51.7037 14.9065 52.4474 13.7038 52.5106 11.5043Z" fill="white"/>
+          <path d="M63.0976 7.48483C63.3353 7.97552 63.3353 8.41826 63.066 8.8457C62.8599 9.17827 62.56 9.3517 62.1478 9.33639C61.5939 9.33639 61.3246 8.92528 61.246 8.54578C61.1828 8.14996 60.8818 7.73884 60.2963 7.73884C59.5526 7.73884 59.1731 8.53048 59.1731 10.0964V14.3372C59.1731 14.9707 59.3159 15.239 59.7107 15.3502C59.9168 15.4134 60.0117 15.493 60.0117 15.5879C60.0117 15.7144 59.9005 15.7776 59.6954 15.7623C58.4927 15.6991 57.5908 15.6991 56.4513 15.7623C56.2453 15.7776 56.1504 15.7144 56.1504 15.5879C56.1504 15.5093 56.2453 15.4134 56.435 15.3349C56.6727 15.2563 56.7829 14.9237 56.7829 14.3382V9.06912C56.7829 8.49987 56.6727 8.16731 56.435 8.07243C56.2453 7.99388 56.1504 7.91431 56.1504 7.80311C56.1504 7.69192 56.2289 7.61337 56.3718 7.58174C57.1787 7.4073 57.9693 7.139 58.7293 6.74318C58.9038 6.64831 59.0139 6.69523 59.0303 6.9013L59.1415 8.18261V8.23055C59.521 7.10737 60.2177 6.53711 61.246 6.53711C62.1795 6.53711 62.7967 6.85335 63.0976 7.48687V7.48483Z" fill="white"/>
+          <path d="M71.6591 15.5543C71.6591 15.6971 71.5479 15.7604 71.3428 15.7604H71.1684C70.741 15.7604 70.7256 15.7604 70.2982 15.7124C70.0921 15.6971 69.9187 15.6492 69.8075 15.6012C69.4117 15.3798 68.9843 15.0789 68.8425 14.3352C68.3365 15.3635 67.197 15.9654 65.9463 15.9654C64.2212 15.9654 63.2245 15.0636 63.1776 13.7823C63.0827 11.8838 64.8078 11.0452 66.2788 10.7127C67.2918 10.4433 68.415 10.175 68.7945 9.8741V9.6211C68.7945 7.76954 68.5099 6.9473 67.4336 6.9473C65.3138 6.9473 66.8328 9.6058 64.9179 9.49461C64.4905 9.4793 64.2212 9.25691 64.0947 8.86109C63.9366 8.38673 64.0631 7.92766 64.4905 7.46859C65.0914 6.8514 66.0728 6.53516 67.4336 6.53516C69.9024 6.53516 71.1521 7.56347 71.1521 9.84248C71.1521 9.9853 71.1521 10.6494 71.1674 11.8358C71.1827 13.0223 71.1827 13.7823 71.1827 14.1149C71.1827 14.7484 71.2459 15.1279 71.3724 15.2697C71.4989 15.3962 71.657 15.4278 71.657 15.5543H71.6591ZM68.7792 12.9437L68.7945 10.6331C68.6517 10.728 68.3671 10.8708 67.9396 11.0442C67.5122 11.2187 67.149 11.3921 66.8164 11.5502C66.1829 11.8665 65.5351 12.5632 65.5984 13.4334C65.6453 14.1771 66.2472 14.6198 67.0062 14.6045C68.0824 14.6045 68.7782 13.8292 68.7782 12.9427L68.7792 12.9437Z" fill="white"/>
+          <path d="M76.6437 15.1267C76.2479 15.6643 75.6471 15.9336 74.8401 15.9336C73.4639 15.9336 72.7835 15.2369 72.7835 13.8454V7.38888H72.2296C72.0561 7.38888 71.9766 7.2787 71.9766 7.05631C71.9766 6.80331 72.0245 6.74006 72.2296 6.74006H72.4356C72.8947 6.74006 73.3374 6.56562 73.7486 6.23407C74.176 5.8862 74.4606 5.47406 74.6187 4.98439C74.6657 4.84157 74.7616 4.77832 74.9034 4.77832C75.0778 4.77832 75.1727 4.85687 75.1727 5.03132V6.74006H76.4387C76.5968 6.74006 76.6764 6.85024 76.6764 7.05631C76.6764 7.27768 76.5978 7.38888 76.4387 7.38888H75.1727V13.9556C75.1727 14.5728 75.3308 14.9053 75.6634 14.9686C75.7583 14.9839 75.9796 14.937 76.3122 14.8258C76.4866 14.7309 76.5968 14.7146 76.6601 14.7788C76.7386 14.8574 76.7386 14.9686 76.6448 15.1267H76.6437Z" fill="white"/>
+          <path d="M81.0422 15.5859C81.0422 15.7124 80.9474 15.7756 80.7413 15.7603C80.172 15.7287 79.665 15.7124 79.2223 15.7124C78.7479 15.7124 78.2409 15.7277 77.7033 15.7603C77.4972 15.7756 77.4023 15.7124 77.4023 15.5859C77.4023 15.5074 77.4972 15.4115 77.687 15.3329C77.9563 15.2217 78.0195 14.9687 78.0195 14.3362V9.08243C78.0195 8.46524 77.9563 8.21225 77.687 8.08575C77.4972 8.0072 77.4023 7.92763 77.4023 7.81643C77.4023 7.70523 77.4972 7.61036 77.687 7.54711C78.5735 7.37266 79.3804 7.10437 80.1241 6.74017C80.3302 6.6453 80.425 6.69223 80.425 6.8983V14.3352C80.425 14.9687 80.4883 15.2217 80.7576 15.3329C80.9474 15.4115 81.0422 15.5074 81.0422 15.5859H81.0422Z" fill="white"/>
+          <path d="M89.6333 7.89603C90.4882 8.79784 90.9146 9.92103 90.9146 11.2503C90.9146 12.5795 90.4872 13.719 89.6333 14.6209C88.7948 15.5227 87.6716 15.9654 86.2944 15.9654C84.9172 15.9654 83.794 15.5227 82.9555 14.6209C82.1169 13.719 81.6895 12.5959 81.6895 11.2503C81.7048 9.90573 82.1322 8.79784 82.9708 7.89603C83.8093 6.99422 84.9172 6.53516 86.2934 6.53516C87.6696 6.53516 88.7938 6.99422 89.6323 7.89603H89.6333ZM84.1745 11.6145C84.3806 12.8009 84.7438 13.7507 85.2661 14.4944C85.7884 15.238 86.4056 15.539 87.1177 15.4278C88.5571 15.1432 88.8111 13.0702 88.4306 10.8861C88.2245 9.69966 87.8613 8.7499 87.339 8.00621C86.8167 7.26252 86.1995 6.96158 85.5038 7.07277C84.0164 7.3574 83.7787 9.43034 84.1745 11.6145Z" fill="white"/>
+          <path d="M101.201 15.5859C101.201 15.7124 101.106 15.7757 100.9 15.7604C99.8241 15.6971 98.9386 15.6971 97.8624 15.7604C97.6563 15.7757 97.5614 15.7124 97.5614 15.5859C97.5614 15.5074 97.6563 15.4115 97.8461 15.3329C98.1154 15.2217 98.1786 14.9687 98.1786 14.3362V10.3015C98.1786 8.56117 97.5931 7.69098 96.4219 7.69098C95.7731 7.69098 95.2824 7.94398 94.9499 8.44997C94.6173 8.94067 94.4592 9.54153 94.4592 10.222V14.3362C94.4592 14.9697 94.5694 15.2227 94.807 15.3329C94.9815 15.4115 95.0764 15.5074 95.0764 15.5859C95.0764 15.7124 94.9815 15.7757 94.7754 15.7604C94.2694 15.7287 93.7624 15.7124 93.2727 15.7124C92.7831 15.7124 92.2914 15.7277 91.7537 15.7604C91.5477 15.7757 91.4528 15.7124 91.4528 15.5859C91.4528 15.5074 91.5477 15.4278 91.7221 15.3329C91.9598 15.2544 92.07 14.9218 92.07 14.3362V9.06716C92.07 8.49792 91.9598 8.16535 91.7221 8.07048C91.5324 7.99193 91.4375 7.91236 91.4375 7.80116C91.4375 7.68996 91.516 7.61141 91.6589 7.57979C92.4658 7.40534 93.2564 7.13704 94.0164 6.74123C94.1909 6.64635 94.3011 6.69328 94.3174 6.89935L94.4286 8.18066L94.4439 8.33878C94.9978 7.13602 95.9629 6.53516 97.3238 6.53516C99.5864 6.53516 100.583 7.75321 100.583 10.3015V14.3362C100.583 14.9697 100.646 15.2227 100.916 15.3329C101.105 15.4115 101.2 15.5074 101.2 15.5859H101.201Z" fill="white"/>
+          <path d="M18.7656 11.3591C18.9941 11.1306 19.2879 10.8368 19.5807 10.5451C20.2326 9.8942 20.2326 8.83733 19.5807 8.18546L18.8901 7.49482C16.4182 9.96663 12.7202 10.4624 9.75565 8.98525C11.7592 9.35557 13.8362 9.06686 15.6766 8.07732C16.9079 7.41524 17.1415 5.74628 16.153 4.75776L12.0775 0.682268C11.1665 -0.228725 9.69036 -0.228725 8.78039 0.682268L4.38763 5.07502C7.28077 3.84575 10.7554 4.41601 13.1079 6.78479C9.51898 5.04238 5.07215 5.66059 2.0923 8.64044C1.86379 8.86895 1.56897 9.16378 1.2772 9.45554C0.626349 10.1074 0.626349 11.1633 1.2772 11.8141L1.96682 12.5037C4.43864 10.0319 8.13668 9.53613 11.1012 11.0133C9.09766 10.643 7.02064 10.9317 5.18029 11.9212C3.94897 12.5833 3.71536 14.2523 4.70388 15.2408L8.77937 19.3163C9.69036 20.2273 11.1665 20.2273 12.0765 19.3163L16.4692 14.9235C13.5761 16.1528 10.1015 15.5825 7.74902 13.2138C11.3379 14.9562 15.7847 14.338 18.7646 11.3581L18.7656 11.3591Z" fill="white"/>
+          </g>
+          <defs>
+          <clipPath id="clip0_783_23413">
+          <rect width="100.412" height="20" fill="white" transform="translate(0.789062)"/>
+          </clipPath>
+          </defs>
+        </svg>`;
+    // Start spiral fade-in during physics fade-out
+    tl.to(spiralContainer, {
+        opacity: 0.9,
+        duration: 1.5,
+        ease: "power2.inOut"
+    });
+    // Define SVG paths for spiral animation
     const svgPaths = [
         {
             path: "M14.1555 0.818359C22.0713 0.818359 28.4867 7.23375 28.4867 15.1496C28.4867 23.0654 22.0713 29.4808 14.1555 29.4808C6.23961 29.4808 -0.175781 23.0654 -0.175781 15.1496C-0.175781 7.23375 6.23961 0.818359 14.1555 0.818359Z",
-            fill: "black",
+            fill: "transparent",
             isBackground: true
         },
         {
@@ -582,79 +807,69 @@ window.addEventListener("load", ()=>{
             fill: "white"
         }
     ];
-    // Create SVG pieces
-    const svgPieces = [];
-    svgPaths.forEach((pathData, index)=>{
-        const piece = document.createElement("div");
-        piece.className = "spiral-svg-piece";
-        // Create SVG for this piece
+    // Helper function to create SVG elements
+    function createSvgPiece(pathData) {
+        const piece = createElement("div", "spiral-svg-piece", spiralWrapper);
+        // Create SVG element
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         svg.setAttribute("width", "300");
         svg.setAttribute("height", "300");
         svg.setAttribute("viewBox", "-14.5 -15 58 60");
-        // Create path for this piece
+        // Create path element
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", pathData.path);
         path.setAttribute("fill", pathData.fill);
-        if (pathData.isBackground) path.classList.add("svg-background");
-        else path.classList.add("svg-dot");
+        path.classList.add(pathData.isBackground ? "svg-background" : "svg-dot");
         svg.appendChild(path);
         piece.appendChild(svg);
-        spiralWrapper.appendChild(piece);
-        svgPieces.push(piece);
-        // Set initial position - no x,y offset needed as we're using transform: translate
+        // Set initial state
         gsap.set(piece, {
             opacity: 0,
             scale: pathData.isBackground ? 3 : 3
         });
-    });
-    // Calculate spiral path - separate for background and dots
-    const backgroundPoint = {
-        x: 0,
-        y: 0
-    };
-    // Generate spiral points - flatten to 2D
+        return piece;
+    }
+    // Create SVG pieces for spiral animation
+    const svgPieces = svgPaths.map(createSvgPiece);
+    // Helper function to generate spiral points
     function generateSpiralPoints(numPoints, maxRadius) {
-        const points = [];
-        for(let i = 0; i < numPoints; i++){
-            const t = i / (numPoints - 1); // 0 to 1
-            const angle = 4 * Math.PI * 2 * t; // 4 full spiral turns
+        return Array.from({
+            length: numPoints
+        }).map((_, i)=>{
+            const t = i / (numPoints - 1);
+            const angle = 4 * Math.PI * 2 * t;
             const radius = maxRadius * t;
-            const x = radius * Math.cos(angle);
-            const y = radius * Math.sin(angle);
-            points.push({
-                x,
-                y
-            });
-        }
-        return points;
+            return {
+                x: radius * Math.cos(angle),
+                y: radius * Math.sin(angle)
+            };
+        });
     }
     const dotSpiralPoints = generateSpiralPoints(svgPaths.length - 1, 500);
-    // Start the spiral animation
+    // Spiral animation sequence
     tl.to(spiralContainer, {
         opacity: 1,
         duration: 0.5
     });
-    // Animate background to center
+    // Animate background
     tl.to(svgPieces[0], {
         opacity: 1,
         scale: 5,
         duration: 1.5,
         ease: "power2.inOut"
     });
-    // Animate each dot along spiral path to its final position
+    // Animate each dot along spiral path
     svgPieces.forEach((piece, index)=>{
         if (index === 0) return; // Skip background
-        // Get spiral point for this piece
         const spiralPoint = dotSpiralPoints[index - 1];
-        // Animate from spiral point to final position
+        // Fade in with blur
         tl.to(piece, {
             opacity: 1,
             filter: "blur(20px)",
             duration: 0.5,
             ease: "power1.in"
         }, `<${index * 0.15}`);
-        // Move along spiral - use transform for positioning
+        // Animate along spiral path
         tl.fromTo(piece, {
             x: spiralPoint.x,
             y: spiralPoint.y,
@@ -673,7 +888,6 @@ window.addEventListener("load", ()=>{
             xPercent: -50,
             yPercent: -50,
             onComplete: function() {
-                // Add shake effect when piece lands
                 gsap.to(piece, {
                     x: "+=5",
                     y: "+=5",
@@ -685,17 +899,15 @@ window.addEventListener("load", ()=>{
             }
         }, `<${0.1}`);
     });
-    // Hold the complete SVG for a moment
+    // Final animation sequence
     tl.to({}, {
         duration: 1.5
-    });
-    // Scale up the complete SVG
+    }); // Hold complete SVG
     tl.to(spiralWrapper, {
         scale: 1.5,
         duration: 2,
         ease: "power2.inOut"
     });
-    // Add subtle shake to the whole SVG
     tl.to(spiralWrapper, {
         x: "+=10",
         y: "+=10",
@@ -704,38 +916,55 @@ window.addEventListener("load", ()=>{
         yoyo: true,
         ease: "none"
     }, "<");
-    // Final fade out with subtle spin and blur
     tl.to(spiralWrapper, {
         opacity: 0.3,
         rotation: 15,
         scale: 2,
         filter: "blur(200px)",
         duration: 2,
-        ease: "power3.in",
-        onStart: function() {
-            document.body.style.backgroundColor = "#000000";
-        }
+        ease: "power3.in"
     });
-    // Fade in black overlay at the same time
     tl.to(blackOverlay, {
-        opacity: 1,
+        opacity: 0.7,
         duration: 1.5,
         ease: "power2.inOut"
     }, "<0.5");
-    // Completely hide spiral container
     tl.to(spiralContainer, {
         opacity: 0,
         duration: 0.5
     }, "<0.8");
-    // Hold black screen for a moment and ensure background stays black
+    // Add available section animation
+    tl.to(availableSection, {
+        opacity: 1,
+        duration: 0.8,
+        ease: "power2.inOut"
+    }, ">-0.2");
+    tl.to(availableText, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "back.out(1.7)"
+    }, "<0.2");
+    tl.to(avalancheLogo, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.8,
+        ease: "back.out(1.5)"
+    }, "<0.3");
+    // Add a pause on the final screen
     tl.to({}, {
-        duration: 1,
-        onComplete: function() {
-            document.body.style.backgroundColor = "#000000";
-        }
+        duration: 1.5
     });
+    tl.to(availableSection, {
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.in"
+    }, ">");
+    tl.to({}, {
+        duration: 1
+    }); // Final hold
 });
 
 </script>
-  <script src="/sandbox.59712999.js"></script></body>
+  <script src="/workspace.4e1dffad.js"></script></body>
 </html>

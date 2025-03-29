@@ -7,9 +7,23 @@
     "build": "parcel build ./src/index.html"
   },
   "devDependencies": {
-    "parcel": "^2.0.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.2.0"
+    "eslint": "^7.2.0",
+    "parcel": "^2.0.0"
   },
-  "keywords": ["css", "javascript"]
+  "keywords": [
+    "css",
+    "javascript"
+  ],
+  "dependencies": {
+    "ammo.js": "^0.0.10",
+    "postprocessing": "^6.37.1",
+    "three": "^0.174.0"
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC"
 }

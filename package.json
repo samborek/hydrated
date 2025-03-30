@@ -1,29 +1,31 @@
 {
-  "name": "javascript",
+  "name": "hydrated",
   "version": "1.0.0",
-  "description": "The JavaScript template",
+  "description": "Three.js application",
   "scripts": {
-    "start": "parcel ./src/index.html",
-    "build": "parcel build ./src/index.html"
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html --public-url ./",
+    "clean": "rm -rf dist .parcel-cache"
+  },
+  "dependencies": {
+    "three": "^0.174.0",
+    "ammo.js": "^0.0.10",
+    "postprocessing": "^6.37.2"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.2.0",
-    "parcel": "^2.0.0"
+    "parcel": "^2.14.4",
+    "@babel/core": "^7.24.0",
+    "@babel/eslint-parser": "^7.23.10",
+    "eslint": "^8.57.0"
   },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
   "keywords": [
     "css",
     "javascript"
-  ],
-  "dependencies": {
-    "ammo.js": "^0.0.10",
-    "postprocessing": "^6.37.1",
-    "three": "^0.174.0"
-  },
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "author": "",
-  "license": "ISC"
+  ]
 }

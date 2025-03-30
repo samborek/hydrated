@@ -2,21 +2,22 @@
   "name": "hydrated",
   "version": "1.0.0",
   "description": "Three.js application",
+  "license": "MIT",
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html --public-url ./",
     "clean": "rm -rf dist .parcel-cache"
   },
   "dependencies": {
-    "three": "^0.174.0",
     "ammo.js": "^0.0.10",
-    "postprocessing": "^6.37.2"
+    "postprocessing": "^6.37.2",
+    "three": "^0.174.0"
   },
   "devDependencies": {
-    "parcel": "^2.14.4",
     "@babel/core": "^7.24.0",
     "@babel/eslint-parser": "^7.23.10",
-    "eslint": "^8.57.0"
+    "eslint": "^8.57.0",
+    "parcel": "^2.14.4"
   },
   "browserslist": [
     ">0.2%",
@@ -24,6 +25,7 @@
     "not ie <= 11",
     "not op_mini all"
   ],
+  "packageManager": "yarn@4.8.1",
   "keywords": [
     "css",
     "javascript"

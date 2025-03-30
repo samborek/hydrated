@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html>
   <head>
     <title>GIGA Scroll Animation</title>
@@ -140,17 +139,6 @@
         justify-content: center;
         align-items: center;
         opacity: 0;
-        z-index: 10; /* Ensure container is above other elements */
-      }
-
-      .gigadot-image {
-        max-width: 80%;
-        max-height: 80vh;
-        width: auto;
-        height: auto;
-        object-fit: contain;
-        display: block;
-        margin: auto;
       }
 
       .bg-transition {
@@ -159,10 +147,9 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: black;
+        background: white;
         opacity: 0;
         pointer-events: none;
-        /* z-index: 0; */ /* This is optional, but ensures it's below */
       }
 
       /* Spiral SVG Animation Styles */
@@ -291,74 +278,11 @@
 
       /* Remove the persistent button styles since we won't use it */
       /* .persistent-button styles removed */
-
-      .spiral-image-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        perspective: 1000px;
-        transform-style: preserve-3d;
-        z-index: 1;
-      }
-
-      .spiral-image-clone {
-        position: absolute;
-        max-width: 80px;
-        height: auto;
-        object-fit: contain;
-        transform-origin: center center;
-        opacity: 0;
-        scale: 0.1;
-        pointer-events: none;
-        backface-visibility: hidden;
-        will-change: transform;
-        border-radius: 8%; /* Add this line */
-      }
-
-      /* ADD THESE STYLES */
-      .liquidated-text {
-        position: fixed; /* MODIFIED: Changed from absolute */
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: #FFFFFF; /* Changed to white for better visibility */
-        font-family: "Gazpacho", sans-serif;
-        font-size: clamp(1.5rem, 4vw, 3rem); /* MODIFIED: Reduced size by 50% */
-        font-weight: 700;
-        white-space: nowrap;
-        text-align: center;
-        opacity: 0; /* Keep initial opacity 0 for animation */
-        z-index: 1000; /* Keep high z-index */
-        mix-blend-mode: difference;
-        text-shadow: 0 0 10px rgba(255,255,255,0.5); /* Keep white glow */
-        letter-spacing: 0.1em;
-        pointer-events: none; /* Keep non-interactive */
-        width: 100%;
-        padding: 0 20px; /* Keep padding */
-        box-sizing: border-box;
-      }
     </style>
   </head>
   <body>
-    <!-- Add preload image -->
-    <img id="gigadot-preload" src="images/gigadot-1.jpg" style="display: none;" alt="GIGADOT preload">
     <div class="scroll-container"></div>
-    <div class="gidadot-container"> <!-- Existing container -->
-        <div class="spiral-image-container">
-            <!-- spiral clones go here -->
-        </div>
-        <div class="bg-transition"></div>
-
-        <!-- MOVED TEXT ELEMENT OUTSIDE -->
-        <!-- <div class="liquidated-text">Are you hydrated?</div> -->
-
-    </div> <!-- End gidadot-container -->
     <div class="spacer"></div>
-
-    <!-- MOVED TEXT ELEMENT HERE, before closing body -->
-    <div class="liquidated-text">Are you hydrated?</div>
 
     <script>
       gsap.registerPlugin(ScrollTrigger);
@@ -428,53 +352,21 @@
           "gidadot-container",
           container
         );
-
-        // Create a container for the spiral images
-        const spiralImageContainer = createElement(
-          "div",
-          "spiral-image-container", // New container
-          gidadotContainer
-        );
-
-        // Get the processed image path from the preloaded img
-        const preloadImg = document.getElementById('gigadot-preload');
-        const imgSrc = preloadImg ? preloadImg.src : 'images/gigadot-1.jpg';
-
-        // ADD THIS LINE - Get reference to the new text element - Keep this reference if needed elsewhere, but we'll use selector in timeline
-        const liquidatedText = document.querySelector(".liquidated-text");
-
-        // --- Create Image Clones ---
-        const numClones = 35; // How many images in the spiral
-        const spiralClones = [];
-        for (let i = 0; i < numClones; i++) {
-          const clone = createElement(
-            "img",
-            "spiral-image-clone", // New class for clones
-            spiralImageContainer,
-            {
-              attributes: {
-                src: imgSrc,
-                alt: "GIGADOT Clone"
-              },
-              // Initial style for positioning at the center
-              style: {
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%) scale(0.1)', // Start small and centered
-                opacity: 0 // Start invisible
-              }
-            }
-          );
-          spiralClones.push(clone);
-        }
-        // --- End Image Clones ---
-
         const bgTransition = createElement(
           "div",
           "bg-transition",
           gidadotContainer
         );
+
+        // Create GIDADOT text layers
+        const gidadotLayers = [];
+        for (let i = 0; i < config.numGidadotLayers; i++) {
+          const layer = createElement("div", "gidadot-text", gidadotContainer, {
+            textContent: "GIDADOT",
+            style: { position: "absolute" },
+          });
+          gidadotLayers.push(layer);
+        }
 
         // Create GIGA and DOT text elements
         for (let i = 0; i < config.numDuplicates; i++) {
@@ -857,8 +749,8 @@
           scrollTrigger: {
             trigger: ".scroll-container",
             start: "top top",
-            end: "+=8000", // Increased from 6500 for smoother scroll
-            scrub: 1.5, // Increased from 0.5 for smoother scrolling
+            end: "+=6500", // Reduced from 8500 to make animations feel more responsive
+            scrub: 0.5, // Changed from 1 to 0.5 for more responsive scrubbing
             pin: true,
             onUpdate: function (self) {
               updateDotPositions();
@@ -867,13 +759,12 @@
           },
         });
 
-        // Initial states (GIGA/DOT/SVG container) - remain the same
+        // Initial states
         gsap.set(gigaTexts, { opacity: 0, y: "10vh" });
         gsap.set(dotTexts, { opacity: 0, clipPath: "inset(0 0 100% 0)" });
         gsap.set(svgContainer, { opacity: 0 });
-        gsap.set(gidadotContainer, { opacity: 0 }); // Ensure container starts hidden
 
-        // Animate GIGA text - remains the same
+        // Animate GIGA text
         gigaTexts.forEach((text, index) => {
           // Fade in
           tl.to(
@@ -899,7 +790,7 @@
           );
         });
 
-        // Animate DOT text - remains the same
+        // Animate DOT text
         dotTexts.forEach((text, index) => {
           // Fade in
           tl.to(
@@ -926,91 +817,88 @@
           );
         });
 
-        // --- Spiral Image Animation Section ---
-        const spiralSectionStartTime = tl.duration();
-        const spiralAnimationDuration = 6.0; // Increased from 3.0 for smoother animation
-        const maxSpiralRadius = Math.min(window.innerWidth, window.innerHeight) * 0.8; // Reduced from 1.0 for better visibility
+        // GIDADOT animation
+        tl.to(gidadotContainer, { opacity: 1, duration: 0.3 });
+        tl.to(
+          bgTransition,
+          { opacity: 1, duration: 0.5, ease: "power2.inOut" },
+          ">"
+        );
 
-        // 1. Fade in the white background FIRST
-        tl.to(bgTransition, {
+        // Animate GIDADOT layers
+        gidadotLayers.forEach((layer, index) => {
+          // Initial state
+          gsap.set(layer, { scale: 0.5, opacity: 0, color: "white" });
+
+          // Animation sequence
+          tl.to(
+            layer,
+            {
+            scale: 1 + index * 0.5,
             opacity: 1,
-            duration: 0.6 // Duration for background fade-in
-        }, spiralSectionStartTime);
+            duration: 0.4,
+              ease: "power2.out",
+            },
+            `>-${index * 0.1}`
+          );
 
-        // 2. THEN, fade in the spiral container (slightly delayed or starting after bg)
-        tl.to(gidadotContainer, {
+          tl.to(layer, { color: "#000000", duration: 0.4, ease: "none" }, "<");
+
+          tl.to(
+            layer,
+            {
             opacity: 1,
-            duration: 0.4 // Duration for container fade-in
-        }, ">-0.2"); // Start this 0.2s before the background fade finishes for overlap
+            duration: 0.1,
+            repeat: 1,
+            yoyo: true,
+              ease: "none",
+          },
+          ">"
+        );
+        
+        tl.to(
+            layer,
+            {
+            scale: 2 + index,
+              rotation: index % 2 ? 5 : -5,
+            duration: 0.6,
+              ease: "power1.inOut",
+            },
+            ">"
+          );
 
-        // === ADD TEXT FADE IN ===
-        // Fade in text slightly after spiral container appears
-        tl.to(liquidatedText, {
-            opacity: 1,
-            duration: 1.0, // Duration for text fade-in
-            ease: "power1.in"
-        }, spiralSectionStartTime + 1.0); // Start 1s after spiral section starts
-
-        // 3. Create a progress tracker and run the main spiral animation
-        const spiralProgress = { value: 0 };
-        tl.to(spiralProgress, {
-          value: 0.1,
-          duration: spiralAnimationDuration,
-          ease: "power1.inOut",
-          onUpdate: () => {
-            // ... (onUpdate logic for setting image properties) ...
-            spiralClones.forEach((clone, index) => {
-              const data = calculateSpiralData(
-                spiralProgress.value,
-                index,
-                spiralClones.length,
-                maxSpiralRadius
-              );
-
-              gsap.set(clone, {
-                x: data.x,
-                y: data.y,
-                rotation: data.rotationZ,
-                rotationX: data.rotationX,
-                rotationY: data.rotationY,
-                skewX: data.skewX,
-                skewY: data.skewY,
-                scale: data.scale,
-                opacity: data.opacity,
-                transformOrigin: "center center",
-                transformPerspective: 1000
-              });
-            });
-          }
-        }, spiralSectionStartTime + 0.6); // Keep original timing relative to background
-
-        // === ADD TEXT FADE OUT ===
-        // Start fading out text before the container fades out completely
-        const textFadeOutStartTime = spiralSectionStartTime + 0.6 + spiralAnimationDuration * 0.7; // Start fading out 70% through spiral anim
-        tl.to(liquidatedText, {
+        tl.to(
+            layer,
+            { color: "white", duration: 0.2, ease: "none" },
+            ">-0.2"
+        );
+        
+        tl.to(
+            layer,
+          {
+            scale: 4 + index,
             opacity: 0,
-            duration: 1.0, // Duration for text fade-out
-            ease: "power1.out"
-        }, textFadeOutStartTime);
+            filter: "blur(30px)",
+              rotation: index % 2 ? 8 : -8,
+            duration: 1,
+              ease: "power2.inOut",
+            },
+            ">-0.3"
+          );
+        });
 
-        // 4. Fade out BOTH the container and the background at the end
-        const fadeOutStartTime = spiralSectionStartTime + 0.6 + spiralAnimationDuration * 0.9; // Adjust start time based on when spiral anim starts
-        tl.to(gidadotContainer, { // Fade out spiral container
-            opacity: 0,
-            duration: 0.8
-        }, fadeOutStartTime);
-        tl.to(bgTransition, { // Fade out background
-            opacity: 0,
-            duration: 1.0 // Slightly longer fade for background
-        }, ">-0.6"); // Start fading background slightly before container finishes fading
+        // Fade transitions
+        tl.to(
+          bgTransition,
+          { opacity: 0, duration: 0.5, ease: "power2.inOut" }, // Reduced from 1 to 0.5
+          "<0.5"
+        );
+        tl.to(gidadotContainer, { opacity: 0, duration: 0.2 }, "<0.2"); // Reduced from 0.3 to 0.2
 
-        // Add a small gap before next section
-        tl.to({}, { duration: 0.3 });
+        // Reserve space for physics animation - reduced gap
+        tl.to({}, { duration: 0.5 }); // Reduced from 1 to 0.2
 
-        // Reserve space for physics animation - keep this gap
-        tl.to({}, { duration: 0.5 });
-
-        // Create spiral animation elements (for the *other* SVG spiral) - remains the same
+        // Create spiral animation elements
         const spiralContainer = createElement(
           "div",
           "spiral-container",
@@ -1271,7 +1159,7 @@
           {
           x: "+=10",
           y: "+=10",
-          duration: 1.2,
+          duration: 0.2,
           repeat: 5,
           yoyo: true,
             ease: "none",
@@ -1280,11 +1168,11 @@
         );
 
         tl.to(spiralWrapper, {
-          opacity: 0.5,
+          opacity: 0.3,
           rotation: 15,
-          scale: 4,
+          scale: 2,
           filter: "blur(200px)",
-          duration: 5,
+          duration: 2,
           ease: "power3.in",
         });
 
@@ -1292,7 +1180,7 @@
           blackOverlay,
           {
             opacity: 0.7,
-          duration: 5.5,
+          duration: 1.5,
             ease: "power2.inOut",
           },
           "<0.5"
@@ -1360,138 +1248,7 @@
             // No need to change visibility when scrolling back
           }
         });
-
-        // Helper function to calculate spiral points and 3D transforms
-        function calculateSpiralData(progress, index, total, maxRadius, turns = 1.5) {
-          // Calculate base position on spiral
-          const t = (progress + index / total) % 0.5;
-          const angle = turns * 8 * Math.PI * t;
-          const radius = maxRadius * Math.min(1, t * 2.5);
-          const x = radius * Math.cos(angle);
-          const y = radius * Math.sin(angle);
-          const angleToCenter = Math.atan2(y, x);
-          const rotationZ = (angleToCenter * 180 / Math.PI) + 90;
-          const rotationX = 5 * Math.sin(angle);
-          const rotationY = 5 * Math.cos(angle);
-          const distanceFromCenter = Math.sqrt(x * x + y * y);
-          const maxDistance = maxRadius * 1.2;
-          const distanceFactor = Math.min(1, distanceFromCenter / maxDistance); // 0 near center, 1 further out
-          const skewX = 15 * Math.sin(angleToCenter) * distanceFactor;
-          const skewY = 15 * Math.cos(angleToCenter) * distanceFactor;
-
-          // --- New Scale & Opacity Logic ---
-
-          // 1. Smoother Eased Fade-In Factor
-          // Starts slow, ramps up. Adjust multiplier (3) or exponent (2) to tune speed.
-          const emergenceFactor = Math.min(1, Math.pow(t * 5, 9));
-
-          // 2. Perspective Scaling Factor
-          // Starts small near center (distanceFactor=0), grows towards 1 further out.
-          const minScaleAtCenter = 2; // How small images are at the very center
-          const maxScaleFurtherOut = 2.0; // Target scale as images move away
-          const perspectiveScaleFactor = minScaleAtCenter + (maxScaleFurtherOut - minScaleAtCenter) * distanceFactor;
-
-          // Combine factors: Apply emergence fade-in to the perspective scale
-          const scale = perspectiveScaleFactor * emergenceFactor;
-
-          // Apply emergence factor directly to opacity for the smooth fade-in
-          const opacity = emergenceFactor;
-
-          // --- End of New Logic ---
-
-          return {
-            x,
-            y,
-            rotationX,
-            rotationY,
-            rotationZ,
-            skewX,
-            skewY,
-            scale,    // Use the new perspective-aware, faded-in scale
-            opacity   // Use the new faded-in opacity
-          };
-        }
-
-        // Create spiral animation with separate ScrollTrigger
-        ScrollTrigger.create({
-          trigger: ".scroll-container",
-          start: "top top",
-          end: "+=4000", // Adjust this value to control how long the spiral section takes to scroll
-          scrub: 2.5, // Higher scrub value for smoother spiral movement
-          onUpdate: (self) => {
-            // Update spiral images based on scroll progress
-            spiralClones.forEach((clone, index) => {
-              const data = calculateSpiralData(
-                self.progress, // Use ScrollTrigger progress directly
-                index,
-                spiralClones.length,
-                maxSpiralRadius
-              );
-
-              gsap.set(clone, {
-                x: data.x,
-                y: data.y,
-                rotation: data.rotationZ,
-                rotationX: data.rotationX,
-                rotationY: data.rotationY,
-                skewX: data.skewX,
-                skewY: data.skewY,
-                scale: data.scale,
-                opacity: data.opacity,
-                transformOrigin: "center center",
-                transformPerspective: 2000
-              });
-            });
-          }
-        });
-
-        // Add animations to main timeline
-        const textStartTime = spiralSectionStartTime + 1;
-        // REMOVED: const textEndTime = spiralSectionStartTime + spiralAnimationDuration - 2.5;
-        const containerFadeOutTime = spiralSectionStartTime + spiralAnimationDuration - 1; // Keep this timing
-
-        // Text animations - Keep the fade-in
-        tl.to(".liquidated-text", {
-          opacity: 1,
-          duration: 1.5,
-          ease: "power2.inOut",
-          scale: 1.1,
-          delay: 0.5
-        }, textStartTime);
-
-        // REMOVED: Independent text fade-out animation
-        // tl.to(".liquidated-text", {
-        //   opacity: 0,
-        //   duration: 1.5,
-        //   scale: 0.9,
-        //   ease: "power2.inOut"
-        // }, textEndTime);
-
-        // Background and container animations
-        tl.to(bgTransition, {
-            opacity: 1,
-            duration: 0.6
-        }, spiralSectionStartTime);
-
-        tl.to(gidadotContainer, {
-            opacity: 1,
-            duration: 0.4
-        }, ">-0.2");
-
-        // Fade out container, background, AND the text together
-        tl.to([gidadotContainer, bgTransition, ".liquidated-text"], { // MODIFIED: Added ".liquidated-text" to the fade-out targets
-            opacity: 0,
-            duration: 0.8, // Use a consistent duration for the group fade-out
-            stagger: 0.1 // Optional: slightly stagger the fade-out for a subtle effect
-        }, containerFadeOutTime);
-
-        // REMOVED: Separate fade-out for bgTransition as it's now handled above
-        // tl.to(bgTransition, {
-        //     opacity: 0,
-        //     duration: 1.0
-        // }, ">-0.6");
-
-      }); // End window load listener
+      });
     </script>
   </body>
 </html>

@@ -278,14 +278,14 @@
         opacity: 0;
       }
       
-      /* Available section styles */
+      /* Available section styles - Improved for smoother animation */
       .available-section {
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -295,9 +295,11 @@
         text-decoration: none;
         cursor: default;
         border-radius: 0;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: all 0.3s ease;
         z-index: 100;
-        pointer-events: none;
+        pointer-events: none !important;
+        /* Fix for Safari and mobile browsers */
+        transform-origin: center center;
       }
 
       .available-text {
@@ -331,16 +333,13 @@
 
       /* Button hover effect - only applies after transformation */
       .available-section.button-active {
-        pointer-events: auto;
+        pointer-events: auto !important;
         cursor: pointer;
         width: auto;
         height: auto;
-        padding: clamp(2rem, 4vw, 2.5rem) clamp(3rem, 6vw, 4rem); /* Increased padding */
-      }
-
-      .available-section.button-active:hover {
-        transform: translate(-50%, -50%) scale(1.05);
-        box-shadow: 0 0 30px rgba(246, 41, 124, 0.5);
+        padding: clamp(2rem, 4vw, 2.5rem) clamp(3rem, 6vw, 4rem);
+        border-radius: 100px;
+        /* No need to modify transform here as it's already centered */
       }
 
       /* Mobile styles */
@@ -427,11 +426,102 @@
         padding: 0 20px;
         box-sizing: border-box;
       }
+
+      /* ADD SCROLL INDICATOR STYLES */
+      .scroll-indicator {
+        position: fixed;
+        bottom: 10vh;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #999999;
+        font-family: "Gazpacho", sans-serif;
+        font-size: clamp(1rem, 3vw, 1.5rem);
+        text-align: center;
+        z-index: 10;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .scroll-indicator.hidden {
+        opacity: 0;
+      }
+
+      .arrow-down {
+        width: clamp(20px, 5vw, 40px);
+        height: clamp(20px, 5vw, 40px);
+        border-left: 2px solid #999999;
+        border-bottom: 2px solid #999999;
+        transform: rotate(-45deg);
+        margin-top: 10px;
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+          transform: translateY(0) rotate(-45deg);
+        }
+        40% {
+          transform: translateY(-10px) rotate(-45deg);
+        }
+        60% {
+          transform: translateY(-5px) rotate(-45deg);
+        }
+      }
+
+      /* FIX AVAILABLE SECTION STYLES - Updated */
+      .available-section {
+        position: fixed;
+        top: 50%;
+        left: 0; /* Changed from 50% */
+        transform: translate(0, -50%); /* Changed from translate(-50%, -50%) */
+        width: 100%; /* Changed from 100vw */
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        background-color: #F6297C;
+        text-decoration: none;
+        cursor: default;
+        border-radius: 0;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        z-index: 100;
+        pointer-events: none; /* Disable pointer events initially */
+      }
+
+      .available-section.button-active {
+        pointer-events: auto; /* Enable pointer events */
+        cursor: pointer; /* Show pointer cursor */
+        width: auto;
+        height: auto;
+        padding: clamp(2rem, 4vw, 2.5rem) clamp(3rem, 6vw, 4rem);
+        border-radius: 100px;
+        left: 50%; /* Add back for button state */
+        transform: translate(-50%, -50%); /* Add back for button state */
+      }
+
+      .available-section.button-active:hover {
+        transform: translate(-50%, -50%) scale(1.05);
+        box-shadow: 0 0 30px rgba(246, 41, 124, 0.5);
+      }
     </style>
   </head>
   <body>
     <!-- Add preload image -->
     <img id="gigadot-preload" src="images/gigadot-1.jpg" style="display: none;" alt="GIGADOT preload">
+    
+    <!-- Add scroll indicator -->
+    <div class="scroll-indicator">
+      <div>Scroll down for liquidity</div>
+      <div class="arrow-down"></div>
+    </div>
+    
     <div class="scroll-container"></div>
     <div class="gidadot-container"> <!-- Existing container -->
         <div class="spiral-image-container">
@@ -465,6 +555,31 @@
           },
         };
 
+        // Handle scroll indicator visibility
+        const scrollIndicator = document.querySelector(".scroll-indicator");
+        let scrollTimeout;
+        
+        function hideScrollIndicator() {
+          scrollIndicator.classList.add("hidden");
+        }
+        
+        window.addEventListener("scroll", () => {
+          // Hide indicator immediately on any scroll
+          if (window.scrollY > 50) { // Add small threshold for accidental scroll
+            hideScrollIndicator();
+          }
+          
+          // Clear previous timeout
+          clearTimeout(scrollTimeout);
+          
+          // Show indicator again if back at top after 1.5 seconds without scrolling
+          scrollTimeout = setTimeout(() => {
+            if (window.scrollY < 50) {
+              scrollIndicator.classList.remove("hidden");
+            }
+          }, 1500);
+        });
+
         // Helper function to get viewport dimensions
         function getViewportSize() {
           return {
@@ -487,20 +602,19 @@
         const dotTexts = [];
         
         // SVG markup for icons - used in multiple places
-        const svgMarkup = `<svg width="58" height="60" viewBox="-14.5 -15 58 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M14.1555 0.818359C22.0713 0.818359 28.4867 7.23375 28.4867 15.1496C28.4867 23.0654 22.0713 29.4808 14.1555 29.4808C6.23961 29.4808 -0.175781 23.0654 -0.175781 15.1496C-0.175781 7.23375 6.23961 0.818359 14.1555 0.818359Z" fill="black"/>
-          <path d="M14.3063 6.48803C15.5497 6.15489 16.7131 6.47157 16.907 7.19511C17.1008 7.91865 16.2495 8.77516 15.0083 9.10775C13.7649 9.4409 12.6015 9.12422 12.4076 8.40068C12.2137 7.67714 13.065 6.82063 14.3063 6.48803Z" fill="white"/>
-          <path d="M9.74045 11.0542C10.0735 9.81059 10.9291 8.96184 11.654 9.15536C12.3768 9.34944 12.6935 10.5147 12.3598 11.7562C12.0267 12.9998 11.1711 13.8485 10.4463 13.655C9.72351 13.4609 9.40681 12.2956 9.74045 11.0542Z" fill="white"/>
-          <path d="M19.603 13.6958C19.9361 12.4523 20.7917 11.6035 21.5139 11.7955C22.2367 11.9896 22.5529 13.1528 22.2198 14.3964C21.8867 15.6399 21.0311 16.4887 20.3089 16.2967C19.5861 16.1026 19.27 14.9394 19.603 13.6958Z" fill="white"/>
-          <path d="M10.7225 14.6872C11.2514 14.1578 12.4194 14.4665 13.3291 15.3749C14.2394 16.2853 14.5472 17.4507 14.0183 17.9802C13.4894 18.5096 12.3214 18.2009 11.4117 17.2925C10.5014 16.3821 10.1936 15.2167 10.7225 14.6872Z" fill="white"/>
-          <path d="M17.9481 7.46942C18.477 6.93996 19.6429 7.24929 20.5532 8.15971C21.4634 9.07013 21.7712 10.2356 21.2423 10.765C20.7135 11.2945 19.5475 10.9852 18.6373 10.0747C17.727 9.16431 17.4192 7.99888 17.9481 7.46942Z" fill="white"/>
-          <path d="M10.7624 11.4499C12.0057 11.1168 13.1691 11.4335 13.363 12.157C13.5569 12.8806 12.7056 13.7371 11.4643 14.0697C10.221 14.4028 9.05755 14.0861 8.86368 13.3626C8.6698 12.6391 9.5211 11.7825 10.7624 11.4499Z" fill="#979FAA"/>
-          <path d="M13.4059 21.3103C14.6493 20.9772 15.8127 21.2938 16.0066 22.0174C16.2005 22.7409 15.3492 23.5974 14.1079 23.93C12.8645 24.2632 11.7011 23.9465 11.5072 23.2229C11.3134 22.4994 12.1647 21.6429 13.4059 21.3103Z" fill="#979FAA"/>
-          <path d="M6.19651 16.0161C6.5296 14.7725 7.3852 13.9238 8.11005 14.1173C8.83282 14.3114 9.14952 15.4766 8.81588 16.7181C8.48279 17.9617 7.62718 18.8104 6.90233 18.6169C6.17956 18.4228 5.86286 17.2576 6.19651 16.0161Z" fill="#979FAA"/>
-          <path d="M16.0591 18.6587C16.3922 17.4152 17.2478 16.5664 17.97 16.7584C18.6928 16.9525 19.0089 18.1157 18.6758 19.3593C18.3427 20.6028 17.4871 21.4516 16.7649 21.2596C16.0421 21.0655 15.726 19.9023 16.0591 18.6587Z" fill="#979FAA"/>
-          <path d="M7.17856 19.6491C7.70745 19.1197 8.87545 19.4284 9.78515 20.3368C10.6954 21.2472 11.0032 22.4126 10.4743 22.9421C9.94545 23.4715 8.77745 23.1628 7.86775 22.2544C6.95749 21.344 6.64966 20.1786 7.17856 19.6491Z" fill="#979FAA"/>
-          <path d="M14.4041 12.4313C14.933 11.9019 16.099 12.2112 17.0092 13.1216C17.9195 14.032 18.2273 15.1975 17.6984 15.7269C17.1695 16.2564 16.0036 15.9471 15.0933 15.0366C14.1831 14.1262 13.8752 12.9608 14.4041 12.4313Z" fill="#979FAA"/>
-          <path d="M16.9499 16.3484C18.1932 16.0152 19.3566 16.3319 19.5505 17.0555C19.7444 17.779 18.8931 18.6355 17.6518 18.9681C16.4085 19.3012 15.2451 18.9846 15.0512 18.261C14.8573 17.5375 15.7086 16.681 16.9499 16.3484Z" fill="white"/>
+        const svgMarkup = `<svg width="58" height="60" viewBox="0 0 31 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21.0882 13.8387C22.7451 15.571 23.2694 17.7539 22.2611 18.7185C21.2528 19.6831 19.0926 19.0589 17.438 17.33C15.7834 15.6011 15.2569 13.4148 16.2652 12.4502C17.2735 11.4856 19.4342 12.1098 21.0882 13.8387Z" fill="white"/>
+          <path d="M7.34995 26.9802C9.00681 28.7125 9.53104 30.8953 8.52274 31.8599C7.51444 32.8246 5.35428 32.2004 3.6997 30.4709C2.04511 28.7414 1.5186 26.5557 2.5269 25.5911C3.5352 24.6265 5.69593 25.2507 7.34995 26.9802Z" fill="white"/>
+          <path d="M14.054 28.9377C16.3804 28.3703 18.5366 29.0063 18.8674 30.3562C19.1982 31.7061 17.5805 33.2671 15.2518 33.8362C12.9231 34.4053 10.7692 33.7675 10.4384 32.4176C10.1076 31.0678 11.7247 29.5068 14.054 28.9377Z" fill="white"/>
+          <path d="M4.48805 15.3249C5.82602 15.7148 6.36731 17.8988 5.69776 20.1974C5.02821 22.496 3.39808 24.0439 2.06011 23.6541C0.722141 23.2643 0.181347 21.0808 0.850332 18.7822C1.51932 16.4836 3.15008 14.934 4.48805 15.3249Z" fill="white"/>
+          <path d="M22.7395 20.6546C24.0775 21.0444 24.616 23.225 23.9436 25.5265C23.2712 27.8279 21.6438 29.3736 20.3059 28.9837C18.9679 28.5939 18.4299 26.4128 19.1018 24.1119C19.7736 21.811 21.3992 20.2648 22.7395 20.6546Z" fill="white"/>
+          <path d="M27.8138 4.53656C29.4707 6.26889 29.995 8.45176 28.9867 9.41637C27.9784 10.381 25.8182 9.75682 24.1636 8.02734C22.509 6.29785 21.9825 4.11214 22.9908 3.14753C23.9991 2.18292 26.1598 2.80707 27.8138 4.53656Z" fill="#979FAA"/>
+          <path d="M14.0745 17.6774C15.7314 19.4097 16.2557 21.5926 15.2474 22.5572C14.2391 23.5218 12.0789 22.8977 10.4244 21.1687C8.76977 19.4398 8.24319 17.2536 9.25149 16.289C10.2598 15.3244 12.4205 15.9491 14.0745 17.6774Z" fill="#979FAA"/>
+          <path d="M16.2678 1.16389C18.5942 0.596472 20.7504 1.23253 21.0812 2.58922C21.412 3.94592 19.7915 5.50349 17.4656 6.06978C15.1398 6.63606 12.983 6.00111 12.6522 4.64441C12.3214 3.28772 13.9419 1.73017 16.2678 1.16389Z" fill="#979FAA"/>
+          <path d="M20.7787 19.6375C23.1051 19.0701 25.2612 19.7062 25.592 21.056C25.9228 22.4059 24.3051 23.9674 21.9765 24.5366C19.6478 25.1057 17.4938 24.4679 17.163 23.118C16.8322 21.7681 18.4494 20.2049 20.7787 19.6375Z" fill="#979FAA"/>
+          <path d="M11.2127 6.01908C12.5506 6.40889 13.0919 8.59231 12.4224 10.8909C11.7528 13.1895 10.1226 14.738 8.78467 14.3482C7.4467 13.9584 6.90597 11.7744 7.57496 9.47633C8.24394 7.17829 9.8747 5.63153 11.2127 6.01908Z" fill="#979FAA"/>
+          <path d="M29.4624 11.3529C30.8004 11.7427 31.3388 13.9233 30.6664 16.2248C29.994 18.5262 28.3667 20.0719 27.0288 19.682C25.6908 19.2922 25.1523 17.1116 25.8247 14.8102C26.4971 12.5088 28.1244 10.962 29.4624 11.3529Z" fill="#979FAA"/>
+          <path d="M9.54324 10.4666C11.8697 9.89916 14.0258 10.5347 14.3566 11.8919C14.6874 13.2492 13.0674 14.8062 10.741 15.3725C8.41462 15.9387 6.25842 15.3038 5.92762 13.9471C5.59681 12.5904 7.2174 11.0329 9.54324 10.4666Z" fill="white"/>
         </svg>`;
 
         // Helper function to create elements with attributes
@@ -1151,8 +1265,17 @@
           document.body, // Attach to body instead of container to ensure it stays fixed
           {
             attributes: {
-              href: "https://app.hydration.net/trade/swap?account=12YDABsQJzuwxkN3T2VHgBKouKVaaxsuBcpQmAknY2qmikcL",
+              href: "https://app.hydration.net/strategies/gigadot",
               target: "_blank"
+            },
+            style: {
+              // Explicitly set positioning to ensure it's centered correctly
+              position: "fixed",
+              top: "50%",
+              left: "50%", 
+              transform: "translate(-50%, -50%)",
+              width: "100%",
+              height: "100%"
             }
           }
         );
@@ -1205,56 +1328,56 @@
         // Define SVG paths for spiral animation
         const svgPaths = [
           {
-            path: "M14.1555 0.818359C22.0713 0.818359 28.4867 7.23375 28.4867 15.1496C28.4867 23.0654 22.0713 29.4808 14.1555 29.4808C6.23961 29.4808 -0.175781 23.0654 -0.175781 15.1496C-0.175781 7.23375 6.23961 0.818359 14.1555 0.818359Z",
+            path: "M21.0882 13.8387C22.7451 15.571 23.2694 17.7539 22.2611 18.7185C21.2528 19.6831 19.0926 19.0589 17.438 17.33C15.7834 15.6011 15.2569 13.4148 16.2652 12.4502C17.2735 11.4856 19.4342 12.1098 21.0882 13.8387Z",
             fill: "transparent",
             isBackground: true,
           },
           {
-            path: "M14.3063 6.48803C15.5497 6.15489 16.7131 6.47157 16.907 7.19511C17.1008 7.91865 16.2495 8.77516 15.0083 9.10775C13.7649 9.4409 12.6015 9.12422 12.4076 8.40068C12.2137 7.67714 13.065 6.82063 14.3063 6.48803Z",
+            path: "M21.0882 13.8387C22.7451 15.571 23.2694 17.7539 22.2611 18.7185C21.2528 19.6831 19.0926 19.0589 17.438 17.33C15.7834 15.6011 15.2569 13.4148 16.2652 12.4502C17.2735 11.4856 19.4342 12.1098 21.0882 13.8387Z",
             fill: "white",
           },
           {
-            path: "M9.74045 11.0542C10.0735 9.81059 10.9291 8.96184 11.654 9.15536C12.3768 9.34944 12.6935 10.5147 12.3598 11.7562C12.0267 12.9998 11.1711 13.8485 10.4463 13.655C9.72351 13.4609 9.40681 12.2956 9.74045 11.0542Z",
+            path: "M7.34995 26.9802C9.00681 28.7125 9.53104 30.8953 8.52274 31.8599C7.51444 32.8246 5.35428 32.2004 3.6997 30.4709C2.04511 28.7414 1.5186 26.5557 2.5269 25.5911C3.5352 24.6265 5.69593 25.2507 7.34995 26.9802Z",
             fill: "white",
           },
           {
-            path: "M19.603 13.6958C19.9361 12.4523 20.7917 11.6035 21.5139 11.7955C22.2367 11.9896 22.5529 13.1528 22.2198 14.3964C21.8867 15.6399 21.0311 16.4887 20.3089 16.2967C19.5861 16.1026 19.27 14.9394 19.603 13.6958Z",
+            path: "M14.054 28.9377C16.3804 28.3703 18.5366 29.0063 18.8674 30.3562C19.1982 31.7061 17.5805 33.2671 15.2518 33.8362C12.9231 34.4053 10.7692 33.7675 10.4384 32.4176C10.1076 31.0678 11.7247 29.5068 14.054 28.9377Z",
             fill: "white",
           },
           {
-            path: "M10.7225 14.6872C11.2514 14.1578 12.4194 14.4665 13.3291 15.3749C14.2394 16.2853 14.5472 17.4507 14.0183 17.9802C13.4894 18.5096 12.3214 18.2009 11.4117 17.2925C10.5014 16.3821 10.1936 15.2167 10.7225 14.6872Z",
+            path: "M4.48805 15.3249C5.82602 15.7148 6.36731 17.8988 5.69776 20.1974C5.02821 22.496 3.39808 24.0439 2.06011 23.6541C0.722141 23.2643 0.181347 21.0808 0.850332 18.7822C1.51932 16.4836 3.15008 14.934 4.48805 15.3249Z",
             fill: "white",
           },
           {
-            path: "M17.9481 7.46942C18.477 6.93996 19.6429 7.24929 20.5532 8.15971C21.4634 9.07013 21.7712 10.2356 21.2423 10.765C20.7135 11.2945 19.5475 10.9852 18.6373 10.0747C17.727 9.16431 17.4192 7.99888 17.9481 7.46942Z",
+            path: "M22.7395 20.6546C24.0775 21.0444 24.616 23.225 23.9436 25.5265C23.2712 27.8279 21.6438 29.3736 20.3059 28.9837C18.9679 28.5939 18.4299 26.4128 19.1018 24.1119C19.7736 21.811 21.3992 20.2648 22.7395 20.6546Z",
             fill: "white",
           },
           {
-            path: "M10.7624 11.4499C12.0057 11.1168 13.1691 11.4335 13.363 12.157C13.5569 12.8806 12.7056 13.7371 11.4643 14.0697C10.221 14.4028 9.05755 14.0861 8.86368 13.3626C8.6698 12.6391 9.5211 11.7825 10.7624 11.4499Z",
+            path: "M27.8138 4.53656C29.4707 6.26889 29.995 8.45176 28.9867 9.41637C27.9784 10.381 25.8182 9.75682 24.1636 8.02734C22.509 6.29785 21.9825 4.11214 22.9908 3.14753C23.9991 2.18292 26.1598 2.80707 27.8138 4.53656Z",
             fill: "#979FAA",
           },
           {
-            path: "M13.4059 21.3103C14.6493 20.9772 15.8127 21.2938 16.0066 22.0174C16.2005 22.7409 15.3492 23.5974 14.1079 23.93C12.8645 24.2632 11.7011 23.9465 11.5072 23.2229C11.3134 22.4994 12.1647 21.6429 13.4059 21.3103Z",
+            path: "M14.0745 17.6774C15.7314 19.4097 16.2557 21.5926 15.2474 22.5572C14.2391 23.5218 12.0789 22.8977 10.4244 21.1687C8.76977 19.4398 8.24319 17.2536 9.25149 16.289C10.2598 15.3244 12.4205 15.9491 14.0745 17.6774Z",
             fill: "#979FAA",
           },
           {
-            path: "M6.19651 16.0161C6.5296 14.7725 7.3852 13.9238 8.11005 14.1173C8.83282 14.3114 9.14952 15.4766 8.81588 16.7181C8.48279 17.9617 7.62718 18.8104 6.90233 18.6169C6.17956 18.4228 5.86286 17.2576 6.19651 16.0161Z",
+            path: "M16.2678 1.16389C18.5942 0.596472 20.7504 1.23253 21.0812 2.58922C21.412 3.94592 19.7915 5.50349 17.4656 6.06978C15.1398 6.63606 12.983 6.00111 12.6522 4.64441C12.3214 3.28772 13.9419 1.73017 16.2678 1.16389Z",
             fill: "#979FAA",
           },
           {
-            path: "M16.0591 18.6587C16.3922 17.4152 17.2478 16.5664 17.97 16.7584C18.6928 16.9525 19.0089 18.1157 18.6758 19.3593C18.3427 20.6028 17.4871 21.4516 16.7649 21.2596C16.0421 21.0655 15.726 19.9023 16.0591 18.6587Z",
+            path: "M20.7787 19.6375C23.1051 19.0701 25.2612 19.7062 25.592 21.056C25.9228 22.4059 24.3051 23.9674 21.9765 24.5366C19.6478 25.1057 17.4938 24.4679 17.163 23.118C16.8322 21.7681 18.4494 20.2049 20.7787 19.6375Z",
             fill: "#979FAA",
           },
           {
-            path: "M7.17856 19.6491C7.70745 19.1197 8.87545 19.4284 9.78515 20.3368C10.6954 21.2472 11.0032 22.4126 10.4743 22.9421C9.94545 23.4715 8.77745 23.1628 7.86775 22.2544C6.95749 21.344 6.64966 20.1786 7.17856 19.6491Z",
+            path: "M11.2127 6.01908C12.5506 6.40889 13.0919 8.59231 12.4224 10.8909C11.7528 13.1895 10.1226 14.738 8.78467 14.3482C7.4467 13.9584 6.90597 11.7744 7.57496 9.47633C8.24394 7.17829 9.8747 5.63153 11.2127 6.01908Z",
             fill: "#979FAA",
           },
           {
-            path: "M14.4041 12.4313C14.933 11.9019 16.099 12.2112 17.0092 13.1216C17.9195 14.032 18.2273 15.1975 17.6984 15.7269C17.1695 16.2564 16.0036 15.9471 15.0933 15.0366C14.1831 14.1262 13.8752 12.9608 14.4041 12.4313Z",
+            path: "M29.4624 11.3529C30.8004 11.7427 31.3388 13.9233 30.6664 16.2248C29.994 18.5262 28.3667 20.0719 27.0288 19.682C25.6908 19.2922 25.1523 17.1116 25.8247 14.8102C26.4971 12.5088 28.1244 10.962 29.4624 11.3529Z",
             fill: "#979FAA",
           },
           {
-            path: "M16.9499 16.3484C18.1932 16.0152 19.3566 16.3319 19.5505 17.0555C19.7444 17.779 18.8931 18.6355 17.6518 18.9681C16.4085 19.3012 15.2451 18.9846 15.0512 18.261C14.8573 17.5375 15.7086 16.681 16.9499 16.3484Z",
+            path: "M9.54324 10.4666C11.8697 9.89916 14.0258 10.5347 14.3566 11.8919C14.6874 13.2492 13.0674 14.8062 10.741 15.3725C8.41462 15.9387 6.25842 15.3038 5.92762 13.9471C5.59681 12.5904 7.2174 11.0329 9.54324 10.4666Z",
             fill: "white",
           },
         ];
@@ -1270,7 +1393,7 @@
           );
           svg.setAttribute("width", "300");
           svg.setAttribute("height", "300");
-          svg.setAttribute("viewBox", "-14.5 -15 58 60");
+          svg.setAttribute("viewBox", "0 0 31 35");
           
           // Create path element
           const path = document.createElementNS(
@@ -1290,7 +1413,7 @@
           gsap.set(piece, { 
             opacity: 0,
             scale: pathData.isBackground ? 3 : 3,
-        });
+          });
 
           return piece;
         }
@@ -1356,7 +1479,7 @@
             {
               x: 0,
               y: 0,
-              scale: 5,
+              scale: 1,
               rotation: 0,
               filter: "blur(0px)",
               duration: 2.5,
@@ -1428,7 +1551,7 @@
           "<0.8"
         );
 
-        // Add available section animation
+        // Add available section animation - Improved animation sequence
         tl.to(availableSection, {
           opacity: 1,
           duration: 2,
@@ -1452,16 +1575,28 @@
         }, "<0.5");
         
         // Add button transformation - resize from full screen to button size
+        // Updated to maintain centering throughout the animation
         tl.to(availableSection, {
           width: "auto",
           height: "auto",
-          borderRadius: 100,
+          borderRadius: "100px",
           padding: "20px 40px",
+          top: "50%", 
+          left: "50%",
+          transform: "translate(-50%, -50%)",
           duration: 3,
           ease: "power3.inOut",
           onComplete: function() {
-            // Make the button clickable after transformation
+            // Make the button clickable ONLY after transformation is complete
             availableSection.classList.add('button-active');
+            
+            // Force pointer-events to auto for the button explicitly
+            availableSection.style.pointerEvents = "auto";
+            
+            // Ensure the button stays centered properly
+            availableSection.style.top = "50%";
+            availableSection.style.left = "50%";
+            availableSection.style.transform = "translate(-50%, -50%)";
           }
         }, ">");
 

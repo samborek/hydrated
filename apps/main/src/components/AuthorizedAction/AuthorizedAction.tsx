@@ -1,6 +1,6 @@
 import { useAccount, Web3ConnectButton } from "@galacticcouncil/web3-connect"
 import { Web3ConnectButtonProps } from "@galacticcouncil/web3-connect/src/components/Web3ConnectButton"
-import { useMatch } from "@tanstack/react-router"
+import { useLocation } from "@tanstack/react-router"
 import { FC } from "react"
 
 export const AuthorizedAction: FC<Web3ConnectButtonProps> = ({
@@ -8,11 +8,9 @@ export const AuthorizedAction: FC<Web3ConnectButtonProps> = ({
   ...props
 }) => {
   const { account } = useAccount()
+  const location = useLocation()
 
-  const isCrossChainPage = !!useMatch({
-    from: "/cross-chain/",
-    shouldThrow: false,
-  })
+  const isCrossChainPage = location.pathname.startsWith("/cross-chain")
 
   // allow incompatible accounts on cross-chain page
   const isIncompatible = !isCrossChainPage && !!account?.isIncompatible

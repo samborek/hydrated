@@ -1,14 +1,12 @@
 import { Web3ConnectButton } from "@galacticcouncil/web3-connect"
-import { useMatch } from "@tanstack/react-router"
+import { useLocation } from "@tanstack/react-router"
 import React from "react"
 
 export const HeaderWeb3ConnectButton: React.FC<
   React.ComponentPropsWithoutRef<typeof Web3ConnectButton>
 > = (props) => {
-  const isCrossChainPage = !!useMatch({
-    from: "/cross-chain/",
-    shouldThrow: false,
-  })
+  const location = useLocation()
+  const isCrossChainPage = location.pathname.startsWith("/cross-chain")
   return (
     <Web3ConnectButton
       {...props}

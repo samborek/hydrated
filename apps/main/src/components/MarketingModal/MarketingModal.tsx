@@ -214,11 +214,10 @@ const MarketingModalContent: FC<Props> = ({ open, onOpenChange, initialStep = "i
         <>
             <Global
                 styles={css`
-                    [data-marketing-modal] {
-                        max-width: 640px !important;
-                        width: 100% !important;
-                    }
-                    [data-marketing-modal] > div {
+                    .marketing-modal,
+                    .marketing-modal > *,
+                    .marketing-modal [data-radix-dialog-content],
+                    .marketing-modal > div > div {
                         max-width: 640px !important;
                         width: 100% !important;
                     }
@@ -228,7 +227,6 @@ const MarketingModalContent: FC<Props> = ({ open, onOpenChange, initialStep = "i
                 className="marketing-modal"
                 open={open}
                 onOpenChange={onOpenChange}
-                data-marketing-modal
                 topContent={
                     !isDepositFlow && (
                         <Stepper

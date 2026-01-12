@@ -1,0 +1,23 @@
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "@galacticcouncil/ui/jsx/jsx-runtime";
+import { Collapsible, Grid, Separator, Stack, Text, } from "@galacticcouncil/ui/components";
+import { openUrl } from "@galacticcouncil/utils";
+import { useState } from "react";
+import { AccountFilter, } from "@/components/account/AccountFilter";
+import { ProviderButton } from "@/components/provider/ProviderButton";
+import { ProviderConnectAll } from "@/components/provider/ProviderConnectAll";
+import { ProviderExternalButton } from "@/components/provider/ProviderExternalButton";
+import { ProviderInstalledButton } from "@/components/provider/ProviderInstalledButton";
+import { ProviderLastConnectedButton } from "@/components/provider/ProviderLastConnectedButton";
+import { Web3ConnectModalPage } from "@/config/modal";
+import { useWeb3ConnectContext } from "@/context/Web3ConnectContext";
+import { useWalletProviders } from "@/hooks/useWalletProviders";
+import { WalletMode } from "@/hooks/useWeb3Connect";
+import { getDefaultAccountFilterByMode } from "@/utils";
+import { getWalletData } from "@/wallets";
+export const ProviderSelect = () => {
+    const { setPage, mode } = useWeb3ConnectContext();
+    const [filter, setFilter] = useState(getDefaultAccountFilterByMode(mode));
+    const isDefaultMode = mode === WalletMode.Default;
+    const { installed, other } = useWalletProviders(isDefaultMode ? filter : mode);
+    return (_jsxs(Stack, { gap: 10, children: [isDefaultMode && (_jsx(AccountFilter, { active: filter, onSetActive: setFilter })), _jsxs(Collapsible, { label: _jsx(Text, { fs: "p3", children: "Installed & recently used" }), actionLabel: "Show", actionLabelWhenOpen: "Hide", defaultOpen: true, children: [_jsxs(Grid, { columns: [2, 4], gap: 10, children: [isDefaultMode && (_jsx(ProviderLastConnectedButton, { onClick: () => setPage(Web3ConnectModalPage.AccountSelect) })), installed.map(getWalletData).map((props) => (_jsx(ProviderInstalledButton, { ...props }, props.provider))), isDefaultMode && _jsx(ProviderExternalButton, {})] }), isDefaultMode && _jsx(ProviderConnectAll, { installed: installed })] }), other.length > 0 && (_jsxs(_Fragment, { children: [_jsx(Separator, {}), _jsx(Collapsible, { label: _jsx(Text, { fs: "p3", children: "Other Wallets" }), actionLabel: "Show", actionLabelWhenOpen: "Hide", defaultOpen: installed.length === 0, children: _jsx(Grid, { columns: [2, 4], gap: 10, children: other.map(getWalletData).map((props) => (_jsx(ProviderButton, { ...props, onClick: () => openUrl(props.installUrl), actionLabel: "Download" }, props.provider))) }) })] }))] }));
+};

@@ -1,0 +1,207 @@
+import { HYDRATION_CHAIN_KEY, isAnyEvmChain } from "@galacticcouncil/utils";
+import { chainsMap } from "@galacticcouncil/xc-cfg";
+import { BaseError, createPublicClient, createWalletClient, custom, ExecutionRevertedError, getContract, parseSignature, } from "viem";
+import { EVM_CALL_PERMIT_ABI, EVM_CALL_PERMIT_ADDRESS, EVM_CALL_PERMIT_TYPES, EVM_DEFAULT_CHAIN_KEY, EVM_DISPATCH_ADDRESS, EVM_GAS_TO_WEIGHT, } from "@/config/evm";
+export class EthereumSigner {
+    address;
+    provider;
+    publicClient;
+    walletClient;
+    constructor(address, provider) {
+        this.address = address;
+        this.provider = provider;
+        this.publicClient = createPublicClient({
+            transport: custom(provider),
+        });
+        this.walletClient = createWalletClient({
+            transport: custom(provider),
+        });
+    }
+    formatError = (err) => {
+        if (err instanceof BaseError)
+            return err.name;
+        if (err instanceof Error)
+            return err.message;
+        return "Unknown error";
+    };
+    async estimateGas(tx, weight = 0n) {
+        const [gas, gasPriceBase] = await Promise.all([
+            this.publicClient.estimateGas({
+                ...tx,
+                account: this.address,
+            }),
+            this.publicClient.getGasPrice(),
+        ]);
+        const gasPriceSurplus = (gasPriceBase * 5n) / 100n; // 5% surplus
+        const gasPrice = gasPriceBase + gasPriceSurplus;
+        const gasByWeight = weight / EVM_GAS_TO_WEIGHT;
+        const baseGasLimit = gasByWeight > gas ? gasByWeight : gas;
+        const gasLimitSurplus = (baseGasLimit * 30n) / 100n; // 30% surplus
+        const gasLimit = baseGasLimit + gasLimitSurplus;
+        return {
+            gas,
+            gasLimit,
+            gasPrice,
+            maxPriorityFeePerGas: gasPrice,
+            maxFeePerGas: gasPrice,
+        };
+    }
+    switchChain = async (options) => {
+        const chainKey = options.chainKey ?? EVM_DEFAULT_CHAIN_KEY;
+        const chain = chainsMap.get(chainKey);
+        const isEvmChain = !!chain && isAnyEvmChain(chain);
+        if (!isEvmChain)
+            throw new Error(`Chain ${chainKey} is not an EVM chain`);
+        const { evmClient } = chain;
+        await this.walletClient.switchChain({ id: evmClient.chain.id });
+        return chain;
+    };
+    async signAndSubmitDispatch(call, options) {
+        return this.signAndSubmit({
+            ...call,
+            to: EVM_DISPATCH_ADDRESS,
+        }, options);
+    }
+    getPermitNonce = async () => {
+        const callPermitContract = getContract({
+            address: EVM_CALL_PERMIT_ADDRESS,
+            abi: EVM_CALL_PERMIT_ABI,
+            client: this.publicClient,
+        });
+        return callPermitContract.read.nonces([this.address]);
+    };
+    getPermit = async (data, options) => {
+        if (this.provider && this.address) {
+            await this.switchChain(options);
+            const weight = options.weight ?? 0n;
+            const tx = {
+                from: this.address,
+                to: EVM_DISPATCH_ADDRESS,
+                data: data,
+            };
+            const [latestBlock, chainId, estimatedGas, nonce] = await Promise.all([
+                this.publicClient.getBlock(),
+                this.publicClient.getChainId(),
+                this.estimateGas(tx, weight),
+                this.getPermitNonce(),
+            ]);
+            const createPermitMessageData = () => {
+                const message = {
+                    ...tx,
+                    value: 0,
+                    gaslimit: Number(estimatedGas.gasLimit),
+                    nonce: Number(nonce),
+                    deadline: Number(latestBlock.timestamp) + 3600, // 1 hour deadline,
+                };
+                const typedData = JSON.stringify({
+                    types: EVM_CALL_PERMIT_TYPES,
+                    primaryType: "CallPermit",
+                    domain: {
+                        name: "Call Permit Precompile",
+                        version: "1",
+                        chainId,
+                        verifyingContract: EVM_CALL_PERMIT_ADDRESS,
+                    },
+                    message: message,
+                });
+                return {
+                    typedData,
+                    message,
+                };
+            };
+            const { message, typedData } = createPermitMessageData();
+            try {
+                const result = await this.walletClient.request({
+                    method: "eth_signTypedData_v4",
+                    params: [this.address, typedData],
+                });
+                const signature = parseSignature(result);
+                return {
+                    message,
+                    signature,
+                };
+            }
+            catch (err) {
+                options.onError(this.formatError(err));
+            }
+        }
+        throw new Error("Error signing transaction. Provider not found");
+    };
+    async signAndSubmitHydration(call, options, chain) {
+        try {
+            const [gas, nonce] = await Promise.all([
+                this.estimateGas({
+                    data: call.data,
+                    to: call.to,
+                }, options.weight),
+                this.publicClient.getTransactionCount({
+                    address: this.address,
+                }),
+            ]);
+            const txHash = await this.walletClient.sendTransaction({
+                account: this.address,
+                data: call.data,
+                to: call.to,
+                nonce,
+                chain,
+                maxFeePerGas: call?.maxFeePerGas || gas.maxFeePerGas,
+                maxPriorityFeePerGas: call?.maxPriorityFeePerGas || gas.maxPriorityFeePerGas,
+                gas: call?.gasLimit || gas.gasLimit,
+                value: call?.value,
+            });
+            options.onSubmitted(txHash);
+            const receipt = await this.publicClient.waitForTransactionReceipt({
+                hash: txHash,
+            });
+            if (receipt.status === "reverted") {
+                options.onError(this.formatError(new ExecutionRevertedError()));
+            }
+            else {
+                options.onSuccess(receipt);
+            }
+            options.onFinalized(receipt);
+            return receipt;
+        }
+        catch (err) {
+            options.onError(this.formatError(err));
+        }
+    }
+    async signAndSubmitNative(call, options, chain) {
+        try {
+            const nonce = await this.publicClient.getTransactionCount({
+                address: this.address,
+            });
+            const txHash = await this.walletClient.sendTransaction({
+                account: this.address,
+                data: call.data,
+                to: call.to,
+                nonce,
+                chain,
+                value: call?.value,
+            });
+            options.onSubmitted(txHash);
+            const receipt = await this.publicClient.waitForTransactionReceipt({
+                hash: txHash,
+            });
+            if (receipt.status === "reverted") {
+                options.onError(this.formatError(new ExecutionRevertedError()));
+            }
+            else {
+                options.onSuccess(receipt);
+            }
+            options.onFinalized(receipt);
+            return receipt;
+        }
+        catch (err) {
+            options.onError(this.formatError(err));
+        }
+    }
+    async signAndSubmit(call, options) {
+        const chain = await this.switchChain(options);
+        const { evmClient } = chain;
+        if (chain.key === HYDRATION_CHAIN_KEY) {
+            return this.signAndSubmitHydration(call, options, evmClient.chain);
+        }
+        return this.signAndSubmitNative(call, options, evmClient.chain);
+    }
+}

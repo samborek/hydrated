@@ -1,0 +1,89 @@
+import { BigNumber } from "bignumber.js";
+import { CollateralType } from "@/helpers/types";
+export var ErrorType;
+(function (ErrorType) {
+    ErrorType[ErrorType["SUPPLY_CAP_REACHED"] = 0] = "SUPPLY_CAP_REACHED";
+    ErrorType[ErrorType["HF_BELOW_ONE"] = 1] = "HF_BELOW_ONE";
+    ErrorType[ErrorType["NOT_ENOUGH_COLLATERAL_TO_REPAY_WITH"] = 2] = "NOT_ENOUGH_COLLATERAL_TO_REPAY_WITH";
+    ErrorType[ErrorType["ZERO_LTV_WITHDRAW_BLOCKED"] = 3] = "ZERO_LTV_WITHDRAW_BLOCKED";
+})(ErrorType || (ErrorType = {}));
+export const useFlashloan = (healthFactor, hfEffectOfFromAmount) => {
+    return (healthFactor !== "-1" &&
+        new BigNumber(healthFactor)
+            .minus(new BigNumber(hfEffectOfFromAmount))
+            .lt("1.05"));
+};
+export const APPROVAL_GAS_LIMIT = 65000;
+export const APPROVE_DELEGATION_GAS_LIMIT = 55000;
+export const checkRequiresApproval = ({ 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+approvedAmount, 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+signedAmount, 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+amount, }) => {
+    // Hydration doesn't require approvals so we override it here
+    return false;
+};
+export const zeroLTVBlockingWithdraw = (user) => {
+    const zeroLTVBlockingWithdraw = [];
+    user.userReservesData.forEach((userReserve) => {
+        if (Number(userReserve.scaledATokenBalance) > 0 &&
+            userReserve.reserve.baseLTVasCollateral === "0" &&
+            userReserve.usageAsCollateralEnabledOnUser &&
+            userReserve.reserve.reserveLiquidationThreshold !== "0") {
+            zeroLTVBlockingWithdraw.push(userReserve.reserve.symbol);
+        }
+    });
+    return zeroLTVBlockingWithdraw;
+};
+export const getAssetCollateralType = (userReserve, userTotalCollateralUSD, userIsInIsolationMode, debtCeilingIsMaxed) => {
+    const poolReserve = userReserve.reserve;
+    if (!poolReserve.usageAsCollateralEnabled) {
+        return CollateralType.UNAVAILABLE;
+    }
+    let collateralType = CollateralType.ENABLED;
+    const userHasSuppliedReserve = userReserve && userReserve.scaledATokenBalance !== "0";
+    const userHasCollateral = userTotalCollateralUSD !== "0";
+    if (poolReserve.isIsolated) {
+        if (debtCeilingIsMaxed) {
+            collateralType = CollateralType.UNAVAILABLE;
+        }
+        else if (userIsInIsolationMode) {
+            if (userHasSuppliedReserve) {
+                collateralType = userReserve.usageAsCollateralEnabledOnUser
+                    ? CollateralType.ISOLATED_ENABLED
+                    : CollateralType.DISABLED;
+            }
+            else {
+                if (userHasCollateral) {
+                    collateralType = CollateralType.UNAVAILABLE_DUE_TO_ISOLATION;
+                }
+            }
+        }
+        else {
+            if (userHasCollateral) {
+                collateralType = CollateralType.ISOLATED_DISABLED;
+            }
+            else {
+                collateralType = CollateralType.ISOLATED_ENABLED;
+            }
+        }
+    }
+    else {
+        if (userIsInIsolationMode) {
+            collateralType = CollateralType.UNAVAILABLE_DUE_TO_ISOLATION;
+        }
+        else {
+            if (userHasSuppliedReserve) {
+                collateralType = userReserve.usageAsCollateralEnabledOnUser
+                    ? CollateralType.ENABLED
+                    : CollateralType.DISABLED;
+            }
+            else {
+                collateralType = CollateralType.ENABLED;
+            }
+        }
+    }
+    return collateralType;
+};

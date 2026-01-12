@@ -1,0 +1,56 @@
+import { InterestRate } from "@aave/contract-helpers";
+import { ReserveIncentiveResponse } from "@aave/math-utils/dist/esm/formatters/incentive/calculate-reserve-incentives";
+import { ComputedReserveData, ComputedUserReserveData } from "@/hooks/commonTypes";
+export type BorrowAssetsItem = {
+    id: string;
+    symbol: string;
+    name: string;
+    iconSymbol: string;
+    underlyingAsset: string;
+    stableBorrowRate: string;
+    variableBorrowRate: string;
+    availableBorrows: string;
+    availableBorrowsInUSD: string;
+    stableBorrowRateEnabled?: boolean;
+    isFreezed?: boolean;
+    aIncentivesData?: ReserveIncentiveResponse[];
+    vIncentivesData?: ReserveIncentiveResponse[];
+    sIncentivesData?: ReserveIncentiveResponse[];
+    borrowCap: string;
+    borrowableInIsolation: boolean;
+    totalBorrows: string;
+    totalLiquidityUSD: string;
+    borrowingEnabled: boolean;
+    isActive: boolean;
+    eModeCategoryId: number;
+};
+export type SupplyAssetsItem = {
+    underlyingAsset: string;
+    symbol: string;
+    iconSymbol: string;
+    name: string;
+    walletBalance: string;
+    walletBalanceUSD: string;
+    availableToDeposit: string;
+    availableToDepositUSD: string;
+    supplyAPY: number | string;
+    aIncentivesData?: ReserveIncentiveResponse[];
+    isFreezed?: boolean;
+    isIsolated: boolean;
+    totalLiquidity: string;
+    supplyCap: string;
+    isActive?: boolean;
+    usageAsCollateralEnabledOnUser: boolean;
+    detailsAddress: string;
+};
+export declare const DASHBOARD_LIST_COLUMN_WIDTHS: {
+    ASSET: number;
+    BUTTONS: number;
+    CELL: number;
+};
+type DashboardReserveData = ComputedUserReserveData & ComputedReserveData & BorrowAssetsItem & SupplyAssetsItem;
+export type DashboardReserve = DashboardReserveData & {
+    borrowRateMode: InterestRate;
+    reserve: ComputedReserveData;
+};
+export {};

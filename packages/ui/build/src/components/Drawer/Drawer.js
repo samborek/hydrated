@@ -1,0 +1,20 @@
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "@galacticcouncil/ui/jsx/jsx-runtime";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
+import { Drawer as DrawerPrimitive } from "vaul";
+import { Flex } from "@/components/Flex";
+import { SDrawerBody, SDrawerContent, SDrawerDescription, SDrawerFooter, SDrawerHandle, SDrawerHeader, SDrawerOverlay, SDrawerTitle, } from "./Drawer.styled";
+const DrawerRoot = DrawerPrimitive.Root;
+const DrawerTrigger = DrawerPrimitive.Trigger;
+const DrawerPortal = DrawerPrimitive.Portal;
+const DrawerClose = DrawerPrimitive.Close;
+const DrawerOverlay = ({ ref, ...props }) => _jsx(SDrawerOverlay, { ref: ref, ...props });
+const DrawerContent = ({ className, children, ref, forceMount, ...props }) => (_jsxs(DrawerPortal, { forceMount: forceMount, children: [_jsx(DrawerOverlay, {}), _jsxs(SDrawerContent, { ref: ref, className: className, ...props, children: [_jsx(SDrawerHandle, {}), children] })] }));
+const DrawerBody = (props) => (_jsx(SDrawerBody, { ...props, children: props.children }));
+const DrawerTitle = ({ children, ref, ...props }) => (_jsx(DrawerPrimitive.Title, { ref: ref, asChild: true, ...props, children: _jsx(SDrawerTitle, { as: "h2", children: children }) }));
+const DrawerDescription = ({ children, ref, ...props }) => (_jsx(DrawerPrimitive.Description, { ref: ref, asChild: true, ...props, children: _jsx(SDrawerDescription, { children: children }) }));
+const DrawerHeader = ({ title, description, customDescription, customHeader, customTitle, ...props }) => (_jsxs(SDrawerHeader, { ...props, children: [_jsx(Flex, { width: "100%", children: customTitle ? (_jsxs(_Fragment, { children: [_jsx(VisuallyHidden.Root, { children: _jsx(DrawerTitle, { children: title }) }), customTitle] })) : (_jsx(DrawerTitle, { children: title })) }), customDescription ? (_jsxs(_Fragment, { children: [description && (_jsx(VisuallyHidden.Root, { children: _jsx(DrawerDescription, { children: description }) })), customDescription] })) : (description && _jsx(DrawerDescription, { children: description })), customHeader] }));
+const DrawerFooter = (props) => _jsx(SDrawerFooter, { ...props });
+const Drawer = ({ children, disableInteractOutside = false, title, description, customHeader, customTitle, ...props }) => {
+    return (_jsx(DrawerRoot, { ...props, children: _jsxs(DrawerContent, { onInteractOutside: disableInteractOutside ? (e) => e.preventDefault() : undefined, children: [_jsx(DrawerHeader, { title: title, description: description, customHeader: customHeader, customTitle: customTitle }), children] }) }));
+};
+export { Drawer, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerPortal, DrawerRoot, DrawerTitle, DrawerTrigger, };

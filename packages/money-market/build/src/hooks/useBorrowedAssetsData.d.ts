@@ -1,0 +1,31 @@
+import { InterestRate } from "@aave/contract-helpers";
+export declare const useBorrowedAssetsData: () => {
+    data: {
+        totalBorrows: string;
+        totalBorrowsUSD: string;
+        borrowAPY: number;
+        incentives: import("@aave/math-utils/dist/esm/formatters/incentive/calculate-reserve-incentives").ReserveIncentiveResponse[] | undefined;
+        underlyingBalance: string;
+        underlyingBalanceMarketReferenceCurrency: string;
+        underlyingBalanceUSD: string;
+        variableBorrows: string;
+        variableBorrowsMarketReferenceCurrency: string;
+        variableBorrowsUSD: string;
+        stableBorrows: string;
+        stableBorrowsMarketReferenceCurrency: string;
+        stableBorrowsUSD: string;
+        totalBorrowsMarketReferenceCurrency: string;
+        stableBorrowAPY: string;
+        stableBorrowAPR: string;
+        reserve: import("@/hooks/commonTypes").ComputedReserveData;
+        underlyingAsset: string;
+        scaledATokenBalance: string;
+        usageAsCollateralEnabledOnUser: boolean;
+        stableBorrowRate: string;
+        scaledVariableDebt: string;
+        principalStableDebt: string;
+        stableBorrowLastUpdateTimestamp: number;
+        borrowRateMode: InterestRate;
+    }[];
+    isLoading: boolean;
+};

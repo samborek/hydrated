@@ -1,0 +1,11 @@
+import type { Meta, StoryObj } from "@storybook/react";
+import { DataTable } from "./DataTable";
+type Story = StoryObj<typeof DataTable>;
+declare const _default: Meta<typeof DataTable>;
+export default _default;
+export declare const Default: Story;
+export declare const WithSkeletons: Story;
+export declare const WithSearch: Story;
+export declare const WithExpandableRows: Story;
+export declare const WithPagination: Story;
+export declare const WithPinnedColumn: Story;

@@ -1,0 +1,9 @@
+export declare const GDOT_STABLESWAP_ASSET_ID = "690";
+export declare const GDOT_ERC20_ASSET_ID = "69";
+export declare const GETH_STABLESWAP_ASSET_ID = "4200";
+export declare const GETH_ERC20_ASSET_ID = "420";
+export declare const VDOT_ASSET_ID = "15";
+export declare const VDOT_ERC20_ASSET_ID = "1005";
+export declare const DOT_ASSET_ID = "5";
+export declare const HEALTH_FACTOR_RISK_THRESHOLD = 1.2;
+export declare const HEALTH_FACTOR_LIQUIDATION_THRESHOLD = 1;

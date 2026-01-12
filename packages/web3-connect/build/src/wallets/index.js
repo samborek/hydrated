@@ -1,0 +1,67 @@
+import { pick } from "remeda";
+import { AlephZero } from "@/wallets/AlephZeroSigner";
+import { BraveWallet, BraveWalletSol } from "@/wallets/BraveWallet";
+import { Enkrypt } from "@/wallets/Enkrypt";
+import { ExternalWallet } from "@/wallets/ExternalWallet";
+import { FearlessWallet } from "@/wallets/FearlessWallet";
+import { MantaWallet } from "@/wallets/MantaWallet";
+import { MetaMask } from "@/wallets/MetaMask";
+import { NovaWallet } from "@/wallets/NovaWallet";
+import { Phantom, PhantomSui } from "@/wallets/Phantom";
+import { PolkadotJS } from "@/wallets/PolkadotJS";
+import { PolkaGate } from "@/wallets/PolkaGate";
+import { RabbyWallet } from "@/wallets/RabbyWallet";
+import { Slush } from "@/wallets/Slush";
+import { Solflare } from "@/wallets/Solflare";
+import { SubWallet, SubWalletEvm, SubWalletH160 } from "@/wallets/SubWallet";
+import { Suiet } from "@/wallets/Suiet";
+import { Talisman, TalismanEvm, TalismanH160 } from "@/wallets/Talisman";
+export { AlephZero, BraveWallet, BraveWalletSol, Enkrypt, ExternalWallet, FearlessWallet, MantaWallet, MetaMask, NovaWallet, Phantom, PhantomSui, PolkadotJS, PolkaGate, RabbyWallet, Slush, Solflare, SubWallet, SubWalletEvm, SubWalletH160, Suiet, Talisman, TalismanEvm, TalismanH160, };
+const wallets = [
+    // Substrate
+    new PolkadotJS(),
+    new NovaWallet(),
+    new Talisman(),
+    new SubWallet(),
+    new AlephZero(),
+    new Enkrypt(),
+    new FearlessWallet(),
+    new MantaWallet(),
+    new PolkaGate(),
+    // Substrate H160
+    new SubWalletH160(),
+    new TalismanH160(),
+    // EVM
+    new MetaMask(),
+    new BraveWallet(),
+    new TalismanEvm(),
+    new SubWalletEvm(),
+    new RabbyWallet(),
+    // Solana
+    new Phantom(),
+    new Solflare(),
+    new BraveWalletSol(),
+    // Sui
+    new Suiet(),
+    new Slush(),
+    new PhantomSui(),
+    // Other
+    new ExternalWallet(),
+];
+export function getWallets() {
+    return wallets;
+}
+export function getWalletData(wallet) {
+    return pick(wallet, [
+        "provider",
+        "accessor",
+        "title",
+        "installUrl",
+        "logo",
+        "enabled",
+        "installed",
+    ]);
+}
+export function getWallet(type) {
+    return wallets.find((wallet) => wallet.provider === type);
+}

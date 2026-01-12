@@ -1,0 +1,19 @@
+import { useCallback, useState } from "react";
+import { useCopyToClipboard, useTimeoutFn } from "react-use";
+export function useCopy(resetTimeoutMs = 0) {
+    const [copied, setCopied] = useState(false);
+    const [, copyToClipboard] = useCopyToClipboard();
+    const [, cancel, reset] = useTimeoutFn(() => setCopied(false), resetTimeoutMs);
+    const copy = useCallback((text) => {
+        copyToClipboard(text);
+        setCopied(true);
+        cancel();
+        if (resetTimeoutMs > 0) {
+            reset();
+        }
+    }, [copyToClipboard, cancel, resetTimeoutMs, reset]);
+    return {
+        copied,
+        copy,
+    };
+}

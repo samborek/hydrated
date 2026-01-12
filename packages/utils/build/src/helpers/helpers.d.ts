@@ -1,0 +1,9 @@
+export declare const sleep: (ms: number) => Promise<unknown>;
+export declare const openUrl: (url: string, target?: string) => void;
+export declare const isHexColor: (hex: string) => boolean;
+export declare const hexToRgba: (hex: string, alpha?: number) => string;
+export declare const stringEquals: (a: string, b: string, caseSensitive?: boolean) => boolean;
+export declare const updateQueryString: (param: string, value?: string | number | null) => void;
+export declare const createQueryString: (params: Record<string, string | number>) => string;
+export declare const getRdnsFromUrl: (url: string) => string;
+export declare const stripTrailingSlash: (url: string) => string;

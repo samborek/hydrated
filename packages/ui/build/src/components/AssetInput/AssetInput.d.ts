@@ -1,0 +1,33 @@
+import { ReactNode } from "react";
+export type AssetInputProps = {
+    label?: string;
+    symbol?: string;
+    value?: string;
+    displayValue?: string;
+    displayValueLoading?: boolean;
+    maxBalance?: string;
+    maxButtonBalance?: string;
+    ignoreBalance?: boolean;
+    ignoreDisplayValue?: boolean;
+    hideMaxBalanceAction?: boolean;
+    error?: string;
+    disabled?: boolean;
+    disabledInput?: boolean;
+    hideInput?: boolean;
+    modalDisabled?: boolean;
+    loading?: boolean;
+    selectedAssetIcon?: ReactNode;
+    onChange?: (value: string) => void;
+    onAsssetBtnClick?: () => void;
+    className?: string;
+};
+export declare const AssetInput: ({ symbol, selectedAssetIcon, value, displayValue, displayValueLoading, label, maxBalance, maxButtonBalance, ignoreBalance, ignoreDisplayValue, hideMaxBalanceAction, onChange, error, disabled, disabledInput, hideInput, modalDisabled, loading, onAsssetBtnClick, className, }: AssetInputProps) => import("react").JSX.Element;
+export declare const AssetButton: ({ loading, symbol, error, icon, disabled, className, onAsssetBtnClick, }: {
+    loading?: boolean;
+    symbol?: string;
+    icon?: ReactNode;
+    error: boolean;
+    disabled?: boolean;
+    className?: string;
+    onAsssetBtnClick?: () => void;
+}) => import("react").JSX.Element;

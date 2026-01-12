@@ -1,0 +1,13 @@
+import { Meta, StoryObj } from "@storybook/react";
+import { ProgressCircle } from "./ProgressCircle";
+type Story = StoryObj<typeof ProgressCircle>;
+declare const _default: Meta<typeof ProgressCircle>;
+export default _default;
+export declare const Default: Story;
+export declare const CustomColor: Story;
+export declare const Thickness: Story;
+export declare const Radius: Story;
+export declare const LabelStart: Story;
+export declare const LabelEnd: Story;
+export declare const CustomLabel: Story;
+export declare const ReversedDirection: Story;

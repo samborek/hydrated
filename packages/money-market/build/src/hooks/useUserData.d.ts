@@ -1,0 +1,24 @@
+export declare const useUserData: () => {
+    loading: boolean;
+    calculatedUserIncentives: import("@aave/math-utils").UserIncentiveDict;
+    userReservesData: import("@aave/math-utils").ComputedUserReserve<import("./commonTypes").ComputedReserveData>[];
+    totalLiquidityMarketReferenceCurrency: string;
+    totalLiquidityUSD: string;
+    totalCollateralMarketReferenceCurrency: string;
+    totalCollateralUSD: string;
+    totalBorrowsMarketReferenceCurrency: string;
+    totalBorrowsUSD: string;
+    netWorthUSD: string;
+    availableBorrowsMarketReferenceCurrency: string;
+    availableBorrowsUSD: string;
+    currentLoanToValue: string;
+    currentLiquidationThreshold: string;
+    healthFactor: string;
+    isInIsolationMode: boolean;
+    isolatedReserve?: import("@aave/math-utils").FormatReserveUSDResponse;
+    earnedAPY: number;
+    debtAPY: number;
+    netAPY: number;
+    isInEmode: boolean;
+    userEmodeCategoryId: number;
+};

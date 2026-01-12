@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createRouter, RouterProvider } from "@tanstack/react-router"
 import { Toaster } from "sonner"
 
-import { Page404 } from "@/components/Page404"
+import { Page404 } from "./components/Page404"
 import { ProvideRpcResolver } from "@/components/ProviderRpcSelect/ProviderRpcResolver"
 import i18n from "@/i18n"
 import { AssetsProvider } from "@/providers/assetsProvider"

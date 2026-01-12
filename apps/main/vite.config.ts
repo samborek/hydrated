@@ -32,7 +32,7 @@ const loaderHtml = fs.readFileSync(
 export default defineConfig({
   build: {
     target: "es2022",
-    outDir: "build",
+    outDir: "dist",
     rollupOptions: {
       output: {
         chunkFileNames: "chunk-[hash].js",

@@ -22,7 +22,11 @@ const HydrationLogoFull = lazy(async () => ({
   ),
 }))
 
-export const Header = forwardRef<HTMLDivElement, unknown>((_props, ref) => {
+type Props = {
+  onDepositClick?: () => void
+}
+
+export const Header = forwardRef<HTMLDivElement, Props>(({ onDepositClick }, ref) => {
   const hasTopNavbar = useHasTopNavbar()
 
   const Logo: LazyExoticComponent<FC<SVGProps<SVGSVGElement>>> = hasTopNavbar
@@ -33,7 +37,7 @@ export const Header = forwardRef<HTMLDivElement, unknown>((_props, ref) => {
     <SHeader ref={ref}>
       <Logo />
       {hasTopNavbar && <HeaderMenu />}
-      <HeaderToolbar />
+      <HeaderToolbar onDepositClick={onDepositClick} />
     </SHeader>
   )
 })

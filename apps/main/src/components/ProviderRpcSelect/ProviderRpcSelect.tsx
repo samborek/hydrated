@@ -8,6 +8,7 @@ import { RpcSelectModal } from "@/components/ProviderRpcSelect/components/RpcSel
 import { RpcStatus } from "@/components/ProviderRpcSelect/components/RpcStatus"
 import { SContainer } from "@/components/ProviderRpcSelect/ProviderRpcSelect.styled"
 import { useRpcProvider } from "@/providers/rpcProvider"
+import { UiSwitcher } from "@/modules/layout/components/UiSwitcher"
 
 type Props = {
   readonly bottomPinned?: boolean
@@ -23,6 +24,7 @@ export const ProviderRpcSelect: FC<Props> = ({ bottomPinned }) => {
 
   return (
     <SContainer bottomPinned={bottomPinned}>
+      <UiSwitcher />
       <Button
         variant="tertiary"
         size="small"

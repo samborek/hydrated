@@ -8,7 +8,7 @@ import { useAccount, useWeb3ConnectModal } from "@/hooks"
 export const ProviderSelectContent = () => {
   const { meta } = useWeb3ConnectModal()
   const { isConnected } = useAccount()
-  const { setPage } = useWeb3ConnectContext()
+  const { setPage, onBackToParent } = useWeb3ConnectContext()
   return (
     <>
       <ModalHeader
@@ -18,7 +18,7 @@ export const ProviderSelectContent = () => {
         onBack={
           isConnected
             ? () => setPage(Web3ConnectModalPage.AccountSelect)
-            : undefined
+            : onBackToParent
         }
       />
       <ModalBody scrollable={false}>

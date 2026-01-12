@@ -245,6 +245,7 @@ const ModalBody = ({
 const ModalFooter = (props: FlexProps) => <SModalFooter {...props} />
 
 export type ModalProps = React.ComponentProps<typeof ModalRoot> & {
+  className?: string
   variant?: ModalVariant
   disableInteractOutside?: boolean
   topContent?: ReactNode
@@ -284,6 +285,7 @@ const Modal = ({
     <ModalContext.Provider value={context}>
       <ModalRoot {...props}>
         <ModalContent
+          {...props}
           animationDurationMs={animationDurationMs}
           onClick={(e) => e.stopPropagation()}
           topContent={topContent}

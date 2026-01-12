@@ -8,6 +8,9 @@ const bottomPinnedStyle = css`
   bottom: 0;
   padding-bottom: 8px;
   z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 `
 
 export const SContainer = styled.div<{ readonly bottomPinned?: boolean }>(

@@ -11,6 +11,7 @@ export type Web3ConnectContextType = {
   squidSdk: SquidSdk
   onAccountSelect: (account: Account) => void
   mode: WalletMode
+  onBackToParent?: () => void
 }
 
 const Web3ConnectContext = createContext<Web3ConnectContextType | null>(null)

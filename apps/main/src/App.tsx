@@ -11,6 +11,7 @@ import { ProvideRpcResolver } from "@/components/ProviderRpcSelect/ProviderRpcRe
 import i18n from "@/i18n"
 import { AssetsProvider } from "@/providers/assetsProvider"
 import { RpcProvider } from "@/providers/rpcProvider"
+import { UiProvider } from "@/providers/uiProvider"
 
 import { routeTree } from "./routeTree.gen"
 
@@ -45,18 +46,20 @@ declare module "@tanstack/react-router" {
 export const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <ProvideRpcResolver>
-          <AssetsProvider>
-            <RpcProvider>
-              <TooltipProvider delayDuration={0}>
-                <RouterProvider router={router} />
-                <Toaster />
-              </TooltipProvider>
-            </RpcProvider>
-          </AssetsProvider>
-        </ProvideRpcResolver>
-      </ThemeProvider>
+      <UiProvider>
+        <ThemeProvider>
+          <ProvideRpcResolver>
+            <AssetsProvider>
+              <RpcProvider>
+                <TooltipProvider delayDuration={0}>
+                  <RouterProvider router={router} />
+                  <Toaster />
+                </TooltipProvider>
+              </RpcProvider>
+            </AssetsProvider>
+          </ProvideRpcResolver>
+        </ThemeProvider>
+      </UiProvider>
     </QueryClientProvider>
   )
 }

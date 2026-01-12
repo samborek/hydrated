@@ -36,11 +36,11 @@ export const SModalOverlay = styled(Overlay)<{ animationDurationMs?: number }>(
   `,
 )
 
-export const SModalWrapper = styled(Overlay)<{ animationDurationMs?: number }>`
+export const SModalWrapper = styled(Overlay) <{ animationDurationMs?: number }>`
   --modal-block-offset: 10vh;
   --modal-animation-duration: ${({
-    animationDurationMs = DEFAULT_ANIMATION_DURATION,
-  }) => animationDurationMs}ms;
+  animationDurationMs = DEFAULT_ANIMATION_DURATION,
+}) => animationDurationMs}ms;
 
   position: fixed;
   inset: 0;
@@ -116,6 +116,7 @@ export const SModalPaper = styled(Paper)`
 
   max-width: 520px;
   padding-bottom: env(safe-area-inset-bottom);
+  overflow: hidden;
 
   ${mq("max-xs")} {
     height: calc(100% - var(--modal-top-content-height));
@@ -142,7 +143,7 @@ export const SModalHeader = styled(Flex)`
   }
 `
 
-export const SModalHeaderButton = styled(ButtonIcon)<{
+export const SModalHeaderButton = styled(ButtonIcon) <{
   align?: "left" | "right"
 }>`
   flex-grow: 0;
@@ -162,7 +163,7 @@ export const SModalTitleContainer = styled(Flex)`
   min-height: var(--modal-header-button-size);
 `
 
-export const SModalBody = styled(Box)<{ noPadding?: boolean }>`
+export const SModalBody = styled(Box) <{ noPadding?: boolean }>`
   padding: ${({ noPadding }) =>
     noPadding ? 0 : "var(--modal-content-padding)"};
 

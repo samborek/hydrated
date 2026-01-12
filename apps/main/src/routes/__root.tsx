@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+
 import { createRootRouteWithContext, HeadContent } from "@tanstack/react-router"
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
+
 import { lazy } from "react"
 
 import { useAccountUniques } from "@/api/account"
@@ -107,8 +107,8 @@ function RootComponent() {
     <>
       <HeadContent />
       <MainLayout />
-      {hasTopNavbar && <ReactQueryDevtools buttonPosition="bottom-left" />}
-      {hasTopNavbar && <TanStackRouterDevtools position="bottom-left" />}
+      {/* {hasTopNavbar && <ReactQueryDevtools buttonPosition="bottom-left" />} */}
+      {/* {hasTopNavbar && <TanStackRouterDevtools position="bottom-left" />} */}
       {isApiLoaded && <Subscriptions />}
       {!hasTopNavbar && <MobileTabBar />}
       <ProviderRpcSelect />

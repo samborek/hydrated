@@ -10,7 +10,7 @@ const searchSchema = z
     tab: z.enum(tradeOrderTabs).default("myActivity"),
     assetIn: z.string().default(USDT_ASSET_ID),
     assetOut: z.string().default(NATIVE_ASSET_ID),
-    allPairs: z.boolean().default(false),
+    allPairs: z.boolean().default(true),
   })
   .overwrite((search) => {
     if (

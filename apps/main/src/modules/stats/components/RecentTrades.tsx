@@ -7,7 +7,7 @@ import { AssetLogo } from "@/components/AssetLogo"
 import styled from "@emotion/styled"
 
 const STableWrapper = styled.div`
-  margin: 0 -20px;
+  margin: 0 -16px;
 `
 
 // Asset ID mapping for logos

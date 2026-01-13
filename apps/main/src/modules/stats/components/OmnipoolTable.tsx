@@ -12,7 +12,7 @@ const SAssetCell = styled.div`
 `
 
 const STableWrapper = styled.div`
-  margin: 0 -20px;
+  margin: 0 -16px;
 `
 
 type OmnipoolAsset = {
@@ -47,7 +47,7 @@ const columns: ColumnDef<OmnipoolAsset>[] = [
     header: 'Asset',
     cell: ({ row }) => (
       <SAssetCell>
-        <AssetLogo id={row.original.id} size="small" />
+        <AssetLogo id={row.original.id} size="medium" />
         <div>
           <Text fw={500}>{row.original.symbol}</Text>
         </div>

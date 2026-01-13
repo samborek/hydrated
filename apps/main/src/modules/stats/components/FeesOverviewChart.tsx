@@ -36,13 +36,14 @@ const SControlsGroup = styled.div`
 
 
 // Generate mock fees data with all 5 categories
+// Generate mock fees data with realistic relative distributions
 const generateFeesData = (timeRange: TimeRange) => {
     const data = []
     const now = new Date()
 
     // Determine number of data points and granularity
     const isWeekly = timeRange === '1Y' || timeRange === 'ALL'
-    const days = timeRange === '1W' ? 7 : timeRange === '1M' ? 30 : timeRange === '1Y' ? 52 : 104
+    const days = timeRange === '1W' ? 7 : timeRange === '1M' ? 30 : timeRange === '1Y' ? 52 : 365
     const step = isWeekly ? 7 : 1
 
     for (let i = days - 1; i >= 0; i--) {
@@ -50,14 +51,20 @@ const generateFeesData = (timeRange: TimeRange) => {
         date.setDate(date.getDate() - (i * step))
 
         const multiplier = isWeekly ? 7 : 1 // Weekly data is ~7x daily
+        const volatility = () => 0.7 + Math.random() * 0.6 // Random fluctuation 0.7x - 1.3x
 
         data.push({
             date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            networkFees: (Math.random() * 500 + 100) * multiplier,
-            tradingFees: (Math.random() * 5000 + 2000) * multiplier,
-            liquidityFees: (Math.random() * 1500 + 500) * multiplier,
-            supplyBorrowFees: (Math.random() * 2000 + 800) * multiplier,
-            hollarFees: (Math.random() * 800 + 200) * multiplier,
+            // Network: Low volume, ~0.4 HDX base
+            networkFees: (Math.random() * 50 + 20) * multiplier * volatility(),
+            // Trading: High volume, main source
+            tradingFees: (Math.random() * 4000 + 2000) * multiplier * volatility(),
+            // Liquidity/Withdraw: Occasional, lower than trading
+            liquidityFees: (Math.random() * 200 + 50) * multiplier * volatility(),
+            // Supply/Borrow: Consistent interest + liquidation spikes
+            supplyBorrowFees: (Math.random() * 800 + 400) * multiplier * volatility(),
+            // Hollar: Borrow interest, significant
+            hollarFees: (Math.random() * 600 + 300) * multiplier * volatility(),
         })
     }
 
@@ -107,9 +114,20 @@ export const FeesOverviewChart: FC = () => {
     const rawFeesData = useMemo(() => generateFeesData(timeRange), [timeRange])
     const percentageData = useMemo(() => convertToPercentages(rawFeesData), [rawFeesData])
 
-    // Calculate total revenue (protocol's portion ~60% of fees)
+    // Calculate total revenue based on protocol cuts derived from docs:
+    // Network: ~100% to Treasury
+    // Trading (Omnipool): ~20% (Protocol Fee) vs ~80% (LPs)
+    // Liquidity: 0% (Withdrawal fees go to LPs)
+    // Supply & Borrow: ~20% (Asset Reserve) to Treasury
+    // Hollar: 100% to Hollar Treasury
     const totalRevenue = rawFeesData.reduce((acc, day) =>
-        acc + (day.networkFees + day.tradingFees + day.liquidityFees + day.supplyBorrowFees + day.hollarFees) * 0.6, 0
+        acc +
+        (day.networkFees * 1.0) +
+        (day.tradingFees * 0.2) +
+        (day.liquidityFees * 0.0) +
+        (day.supplyBorrowFees * 0.2) +
+        (day.hollarFees * 1.0),
+        0
     )
 
     // For fees mode, show current period average % distribution
@@ -185,10 +203,14 @@ export const FeesOverviewChart: FC = () => {
                                 borderRadius: 8,
                                 color: '#fff',
                             }}
-                            formatter={(value: number, name: string) => [
-                                `$${(value * 0.6).toFixed(2)}`,
-                                LABELS[name as keyof typeof LABELS] || name
-                            ]}
+                            formatter={(value: number, name: string) => {
+                                // Apply specific cuts for tooltip display if showing Revenue
+                                // Note: The bar chart shows raw VOLUME of fees, but tooltip could show REVENUE part?
+                                // Actually usually stacked bars show total volume. The Header shows Total Revenue.
+                                // Let's leave bars as total volume collected, but maybe clarify in tooltip.
+                                // For now, simple value formatting.
+                                return [`$${value.toFixed(2)}`, LABELS[name as keyof typeof LABELS] || name]
+                            }}
                         />
                         <Legend
                             verticalAlign="bottom"

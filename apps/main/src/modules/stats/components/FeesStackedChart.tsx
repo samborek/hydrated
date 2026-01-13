@@ -28,7 +28,7 @@ const SChartHeader = styled.div`
 
 
 
-// Generate mock fees data
+// Generate mock fees data with realistic relative distributions
 const generateFeesData = () => {
     const data = []
     const now = new Date()
@@ -37,13 +37,20 @@ const generateFeesData = () => {
         const date = new Date(now)
         date.setDate(date.getDate() - i)
 
+        const volatility = () => 0.7 + Math.random() * 0.6
+
         data.push({
             date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            swap: Math.random() * 5000 + 2000,
-            liquidations: Math.random() * 1000 + 200,
-            hollar: Math.random() * 800 + 100,
-            tips: Math.random() * 300 + 50,
-            txFees: Math.random() * 500 + 100,
+            // Swap: Main volume, similar to Trading Fees
+            swap: (Math.random() * 4000 + 2000) * volatility(),
+            // Liquidations: Part of Supply/Borrow, spikey
+            liquidations: (Math.random() * 500 + 100) * volatility(),
+            // Hollar: Consistent borrow interest
+            hollar: (Math.random() * 600 + 300) * volatility(),
+            // Tips: Very small part of Network fees
+            tips: (Math.random() * 10 + 2) * volatility(),
+            // TX Fees: Small base network fees
+            txFees: (Math.random() * 40 + 15) * volatility(),
         })
     }
 

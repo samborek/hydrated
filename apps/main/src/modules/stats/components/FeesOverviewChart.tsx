@@ -31,6 +31,7 @@ const SControlsGroup = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
+  align-self: center;
   flex-wrap: wrap;
 `
 

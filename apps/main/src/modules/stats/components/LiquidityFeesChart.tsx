@@ -14,7 +14,7 @@ import {
 } from "recharts"
 import { ChevronDown } from "lucide-react"
 
-import { mq } from "@galacticcouncil/ui/theme"
+
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -33,6 +33,7 @@ const SControlsGroup = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
+  align-self: center;
   flex-wrap: wrap;
 `
 

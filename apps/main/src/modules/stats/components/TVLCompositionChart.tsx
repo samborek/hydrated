@@ -28,6 +28,7 @@ const SControlsGroup = styled.div`
   display: flex;
   gap: 16px;
   align-items: center;
+  align-self: center;
   flex-wrap: wrap;
 `
 

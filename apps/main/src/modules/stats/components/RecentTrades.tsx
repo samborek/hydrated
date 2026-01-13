@@ -1,27 +1,43 @@
-import styled from "@emotion/styled"
-import { DataTable, Flex, Text } from "@galacticcouncil/ui/components"
+import { ArrowRightLong } from "@galacticcouncil/ui/assets/icons"
+import { DataTable, Flex, Icon, Text } from "@galacticcouncil/ui/components"
+import { getToken, getTokenPx } from "@galacticcouncil/ui/utils"
 import { FC } from "react"
 import { ColumnDef } from "@tanstack/react-table"
+import { AssetLogo } from "@/components/AssetLogo"
 
-const STradeFlow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`
+// Asset ID mapping for logos
+const ASSET_IDS: Record<string, string> = {
+  'DOT': '5',
+  'HDX': '0',
+  'USDC': '22',
+  'USDT': '10',
+  'WETH': '20',
+  'WBTC': '11',
+  'ASTR': '14',
+  'GLMR': '15',
+  'CFG': '16',
+}
 
-const SAssetBadge = styled.span<{ $color?: string }>`
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: ${({ $color }) => $color ? `${$color}20` : 'rgba(255, 255, 255, 0.1)'};
-  font-size: 12px;
-`
-
-const SArrow = styled.span`
-  color: rgba(255, 255, 255, 0.3);
-`
+// Swap flow component matching trade module pattern
+const SwapFlow: FC<{ fromAmount: string; fromAsset: string; toAmount: string; toAsset: string }> = ({
+  fromAmount, fromAsset, toAmount, toAsset
+}) => (
+  <Flex gap={12} align="center">
+    <Flex gap={getTokenPx("scales.paddings.s")} align="center">
+      <AssetLogo id={ASSET_IDS[fromAsset] || '0'} size="small" />
+      <Text fw={500} fs={12} color={getToken("text.high")}>
+        {fromAmount} {fromAsset}
+      </Text>
+    </Flex>
+    <Icon size={16} component={ArrowRightLong} color={getToken("icons.onContainer")} />
+    <Flex gap={getTokenPx("scales.paddings.s")} align="center">
+      <AssetLogo id={ASSET_IDS[toAsset] || '0'} size="small" />
+      <Text fw={500} fs={12} color={getToken("text.high")}>
+        {toAmount} {toAsset}
+      </Text>
+    </Flex>
+  </Flex>
+)
 
 type Trade = {
   account: string
@@ -59,15 +75,12 @@ const columns: ColumnDef<Trade>[] = [
     id: 'trade',
     header: '',
     cell: ({ row }) => (
-      <STradeFlow>
-        <SAssetBadge $color="#4CAF50">
-          🟢 {row.original.fromAmount} {row.original.fromAsset}
-        </SAssetBadge>
-        <SArrow>→</SArrow>
-        <SAssetBadge $color="#E6007A">
-          🔴 {row.original.toAmount} {row.original.toAsset}
-        </SAssetBadge>
-      </STradeFlow>
+      <SwapFlow
+        fromAmount={row.original.fromAmount}
+        fromAsset={row.original.fromAsset}
+        toAmount={row.original.toAmount}
+        toAsset={row.original.toAsset}
+      />
     ),
   },
   {
@@ -79,8 +92,8 @@ const columns: ColumnDef<Trade>[] = [
     header: 'Date',
     cell: ({ getValue }) => (
       <Flex align="center" gap={4}>
-        <Text color="rgba(255,255,255,0.5)">{getValue() as string}</Text>
-        <Text color="rgba(255,255,255,0.4)">→</Text>
+        <Text color={getToken("text.medium")}>{getValue() as string}</Text>
+        <Text color={getToken("text.low")}>→</Text>
       </Flex>
     ),
   },

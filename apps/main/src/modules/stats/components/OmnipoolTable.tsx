@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
 import { DataTable, Flex, Text } from "@galacticcouncil/ui/components"
+import { getToken } from "@galacticcouncil/ui/utils"
 import { FC } from "react"
 import { AssetLogo } from "@/components/AssetLogo"
 import { ColumnDef } from "@tanstack/react-table"
@@ -66,8 +67,8 @@ const columns: ColumnDef<OmnipoolAsset>[] = [
     header: 'APY',
     cell: ({ getValue }) => (
       <Flex align="center" gap={4}>
-        <Text color="#4CAF50">{getValue() as string}</Text>
-        <Text color="rgba(255,255,255,0.4)">→</Text>
+        <Text color={getToken("text.success")}>{getValue() as string}</Text>
+        <Text color={getToken("text.low")}>→</Text>
       </Flex>
     ),
   },

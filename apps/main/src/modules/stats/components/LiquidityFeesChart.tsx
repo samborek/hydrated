@@ -14,21 +14,41 @@ import {
 } from "recharts"
 import { ChevronDown } from "lucide-react"
 
+import { mq } from "@galacticcouncil/ui/theme"
+
 const SChartContainer = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: column;
 `
 
 const SChartHeader = styled.div`
+  order: 1;
   margin-bottom: 8px;
 `
 
-const SControlsFooter = styled.div`
+const SControlsRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
   flex-wrap: wrap;
   gap: 16px;
+  order: 3;
+  margin-top: 16px;
+  
+  ${mq("md")} {
+    order: 2;
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+`
+
+const SChartWrapper = styled.div`
+  order: 2;
+  
+  ${mq("md")} {
+    order: 3;
+  }
 `
 
 
@@ -139,92 +159,7 @@ export const LiquidityFeesChart: FC = () => {
                 </div>
             </SChartHeader>
 
-
-            <ResponsiveContainer width="100%" height={280}>
-                <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                    <defs>
-                        <linearGradient id="gradOmnipoolWithdraw" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#22C55E" stopOpacity={0.6} />
-                            <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1} />
-                        </linearGradient>
-                        <linearGradient id="gradIsolatedPoolTrade" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
-                            <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
-                        </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis
-                        dataKey="date"
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                        tickLine={false}
-                    />
-                    <YAxis
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                        tickLine={false}
-                        tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
-                    />
-                    <Tooltip
-                        contentStyle={{
-                            background: 'rgba(20, 20, 30, 0.95)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: 8,
-                            color: '#fff',
-                        }}
-                        formatter={(value: number, name: string) => [
-                            `$${value.toFixed(2)}`,
-                            FEE_TYPES[name as FeeType]?.label || name
-                        ]}
-                    />
-                    <Legend
-                        verticalAlign="bottom"
-                        align="left"
-                        wrapperStyle={{ paddingTop: '20px' }}
-                        content={({ payload }: any) => (
-                            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                                {payload?.map((entry: any, index: number) => (
-                                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <div
-                                            style={{
-                                                width: '12px',
-                                                height: '12px',
-                                                backgroundColor: entry.color,
-                                                borderRadius: '4px'
-                                            }}
-                                        />
-                                        <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
-                                            {FEE_TYPES[entry.value as FeeType]?.label || entry.value}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    />
-                    {activeTypes.includes('omnipoolWithdraw') && (
-                        <Area
-                            type="monotone"
-                            dataKey="omnipoolWithdraw"
-                            stroke="#22C55E"
-                            fill="url(#gradOmnipoolWithdraw)"
-                            strokeWidth={2}
-                            name="omnipoolWithdraw"
-                        />
-                    )}
-                    {activeTypes.includes('isolatedPoolTrade') && (
-                        <Area
-                            type="monotone"
-                            dataKey="isolatedPoolTrade"
-                            stroke="#8B5CF6"
-                            fill="url(#gradIsolatedPoolTrade)"
-                            strokeWidth={2}
-                            name="isolatedPoolTrade"
-                        />
-                    )}
-                </AreaChart>
-            </ResponsiveContainer>
-
-            <SControlsFooter>
+            <SControlsRow>
                 <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
                         <SFilterBtn>
@@ -264,7 +199,93 @@ export const LiquidityFeesChart: FC = () => {
                         </Button>
                     ))}
                 </Flex>
-            </SControlsFooter>
+            </SControlsRow>
+
+            <SChartWrapper>
+                <ResponsiveContainer width="100%" height={280}>
+                    <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                        <defs>
+                            <linearGradient id="gradOmnipoolWithdraw" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#22C55E" stopOpacity={0.6} />
+                                <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1} />
+                            </linearGradient>
+                            <linearGradient id="gradIsolatedPoolTrade" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
+                                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                        <XAxis
+                            dataKey="date"
+                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
+                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                            tickLine={false}
+                        />
+                        <YAxis
+                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
+                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                            tickLine={false}
+                            tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
+                        />
+                        <Tooltip
+                            contentStyle={{
+                                background: 'rgba(20, 20, 30, 0.95)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                borderRadius: 8,
+                                color: '#fff',
+                            }}
+                            formatter={(value: number, name: string) => [
+                                `$${value.toFixed(2)}`,
+                                FEE_TYPES[name as FeeType]?.label || name
+                            ]}
+                        />
+                        <Legend
+                            verticalAlign="bottom"
+                            align="left"
+                            wrapperStyle={{ paddingTop: '20px' }}
+                            content={({ payload }: any) => (
+                                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                                    {payload?.map((entry: any, index: number) => (
+                                        <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div
+                                                style={{
+                                                    width: '12px',
+                                                    height: '12px',
+                                                    backgroundColor: entry.color,
+                                                    borderRadius: '4px'
+                                                }}
+                                            />
+                                            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                                                {FEE_TYPES[entry.value as FeeType]?.label || entry.value}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        />
+                        {activeTypes.includes('omnipoolWithdraw') && (
+                            <Area
+                                type="monotone"
+                                dataKey="omnipoolWithdraw"
+                                stroke="#22C55E"
+                                fill="url(#gradOmnipoolWithdraw)"
+                                strokeWidth={2}
+                                name="omnipoolWithdraw"
+                            />
+                        )}
+                        {activeTypes.includes('isolatedPoolTrade') && (
+                            <Area
+                                type="monotone"
+                                dataKey="isolatedPoolTrade"
+                                stroke="#8B5CF6"
+                                fill="url(#gradIsolatedPoolTrade)"
+                                strokeWidth={2}
+                                name="isolatedPoolTrade"
+                            />
+                        )}
+                    </AreaChart>
+                </ResponsiveContainer>
+            </SChartWrapper>
         </SChartContainer>
     )
 }

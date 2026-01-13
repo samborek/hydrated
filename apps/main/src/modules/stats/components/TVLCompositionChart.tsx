@@ -16,16 +16,19 @@ const SChartContainer = styled.div`
 `
 
 const SChartHeader = styled.div`
-  margin-bottom: 8px;
-`
-
-const SControlsFooter = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
   flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+`
+
+const SControlsGroup = styled.div`
+  display: flex;
   gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
 `
 
 
@@ -178,6 +181,30 @@ export const TVLCompositionChart: FC<Props> = ({
                         {value}
                     </Text>
                 </div>
+                <SControlsGroup>
+                    <SPillToggle>
+                        {(['All', 'Omnipool', 'Stable', 'XYK', 'MM'] as Filter[]).map((f) => (
+                            <SPillButton
+                                key={f}
+                                $active={filter === f}
+                                onClick={() => setFilter(f)}
+                            >
+                                {f}
+                            </SPillButton>
+                        ))}
+                    </SPillToggle>
+                    <SCircleToggle>
+                        {(['1W', '1M', '3M'] as TimeRange[]).map((range) => (
+                            <SCircleButton
+                                key={range}
+                                $active={timeRange === range}
+                                onClick={() => setTimeRange(range)}
+                            >
+                                {range}
+                            </SCircleButton>
+                        ))}
+                    </SCircleToggle>
+                </SControlsGroup>
             </SChartHeader>
 
 
@@ -288,31 +315,6 @@ export const TVLCompositionChart: FC<Props> = ({
                     <Text fs={12} fw={500}>{totals.xykPools}</Text>
                 </SLegendItem>
             </SLegendRow>
-
-            <SControlsFooter>
-                <SPillToggle>
-                    {(['All', 'Omnipool', 'Stable', 'XYK', 'MM'] as Filter[]).map((f) => (
-                        <SPillButton
-                            key={f}
-                            $active={filter === f}
-                            onClick={() => setFilter(f)}
-                        >
-                            {f}
-                        </SPillButton>
-                    ))}
-                </SPillToggle>
-                <SCircleToggle>
-                    {(['1W', '1M', '3M'] as TimeRange[]).map((range) => (
-                        <SCircleButton
-                            key={range}
-                            $active={timeRange === range}
-                            onClick={() => setTimeRange(range)}
-                        >
-                            {range}
-                        </SCircleButton>
-                    ))}
-                </SCircleToggle>
-            </SControlsFooter>
         </SChartContainer >
     )
 }

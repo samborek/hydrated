@@ -18,37 +18,22 @@ import { mq } from "@galacticcouncil/ui/theme"
 
 const SChartContainer = styled.div`
   width: 100%;
-  display: flex;
-  flex-direction: column;
 `
 
 const SChartHeader = styled.div`
-  order: 1;
-  margin-bottom: 8px;
-`
-
-const SControlsRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
-  order: 3;
-  margin-top: 16px;
-  
-  ${mq("md")} {
-    order: 2;
-    margin-top: 0;
-    margin-bottom: 16px;
-  }
+  gap: 12px;
+  margin-bottom: 16px;
 `
 
-const SChartWrapper = styled.div`
-  order: 2;
-  
-  ${mq("md")} {
-    order: 3;
-  }
+const SControlsGroup = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
 `
 
 
@@ -161,165 +146,159 @@ export const TradingFeesChart: FC = () => {
                         Latest period total
                     </Text>
                 </div>
+                <SControlsGroup>
+                    <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                            <SFilterBtn>
+                                Filter ({activeTypes.length}/{Object.keys(FEE_TYPES).length})
+                                <ChevronDown size={14} />
+                            </SFilterBtn>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {(Object.entries(FEE_TYPES) as [FeeType, typeof FEE_TYPES[FeeType]][]).map(([key, { label, color }]) => (
+                                <DropdownMenuItem
+                                    key={key}
+                                    onSelect={(e) => e.preventDefault()}
+                                >
+                                    <SFilterItem onClick={() => toggleFeeType(key)}>
+                                        <Checkbox
+                                            checked={activeTypes.includes(key)}
+                                            onCheckedChange={() => toggleFeeType(key)}
+                                        />
+                                        <span style={{ color, fontSize: 14 }}>{label}</span>
+                                    </SFilterItem>
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Flex gap={6}>
+                        {(['1W', '1M', '1Y', 'ALL'] as TimeRange[]).map((range) => (
+                            <Button
+                                key={range}
+                                size="small"
+                                variant={timeRange === range ? 'secondary' : 'tertiary'}
+                                outline={timeRange !== range}
+                                onClick={() => setTimeRange(range)}
+                                sx={{ px: 12, minWidth: 42 }}
+                            >
+                                {range}
+                            </Button>
+                        ))}
+                    </Flex>
+                </SControlsGroup>
             </SChartHeader>
 
-            <SControlsRow>
-                <DropdownMenu modal={false}>
-                    <DropdownMenuTrigger asChild>
-                        <SFilterBtn>
-                            Filter ({activeTypes.length}/{Object.keys(FEE_TYPES).length})
-                            <ChevronDown size={14} />
-                        </SFilterBtn>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        {(Object.entries(FEE_TYPES) as [FeeType, typeof FEE_TYPES[FeeType]][]).map(([key, { label, color }]) => (
-                            <DropdownMenuItem
-                                key={key}
-                                onSelect={(e) => e.preventDefault()}
-                            >
-                                <SFilterItem onClick={() => toggleFeeType(key)}>
-                                    <Checkbox
-                                        checked={activeTypes.includes(key)}
-                                        onCheckedChange={() => toggleFeeType(key)}
-                                    />
-                                    <span style={{ color, fontSize: 14 }}>{label}</span>
-                                </SFilterItem>
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-
-                <Flex gap={6}>
-                    {(['1W', '1M', '1Y', 'ALL'] as TimeRange[]).map((range) => (
-                        <Button
-                            key={range}
-                            size="small"
-                            variant={timeRange === range ? 'secondary' : 'tertiary'}
-                            outline={timeRange !== range}
-                            onClick={() => setTimeRange(range)}
-                            sx={{ px: 12, minWidth: 42 }}
-                        >
-                            {range}
-                        </Button>
-                    ))}
-                </Flex>
-            </SControlsRow>
-
-            <SChartWrapper>
-
-
-                <ResponsiveContainer width="100%" height={280}>
-                    <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                        <defs>
-                            <linearGradient id="gradOmnipoolAsset" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.6} />
-                                <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
-                            </linearGradient>
-                            <linearGradient id="gradOmnipoolProtocol" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
-                                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
-                            </linearGradient>
-                            <linearGradient id="gradStablepools" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.6} />
-                                <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
-                            </linearGradient>
-                            <linearGradient id="gradXykTrade" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#EC4899" stopOpacity={0.6} />
-                                <stop offset="95%" stopColor="#EC4899" stopOpacity={0.1} />
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                        <XAxis
-                            dataKey="date"
-                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                            tickLine={false}
-                        />
-                        <YAxis
-                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                            tickLine={false}
-                            tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
-                        />
-                        <Tooltip
-                            contentStyle={{
-                                background: 'rgba(20, 20, 30, 0.95)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                borderRadius: 8,
-                                color: '#fff',
-                            }}
-                            formatter={(value: number, name: string) => [
-                                `$${value.toFixed(2)}`,
-                                FEE_TYPES[name as FeeType]?.label || name
-                            ]}
-                        />
-                        <Legend
-                            verticalAlign="bottom"
-                            align="left"
-                            wrapperStyle={{ paddingTop: '20px' }}
-                            content={({ payload }: any) => (
-                                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                                    {payload?.map((entry: any, index: number) => (
-                                        <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <div
-                                                style={{
-                                                    width: '12px',
-                                                    height: '12px',
-                                                    backgroundColor: entry.color,
-                                                    borderRadius: '4px'
-                                                }}
-                                            />
-                                            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
-                                                {FEE_TYPES[entry.value as FeeType]?.label || entry.value}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        />
-                        {activeTypes.includes('omnipoolAsset') && (
-                            <Area
-                                type="monotone"
-                                dataKey="omnipoolAsset"
-                                stroke="#3B82F6"
-                                fill="url(#gradOmnipoolAsset)"
-                                strokeWidth={2}
-                                name="omnipoolAsset"
-                            />
+            <ResponsiveContainer width="100%" height={280}>
+                <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                    <defs>
+                        <linearGradient id="gradOmnipoolAsset" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="gradOmnipoolProtocol" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="gradStablepools" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="gradXykTrade" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#EC4899" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#EC4899" stopOpacity={0.1} />
+                        </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis
+                        dataKey="date"
+                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
+                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tickLine={false}
+                    />
+                    <YAxis
+                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
+                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tickLine={false}
+                        tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
+                    />
+                    <Tooltip
+                        contentStyle={{
+                            background: 'rgba(20, 20, 30, 0.95)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: 8,
+                            color: '#fff',
+                        }}
+                        formatter={(value: number, name: string) => [
+                            `$${value.toFixed(2)}`,
+                            FEE_TYPES[name as FeeType]?.label || name
+                        ]}
+                    />
+                    <Legend
+                        verticalAlign="bottom"
+                        align="left"
+                        wrapperStyle={{ paddingTop: '20px' }}
+                        content={({ payload }: any) => (
+                            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                                {payload?.map((entry: any, index: number) => (
+                                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <div
+                                            style={{
+                                                width: '12px',
+                                                height: '12px',
+                                                backgroundColor: entry.color,
+                                                borderRadius: '4px'
+                                            }}
+                                        />
+                                        <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                                            {FEE_TYPES[entry.value as FeeType]?.label || entry.value}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
                         )}
-                        {activeTypes.includes('omnipoolProtocol') && (
-                            <Area
-                                type="monotone"
-                                dataKey="omnipoolProtocol"
-                                stroke="#8B5CF6"
-                                fill="url(#gradOmnipoolProtocol)"
-                                strokeWidth={2}
-                                name="omnipoolProtocol"
-                            />
-                        )}
-                        {activeTypes.includes('stablepools') && (
-                            <Area
-                                type="monotone"
-                                dataKey="stablepools"
-                                stroke="#F59E0B"
-                                fill="url(#gradStablepools)"
-                                strokeWidth={2}
-                                name="stablepools"
-                            />
-                        )}
-                        {activeTypes.includes('xykTrade') && (
-                            <Area
-                                type="monotone"
-                                dataKey="xykTrade"
-                                stroke="#EC4899"
-                                fill="url(#gradXykTrade)"
-                                strokeWidth={2}
-                                name="xykTrade"
-                            />
-                        )}
-                    </AreaChart>
-                </ResponsiveContainer>
-            </SChartWrapper>
+                    />
+                    {activeTypes.includes('omnipoolAsset') && (
+                        <Area
+                            type="monotone"
+                            dataKey="omnipoolAsset"
+                            stroke="#3B82F6"
+                            fill="url(#gradOmnipoolAsset)"
+                            strokeWidth={2}
+                            name="omnipoolAsset"
+                        />
+                    )}
+                    {activeTypes.includes('omnipoolProtocol') && (
+                        <Area
+                            type="monotone"
+                            dataKey="omnipoolProtocol"
+                            stroke="#8B5CF6"
+                            fill="url(#gradOmnipoolProtocol)"
+                            strokeWidth={2}
+                            name="omnipoolProtocol"
+                        />
+                    )}
+                    {activeTypes.includes('stablepools') && (
+                        <Area
+                            type="monotone"
+                            dataKey="stablepools"
+                            stroke="#F59E0B"
+                            fill="url(#gradStablepools)"
+                            strokeWidth={2}
+                            name="stablepools"
+                        />
+                    )}
+                    {activeTypes.includes('xykTrade') && (
+                        <Area
+                            type="monotone"
+                            dataKey="xykTrade"
+                            stroke="#EC4899"
+                            fill="url(#gradXykTrade)"
+                            strokeWidth={2}
+                            name="xykTrade"
+                        />
+                    )}
+                </AreaChart>
+            </ResponsiveContainer>
         </SChartContainer>
     )
 }

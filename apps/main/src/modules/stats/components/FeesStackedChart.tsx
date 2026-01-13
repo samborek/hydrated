@@ -17,16 +17,12 @@ const SChartContainer = styled.div`
 `
 
 const SChartHeader = styled.div`
-  margin-bottom: 8px;
-`
-
-const SControlsFooter = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+  margin-bottom: 16px;
 `
 
 
@@ -100,8 +96,21 @@ export const FeesStackedChart: FC<Props> = ({
                         Last {timeRange === '1W' ? '7 days' : timeRange === '1M' ? '30 days' : '90 days'}
                     </Text>
                 </div>
+                <Flex gap={6}>
+                    {(['1W', '1M', '3M'] as TimeRange[]).map((range) => (
+                        <Button
+                            key={range}
+                            size="small"
+                            variant={timeRange === range ? 'secondary' : 'tertiary'}
+                            outline={timeRange !== range}
+                            onClick={() => setTimeRange(range)}
+                            sx={{ px: 12, minWidth: 42 }}
+                        >
+                            {range}
+                        </Button>
+                    ))}
+                </Flex>
             </SChartHeader>
-
 
             <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={filteredData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
@@ -155,26 +164,9 @@ export const FeesStackedChart: FC<Props> = ({
                     <Bar dataKey="liquidations" stackId="a" fill={COLORS.liquidations} name="Liquidations" />
                     <Bar dataKey="hollar" stackId="a" fill={COLORS.hollar} name="Hollar" />
                     <Bar dataKey="tips" stackId="a" fill={COLORS.tips} name="Tips" />
-                    <Bar dataKey="txFees" stackId="a" fill={COLORS.txFees} name="TX Fees" radius={[2, 2, 0, 0]} />
+                    <Bar dataKey="txFees" stackId="a" fill={COLORS.txFees} name="TX Fees" radius={[4, 4, 0, 0]} />
                 </BarChart>
             </ResponsiveContainer>
-
-            <SControlsFooter>
-                <Flex gap={6}>
-                    {(['1W', '1M', '3M'] as TimeRange[]).map((range) => (
-                        <Button
-                            key={range}
-                            size="small"
-                            variant={timeRange === range ? 'secondary' : 'tertiary'}
-                            outline={timeRange !== range}
-                            onClick={() => setTimeRange(range)}
-                            sx={{ px: 12, minWidth: 42 }}
-                        >
-                            {range}
-                        </Button>
-                    ))}
-                </Flex>
-            </SControlsFooter>
         </SChartContainer>
     )
 }

@@ -16,16 +16,12 @@ const SChartContainer = styled.div`
 `
 
 const SChartHeader = styled.div`
-  margin-bottom: 8px;
-`
-
-const SControlsFooter = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+  margin-bottom: 16px;
 `
 
 
@@ -100,8 +96,21 @@ export const SupplyBorrowChart: FC<Props> = ({
                 <div>
                     <Text fs={14} color="rgba(255,255,255,0.6)">{title}</Text>
                 </div>
+                <Flex gap={6}>
+                    {(['7D', '30D', 'MAX'] as TimeRange[]).map((range) => (
+                        <Button
+                            key={range}
+                            size="small"
+                            variant={timeRange === range ? 'secondary' : 'tertiary'}
+                            outline={timeRange !== range}
+                            onClick={() => setTimeRange(range)}
+                            sx={{ px: 12, minWidth: 42 }}
+                        >
+                            {range}
+                        </Button>
+                    ))}
+                </Flex>
             </SChartHeader>
-
 
             <ResponsiveContainer width="100%" height={280}>
                 <AreaChart data={filteredData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
@@ -168,23 +177,6 @@ export const SupplyBorrowChart: FC<Props> = ({
                     <Text fs={12} fw={500}>${latestData?.borrow.toFixed(2)}M</Text>
                 </SLegendItem>
             </SLegendRow>
-
-            <SControlsFooter>
-                <Flex gap={6}>
-                    {(['7D', '30D', 'MAX'] as TimeRange[]).map((range) => (
-                        <Button
-                            key={range}
-                            size="small"
-                            variant={timeRange === range ? 'secondary' : 'tertiary'}
-                            outline={timeRange !== range}
-                            onClick={() => setTimeRange(range)}
-                            sx={{ px: 12, minWidth: 42 }}
-                        >
-                            {range}
-                        </Button>
-                    ))}
-                </Flex>
-            </SControlsFooter>
         </SChartContainer >
     )
 }

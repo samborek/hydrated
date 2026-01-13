@@ -17,16 +17,12 @@ const SChartContainer = styled.div`
 `
 
 const SChartHeader = styled.div`
-  margin-bottom: 8px;
-`
-
-const SControlsFooter = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+  margin-bottom: 16px;
 `
 
 
@@ -83,10 +79,23 @@ export const VolumeChart: FC<Props> = ({
                         {value}
                     </Text>
                 </div>
+                <Flex gap={6}>
+                    {(['7D', '30D', 'MAX'] as TimeRange[]).map((range) => (
+                        <Button
+                            key={range}
+                            size="small"
+                            variant={timeRange === range ? 'secondary' : 'tertiary'}
+                            outline={timeRange !== range}
+                            onClick={() => setTimeRange(range)}
+                            sx={{ px: 12, minWidth: 42 }}
+                        >
+                            {range}
+                        </Button>
+                    ))}
+                </Flex>
             </SChartHeader>
 
-
-            <ResponsiveContainer width="100%" height={280}>
+            <ResponsiveContainer width="100%" height={330}>
                 <AreaChart data={filteredData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
                     <defs>
                         <linearGradient id="volumeGrad" x1="0" y1="0" x2="0" y2="1">
@@ -116,30 +125,7 @@ export const VolumeChart: FC<Props> = ({
                         }}
                         formatter={(value: number) => [`$${value.toFixed(2)}M`, 'Volume']}
                     />
-                    <Legend
-                        verticalAlign="bottom"
-                        align="left"
-                        wrapperStyle={{ paddingTop: '20px' }}
-                        content={({ payload }: any) => (
-                            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                                {payload?.map((entry: any, index: number) => (
-                                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <div
-                                            style={{
-                                                width: '12px',
-                                                height: '12px',
-                                                backgroundColor: entry.color,
-                                                borderRadius: '4px'
-                                            }}
-                                        />
-                                        <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
-                                            {entry.value}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    />
+
                     <Area
                         type="monotone"
                         dataKey="volume"
@@ -150,23 +136,6 @@ export const VolumeChart: FC<Props> = ({
                     />
                 </AreaChart>
             </ResponsiveContainer>
-
-            <SControlsFooter>
-                <Flex gap={6}>
-                    {(['7D', '30D', 'MAX'] as TimeRange[]).map((range) => (
-                        <Button
-                            key={range}
-                            size="small"
-                            variant={timeRange === range ? 'secondary' : 'tertiary'}
-                            outline={timeRange !== range}
-                            onClick={() => setTimeRange(range)}
-                            sx={{ px: 12, minWidth: 42 }}
-                        >
-                            {range}
-                        </Button>
-                    ))}
-                </Flex>
-            </SControlsFooter>
         </SChartContainer >
     )
 }

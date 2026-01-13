@@ -19,16 +19,19 @@ const SChartContainer = styled.div`
 `
 
 const SChartHeader = styled.div`
-  margin-bottom: 8px;
-`
-
-const SControlsFooter = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+  margin-bottom: 16px;
+`
+
+const SControlsGroup = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
 `
 
 
@@ -131,6 +134,30 @@ export const FeesOverviewChart: FC = () => {
                                 timeRange === '1Y' ? 'Last year' : 'All time'}
                     </Text>
                 </div>
+                <SControlsGroup>
+                    <ToggleGroup
+                        type="single"
+                        value={viewMode}
+                        onValueChange={(v) => v && setViewMode(v as ViewMode)}
+                    >
+                        <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
+                        <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
+                    </ToggleGroup>
+                    <Flex gap={6}>
+                        {(['1W', '1M', '1Y', 'ALL'] as TimeRange[]).map((range) => (
+                            <Button
+                                key={range}
+                                size="small"
+                                variant={timeRange === range ? 'secondary' : 'tertiary'}
+                                outline={timeRange !== range}
+                                onClick={() => setTimeRange(range)}
+                                sx={{ px: 12, minWidth: 42 }}
+                            >
+                                {range}
+                            </Button>
+                        ))}
+                    </Flex>
+                </SControlsGroup>
             </SChartHeader>
 
 
@@ -191,7 +218,7 @@ export const FeesOverviewChart: FC = () => {
                         <Bar dataKey="tradingFees" stackId="a" fill={COLORS.tradingFees} name="tradingFees" />
                         <Bar dataKey="liquidityFees" stackId="a" fill={COLORS.liquidityFees} name="liquidityFees" />
                         <Bar dataKey="supplyBorrowFees" stackId="a" fill={COLORS.supplyBorrowFees} name="supplyBorrowFees" />
-                        <Bar dataKey="hollarFees" stackId="a" fill={COLORS.hollarFees} name="hollarFees" radius={[2, 2, 0, 0]} />
+                        <Bar dataKey="hollarFees" stackId="a" fill={COLORS.hollarFees} name="hollarFees" radius={[4, 4, 0, 0]} />
                     </BarChart>
                 ) : (
                     // FEES MODE: Line Chart showing % distribution over time
@@ -260,31 +287,6 @@ export const FeesOverviewChart: FC = () => {
                     </LineChart>
                 )}
             </ResponsiveContainer>
-
-            <SControlsFooter>
-                <ToggleGroup
-                    type="single"
-                    value={viewMode}
-                    onValueChange={(v) => v && setViewMode(v as ViewMode)}
-                >
-                    <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
-                    <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
-                </ToggleGroup>
-                <Flex gap={6}>
-                    {(['1W', '1M', '1Y', 'ALL'] as TimeRange[]).map((range) => (
-                        <Button
-                            key={range}
-                            size="small"
-                            variant={timeRange === range ? 'secondary' : 'tertiary'}
-                            outline={timeRange !== range}
-                            onClick={() => setTimeRange(range)}
-                            sx={{ px: 12, minWidth: 42 }}
-                        >
-                            {range}
-                        </Button>
-                    ))}
-                </Flex>
-            </SControlsFooter>
         </SChartContainer>
     )
 }

@@ -17,16 +17,12 @@ const SChartContainer = styled.div`
 `
 
 const SChartHeader = styled.div`
-  margin-bottom: 8px;
-`
-
-const SControlsFooter = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+  margin-bottom: 16px;
 `
 
 
@@ -76,7 +72,22 @@ export const HollarFeesChart: FC = () => {
                         HSM Revenue (latest)
                     </Text>
                 </div>
+                <Flex gap={6}>
+                    {(['1W', '1M', '1Y', 'ALL'] as TimeRange[]).map((range) => (
+                        <Button
+                            key={range}
+                            size="small"
+                            variant={timeRange === range ? 'secondary' : 'tertiary'}
+                            outline={timeRange !== range}
+                            onClick={() => setTimeRange(range)}
+                            sx={{ px: 12, minWidth: 42 }}
+                        >
+                            {range}
+                        </Button>
+                    ))}
+                </Flex>
             </SChartHeader>
+
 
 
             <ResponsiveContainer width="100%" height={280}>
@@ -143,23 +154,6 @@ export const HollarFeesChart: FC = () => {
                     />
                 </AreaChart>
             </ResponsiveContainer>
-
-            <SControlsFooter>
-                <Flex gap={6}>
-                    {(['1W', '1M', '1Y', 'ALL'] as TimeRange[]).map((range) => (
-                        <Button
-                            key={range}
-                            size="small"
-                            variant={timeRange === range ? 'secondary' : 'tertiary'}
-                            outline={timeRange !== range}
-                            onClick={() => setTimeRange(range)}
-                            sx={{ px: 12, minWidth: 42 }}
-                        >
-                            {range}
-                        </Button>
-                    ))}
-                </Flex>
-            </SControlsFooter>
         </SChartContainer >
     )
 }

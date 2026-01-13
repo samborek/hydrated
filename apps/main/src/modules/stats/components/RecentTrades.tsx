@@ -4,6 +4,11 @@ import { getToken, getTokenPx } from "@galacticcouncil/ui/utils"
 import { FC } from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { AssetLogo } from "@/components/AssetLogo"
+import styled from "@emotion/styled"
+
+const STableWrapper = styled.div`
+  margin: 0 -20px;
+`
 
 // Asset ID mapping for logos
 const ASSET_IDS: Record<string, string> = {
@@ -101,13 +106,16 @@ const columns: ColumnDef<Trade>[] = [
 
 export const RecentTrades: FC = () => {
   return (
-    <DataTable
-      data={mockTrades}
-      columns={columns}
-      paginated
-      pageSize={5}
-      size="medium"
-    />
+    <STableWrapper>
+      <DataTable
+        data={mockTrades}
+        columns={columns}
+        paginated
+        pageSize={5}
+        size="large"
+        onRowClick={() => { }}
+      />
+    </STableWrapper>
   )
 }
 

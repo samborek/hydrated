@@ -11,6 +11,10 @@ const SAssetCell = styled.div`
   gap: 12px;
 `
 
+const STableWrapper = styled.div`
+  margin: 0 -20px;
+`
+
 type OmnipoolAsset = {
   id: string
   symbol: string
@@ -76,12 +80,15 @@ const columns: ColumnDef<OmnipoolAsset>[] = [
 
 export const OmnipoolTable: FC = () => {
   return (
-    <DataTable
-      data={mockAssets}
-      columns={columns}
-      paginated
-      pageSize={5}
-      size="medium"
-    />
+    <STableWrapper>
+      <DataTable
+        data={mockAssets}
+        columns={columns}
+        paginated
+        pageSize={5}
+        size="large"
+        onRowClick={() => { }}
+      />
+    </STableWrapper>
   )
 }

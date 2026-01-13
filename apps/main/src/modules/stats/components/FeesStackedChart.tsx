@@ -1,4 +1,5 @@
 import styled from "@emotion/styled"
+import { css } from "@emotion/react"
 import { Button, Flex, Text } from "@galacticcouncil/ui/components"
 import { FC, useState } from "react"
 import {
@@ -15,6 +16,20 @@ import {
 const SChartContainer = styled.div`
   width: 100%;
 `
+
+const STooltipContainer = styled.div(
+    ({ theme }) => css`
+    display: grid;
+    align-items: start;
+    gap: 6px;
+    border-radius: ${theme.radii.md}px;
+    background-color: ${theme.details.tooltips};
+    padding: ${theme.scales.paddings.m}px;
+    box-shadow:
+      0px 3px 9px 0px rgba(0, 0, 0, 0.04),
+      0px 14px 37px 0px rgba(0, 0, 0, 0.04);
+  `,
+)
 
 const SChartHeader = styled.div`
   display: flex;
@@ -135,13 +150,24 @@ export const FeesStackedChart: FC<Props> = ({
                         tickFormatter={(value) => `$${(value / 1000).toFixed(1)} K`}
                     />
                     <Tooltip
-                        contentStyle={{
-                            background: 'rgba(20, 20, 30, 0.95)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: 8,
-                            color: '#fff',
+                        content={({ active, payload, label }) => {
+                            if (!active || !payload?.length) return null
+                            return (
+                                <STooltipContainer>
+                                    <Text fs={14} fw={600} color="text.high">{label}</Text>
+                                    {payload.map((entry: any) => (
+                                        <Flex key={entry.dataKey} gap={8} align="center">
+                                            <div style={{ width: 10, height: 10, backgroundColor: entry.color, borderRadius: 2, flexShrink: 0 }} />
+                                            <Flex justify="space-between" gap={20} sx={{ flex: 1 }}>
+                                                <Text fs={13} color="text.medium">{entry.name}</Text>
+                                                <Text fs={13} fw={500} color="text.high">${entry.value.toFixed(2)}</Text>
+                                            </Flex>
+                                        </Flex>
+                                    ))}
+                                </STooltipContainer>
+                            )
                         }}
-                        formatter={(value: number) => [`$${value.toFixed(2)} `, '']}
+                        cursor={{ fill: 'rgba(255, 255, 255, 0.04)' }}
                     />
                     <Legend
                         verticalAlign="bottom"

@@ -67,7 +67,7 @@ const columns: ColumnDef<OmnipoolAsset>[] = [
     header: 'APY',
     cell: ({ getValue }) => (
       <Flex align="center" gap={4}>
-        <Text color={getToken("text.success")}>{getValue() as string}</Text>
+        <Text color="#45D678">{getValue() as string}</Text>
         <Text color={getToken("text.low")}>→</Text>
       </Flex>
     ),

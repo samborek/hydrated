@@ -3,8 +3,8 @@ import { css } from "@galacticcouncil/ui/utils"
 import { Button, Flex, Text, Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@galacticcouncil/ui/components"
 import { FC, useState, useMemo } from "react"
 import {
-    LineChart,
-    Line,
+    AreaChart,
+    Area,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -142,7 +142,21 @@ export const SupplyBorrowFeesChart: FC = () => {
             </SChartHeader>
 
             <ResponsiveContainer width="100%" height={280}>
-                <LineChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                    <defs>
+                        <linearGradient id="gradLiquidationPenalty" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#EF4444" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#EF4444" stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="gradPepl" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="gradAssetReserve" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#22C55E" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1} />
+                        </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                     <XAxis
                         dataKey="date"
@@ -192,20 +206,37 @@ export const SupplyBorrowFeesChart: FC = () => {
                             </div>
                         )}
                     />
-                    {(Object.entries(FEE_TYPES) as [FeeType, typeof FEE_TYPES[FeeType]][]).map(([key, { color }]) => (
-                        activeTypes.includes(key) && (
-                            <Line
-                                key={key}
-                                type="monotone"
-                                dataKey={key}
-                                stroke={color}
-                                strokeWidth={2}
-                                dot={false}
-                                name={key}
-                            />
-                        )
-                    ))}
-                </LineChart>
+                    {activeTypes.includes('liquidationPenalty') && (
+                        <Area
+                            type="monotone"
+                            dataKey="liquidationPenalty"
+                            stroke="#EF4444"
+                            fill="url(#gradLiquidationPenalty)"
+                            strokeWidth={2}
+                            name="liquidationPenalty"
+                        />
+                    )}
+                    {activeTypes.includes('pepl') && (
+                        <Area
+                            type="monotone"
+                            dataKey="pepl"
+                            stroke="#F59E0B"
+                            fill="url(#gradPepl)"
+                            strokeWidth={2}
+                            name="pepl"
+                        />
+                    )}
+                    {activeTypes.includes('assetReserve') && (
+                        <Area
+                            type="monotone"
+                            dataKey="assetReserve"
+                            stroke="#22C55E"
+                            fill="url(#gradAssetReserve)"
+                            strokeWidth={2}
+                            name="assetReserve"
+                        />
+                    )}
+                </AreaChart>
             </ResponsiveContainer>
 
             <SControlsFooter>

@@ -3,8 +3,8 @@ import { css } from "@galacticcouncil/ui/utils"
 import { Button, Flex, Text, Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@galacticcouncil/ui/components"
 import { FC, useState, useMemo } from "react"
 import {
-    LineChart,
-    Line,
+    AreaChart,
+    Area,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -141,7 +141,17 @@ export const LiquidityFeesChart: FC = () => {
 
 
             <ResponsiveContainer width="100%" height={280}>
-                <LineChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                    <defs>
+                        <linearGradient id="gradOmnipoolWithdraw" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#22C55E" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="gradIsolatedPoolTrade" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
+                        </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                     <XAxis
                         dataKey="date"
@@ -191,20 +201,27 @@ export const LiquidityFeesChart: FC = () => {
                             </div>
                         )}
                     />
-                    {(Object.entries(FEE_TYPES) as [FeeType, typeof FEE_TYPES[FeeType]][]).map(([key, { color }]) => (
-                        activeTypes.includes(key) && (
-                            <Line
-                                key={key}
-                                type="monotone"
-                                dataKey={key}
-                                stroke={color}
-                                strokeWidth={2}
-                                dot={false}
-                                name={key}
-                            />
-                        )
-                    ))}
-                </LineChart>
+                    {activeTypes.includes('omnipoolWithdraw') && (
+                        <Area
+                            type="monotone"
+                            dataKey="omnipoolWithdraw"
+                            stroke="#22C55E"
+                            fill="url(#gradOmnipoolWithdraw)"
+                            strokeWidth={2}
+                            name="omnipoolWithdraw"
+                        />
+                    )}
+                    {activeTypes.includes('isolatedPoolTrade') && (
+                        <Area
+                            type="monotone"
+                            dataKey="isolatedPoolTrade"
+                            stroke="#8B5CF6"
+                            fill="url(#gradIsolatedPoolTrade)"
+                            strokeWidth={2}
+                            name="isolatedPoolTrade"
+                        />
+                    )}
+                </AreaChart>
             </ResponsiveContainer>
 
             <SControlsFooter>

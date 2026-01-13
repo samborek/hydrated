@@ -3,8 +3,8 @@ import { css } from "@galacticcouncil/ui/utils"
 import { Button, Flex, Text, Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@galacticcouncil/ui/components"
 import { FC, useState, useMemo } from "react"
 import {
-    LineChart,
-    Line,
+    AreaChart,
+    Area,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -145,7 +145,25 @@ export const TradingFeesChart: FC = () => {
 
 
             <ResponsiveContainer width="100%" height={280}>
-                <LineChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                    <defs>
+                        <linearGradient id="gradOmnipoolAsset" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="gradOmnipoolProtocol" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="gradStablepools" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="gradXykTrade" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#EC4899" stopOpacity={0.6} />
+                            <stop offset="95%" stopColor="#EC4899" stopOpacity={0.1} />
+                        </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                     <XAxis
                         dataKey="date"
@@ -195,20 +213,47 @@ export const TradingFeesChart: FC = () => {
                             </div>
                         )}
                     />
-                    {(Object.entries(FEE_TYPES) as [FeeType, typeof FEE_TYPES[FeeType]][]).map(([key, { color }]) => (
-                        activeTypes.includes(key) && (
-                            <Line
-                                key={key}
-                                type="monotone"
-                                dataKey={key}
-                                stroke={color}
-                                strokeWidth={2}
-                                dot={false}
-                                name={key}
-                            />
-                        )
-                    ))}
-                </LineChart>
+                    {activeTypes.includes('omnipoolAsset') && (
+                        <Area
+                            type="monotone"
+                            dataKey="omnipoolAsset"
+                            stroke="#3B82F6"
+                            fill="url(#gradOmnipoolAsset)"
+                            strokeWidth={2}
+                            name="omnipoolAsset"
+                        />
+                    )}
+                    {activeTypes.includes('omnipoolProtocol') && (
+                        <Area
+                            type="monotone"
+                            dataKey="omnipoolProtocol"
+                            stroke="#8B5CF6"
+                            fill="url(#gradOmnipoolProtocol)"
+                            strokeWidth={2}
+                            name="omnipoolProtocol"
+                        />
+                    )}
+                    {activeTypes.includes('stablepools') && (
+                        <Area
+                            type="monotone"
+                            dataKey="stablepools"
+                            stroke="#F59E0B"
+                            fill="url(#gradStablepools)"
+                            strokeWidth={2}
+                            name="stablepools"
+                        />
+                    )}
+                    {activeTypes.includes('xykTrade') && (
+                        <Area
+                            type="monotone"
+                            dataKey="xykTrade"
+                            stroke="#EC4899"
+                            fill="url(#gradXykTrade)"
+                            strokeWidth={2}
+                            name="xykTrade"
+                        />
+                    )}
+                </AreaChart>
             </ResponsiveContainer>
 
             <SControlsFooter>

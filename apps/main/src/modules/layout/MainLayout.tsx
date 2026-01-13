@@ -29,19 +29,38 @@ const SPromoButton = styled(ButtonIcon)`
   }
 `
 
+const MARKETING_BANNER_DISMISSED_KEY = "marketing_banner_dismissed"
+
 export const MainLayout = () => {
   const { uiVersion } = useUiContext()
+
+  // Check localStorage on initial render to determine initial state
+  const getInitialMarketingState = () => {
+    if (typeof window !== "undefined") {
+      const dismissed = localStorage.getItem(MARKETING_BANNER_DISMISSED_KEY) === "true"
+      if (dismissed) {
+        return {
+          modalOpen: false,
+          bannerVisible: false,
+          dismissed: true,
+          initialStep: "intro" as const
+        }
+      }
+    }
+    return {
+      modalOpen: true,
+      bannerVisible: false,
+      dismissed: false,
+      initialStep: "intro" as const
+    }
+  }
+
   const [marketingState, setMarketingState] = useState<{
     modalOpen: boolean
     bannerVisible: boolean
     dismissed: boolean
     initialStep?: "intro" | "connect" | "trade"
-  }>({
-    modalOpen: true,
-    bannerVisible: false,
-    dismissed: false,
-    initialStep: "intro"
-  })
+  }>(getInitialMarketingState)
 
   const [depositOpen, setDepositOpen] = useState(false)
 
@@ -58,6 +77,7 @@ export const MainLayout = () => {
   }
 
   const handleBannerClose = () => {
+    localStorage.setItem(MARKETING_BANNER_DISMISSED_KEY, "true")
     setMarketingState((prev) => ({ ...prev, bannerVisible: false, dismissed: true }))
   }
 

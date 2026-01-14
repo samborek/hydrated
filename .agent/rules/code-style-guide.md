@@ -16,11 +16,15 @@ Before creating any new styled components or UI elements:
    - Paddings: `theme.containers.paddings.*`
    - Text colors: `theme.text.*`
 
-3. **Check Existing Patterns** - Look at similar pages for established patterns:
+3. **Check Similar Pages** - Look at similar pages for established patterns (e.g. Liquidity, Wallet):
+   - Check if an element (like an asset list item with icon and name) already exists in other modules.
+   - Use `AssetLabel`, `AssetLogo` and other composed components instead of rebuilding them.
+
+4. **Check Existing Patterns** - Look at similar pages for established patterns:
    - Wallet, Liquidity, Borrow modules are good references
    - Copy styled component patterns from existing modules
 
-4. **Use Storybook** - Run Storybook to see all available components:
+5. **Use Storybook** - Run Storybook to see all available components:
    ```bash
    cd packages/ui && yarn storybook
 

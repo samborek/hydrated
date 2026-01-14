@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { css, styled } from "@galacticcouncil/ui/utils"
-import { SectionHeader, Text, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
+import { Flex, SectionHeader, Separator, Text, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { AssetLogo } from "@/components/AssetLogo"
 import { SupplyBorrowChart } from "@/modules/stats/components/SupplyBorrowChart"
@@ -98,52 +98,51 @@ function MoneyMarketStats() {
     <SPageContainer>
       <SectionHeader as="h1" sx={{ p: 0 }} mb={-12}>Money Market</SectionHeader>
 
-      <SMetricsGrid>
-        <SStatCard>
-          <ValueStats
-            label="Total Value Locked"
-            size="medium"
-            customValue={
-              <ValueStatsValue size="medium" style={{ color: '#F59E0B' }}>
-                $12.6M
-              </ValueStatsValue>
-            }
-          />
-        </SStatCard>
-        <SStatCard>
-          <ValueStats
-            label="Total Supplied"
-            size="medium"
-            customValue={
-              <ValueStatsValue size="medium" style={{ color: theme.details.values.positive }}>
-                $12.6M
-              </ValueStatsValue>
-            }
-          />
-        </SStatCard>
-        <SStatCard>
-          <ValueStats
-            label="Total Borrowed"
-            size="medium"
-            customValue={
-              <ValueStatsValue size="medium" style={{ color: '#F59E0B' }}>
-                $7.5M
-              </ValueStatsValue>
-            }
-          />
-        </SStatCard>
-        <SStatCard>
-          <ValueStats
-            label="Liquidations (24h)"
-            size="medium"
-            customValue={
-              <ValueStatsValue size="medium" style={{ color: theme.details.values.negative }}>
-                $45,230
-              </ValueStatsValue>
-            }
-          />
-        </SStatCard>
-      </SMetricsGrid>
+      <Flex gap={20} justify="space-between" sx={{ py: 10, overflowX: 'auto', height: 80 }}>
+        <ValueStats
+          label="Total Value Locked"
+          size="large"
+          wrap
+          customValue={
+            <ValueStatsValue size="large" style={{ color: '#F59E0B' }}>
+              $12.6M
+            </ValueStatsValue>
+          }
+        />
+        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
+        <ValueStats
+          label="Total Supplied"
+          size="large"
+          wrap
+          customValue={
+            <ValueStatsValue size="large" style={{ color: theme.details.values.positive }}>
+              $12.6M
+            </ValueStatsValue>
+          }
+        />
+        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
+        <ValueStats
+          label="Total Borrowed"
+          size="large"
+          wrap
+          customValue={
+            <ValueStatsValue size="large" style={{ color: '#F59E0B' }}>
+              $7.5M
+            </ValueStatsValue>
+          }
+        />
+        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
+        <ValueStats
+          label="Liquidations (24h)"
+          size="large"
+          wrap
+          customValue={
+            <ValueStatsValue size="large" style={{ color: theme.details.values.negative }}>
+              $45,230
+            </ValueStatsValue>
+          }
+        />
+      </Flex>
 
       <SSection>
         <SupplyBorrowChart title="Supply / Borrow History" />

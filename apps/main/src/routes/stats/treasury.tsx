@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { css, styled } from "@galacticcouncil/ui/utils"
-import { SectionHeader, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
+import { Flex, SectionHeader, Separator, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { TreasuryChart } from "@/modules/stats/components/TreasuryChart"
 import { OmnipoolTable } from "@/modules/stats/components/OmnipoolTable"
@@ -43,33 +43,32 @@ function TreasuryStats() {
         <SPageContainer>
             <SectionHeader as="h1" sx={{ p: 0 }} mb={-12}>Treasury</SectionHeader>
 
-            <SMetricsGrid>
-                <SStatCard>
-                    <ValueStats
-                        label="Total Treasury Value"
-                        size="medium"
-                        customValue={
-                            <ValueStatsValue size="medium" style={{ color: theme.details.values.positive }}>
-                                $2,852,500
-                            </ValueStatsValue>
-                        }
-                    />
-                </SStatCard>
-                <SStatCard>
-                    <ValueStats
-                        label="LP Positions Value"
-                        value="$1,200,000"
-                        size="medium"
-                    />
-                </SStatCard>
-                <SStatCard>
-                    <ValueStats
-                        label="Staked Assets Value"
-                        value="$225,000"
-                        size="medium"
-                    />
-                </SStatCard>
-            </SMetricsGrid>
+            <Flex gap={20} justify="space-between" sx={{ py: 10, overflowX: 'auto', height: 80 }}>
+                <ValueStats
+                    label="Total Treasury Value"
+                    size="large"
+                    wrap
+                    customValue={
+                        <ValueStatsValue size="large" style={{ color: theme.details.values.positive }}>
+                            $2,852,500
+                        </ValueStatsValue>
+                    }
+                />
+                <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
+                <ValueStats
+                    label="LP Positions Value"
+                    value="$1,200,000"
+                    size="large"
+                    wrap
+                />
+                <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
+                <ValueStats
+                    label="Staked Assets Value"
+                    value="$225,000"
+                    size="large"
+                    wrap
+                />
+            </Flex>
 
             <SSection>
                 <TreasuryChart title="Treasury Value History" value="$2.85M" />

@@ -15,7 +15,7 @@ const SPageContainer = styled.div`
 `
 
 const SSection = styled.section(
-    ({ theme }) => css`
+  ({ theme }) => css`
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
     border-radius: 16px;
@@ -24,44 +24,44 @@ const SSection = styled.section(
 )
 
 function FeesStats() {
-    return (
-        <SPageContainer>
-            <SectionHeader as="h1" sx={{ p: 0 }} mb={-18}>
-                Fees & Revenue
-            </SectionHeader>
+  return (
+    <SPageContainer>
+      <SectionHeader as="h1" sx={{ p: 0 }} mb={-18}>
+        Fees & Revenue
+      </SectionHeader>
 
-            {/* Overview Chart - Stacked Bar Chart */}
-            <SSection>
-                <FeesOverviewChart />
-            </SSection>
+      {/* Overview Chart - Stacked Bar Chart */}
+      <SSection>
+        <FeesOverviewChart />
+      </SSection>
 
-            {/* Trading Fees / Revenue Section */}
-            <SSection>
-                <SectionHeader>Trading Fees</SectionHeader>
-                <TradingFeesChart />
-            </SSection>
+      {/* Trading Fees / Revenue Section */}
+      <SSection>
+        <SectionHeader>Trading Fees</SectionHeader>
+        <TradingFeesChart />
+      </SSection>
 
-            {/* Liquidity Fees Section */}
-            <SSection>
-                <SectionHeader>Liquidity / Withdraw Fees</SectionHeader>
-                <LiquidityFeesChart />
-            </SSection>
+      {/* Liquidity Fees Section */}
+      <SSection>
+        <SectionHeader>Liquidity / Withdraw Fees</SectionHeader>
+        <LiquidityFeesChart />
+      </SSection>
 
-            {/* Supply & Borrow Fees Section */}
-            <SSection>
-                <SectionHeader>Supply & Borrow Fees</SectionHeader>
-                <SupplyBorrowFeesChart />
-            </SSection>
+      {/* Supply & Borrow Fees Section */}
+      <SSection>
+        <SectionHeader>Supply & Borrow Fees</SectionHeader>
+        <SupplyBorrowFeesChart />
+      </SSection>
 
-            {/* Hollar Fees Section */}
-            <SSection>
-                <SectionHeader>Hollar Fees</SectionHeader>
-                <HollarFeesChart />
-            </SSection>
-        </SPageContainer>
-    )
+      {/* Hollar Fees Section */}
+      <SSection>
+        <SectionHeader>Hollar Fees</SectionHeader>
+        <HollarFeesChart />
+      </SSection>
+    </SPageContainer>
+  )
 }
 
 export const Route = createFileRoute("/stats/fees")({
-    component: FeesStats,
+  component: FeesStats,
 })

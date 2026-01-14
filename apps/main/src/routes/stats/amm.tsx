@@ -34,7 +34,7 @@ const SSectionTitle = styled.h2<{ color?: string }>(
     align-items: center;
     gap: 12px;
     font-family: ${theme.fontFamilies1.primary};
-    font-size: ${theme.headlineSize.h5};
+    font-size: 20px;
     font-weight: 500;
     color: ${theme.text.high};
     margin: 0;
@@ -199,7 +199,7 @@ function AMMStats() {
                 />
             </Flex>
 
-            <SectionHeader>Omnipool assets</SectionHeader>
+
             <TableContainer as={Paper}>
                 <DataTable
                     data={omnipoolAssets}
@@ -241,7 +241,7 @@ function AMMStats() {
                 />
             </Flex>
 
-            <SectionHeader>Stableswap pools</SectionHeader>
+
             <TableContainer as={Paper}>
                 <DataTable
                     data={stableswapPools}
@@ -281,7 +281,7 @@ function AMMStats() {
                 />
             </Flex>
 
-            <SectionHeader>XYK pairs</SectionHeader>
+
             <TableContainer as={Paper}>
                 <DataTable
                     data={xykPools}

@@ -1,8 +1,12 @@
+import { Fragment } from "react"
 import { createFileRoute } from "@tanstack/react-router"
 import { css, styled } from "@galacticcouncil/ui/utils"
-import { SectionHeader, Text, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
+import { AssetLabel, Flex, SectionHeader, Separator, Text, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
+import { AssetLogo } from "@/components/AssetLogo"
 import { HollarSupplyChart } from "@/modules/stats/components/HollarSupplyChart"
+
+import { HOLLAR_ASSET_ID, SUSDE_ASSET_ID, SUSDS_ASSET_ID, USDT_ASSET_ID } from "@galacticcouncil/utils"
 
 const SPageContainer = styled.div`
   display: flex;
@@ -20,29 +24,10 @@ const SSection = styled.section(
   `
 )
 
-const SMetricsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-`
-
-const SStatCard = styled.div(
-  ({ theme }) => css`
-    background: ${theme.surfaces.containers.high.primary};
-    border: 1px solid ${theme.details.borders};
-    border-radius: 12px;
-    padding: 20px;
-  `
-)
-
-const SReservesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  
-  @media (max-width: 1000px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+const SStatCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 `
 
 const SCollateralGrid = styled.div`
@@ -84,17 +69,17 @@ const SProgressBar = styled.div<{ $value: number; $color: string }>(
 )
 
 const reserves = [
-  { asset: 'HUSDT', value: '$2.1M', percentage: '25%', color: '#26A17B' },
-  { asset: 'HUSDC', value: '$1.8M', percentage: '27%', color: '#2775CA' },
-  { asset: 'HUSDe', value: '$1.5M', percentage: '29%', color: '#8B5CF6' },
-  { asset: 'HUSDs', value: '$1.2M', percentage: '19%', color: '#F4B731' },
+  { id: [HOLLAR_ASSET_ID, USDT_ASSET_ID], asset: 'HUSDT', name: 'Hydrated Tether', value: '$2.1M', percentage: '25%', color: '#26A17B' },
+  { id: [HOLLAR_ASSET_ID, '22'], asset: 'HUSDC', name: 'Hydrated USDC', value: '$1.8M', percentage: '27%', color: '#2775CA' },
+  { id: [HOLLAR_ASSET_ID, SUSDE_ASSET_ID], asset: 'HUSDe', name: 'Hydrated USDe', value: '$1.5M', percentage: '29%', color: '#8B5CF6' },
+  { id: [HOLLAR_ASSET_ID, SUSDS_ASSET_ID], asset: 'HUSDs', name: 'Hydrated USDS', value: '$1.2M', percentage: '19%', color: '#F4B731' },
 ]
 
 const collaterals = [
-  { asset: 'HUSDT', current: '$1.2M', cap: '$2M', percentage: 60, apy: '4.2%', color: '#26A17B' },
-  { asset: 'HUSDC', current: '$0.8M', cap: '$2M', percentage: 40, apy: '3.8%', color: '#2775CA' },
-  { asset: 'HUSDe', current: '$0.6M', cap: '$1.5M', percentage: 40, apy: '5.1%', color: '#8B5CF6' },
-  { asset: 'HUSDs', current: '$0.7M', cap: '$1.5M', percentage: 47, apy: '4.5%', color: '#F4B731' },
+  { id: [HOLLAR_ASSET_ID, USDT_ASSET_ID], asset: 'HUSDT', name: 'Hydrated Tether', current: '$1.2M', cap: '$2M', percentage: 60, apy: '4.2%', color: '#26A17B' },
+  { id: [HOLLAR_ASSET_ID, '22'], asset: 'HUSDC', name: 'Hydrated USDC', current: '$0.8M', cap: '$2M', percentage: 40, apy: '3.8%', color: '#2775CA' },
+  { id: [HOLLAR_ASSET_ID, SUSDE_ASSET_ID], asset: 'HUSDe', name: 'Hydrated USDe', current: '$0.6M', cap: '$1.5M', percentage: 40, apy: '5.1%', color: '#8B5CF6' },
+  { id: [HOLLAR_ASSET_ID, SUSDS_ASSET_ID], asset: 'HUSDs', name: 'Hydrated USDS', current: '$0.7M', cap: '$1.5M', percentage: 47, apy: '4.5%', color: '#F4B731' },
 ]
 
 function HollarStats() {
@@ -104,60 +89,67 @@ function HollarStats() {
     <SPageContainer>
       <SectionHeader as="h1" sx={{ p: 0 }} mb={-12}>Hollar (HUSD)</SectionHeader>
 
-      <SMetricsGrid>
-        <SStatCard>
-          <ValueStats
-            label="Total Hollar Supply"
-            size="medium"
-            customValue={
-              <ValueStatsValue size="medium" style={{ color: '#8B5CF6' }}>
-                $8.5M
-              </ValueStatsValue>
-            }
-          />
-        </SStatCard>
-        <SStatCard>
-          <ValueStats
-            label="Total Borrowed"
-            value="$5.2M"
-            size="medium"
-          />
-        </SStatCard>
-        <SStatCard>
-          <ValueStats
-            label="Total from HSM"
-            value="$3.3M"
-            size="medium"
-          />
-        </SStatCard>
-        <SStatCard>
-          <ValueStats
-            label="Hollar Peg"
-            size="medium"
-            customValue={
-              <ValueStatsValue size="medium" style={{ color: theme.details.values.positive }}>
-                $1.0001
-              </ValueStatsValue>
-            }
-          />
-        </SStatCard>
-      </SMetricsGrid>
+      <Flex gap={20} justify="space-between" sx={{ py: 10, overflowX: 'auto', height: 80 }}>
+        <ValueStats
+          label="Total Hollar Supply"
+          size="large"
+          wrap
+          customValue={
+            <ValueStatsValue size="large" style={{ color: '#8B5CF6' }}>
+              $8.5M
+            </ValueStatsValue>
+          }
+        />
+        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
+        <ValueStats
+          label="Total Borrowed"
+          value="$5.2M"
+          size="large"
+          wrap
+        />
+        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
+        <ValueStats
+          label="Total from HSM"
+          value="$3.3M"
+          size="large"
+          wrap
+        />
+        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
+        <ValueStats
+          label="Hollar Peg"
+          size="large"
+          wrap
+          customValue={
+            <ValueStatsValue size="large" style={{ color: theme.details.values.positive }}>
+              $1.0001
+            </ValueStatsValue>
+          }
+        />
+      </Flex>
 
       <SSection>
         <HollarSupplyChart title="Hollar Supply History" value="$8.5M" />
       </SSection>
 
       <SSection>
-        <SectionHeader>Stablepool Reserves</SectionHeader>
-        <SReservesGrid>
-          {reserves.map((reserve) => (
-            <SStatCard key={reserve.asset}>
-              <Text fs={14} fw={500} color={reserve.color}>{reserve.asset}</Text>
-              <Text fs={18} fw={600} style={{ marginTop: 8 }}>{reserve.value}</Text>
-              <Text fs={12} color="text.medium">{reserve.percentage} of pool</Text>
-            </SStatCard>
+        <SectionHeader mb={20}>Stablepool Reserves</SectionHeader>
+        <Flex justify="space-between" gap={0}>
+          {reserves.map((reserve, index) => (
+            <Fragment key={reserve.asset}>
+              <SStatCard>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <AssetLogo id={reserve.id} size="medium" />
+                  <AssetLabel symbol={reserve.asset} name={reserve.name} />
+                </div>
+                <Text fs={22} style={{ marginTop: 8, fontFamily: theme.fontFamilies1.primary }}>{reserve.value}</Text>
+                <Text fs={12} color="text.medium">{reserve.percentage} of pool</Text>
+              </SStatCard>
+              {index < reserves.length - 1 && (
+                <Separator orientation="vertical" sx={{ my: 10, mx: 20 }} />
+              )}
+            </Fragment>
           ))}
-        </SReservesGrid>
+        </Flex>
       </SSection>
 
       <SSection>
@@ -166,7 +158,10 @@ function HollarStats() {
           {collaterals.map((col) => (
             <SCollateralCard key={col.asset}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Text fw={500} color={col.color}>{col.asset}</Text>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <AssetLogo id={col.id} size="medium" />
+                  <AssetLabel symbol={col.asset} name={col.name} />
+                </div>
                 <Text fs={12} color="text.medium">{col.current} / {col.cap}</Text>
               </div>
               <SProgressBar $value={col.percentage} $color={col.color} />

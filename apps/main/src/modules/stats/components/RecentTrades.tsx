@@ -1,6 +1,7 @@
 import { ArrowRightLong } from "@galacticcouncil/ui/assets/icons"
 import { DataTable, Flex, Icon, Text } from "@galacticcouncil/ui/components"
 import { getToken, getTokenPx } from "@galacticcouncil/ui/utils"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC } from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { AssetLogo } from "@/components/AssetLogo"
@@ -68,43 +69,45 @@ const mockTrades: Trade[] = [
   { account: '7PQRst...XYz2AB', fromAmount: '150', fromAsset: 'CFG', toAmount: '57', toAsset: 'USDC', value: '57 USDC', date: '02/01/2025, 15:52' },
 ]
 
-const columns: ColumnDef<Trade>[] = [
-  {
-    accessorKey: 'account',
-    header: 'Account',
-    cell: ({ getValue }) => (
-      <Text color="#4CAF50">{getValue() as string}</Text>
-    ),
-  },
-  {
-    id: 'trade',
-    header: '',
-    cell: ({ row }) => (
-      <SwapFlow
-        fromAmount={row.original.fromAmount}
-        fromAsset={row.original.fromAsset}
-        toAmount={row.original.toAmount}
-        toAsset={row.original.toAsset}
-      />
-    ),
-  },
-  {
-    accessorKey: 'value',
-    header: 'Trade Value',
-  },
-  {
-    accessorKey: 'date',
-    header: 'Date',
-    cell: ({ getValue }) => (
-      <Flex align="center" gap={4}>
-        <Text color={getToken("text.medium")}>{getValue() as string}</Text>
-        <Text color={getToken("text.low")}>→</Text>
-      </Flex>
-    ),
-  },
-]
-
 export const RecentTrades: FC = () => {
+  const { themeProps: theme } = useTheme()
+
+  const columns: ColumnDef<Trade>[] = [
+    {
+      accessorKey: 'account',
+      header: 'Account',
+      cell: ({ getValue }) => (
+        <Text color={theme.details.values.positive}>{getValue() as string}</Text>
+      ),
+    },
+    {
+      id: 'trade',
+      header: '',
+      cell: ({ row }) => (
+        <SwapFlow
+          fromAmount={row.original.fromAmount}
+          fromAsset={row.original.fromAsset}
+          toAmount={row.original.toAmount}
+          toAsset={row.original.toAsset}
+        />
+      ),
+    },
+    {
+      accessorKey: 'value',
+      header: 'Trade Value',
+    },
+    {
+      accessorKey: 'date',
+      header: 'Date',
+      cell: ({ getValue }) => (
+        <Flex align="center" gap={4}>
+          <Text color={theme.text.medium}>{getValue() as string}</Text>
+          <Text color={theme.text.low}>→</Text>
+        </Flex>
+      ),
+    },
+  ]
+
   return (
     <STableWrapper>
       <DataTable

@@ -1,22 +1,27 @@
 ---
 trigger: always_on
-glob: **/*
-description: Guidelines for maximizing component reuse and maintaining visual consistency.
 ---
 
-## Component Implementation Workflow
+## Component Reusability
 
-**Step 1: Consult Storybook / Component Index**
-Before writing ANY layout or component code, check `packages/ui/src/components` or the component index.
--   **Index Path**: `.agent/docs/component_index.md` (Absolute: `/Users/samborek/Documents/AntigravityTests/hydration-ui/.agent/docs/component_index.md`)
--   **Goal**: Find an existing component that solves the problem.
--   **Example**: Need a group of filter buttons? Check for `ToggleGroup`. Need a chart? Check for `Chart`.
+Before creating any new styled components or UI elements:
 
-**Step 2: Check Theme Tokens**
-If no component exists, ensure all primitive styling uses theme tokens.
--   Colors: `theme.surfaces.*, `theme.text.*`
--   Spacing: `theme.containers.paddings.*`
--   Borders: `theme.details.borders`, `theme.details.separators`
+1. **Check UI Library First** - Look for existing components in `@galacticcouncil/ui/components`:
+   - `Button`, `Text`, `Flex`, `Box`, [DataTable](cci:1://file:///Users/samborek/Documents/AntigravityTests/hydration-ui/packages/ui/src/components/DataTable/DataTable.tsx:90:0-332:1), [Chip](cci:1://file:///Users/samborek/Documents/AntigravityTests/hydration-ui/packages/ui/src/components/Chip/Chip.tsx:10:0-10:66), etc.
+   - Use Storybook (`packages/ui`) as the reference for available components and their variants
 
-**Step 3: Reference Existing Modules**
-Look at `wallet` or `liquidity` modules for usage patterns of these components.
+2. **Check Theme Tokens** - Never hardcode colors or spacing:
+   - Backgrounds: `theme.surfaces.containers.*`
+   - Borders: `theme.details.borders`, `theme.details.separators`
+   - Paddings: `theme.containers.paddings.*`
+   - Text colors: `theme.text.*`
+
+3. **Check Existing Patterns** - Look at similar pages for established patterns:
+   - Wallet, Liquidity, Borrow modules are good references
+   - Copy styled component patterns from existing modules
+
+4. **Use Storybook** - Run Storybook to see all available components:
+   ```bash
+   cd packages/ui && yarn storybook
+
+Overall when implementing precisely compare the styling, parameters, focus on details when comparing - this should apply when we have Figma Design provided or available component in library

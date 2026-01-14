@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Text } from "@galacticcouncil/ui/components"
+import { Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
 import { FC, useState } from "react"
 import {
     AreaChart,
@@ -10,6 +10,9 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from "recharts"
+import { css } from "@galacticcouncil/ui/utils"
+import { useTheme } from "@galacticcouncil/ui/theme"
+import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -55,28 +58,7 @@ const SLegendDot = styled.div<{ $color: string }>`
   background: ${({ $color }) => $color};
 `
 
-const SPillToggle = styled.div`
-  display: flex;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
-  padding: 4px;
-`
 
-const SPillButton = styled.button<{ $active: boolean }>`
-  background: ${({ $active }) => $active ? '#85D1FF' : 'transparent'};
-  color: ${({ $active }) => $active ? '#000' : 'rgba(255, 255, 255, 0.6)'};
-  border: none;
-  border-radius: 16px;
-  padding: 4px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    color: ${({ $active }) => $active ? '#000' : '#fff'};
-  }
-`
 
 const SCircleToggle = styled.div`
   display: flex;
@@ -84,26 +66,28 @@ const SCircleToggle = styled.div`
   align-items: center;
 `
 
-const SCircleButton = styled.button<{ $active: boolean }>`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: ${({ $active }) => $active ? 'rgba(255, 255, 255, 0.1)' : 'transparent'};
-  color: ${({ $active }) => $active ? '#fff' : 'rgba(255, 255, 255, 0.6)'};
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
+const SCircleButton = styled.button<{ $active: boolean }>(
+    ({ theme, $active }) => css`
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: ${$active ? theme.surfaces.containers.high.hover : 'transparent'};
+    color: ${$active ? theme.text.high : theme.text.medium};
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
 
-  &:hover {
-    color: #fff;
-    background: ${({ $active }) => $active ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.05)'};
-  }
-`
+    &:hover {
+      color: ${theme.text.high};
+      background: ${$active ? theme.surfaces.containers.high.hover : theme.surfaces.containers.high.primary};
+    }
+  `
+)
 
 // Generate mock data for the chart
 const generateMockData = () => {
@@ -173,27 +157,38 @@ export const TVLCompositionChart: FC<Props> = ({
         xykPools: `$${(latestData?.xykPools || 0).toFixed(2)}M`,
     }
 
+    const { themeProps: theme } = useTheme()
+
     return (
         <SChartContainer>
             <SChartHeader>
                 <div>
-                    <Text fs={14} color="rgba(255,255,255,0.6)">{title}</Text>
-                    <Text fs={32} fw={700} color="#FF4B8C" style={{ fontFamily: 'Gazpacho, sans-serif' }}>
+                    <Text fs={14} color="text.medium">{title}</Text>
+                    <Text fs={32} fw={700} color="secondaryColors.pink.coralPink" style={{ fontFamily: 'Gazpacho, sans-serif' }}>
                         {value}
                     </Text>
                 </div>
                 <SControlsGroup>
-                    <SPillToggle>
+                    <ToggleGroup
+                        type="single"
+                        value={filter}
+                        onValueChange={(v) => v && setFilter(v as Filter)}
+                    >
                         {(['All', 'Omnipool', 'Stable', 'XYK', 'MM'] as Filter[]).map((f) => (
-                            <SPillButton
+                            <ToggleGroupItem
                                 key={f}
-                                $active={filter === f}
-                                onClick={() => setFilter(f)}
+                                value={f}
+                                style={{
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    padding: '4px 12px',
+                                    borderRadius: '16px',
+                                }}
                             >
                                 {f}
-                            </SPillButton>
+                            </ToggleGroupItem>
                         ))}
-                    </SPillToggle>
+                    </ToggleGroup>
                     <SCircleToggle>
                         {(['1W', '1M', '3M'] as TimeRange[]).map((range) => (
                             <SCircleButton
@@ -229,27 +224,29 @@ export const TVLCompositionChart: FC<Props> = ({
                             <stop offset="95%" stopColor={COLORS.xykPools} stopOpacity={0.2} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
                     <XAxis
                         dataKey="date"
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.medium, fontSize: 11 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                     />
                     <YAxis
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.medium, fontSize: 11 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                         tickFormatter={(value) => `$${value}M`}
                     />
                     <Tooltip
-                        contentStyle={{
-                            background: 'rgba(20, 20, 30, 0.95)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: 8,
-                            color: '#fff',
-                        }}
-                        formatter={(value: number) => [`$${value.toFixed(2)}M`, '']}
+                        content={({ active, payload, label }) => (
+                            <ChartTooltipContent
+                                active={active}
+                                payload={payload as any}
+                                label={label}
+                                valueFormatter={(v) => `$${v.toFixed(2)}M`}
+                            />
+                        )}
+                        cursor={chartCursorStyle}
                     />
                     {(filter === 'All' || filter === 'Omnipool') && (
                         <Area
@@ -297,22 +294,22 @@ export const TVLCompositionChart: FC<Props> = ({
             <SLegendRow>
                 <SLegendItem>
                     <SLegendDot $color={COLORS.omnipool} />
-                    <Text fs={12} color="rgba(255,255,255,0.6)">Omnipool:</Text>
+                    <Text fs={12} color="text.medium">Omnipool:</Text>
                     <Text fs={12} fw={500}>{totals.omnipool}</Text>
                 </SLegendItem>
                 <SLegendItem>
                     <SLegendDot $color={COLORS.stablePools} />
-                    <Text fs={12} color="rgba(255,255,255,0.6)">Stable Pools:</Text>
+                    <Text fs={12} color="text.medium">Stable Pools:</Text>
                     <Text fs={12} fw={500}>{totals.stablePools}</Text>
                 </SLegendItem>
                 <SLegendItem>
                     <SLegendDot $color={COLORS.moneyMarket} />
-                    <Text fs={12} color="rgba(255,255,255,0.6)">Money Market:</Text>
+                    <Text fs={12} color="text.medium">Money Market:</Text>
                     <Text fs={12} fw={500}>{totals.moneyMarket}</Text>
                 </SLegendItem>
                 <SLegendItem>
                     <SLegendDot $color={COLORS.xykPools} />
-                    <Text fs={12} color="rgba(255,255,255,0.6)">XYK Pools:</Text>
+                    <Text fs={12} color="text.medium">XYK Pools:</Text>
                     <Text fs={12} fw={500}>{totals.xykPools}</Text>
                 </SLegendItem>
             </SLegendRow>

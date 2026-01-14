@@ -2,6 +2,7 @@ import styled from "@emotion/styled"
 import { DataTable, Flex, Text } from "@galacticcouncil/ui/components"
 import { getToken } from "@galacticcouncil/ui/utils"
 import { FC } from "react"
+import { useNavigate } from "@tanstack/react-router"
 import { AssetLogo } from "@/components/AssetLogo"
 import { ColumnDef } from "@tanstack/react-table"
 
@@ -79,6 +80,12 @@ const columns: ColumnDef<OmnipoolAsset>[] = [
 ]
 
 export const OmnipoolTable: FC = () => {
+  const navigate = useNavigate()
+
+  const handleRowClick = (row: OmnipoolAsset) => {
+    navigate({ to: '/stats/asset/$asset', params: { asset: row.symbol.toLowerCase() } })
+  }
+
   return (
     <STableWrapper>
       <DataTable
@@ -87,8 +94,9 @@ export const OmnipoolTable: FC = () => {
         paginated
         pageSize={5}
         size="large"
-        onRowClick={() => { }}
+        onRowClick={handleRowClick}
       />
     </STableWrapper>
   )
 }
+

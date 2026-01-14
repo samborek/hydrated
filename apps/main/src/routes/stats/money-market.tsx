@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { css, styled } from "@galacticcouncil/ui/utils"
-import { SectionHeader, Text } from "@galacticcouncil/ui/components"
+import { SectionHeader, Text, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import { AssetLogo } from "@/components/AssetLogo"
 import { SupplyBorrowChart } from "@/modules/stats/components/SupplyBorrowChart"
 
@@ -26,34 +27,36 @@ const SMetricsGrid = styled.div`
   gap: 16px;
 `
 
-const SMetricCard = styled.div(
+const SStatCard = styled.div(
   ({ theme }) => css`
-    background: ${theme.surfaces.containers.high.accent};
+    background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
-    border-radius: 8px;
-    padding: 16px;
+    border-radius: 12px;
+    padding: 20px;
   `
 )
 
-const STable = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  
-  th, td {
-    text-align: left;
-    padding: 12px 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  }
-  
-  th {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.5);
-  }
-  
-  tbody tr:hover {
-    background: rgba(255, 255, 255, 0.02);
-  }
-`
+const STable = styled.table(
+  ({ theme }) => css`
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 1px solid ${theme.details.separators};
+    }
+
+    th {
+      font-size: 12px;
+      color: ${theme.text.medium};
+    }
+
+    tbody tr:hover {
+      background: ${theme.surfaces.containers.high.hover};
+    }
+  `
+)
 
 const SAssetCell = styled.div`
   display: flex;
@@ -61,22 +64,24 @@ const SAssetCell = styled.div`
   gap: 12px;
 `
 
-const SProgressBar = styled.div<{ $value: number }>`
-  height: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  overflow: hidden;
-  width: 100px;
-  
-  &::after {
-    content: '';
-    display: block;
-    height: 100%;
-    width: ${({ $value }) => $value}%;
-    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+const SProgressBar = styled.div<{ $value: number }>(
+  ({ theme, $value }) => css`
+    height: 8px;
+    background: ${theme.surfaces.containers.dim.dimOnBg};
     border-radius: 4px;
-  }
-`
+    overflow: hidden;
+    width: 100px;
+
+    &::after {
+      content: '';
+      display: block;
+      height: 100%;
+      width: ${$value}%;
+      background: linear-gradient(90deg, ${theme.details.values.positive}, #8BC34A);
+      border-radius: 4px;
+    }
+  `
+)
 
 // Mock data with real asset IDs
 const mockMarkets = [
@@ -87,27 +92,57 @@ const mockMarkets = [
 ]
 
 function MoneyMarketStats() {
+  const { themeProps: theme } = useTheme()
+
   return (
     <SPageContainer>
       <SectionHeader as="h1" sx={{ p: 0 }} mb={-12}>Money Market</SectionHeader>
 
       <SMetricsGrid>
-        <SMetricCard>
-          <Text fs={12} color="rgba(255,255,255,0.5)" style={{ marginBottom: 8 }}>Total Value Locked</Text>
-          <Text fs={28} fw={700} color="#F59E0B" style={{ fontFamily: 'Gazpacho, sans-serif' }}>$12.6M</Text>
-        </SMetricCard>
-        <SMetricCard>
-          <Text fs={12} color="rgba(255,255,255,0.5)" style={{ marginBottom: 8 }}>Total Supplied</Text>
-          <Text fs={24} fw={700} color="#22C55E" style={{ fontFamily: 'Gazpacho, sans-serif' }}>$12.6M</Text>
-        </SMetricCard>
-        <SMetricCard>
-          <Text fs={12} color="rgba(255,255,255,0.5)" style={{ marginBottom: 8 }}>Total Borrowed</Text>
-          <Text fs={24} fw={700} color="#F59E0B" style={{ fontFamily: 'Gazpacho, sans-serif' }}>$7.5M</Text>
-        </SMetricCard>
-        <SMetricCard>
-          <Text fs={12} color="rgba(255,255,255,0.5)" style={{ marginBottom: 8 }}>Liquidations (24h)</Text>
-          <Text fs={24} fw={700} color="#EF4444" style={{ fontFamily: 'Gazpacho, sans-serif' }}>$45,230</Text>
-        </SMetricCard>
+        <SStatCard>
+          <ValueStats
+            label="Total Value Locked"
+            size="medium"
+            customValue={
+              <ValueStatsValue size="medium" style={{ color: '#F59E0B' }}>
+                $12.6M
+              </ValueStatsValue>
+            }
+          />
+        </SStatCard>
+        <SStatCard>
+          <ValueStats
+            label="Total Supplied"
+            size="medium"
+            customValue={
+              <ValueStatsValue size="medium" style={{ color: theme.details.values.positive }}>
+                $12.6M
+              </ValueStatsValue>
+            }
+          />
+        </SStatCard>
+        <SStatCard>
+          <ValueStats
+            label="Total Borrowed"
+            size="medium"
+            customValue={
+              <ValueStatsValue size="medium" style={{ color: '#F59E0B' }}>
+                $7.5M
+              </ValueStatsValue>
+            }
+          />
+        </SStatCard>
+        <SStatCard>
+          <ValueStats
+            label="Liquidations (24h)"
+            size="medium"
+            customValue={
+              <ValueStatsValue size="medium" style={{ color: theme.details.values.negative }}>
+                $45,230
+              </ValueStatsValue>
+            }
+          />
+        </SStatCard>
       </SMetricsGrid>
 
       <SSection>
@@ -144,7 +179,7 @@ function MoneyMarketStats() {
                     <Text fs={12}>{market.utilization}%</Text>
                   </div>
                 </td>
-                <td><Text color="#4CAF50">{market.supplyApy}</Text></td>
+                <td><Text color={theme.details.values.positive}>{market.supplyApy}</Text></td>
                 <td><Text color="#FF9800">{market.borrowApy}</Text></td>
               </tr>
             ))}

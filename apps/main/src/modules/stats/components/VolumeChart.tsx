@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
 import { Button, Flex, Text } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState } from "react"
 import {
     AreaChart,
@@ -10,6 +11,7 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from "recharts"
+import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -59,6 +61,7 @@ export const VolumeChart: FC<Props> = ({
     title = "24h Volume",
     value = "$10.3M"
 }) => {
+    const { themeProps: theme } = useTheme()
     const [timeRange, setTimeRange] = useState<TimeRange>('30D')
 
     // Filter data based on time range
@@ -73,7 +76,7 @@ export const VolumeChart: FC<Props> = ({
         <SChartContainer>
             <SChartHeader>
                 <div>
-                    <Text fs={14} color="rgba(255,255,255,0.6)">{title}</Text>
+                    <Text fs={14} color={theme.text.medium}>{title}</Text>
                     <Text fs={28} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif' }}>
                         {value}
                     </Text>
@@ -102,27 +105,29 @@ export const VolumeChart: FC<Props> = ({
                             <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
                     <XAxis
                         dataKey="date"
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.low, fontSize: 10 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                     />
                     <YAxis
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.low, fontSize: 10 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                         tickFormatter={(value) => `$${value}M`}
                     />
                     <Tooltip
-                        contentStyle={{
-                            background: 'rgba(20, 20, 30, 0.95)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: 8,
-                            color: '#fff',
-                        }}
-                        formatter={(value: number) => [`$${value.toFixed(2)}M`, 'Volume']}
+                        content={({ active, payload, label }) => (
+                            <ChartTooltipContent
+                                active={active}
+                                payload={payload as any}
+                                label={label}
+                                valueFormatter={(v) => `$${v.toFixed(2)}M`}
+                            />
+                        )}
+                        cursor={{ fill: theme.surfaces.containers.high.hover }}
                     />
 
                     <Area

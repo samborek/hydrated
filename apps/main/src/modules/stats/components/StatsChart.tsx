@@ -1,7 +1,7 @@
 import styled from "@emotion/styled"
 import { Text } from "@galacticcouncil/ui/components"
 import { FC, useState } from "react"
-
+import { css } from "@galacticcouncil/ui/utils"
 const SChartContainer = styled.div`
   width: 100%;
 `
@@ -13,48 +13,55 @@ const SChartHeader = styled.div`
   margin-bottom: 20px;
 `
 
-const SToggleGroup = styled.div`
-  display: flex;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 4px;
-`
+const SToggleGroup = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    background: ${theme.surfaces.containers.high.primary};
+    border: 1px solid ${theme.details.borders};
+    border-radius: 8px;
+    padding: 4px;
+  `
+)
 
-const SToggleButton = styled.button<{ $active?: boolean }>`
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  transition: all 0.2s;
-  background: ${({ $active }) => $active ? 'rgba(255, 255, 255, 0.1)' : 'transparent'};
-  color: ${({ $active }) => $active ? '#fff' : 'rgba(255, 255, 255, 0.5)'};
-  
-  &:hover {
-    color: #fff;
-  }
-`
+const SToggleButton = styled.button<{ $active?: boolean }>(
+  ({ theme, $active }) => css`
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: ${$active ? theme.secondaryColors.blues.vibrantBlue : 'transparent'};
+    color: ${$active ? '#000000' : theme.text.medium};
+    
+    &:hover {
+      color: ${$active ? '#000000' : theme.text.high};
+    }
+  `
+)
 
 const STimeRangeGroup = styled.div`
   display: flex;
   gap: 8px;
 `
 
-const STimeButton = styled.button<{ $active?: boolean }>`
-  padding: 6px 12px;
-  border: 1px solid ${({ $active }) => $active ? 'rgba(255, 255, 255, 0.2)' : 'transparent'};
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  background: ${({ $active }) => $active ? 'rgba(255, 255, 255, 0.05)' : 'transparent'};
-  color: ${({ $active }) => $active ? '#fff' : 'rgba(255, 255, 255, 0.5)'};
+const STimeButton = styled.button<{ $active?: boolean }>(
+  ({ theme, $active }) => css`
+    padding: 6px 12px;
+    border: 1px solid ${$active ? theme.details.borders : 'transparent'};
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    background: ${$active ? theme.surfaces.containers.high.hover : 'transparent'};
+    color: ${$active ? theme.text.high : theme.text.medium};
   
-  &:hover {
-    color: #fff;
-  }
-`
+    &:hover {
+      color: ${theme.text.high};
+    }
+  `
+)
 
 const SChartPlaceholder = styled.div`
   height: 300px;
@@ -133,14 +140,14 @@ export const StatsChart: FC = () => {
 
       <SChartPlaceholder>
         <SChartValue>
-          <Text fs={12} color="rgba(255,255,255,0.5)">
+          <Text fs={12} color="text.medium">
             {chartType === 'price' ? 'Price' : 'Volume'}
           </Text>
           <Text fs={24} fw={600}>
             0.000000345 HDX
           </Text>
         </SChartValue>
-        <Text color="rgba(255,255,255,0.3)" fs={14}>
+        <Text color="text.medium" fs={14}>
           Chart visualization (integrate with charting library)
         </Text>
       </SChartPlaceholder>

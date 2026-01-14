@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { SectionHeader } from "@galacticcouncil/ui/components"
 import { StatsHeader } from "@/modules/stats/components/StatsHeader"
-import { OmnipoolTable } from "@/modules/stats/components/OmnipoolTable"
 import { RecentTrades } from "@/modules/stats/components/RecentTrades"
 import { TVLCompositionChart } from "@/modules/stats/components/TVLCompositionChart"
 import { VolumeChart } from "@/modules/stats/components/VolumeChart"
@@ -56,12 +55,6 @@ function PlatformOverview() {
           <FeesStackedChart title="Protocol Fees" />
         </SSection>
       </SChartsGrid>
-
-      {/* Omnipool Assets */}
-      <SSection>
-        <SectionHeader>Omnipool assets</SectionHeader>
-        <OmnipoolTable />
-      </SSection>
 
       {/* Recent Trades */}
       <SSection>

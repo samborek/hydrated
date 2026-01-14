@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
-import { css } from "@emotion/react"
 import { Button, Flex, Text } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState } from "react"
 import {
     BarChart,
@@ -12,24 +12,11 @@ import {
     ResponsiveContainer,
     Legend,
 } from "recharts"
+import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
   width: 100%;
 `
-
-const STooltipContainer = styled.div(
-    ({ theme }) => css`
-    display: grid;
-    align-items: start;
-    gap: 6px;
-    border-radius: ${theme.radii.md}px;
-    background-color: ${theme.details.tooltips};
-    padding: ${theme.scales.paddings.m}px;
-    box-shadow:
-      0px 3px 9px 0px rgba(0, 0, 0, 0.04),
-      0px 14px 37px 0px rgba(0, 0, 0, 0.04);
-  `,
-)
 
 const SChartHeader = styled.div`
   display: flex;
@@ -91,6 +78,7 @@ type Props = {
 export const FeesStackedChart: FC<Props> = ({
     title = "Fees summary"
 }) => {
+    const { themeProps: theme } = useTheme()
     const [timeRange, setTimeRange] = useState<TimeRange>('1M')
 
     // Filter data based on time range
@@ -110,11 +98,11 @@ export const FeesStackedChart: FC<Props> = ({
         <SChartContainer>
             <SChartHeader>
                 <div>
-                    <Text fs={14} color="rgba(255,255,255,0.6)">{title}</Text>
+                    <Text fs={14} color={theme.text.medium}>{title}</Text>
                     <Text fs={28} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif' }}>
                         ${(totalFees / 1000).toFixed(1)}K
                     </Text>
-                    <Text fs={12} color="rgba(255,255,255,0.4)">
+                    <Text fs={12} color={theme.text.low}>
                         Last {timeRange === '1W' ? '7 days' : timeRange === '1M' ? '30 days' : '90 days'}
                     </Text>
                 </div>
@@ -136,38 +124,29 @@ export const FeesStackedChart: FC<Props> = ({
 
             <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={filteredData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
                     <XAxis
                         dataKey="date"
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.low, fontSize: 11 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                     />
                     <YAxis
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.low, fontSize: 11 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                         tickFormatter={(value) => `$${(value / 1000).toFixed(1)} K`}
                     />
                     <Tooltip
-                        content={({ active, payload, label }) => {
-                            if (!active || !payload?.length) return null
-                            return (
-                                <STooltipContainer>
-                                    <Text fs={14} fw={600} color="text.high">{label}</Text>
-                                    {payload.map((entry: any) => (
-                                        <Flex key={entry.dataKey} gap={8} align="center">
-                                            <div style={{ width: 10, height: 10, backgroundColor: entry.color, borderRadius: 2, flexShrink: 0 }} />
-                                            <Flex justify="space-between" gap={20} sx={{ flex: 1 }}>
-                                                <Text fs={13} color="text.medium">{entry.name}</Text>
-                                                <Text fs={13} fw={500} color="text.high">${entry.value.toFixed(2)}</Text>
-                                            </Flex>
-                                        </Flex>
-                                    ))}
-                                </STooltipContainer>
-                            )
-                        }}
-                        cursor={{ fill: 'rgba(255, 255, 255, 0.04)' }}
+                        content={({ active, payload, label }) => (
+                            <ChartTooltipContent
+                                active={active}
+                                payload={payload as any}
+                                label={label}
+                                valueFormatter={(v) => `$${v.toFixed(2)}`}
+                            />
+                        )}
+                        cursor={{ fill: theme.surfaces.containers.high.hover }}
                     />
                     <Legend
                         verticalAlign="bottom"
@@ -185,7 +164,7 @@ export const FeesStackedChart: FC<Props> = ({
                                                 borderRadius: '4px'
                                             }}
                                         />
-                                        <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                                        <span style={{ color: theme.text.low, fontSize: '12px' }}>
                                             {entry.value}
                                         </span>
                                     </div>

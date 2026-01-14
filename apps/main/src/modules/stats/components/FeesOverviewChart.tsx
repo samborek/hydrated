@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
-import { css } from "@emotion/react"
 import { Button, Flex, Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState, useMemo } from "react"
 import {
     BarChart,
@@ -14,24 +14,11 @@ import {
     ResponsiveContainer,
     Legend,
 } from "recharts"
+import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
   width: 100%;
 `
-
-const STooltipContainer = styled.div(
-    ({ theme }) => css`
-    display: grid;
-    align-items: start;
-    gap: 6px;
-    border-radius: ${theme.radii.md}px;
-    background-color: ${theme.details.tooltips};
-    padding: ${theme.scales.paddings.m}px;
-    box-shadow:
-      0px 3px 9px 0px rgba(0, 0, 0, 0.04),
-      0px 14px 37px 0px rgba(0, 0, 0, 0.04);
-  `,
-)
 
 const SChartHeader = styled.div`
   display: flex;
@@ -124,6 +111,7 @@ type ViewMode = 'fees' | 'revenue'
 const FEE_KEYS = ['networkFees', 'tradingFees', 'liquidityFees', 'supplyBorrowFees', 'hollarFees'] as const
 
 export const FeesOverviewChart: FC = () => {
+    const { themeProps: theme } = useTheme()
     const [timeRange, setTimeRange] = useState<TimeRange>('1M')
     const [viewMode, setViewMode] = useState<ViewMode>('revenue')
 
@@ -153,7 +141,7 @@ export const FeesOverviewChart: FC = () => {
         <SChartContainer>
             <SChartHeader>
                 <div>
-                    <Text fs={14} color="rgba(255,255,255,0.6)">
+                    <Text fs={14} color={theme.text.medium}>
                         {viewMode === 'revenue' ? 'Protocol Revenue' : 'Fee Distribution (%)'}
                     </Text>
                     <Text fs={32} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif' }}>
@@ -162,7 +150,7 @@ export const FeesOverviewChart: FC = () => {
                             : `${latestPercentages?.tradingFees.toFixed(1)}% Trading`
                         }
                     </Text>
-                    <Text fs={12} color="rgba(255,255,255,0.4)">
+                    <Text fs={12} color={theme.text.low}>
                         {timeRange === '1W' ? 'Last 7 days' :
                             timeRange === '1M' ? 'Last 30 days' :
                                 timeRange === '1Y' ? 'Last year' : 'All time'}
@@ -199,38 +187,30 @@ export const FeesOverviewChart: FC = () => {
                 {viewMode === 'revenue' ? (
                     // REVENUE MODE: Stacked Bar Chart with absolute $ values
                     <BarChart data={rawFeesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
                         <XAxis
                             dataKey="date"
-                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                            tick={{ fill: theme.text.low, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
                             tickLine={false}
                         />
                         <YAxis
-                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                            tick={{ fill: theme.text.low, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
                             tickLine={false}
                             tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
                         />
                         <Tooltip
-                            content={({ active, payload, label }) => {
-                                if (!active || !payload?.length) return null
-                                return (
-                                    <STooltipContainer>
-                                        <Text fs={14} fw={600} color="text.high">{label}</Text>
-                                        {payload.map((entry: any) => (
-                                            <Flex key={entry.dataKey} gap={8} align="center">
-                                                <div style={{ width: 10, height: 10, backgroundColor: entry.color, borderRadius: 2, flexShrink: 0 }} />
-                                                <Flex justify="space-between" gap={20} sx={{ flex: 1 }}>
-                                                    <Text fs={13} color="text.medium">{LABELS[entry.name as keyof typeof LABELS] || entry.name}</Text>
-                                                    <Text fs={13} fw={500} color="text.high">${entry.value.toFixed(2)}</Text>
-                                                </Flex>
-                                            </Flex>
-                                        ))}
-                                    </STooltipContainer>
-                                )
-                            }}
-                            cursor={{ fill: 'rgba(255, 255, 255, 0.04)' }}
+                            content={({ active, payload, label }) => (
+                                <ChartTooltipContent
+                                    active={active}
+                                    payload={payload as any}
+                                    label={label}
+                                    valueFormatter={(v) => `$${v.toFixed(2)}`}
+                                    nameFormatter={(name) => LABELS[name as keyof typeof LABELS] || name}
+                                />
+                            )}
+                            cursor={{ fill: theme.surfaces.containers.high.hover }}
                         />
                         <Legend
                             verticalAlign="bottom"
@@ -248,7 +228,7 @@ export const FeesOverviewChart: FC = () => {
                                                     borderRadius: '4px'
                                                 }}
                                             />
-                                            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                                            <span style={{ color: theme.text.low, fontSize: '12px' }}>
                                                 {LABELS[entry.value as keyof typeof LABELS] || entry.value}
                                             </span>
                                         </div>
@@ -265,38 +245,30 @@ export const FeesOverviewChart: FC = () => {
                 ) : (
                     // FEES MODE: Line Chart showing % distribution over time
                     <LineChart data={percentageData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
                         <XAxis
                             dataKey="date"
-                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                            tick={{ fill: theme.text.low, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
                             tickLine={false}
                         />
                         <YAxis
-                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                            tick={{ fill: theme.text.low, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
                             tickLine={false}
                             tickFormatter={(value) => `${value.toFixed(0)}%`}
                             domain={[0, 100]}
                         />
                         <Tooltip
-                            content={({ active, payload, label }) => {
-                                if (!active || !payload?.length) return null
-                                return (
-                                    <STooltipContainer>
-                                        <Text fs={14} fw={600} color="text.high">{label}</Text>
-                                        {payload.map((entry: any) => (
-                                            <Flex key={entry.dataKey} gap={8} align="center">
-                                                <div style={{ width: 10, height: 10, backgroundColor: entry.color, borderRadius: 2, flexShrink: 0 }} />
-                                                <Flex justify="space-between" gap={20} sx={{ flex: 1 }}>
-                                                    <Text fs={13} color="text.medium">{LABELS[entry.name as keyof typeof LABELS] || entry.name}</Text>
-                                                    <Text fs={13} fw={500} color="text.high">{entry.value.toFixed(1)}%</Text>
-                                                </Flex>
-                                            </Flex>
-                                        ))}
-                                    </STooltipContainer>
-                                )
-                            }}
+                            content={({ active, payload, label }) => (
+                                <ChartTooltipContent
+                                    active={active}
+                                    payload={payload as any}
+                                    label={label}
+                                    valueFormatter={(v) => `${v.toFixed(1)}%`}
+                                    nameFormatter={(name) => LABELS[name as keyof typeof LABELS] || name}
+                                />
+                            )}
                         />
                         <Legend
                             verticalAlign="bottom"

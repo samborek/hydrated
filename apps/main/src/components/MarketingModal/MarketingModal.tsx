@@ -131,13 +131,10 @@ const SModalHero = styled.div`
   background-position: center;
   z-index: 0;
   border-radius: 12px 12px 0 0;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 30%, rgba(13, 21, 37, 0.5) 60%, #0D1525 100%);
-  }
+  
+  /* Use mask-image gradient like banner - fades to transparent at bottom */
+  mask-image: linear-gradient(180deg, black 0%, black 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, black 0%, black 50%, transparent 100%);
 `
 
 const SHeroContent = styled.div`

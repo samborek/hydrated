@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
 import { Button, Flex, Text } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState, useMemo } from "react"
 import {
     AreaChart,
@@ -11,6 +12,7 @@ import {
     ResponsiveContainer,
     Legend,
 } from "recharts"
+import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -54,6 +56,7 @@ const generateHollarFeesData = (timeRange: TimeRange) => {
 type TimeRange = '1W' | '1M' | '1Y' | 'ALL'
 
 export const HollarFeesChart: FC = () => {
+    const { themeProps: theme } = useTheme()
     const [timeRange, setTimeRange] = useState<TimeRange>('1M')
 
     const feesData = useMemo(() => generateHollarFeesData(timeRange), [timeRange])
@@ -68,7 +71,7 @@ export const HollarFeesChart: FC = () => {
                     <Text fs={24} fw={700} color="#8B5CF6" style={{ fontFamily: 'Gazpacho, sans-serif' }}>
                         ${(latestValue / 1000).toFixed(2)}K
                     </Text>
-                    <Text fs={12} color="rgba(255,255,255,0.4)">
+                    <Text fs={12} color={theme.text.low}>
                         HSM Revenue (latest)
                     </Text>
                 </div>
@@ -98,27 +101,29 @@ export const HollarFeesChart: FC = () => {
                             <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
                     <XAxis
                         dataKey="date"
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.low, fontSize: 11 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                     />
                     <YAxis
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.low, fontSize: 11 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                         tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
                     />
                     <Tooltip
-                        contentStyle={{
-                            background: 'rgba(20, 20, 30, 0.95)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: 8,
-                            color: '#fff',
-                        }}
-                        formatter={(value: number) => [`$${value.toFixed(2)}`, 'HSM Revenue']}
+                        content={({ active, payload, label }) => (
+                            <ChartTooltipContent
+                                active={active}
+                                payload={payload as any}
+                                label={label}
+                                valueFormatter={(v) => `$${v.toFixed(2)}`}
+                            />
+                        )}
+                        cursor={{ fill: theme.surfaces.containers.high.hover }}
                     />
                     <Legend
                         verticalAlign="bottom"

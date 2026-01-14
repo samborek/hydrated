@@ -48,7 +48,7 @@ const SImageArea = styled.div`
   background-position: center;
   border-radius: 0 8px 8px 0;
   overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent 0%, black 10%);
+  mask-image: linear-gradient(90deg, transparent 0%, black 0%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 80%);
 `
 

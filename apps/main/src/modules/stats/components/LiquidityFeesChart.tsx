@@ -13,6 +13,8 @@ import {
     Legend,
 } from "recharts"
 import { ChevronDown } from "lucide-react"
+import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
+import { useTheme } from "@galacticcouncil/ui/theme"
 
 
 
@@ -47,8 +49,8 @@ const SFilterBtn = styled.button(
         align-items: center;
         gap: 4px;
         padding: 8px 14px;
-        background: rgba(182, 182, 183, 0.2);
-        border: 0.7px solid rgba(124, 127, 138, 0.2);
+        background: ${theme.surfaces.containers.high.primary};
+        border: 1px solid ${theme.details.borders};
         border-radius: 32px;
         color: ${theme.text.medium};
         font-size: 14px;
@@ -57,26 +59,29 @@ const SFilterBtn = styled.button(
         transition: background 0.15s ease;
 
         &:hover {
-            background: rgba(182, 182, 183, 0.3);
+            background: ${theme.surfaces.containers.high.hover};
+            color: ${theme.text.high};
         }
     `
 )
 
 // Figma-based filter item row
-const SFilterItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 8px;
-  min-width: 100px;
-  border-radius: 32px;
-  cursor: pointer;
-  transition: background 0.15s ease;
+const SFilterItem = styled.div(
+    ({ theme }) => css`
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 8px;
+      min-width: 100px;
+      border-radius: 32px;
+      cursor: pointer;
+      transition: background 0.15s ease;
 
-  &:hover {
-      background: rgba(255, 255, 255, 0.05);
-  }
-`
+      &:hover {
+          background: ${theme.surfaces.containers.high.hover};
+      }
+    `
+)
 
 
 // Fee types in Liquidity Fees
@@ -132,6 +137,8 @@ export const LiquidityFeesChart: FC = () => {
     const latestData = feesData[feesData.length - 1]
     const total = activeTypes.reduce((acc, type) => acc + (latestData?.[type] || 0), 0)
 
+    const { themeProps: theme } = useTheme()
+
     return (
         <SChartContainer>
             <SChartHeader>
@@ -139,7 +146,7 @@ export const LiquidityFeesChart: FC = () => {
                     <Text fs={24} fw={700} color="#22C55E" style={{ fontFamily: 'Gazpacho, sans-serif' }}>
                         ${(total / 1000).toFixed(2)}K
                     </Text>
-                    <Text fs={12} color="rgba(255,255,255,0.4)">
+                    <Text fs={12} color="text.medium">
                         Latest period total
                     </Text>
                 </div>
@@ -197,30 +204,29 @@ export const LiquidityFeesChart: FC = () => {
                             <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
                     <XAxis
                         dataKey="date"
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.medium, fontSize: 11 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                     />
                     <YAxis
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.medium, fontSize: 11 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                         tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
                     />
                     <Tooltip
-                        contentStyle={{
-                            background: 'rgba(20, 20, 30, 0.95)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: 8,
-                            color: '#fff',
-                        }}
-                        formatter={(value: number, name: string) => [
-                            `$${value.toFixed(2)}`,
-                            FEE_TYPES[name as FeeType]?.label || name
-                        ]}
+                        content={({ active, payload, label }) => (
+                            <ChartTooltipContent
+                                active={active}
+                                payload={payload as any}
+                                label={label}
+                                valueFormatter={(v) => `$${v.toFixed(2)}`}
+                            />
+                        )}
+                        cursor={chartCursorStyle}
                     />
                     <Legend
                         verticalAlign="bottom"
@@ -238,7 +244,7 @@ export const LiquidityFeesChart: FC = () => {
                                                 borderRadius: '4px'
                                             }}
                                         />
-                                        <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                                        <span style={{ color: theme.text.medium, fontSize: '12px' }}>
                                             {FEE_TYPES[entry.value as FeeType]?.label || entry.value}
                                         </span>
                                     </div>

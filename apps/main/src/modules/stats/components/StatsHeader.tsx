@@ -1,6 +1,8 @@
 import styled from "@emotion/styled"
-import { Text } from "@galacticcouncil/ui/components"
+import { css } from "@galacticcouncil/ui/utils"
+import { ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
 import { FC } from "react"
+import { useTheme } from "@galacticcouncil/ui/theme"
 
 const SStatsGrid = styled.div`
   display: grid;
@@ -16,25 +18,17 @@ const SStatsGrid = styled.div`
   }
 `
 
-const SStatCard = styled.div`
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  padding: 20px;
-`
-
-const SStatLabel = styled(Text)`
-  color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 8px;
-  font-size: 12px;
-`
-
-const SStatValue = styled(Text) <{ $highlight?: boolean }>`
-  font-size: 24px;
-  font-weight: 700;
-  font-family: "Gazpacho", sans-serif;
-  color: ${({ $highlight }) => $highlight ? '#FF4B8C' : '#fff'};
-`
+const SStatCard = styled.div(
+  ({ theme }) => css`
+    background: ${theme.surfaces.containers.high.primary};
+    border: 1px solid ${theme.details.borders};
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  `
+)
 
 type StatCardProps = {
   label: string
@@ -42,12 +36,28 @@ type StatCardProps = {
   highlight?: boolean
 }
 
-const StatCard: FC<StatCardProps> = ({ label, value, highlight }) => (
-  <SStatCard>
-    <SStatLabel>{label}</SStatLabel>
-    <SStatValue $highlight={highlight}>{value}</SStatValue>
-  </SStatCard>
-)
+const StatCard: FC<StatCardProps> = ({ label, value, highlight }) => {
+  const { themeProps: theme } = useTheme()
+
+  return (
+    <SStatCard>
+      <ValueStats
+        label={label}
+        size="medium"
+        value={!highlight ? value : undefined}
+        customValue={highlight ? (
+          <ValueStatsValue size="medium" style={{ color: theme.secondaryColors.pink.coralPink }}>
+            {value}
+          </ValueStatsValue>
+        ) : undefined}
+      />
+    </SStatCard>
+  )
+}
+
+
+
+
 
 // Mock data - replace with real data from API
 const stats = [
@@ -75,4 +85,3 @@ export const StatsHeader: FC = () => {
     </SStatsGrid>
   )
 }
-

@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
 import { Button, Flex, Text } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState } from "react"
 import {
     AreaChart,
@@ -10,6 +11,7 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from "recharts"
+import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -80,6 +82,7 @@ type Props = {
 export const SupplyBorrowChart: FC<Props> = ({
     title = "Supply / Borrow History"
 }) => {
+    const { themeProps: theme } = useTheme()
     const [timeRange, setTimeRange] = useState<TimeRange>('30D')
 
     const getFilteredData = () => {
@@ -94,7 +97,7 @@ export const SupplyBorrowChart: FC<Props> = ({
         <SChartContainer>
             <SChartHeader>
                 <div>
-                    <Text fs={14} color="rgba(255,255,255,0.6)">{title}</Text>
+                    <Text fs={14} color={theme.text.medium}>{title}</Text>
                 </div>
                 <Flex gap={6}>
                     {(['7D', '30D', 'MAX'] as TimeRange[]).map((range) => (
@@ -124,27 +127,29 @@ export const SupplyBorrowChart: FC<Props> = ({
                             <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
                     <XAxis
                         dataKey="date"
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.low, fontSize: 10 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                     />
                     <YAxis
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                        tick={{ fill: theme.text.low, fontSize: 10 }}
+                        axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                         tickFormatter={(value) => `$${value.toFixed(0)}M`}
                     />
                     <Tooltip
-                        contentStyle={{
-                            background: 'rgba(20, 20, 30, 0.95)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: 8,
-                            color: '#fff',
-                        }}
-                        formatter={(value: number) => [`$${value.toFixed(2)}M`, '']}
+                        content={({ active, payload, label }) => (
+                            <ChartTooltipContent
+                                active={active}
+                                payload={payload as any}
+                                label={label}
+                                valueFormatter={(v) => `$${v.toFixed(2)}M`}
+                            />
+                        )}
+                        cursor={{ fill: theme.surfaces.containers.high.hover }}
                     />
                     <Area
                         type="monotone"
@@ -168,12 +173,12 @@ export const SupplyBorrowChart: FC<Props> = ({
             <SLegendRow>
                 <SLegendItem>
                     <SLegendDot $color="#22C55E" />
-                    <Text fs={12} color="rgba(255,255,255,0.6)">Supply:</Text>
+                    <Text fs={12} color={theme.text.low}>Supply:</Text>
                     <Text fs={12} fw={500}>${latestData?.supply.toFixed(2)}M</Text>
                 </SLegendItem>
                 <SLegendItem>
                     <SLegendDot $color="#F59E0B" />
-                    <Text fs={12} color="rgba(255,255,255,0.6)">Borrow:</Text>
+                    <Text fs={12} color={theme.text.low}>Borrow:</Text>
                     <Text fs={12} fw={500}>${latestData?.borrow.toFixed(2)}M</Text>
                 </SLegendItem>
             </SLegendRow>

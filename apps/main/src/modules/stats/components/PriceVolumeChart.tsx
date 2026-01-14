@@ -13,6 +13,9 @@ import {
     Bar,
     Legend,
 } from "recharts"
+import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
+import { css } from "@galacticcouncil/ui/utils"
+import { useTheme } from "@galacticcouncil/ui/theme"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -23,48 +26,55 @@ const SChartHeader = styled.div`
 `
 
 
-const SToggleGroup = styled.div`
-display: flex;
-background: rgba(255, 255, 255, 0.05);
-border - radius: 8px;
-padding: 4px;
-`
+const SToggleGroup = styled.div(
+    ({ theme }) => css`
+    display: flex;
+    background: ${theme.surfaces.containers.high.primary};
+    border-radius: 8px;
+    padding: 4px;
+    border: 1px solid ${theme.details.borders};
+  `
+)
 
-const SToggleButton = styled.button<{ $active?: boolean }>`
-padding: 6px 12px;
-border: none;
-border - radius: 6px;
-cursor: pointer;
-font - size: 12px;
-font - weight: 500;
-transition: all 0.2s;
-background: ${({ $active }) => $active ? 'rgba(255, 255, 255, 0.1)' : 'transparent'};
-color: ${({ $active }) => $active ? '#fff' : 'rgba(255, 255, 255, 0.5)'};
-  
-  &:hover {
-    color: #fff;
-}
-`
+const SToggleButton = styled.button<{ $active?: boolean }>(
+    ({ theme, $active }) => css`
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: ${$active ? theme.secondaryColors.blues.vibrantBlue : 'transparent'};
+    color: ${$active ? '#000000' : theme.text.medium};
+    
+    &:hover {
+      color: ${$active ? '#000000' : theme.text.high};
+    }
+  `
+)
 
 const STimeRangeGroup = styled.div`
 display: flex;
 gap: 8px;
 `
 
-const STimeButton = styled.button<{ $active?: boolean }>`
-padding: 6px 12px;
-border: 1px solid ${({ $active }) => $active ? 'rgba(255, 255, 255, 0.2)' : 'transparent'};
-border - radius: 6px;
-cursor: pointer;
-font - size: 12px;
-font - weight: 500;
-background: ${({ $active }) => $active ? 'rgba(255, 255, 255, 0.05)' : 'transparent'};
-color: ${({ $active }) => $active ? '#fff' : 'rgba(255, 255, 255, 0.5)'};
+const STimeButton = styled.button<{ $active?: boolean }>(
+    ({ theme, $active }) => css`
+    padding: 6px 12px;
+    border: 1px solid ${$active ? theme.details.borders : 'transparent'};
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    background: ${$active ? theme.surfaces.containers.high.hover : 'transparent'};
+    color: ${$active ? theme.text.high : theme.text.medium};
   
-  &:hover {
-    color: #fff;
-}
-`
+    &:hover {
+      color: ${theme.text.high};
+    }
+  `
+)
 
 const SChartValue = styled.div`
   margin-bottom: 0;
@@ -125,17 +135,19 @@ export const PriceVolumeChart: FC<Props> = ({
 
     const latestPrice = priceData[priceData.length - 1]?.price || 0
 
+    const { themeProps: theme } = useTheme()
+
     return (
         <SChartContainer>
             <SChartHeader>
                 {title && <Text fs={14} fw={500} color="rgba(255,255,255,0.6)" className="mb-1">{title}</Text>}
                 <SChartValue>
-                    {/* <Text fs={12} color="rgba(255,255,255,0.5)">
+                    {/* <Text fs={12} color="text.medium">
                         {chartType === 'price' ? 'Price' : 'Volume'}
                     </Text> */}
                     {/* The label seemed redundant if Title is present, or I can align with Figma */}
                     {/* Figma screenshot shows Price top left. */}
-                    <Text fs={12} color="rgba(255,255,255,0.5)">
+                    <Text fs={12} color="text.medium">
                         {chartType === 'price' ? 'Price' : 'Volume'}
                     </Text>
                     <Text fs={24} fw={600}>
@@ -157,28 +169,30 @@ export const PriceVolumeChart: FC<Props> = ({
                                 <stop offset="95%" stopColor="#4CAF50" stopOpacity={0} />
                             </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
                         <XAxis
                             dataKey="date"
-                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
                             tickLine={false}
                         />
                         <YAxis
-                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
                             tickLine={false}
                             tickFormatter={(value) => `$${value.toFixed(3)} `}
                             domain={['auto', 'auto']}
                         />
                         <Tooltip
-                            contentStyle={{
-                                background: 'rgba(20, 20, 30, 0.95)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                borderRadius: 8,
-                                color: '#fff',
-                            }}
-                            formatter={(value: number) => [`$${value.toFixed(6)} `, 'Price']}
+                            content={({ active, payload, label }) => (
+                                <ChartTooltipContent
+                                    active={active}
+                                    payload={payload as any}
+                                    label={label}
+                                    valueFormatter={(v) => `$${v.toFixed(6)}`}
+                                />
+                            )}
+                            cursor={chartCursorStyle}
                         />
                         <Legend
                             verticalAlign="bottom"
@@ -216,27 +230,29 @@ export const PriceVolumeChart: FC<Props> = ({
                     </LineChart>
                 ) : (
                     <BarChart data={priceData} margin={{ top: 5, right: 0, left: 0, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
                         <XAxis
                             dataKey="date"
-                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
                             tickLine={false}
                         />
                         <YAxis
-                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
                             tickLine={false}
                             tickFormatter={(value) => `$${(value / 1000).toFixed(0)} K`}
                         />
                         <Tooltip
-                            contentStyle={{
-                                background: 'rgba(20, 20, 30, 0.95)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                borderRadius: 8,
-                                color: '#fff',
-                            }}
-                            formatter={(value: number) => [`$${value.toLocaleString()} `, 'Volume']}
+                            content={({ active, payload, label }) => (
+                                <ChartTooltipContent
+                                    active={active}
+                                    payload={payload as any}
+                                    label={label}
+                                    valueFormatter={(v) => `$${v.toLocaleString()}`}
+                                />
+                            )}
+                            cursor={chartCursorStyle}
                         />
                         <Legend
                             verticalAlign="bottom"
@@ -254,7 +270,7 @@ export const PriceVolumeChart: FC<Props> = ({
                                                     borderRadius: '4px'
                                                 }}
                                             />
-                                            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                                            <span style={{ color: theme.text.medium, fontSize: '12px' }}>
                                                 {entry.value}
                                             </span>
                                         </div>

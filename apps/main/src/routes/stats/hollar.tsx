@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { css, styled } from "@galacticcouncil/ui/utils"
-import { SectionHeader, Text } from "@galacticcouncil/ui/components"
+import { SectionHeader, Text, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import { HollarSupplyChart } from "@/modules/stats/components/HollarSupplyChart"
 
 const SPageContainer = styled.div`
@@ -25,12 +26,12 @@ const SMetricsGrid = styled.div`
   gap: 16px;
 `
 
-const SMetricCard = styled.div(
+const SStatCard = styled.div(
   ({ theme }) => css`
-    background: ${theme.surfaces.containers.high.accent};
+    background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
-    border-radius: 8px;
-    padding: 16px;
+    border-radius: 12px;
+    padding: 20px;
   `
 )
 
@@ -54,29 +55,33 @@ const SCollateralGrid = styled.div`
   }
 `
 
-const SCollateralCard = styled.div`
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  padding: 16px;
-`
+const SCollateralCard = styled.div(
+  ({ theme }) => css`
+    background: ${theme.surfaces.containers.high.accent};
+    border: 1px solid ${theme.details.borders};
+    border-radius: 8px;
+    padding: 16px;
+  `
+)
 
-const SProgressBar = styled.div<{ $value: number; $color: string }>`
-  height: 24px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-top: 8px;
-  
-  &::after {
-    content: '';
-    display: block;
-    height: 100%;
-    width: ${({ $value }) => $value}%;
-    background: ${({ $color }) => $color};
+const SProgressBar = styled.div<{ $value: number; $color: string }>(
+  ({ theme, $value, $color }) => css`
+    height: 24px;
+    background: ${theme.surfaces.containers.dim.dimOnBg};
     border-radius: 4px;
-  }
-`
+    overflow: hidden;
+    margin-top: 8px;
+
+    &::after {
+      content: '';
+      display: block;
+      height: 100%;
+      width: ${$value}%;
+      background: ${$color};
+      border-radius: 4px;
+    }
+  `
+)
 
 const reserves = [
   { asset: 'HUSDT', value: '$2.1M', percentage: '25%', color: '#26A17B' },
@@ -93,27 +98,49 @@ const collaterals = [
 ]
 
 function HollarStats() {
+  const { themeProps: theme } = useTheme()
+
   return (
     <SPageContainer>
       <SectionHeader as="h1" sx={{ p: 0 }} mb={-12}>Hollar (HUSD)</SectionHeader>
 
       <SMetricsGrid>
-        <SMetricCard>
-          <Text fs={12} color="rgba(255,255,255,0.5)" style={{ marginBottom: 8 }}>Total Hollar Supply</Text>
-          <Text fs={28} fw={700} color="#8B5CF6" style={{ fontFamily: 'Gazpacho, sans-serif' }}>$8.5M</Text>
-        </SMetricCard>
-        <SMetricCard>
-          <Text fs={12} color="rgba(255,255,255,0.5)" style={{ marginBottom: 8 }}>Total Borrowed</Text>
-          <Text fs={24} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif' }}>$5.2M</Text>
-        </SMetricCard>
-        <SMetricCard>
-          <Text fs={12} color="rgba(255,255,255,0.5)" style={{ marginBottom: 8 }}>Total from HSM</Text>
-          <Text fs={24} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif' }}>$3.3M</Text>
-        </SMetricCard>
-        <SMetricCard>
-          <Text fs={12} color="rgba(255,255,255,0.5)" style={{ marginBottom: 8 }}>Hollar Peg</Text>
-          <Text fs={24} fw={700} color="#4CAF50" style={{ fontFamily: 'Gazpacho, sans-serif' }}>$1.0001</Text>
-        </SMetricCard>
+        <SStatCard>
+          <ValueStats
+            label="Total Hollar Supply"
+            size="medium"
+            customValue={
+              <ValueStatsValue size="medium" style={{ color: '#8B5CF6' }}>
+                $8.5M
+              </ValueStatsValue>
+            }
+          />
+        </SStatCard>
+        <SStatCard>
+          <ValueStats
+            label="Total Borrowed"
+            value="$5.2M"
+            size="medium"
+          />
+        </SStatCard>
+        <SStatCard>
+          <ValueStats
+            label="Total from HSM"
+            value="$3.3M"
+            size="medium"
+          />
+        </SStatCard>
+        <SStatCard>
+          <ValueStats
+            label="Hollar Peg"
+            size="medium"
+            customValue={
+              <ValueStatsValue size="medium" style={{ color: theme.details.values.positive }}>
+                $1.0001
+              </ValueStatsValue>
+            }
+          />
+        </SStatCard>
       </SMetricsGrid>
 
       <SSection>
@@ -124,11 +151,11 @@ function HollarStats() {
         <SectionHeader>Stablepool Reserves</SectionHeader>
         <SReservesGrid>
           {reserves.map((reserve) => (
-            <SMetricCard key={reserve.asset}>
+            <SStatCard key={reserve.asset}>
               <Text fs={14} fw={500} color={reserve.color}>{reserve.asset}</Text>
               <Text fs={18} fw={600} style={{ marginTop: 8 }}>{reserve.value}</Text>
-              <Text fs={12} color="rgba(255,255,255,0.5)">{reserve.percentage} of pool</Text>
-            </SMetricCard>
+              <Text fs={12} color="text.medium">{reserve.percentage} of pool</Text>
+            </SStatCard>
           ))}
         </SReservesGrid>
       </SSection>
@@ -140,10 +167,10 @@ function HollarStats() {
             <SCollateralCard key={col.asset}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Text fw={500} color={col.color}>{col.asset}</Text>
-                <Text fs={12} color="rgba(255,255,255,0.5)">{col.current} / {col.cap}</Text>
+                <Text fs={12} color="text.medium">{col.current} / {col.cap}</Text>
               </div>
               <SProgressBar $value={col.percentage} $color={col.color} />
-              <Text fs={12} color="rgba(255,255,255,0.5)" style={{ marginTop: 4 }}>APY: {col.apy}</Text>
+              <Text fs={12} color="text.medium" style={{ marginTop: 4 }}>APY: {col.apy}</Text>
             </SCollateralCard>
           ))}
         </SCollateralGrid>

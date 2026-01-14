@@ -20,7 +20,7 @@ const SSection = styled.section(
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
     border-radius: 16px;
-    padding: ${theme.containers.paddings.secondary}px;
+    padding: ${theme.scales.paddings.xl}px;
   `
 )
 
@@ -132,7 +132,7 @@ function HollarStats() {
       </SSection>
 
       <SSection>
-        <SectionHeader mb={20}>Stablepool Reserves</SectionHeader>
+        <SectionHeader mb={Number(theme.scales.paddings.xl)}>Stablepool Reserves</SectionHeader>
         <Flex justify="space-between" gap={0}>
           {reserves.map((reserve, index) => (
             <Fragment key={reserve.asset}>

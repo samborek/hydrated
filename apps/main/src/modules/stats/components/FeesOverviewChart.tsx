@@ -14,7 +14,7 @@ import {
     ResponsiveContainer,
     Legend,
 } from "recharts"
-import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
+import { ChartTooltipContent } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
   width: 100%;

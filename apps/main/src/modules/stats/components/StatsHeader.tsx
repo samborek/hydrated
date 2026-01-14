@@ -1,13 +1,6 @@
-import { css } from "@galacticcouncil/ui/utils"
 import { Flex, Separator, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
 import { FC, Fragment } from "react"
 import { useTheme } from "@galacticcouncil/ui/theme"
-
-type StatCardProps = {
-  label: string
-  value: string
-  highlight?: boolean
-}
 
 // Mock data - replace with real data from API
 const stats = [

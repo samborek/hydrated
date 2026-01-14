@@ -281,7 +281,6 @@ export const FeesOverviewChart: FC = () => {
               axisLine={{ stroke: theme.details.separators }}
               tickLine={false}
               tickFormatter={(value) => `${value.toFixed(1)}%`}
-              tickFormatter={(value) => `${value.toFixed(1)}%`}
               domain={[0, 'auto']} // Let it auto-scale for larger interest rates
             />
             <Tooltip

@@ -21,20 +21,7 @@ const SSection = styled.section(
   `
 )
 
-const SMetricsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-`
 
-const SStatCard = styled.div(
-    ({ theme }) => css`
-    background: ${theme.surfaces.containers.high.primary};
-    border: 1px solid ${theme.details.borders};
-    border-radius: 12px;
-    padding: 20px;
-  `
-)
 
 function TreasuryStats() {
     const { themeProps: theme } = useTheme()

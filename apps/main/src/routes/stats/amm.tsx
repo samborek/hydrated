@@ -8,8 +8,8 @@ import { ColumnDef } from "@tanstack/react-table"
 const SPageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 0 0 24px 0;
+  gap: 12px;
+  padding: 0 0 12px 0;
 `
 
 const SAssetCell = styled.div`
@@ -38,8 +38,8 @@ const SSectionTitle = styled.h2<{ color?: string }>(
     font-weight: 500;
     color: ${theme.text.high};
     margin: 0;
-    padding-top: 24px;
-    padding-bottom: 8px;
+    padding-top: 12px;
+    padding-bottom: 4px;
     
     &::before {
       content: '';
@@ -171,7 +171,7 @@ function AMMStats() {
             {/* ===== OMNIPOOL SECTION ===== */}
             <SSectionTitle color={theme.colors.skyBlue['600']}>Omnipool</SSectionTitle>
 
-            <Flex gap={20} justify="space-between" sx={{ py: 20, overflowX: 'auto', height: 100 }}>
+            <Flex gap={20} justify="space-between" sx={{ py: 10, overflowX: 'auto', height: 80 }}>
                 <ValueStats
                     label="Total Value Locked"
                     size="large"
@@ -213,7 +213,7 @@ function AMMStats() {
             {/* ===== STABLESWAP SECTION ===== */}
             <SSectionTitle color={theme.colors.successGreen['500']}>Stableswap</SSectionTitle>
 
-            <Flex gap={20} justify="space-between" sx={{ py: 20, overflowX: 'auto', height: 100 }}>
+            <Flex gap={20} justify="space-between" sx={{ py: 10, overflowX: 'auto', height: 80 }}>
                 <ValueStats
                     label="Total Value Locked"
                     size="large"
@@ -253,7 +253,7 @@ function AMMStats() {
             {/* ===== XYK POOLS SECTION ===== */}
             <SSectionTitle color={theme.colors.lavender['700']}>Isolated Pools (XYK)</SSectionTitle>
 
-            <Flex gap={20} justify="space-between" sx={{ py: 20, overflowX: 'auto', height: 100 }}>
+            <Flex gap={20} justify="space-between" sx={{ py: 10, overflowX: 'auto', height: 80 }}>
                 <ValueStats
                     label="Total Value Locked"
                     size="large"

@@ -38,8 +38,8 @@ const SLoopCard = styled.div(
 
 const SBadge = styled.div(
     ({ theme }) => css`
-    background: ${theme.colors.secondary.cyan.cyanOnBg};
-    color: ${theme.colors.secondary.cyan.cyan};
+    background: ${theme.colors.azureBlue[500]};
+    color: ${theme.colors.azureBlue[900]};
     font-size: 11px;
     font-weight: 600;
     padding: 4px 8px;
@@ -66,11 +66,10 @@ type StrategyRow = {
 }
 
 export const MultiplyView: FC = () => {
-    const { t } = useTranslation(["borrow"])
     const { themeProps: theme } = useTheme()
     const { gte } = useBreakpoints()
 
-    const { data: supplyAssets } = useSupplyAssetsData()
+    const { data: supplyAssets } = useSupplyAssetsData({ showAll: true })
     const { data: borrowAssets } = useBorrowAssetsData()
 
     const strategies = useMemo(() => {
@@ -84,8 +83,8 @@ export const MultiplyView: FC = () => {
 
             // Mock APY calc: SupplyAPY + (SupplyAPY - BorrowAPY) * (Lev - 1)
             // This is a rough estimation of "Looping" APY
-            const supplyApy = Number(collateral.supplyApy) || 0
-            const borrowApy = Number(debt.borrowApy) || 0
+            const supplyApy = Number(collateral.supplyAPY) || 0
+            const borrowApy = Number(debt.borrowAPY) || 0
             const netApy = supplyApy + (supplyApy - borrowApy) * (s.leverage - 1)
 
             return {
@@ -108,9 +107,9 @@ export const MultiplyView: FC = () => {
                 return (
                     <Flex align="center" gap={12}>
                         <Flex>
-                            <AssetLogo id={getAssetIdFromAddress(s.collateralAsset.underlyingAsset)} size={26} />
+                            <AssetLogo id={getAssetIdFromAddress(s.collateralAsset.underlyingAsset)} size="medium" />
                             <div style={{ marginLeft: -10 }}>
-                                <AssetLogo id={getAssetIdFromAddress(s.debtAsset.underlyingAsset)} size={26} />
+                                <AssetLogo id={getAssetIdFromAddress(s.debtAsset.underlyingAsset)} size="medium" />
                             </div>
                         </Flex>
                         <Flex direction="column">
@@ -124,7 +123,7 @@ export const MultiplyView: FC = () => {
         columnHelper.accessor("netApy", {
             header: "Net APY",
             cell: ({ getValue }) => (
-                <Text color={theme.colors.secondary.green.green} fw={600}>
+                <Text color={theme.details.values.positive} fw={600}>
                     {getValue().toFixed(2)}%
                 </Text>
             )
@@ -154,9 +153,9 @@ export const MultiplyView: FC = () => {
                         <SLoopCard key={"feat-" + s.id}>
                             <Flex justify="space-between" align="center">
                                 <Flex>
-                                    <AssetLogo id={getAssetIdFromAddress(s.collateralAsset.underlyingAsset)} size={32} />
+                                    <AssetLogo id={getAssetIdFromAddress(s.collateralAsset.underlyingAsset)} size="large" />
                                     <div style={{ marginLeft: -12 }}>
-                                        <AssetLogo id={getAssetIdFromAddress(s.debtAsset.underlyingAsset)} size={32} />
+                                        <AssetLogo id={getAssetIdFromAddress(s.debtAsset.underlyingAsset)} size="large" />
                                     </div>
                                 </Flex>
                                 <SBadge>Up to {s.leverage}x</SBadge>
@@ -168,7 +167,7 @@ export const MultiplyView: FC = () => {
                             <Flex justify="space-between" align="flex-end" mt={12}>
                                 <div>
                                     <Text fs={11} color={theme.text.low} mb={2}>Net APY</Text>
-                                    <Text fs={20} fw={700} color={theme.colors.secondary.green.green} style={{ fontFamily: 'Gazpacho' }}>
+                                    <Text fs={20} fw={700} color={theme.details.values.positive} style={{ fontFamily: 'Gazpacho' }}>
                                         {s.netApy.toFixed(2)}%
                                     </Text>
                                 </div>

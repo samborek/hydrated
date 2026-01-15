@@ -1,15 +1,10 @@
 import { ManageEmodeButton } from "@galacticcouncil/money-market/components/primitives"
 import { useMoneyMarketData } from "@galacticcouncil/money-market/hooks"
-import {
-  Box,
+Box,
   Button,
   Flex,
   Grid,
   Stack,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Text,
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints } from "@galacticcouncil/ui/theme"
@@ -41,6 +36,7 @@ export const BorrowDashboardPage = () => {
   )
 
   const { gte } = useBreakpoints()
+  const [view, setView] = useState<"lend-borrow" | "multiply">("lend-borrow")
   const [mode, setMode] = useState<"supply" | "borrow">("supply")
 
   const shouldRenderFilter = !gte("lg")

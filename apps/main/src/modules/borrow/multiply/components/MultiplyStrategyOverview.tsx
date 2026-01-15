@@ -4,7 +4,7 @@ import { FC } from "react"
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 import { AssetLogo } from "@/components/AssetLogo"
 import { ReserveConfiguration } from "@/modules/borrow/reserve/ReserveConfiguration"
-import { ComputedReserveData } from "@galacticcouncil/money-market/hooks"
+import { ComputedReserveData, AssetCapsProvider } from "@galacticcouncil/money-market/hooks"
 import { Zap } from "lucide-react"
 
 export type MultiplyStrategyOverviewProps = {
@@ -185,7 +185,9 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
                             <Text fs={18} fw={600}>Reserve Status & Configuration ({collateralAsset.symbol})</Text>
                         </Flex>
                         <Separator />
-                        <ReserveConfiguration reserve={collateralAsset} />
+                        <AssetCapsProvider asset={collateralAsset}>
+                            <ReserveConfiguration reserve={collateralAsset} />
+                        </AssetCapsProvider>
                     </Stack>
                 </Paper>
 
@@ -197,7 +199,9 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
                             <Text fs={18} fw={600}>Reserve Status & Configuration ({debtAsset.symbol})</Text>
                         </Flex>
                         <Separator />
-                        <ReserveConfiguration reserve={debtAsset} />
+                        <AssetCapsProvider asset={debtAsset}>
+                            <ReserveConfiguration reserve={debtAsset} />
+                        </AssetCapsProvider>
                     </Stack>
                 </Paper>
             </Stack>

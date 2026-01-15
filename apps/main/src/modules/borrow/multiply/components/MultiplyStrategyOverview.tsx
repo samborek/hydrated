@@ -1,15 +1,19 @@
-import { Box, Flex, Grid, Text, Paper, Stack } from "@galacticcouncil/ui/components"
+import { Box, Flex, Grid, Text, Paper, Separator, Stack } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC } from "react"
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
+import { formatNumber } from "@galacticcouncil/ui/utils"
+import { AssetLogo } from "@/components/AssetLogo"
+import { ReserveConfiguration } from "@/modules/borrow/reserve/ReserveConfiguration"
+import { ComputedReserveData } from "@galacticcouncil/money-market/hooks"
+import { Zap } from "lucide-react"
 
 export type MultiplyStrategyOverviewProps = {
-    strategyId: string
-    collateralAsset: any
-    debtAsset: any
+    collateralAsset: ComputedReserveData
+    debtAsset: ComputedReserveData
 }
 
-// MockData...
+// Mock data for chart
 const generateChartData = () => {
     return Array.from({ length: 30 }, (_, i) => ({
         day: i,
@@ -17,9 +21,37 @@ const generateChartData = () => {
     }))
 }
 
+const OverviewCard = ({ title, value, subValue, icon }: { title: string, value: string, subValue?: any, icon?: any }) => {
+    const { themeProps: theme } = useTheme()
+    return (
+        <Paper p={16} sx={{ background: theme.surfaces.containers.high.primary, border: `1px solid ${theme.details.borders}`, minHeight: 100 }}>
+            <Stack justify="space-between" sx={{ height: "100%" }}>
+                <Text fs={12} color={theme.text.medium}>{title}</Text>
+                <Flex align="center" gap={8}>
+                    <Text fs={24} fw={600}>{value}</Text>
+                    {icon && <Box sx={{ color: theme.colors.azureBlue[400] }}>{icon}</Box>}
+                </Flex>
+                {subValue && subValue}
+            </Stack>
+        </Paper>
+    )
+}
+
+const DetailRow = ({ label, value }: { label: string, value: any }) => {
+    const { themeProps: theme } = useTheme()
+    return (
+        <Flex justify="space-between" align="center" py={12}>
+            <Text fs={14} color={theme.text.medium}>{label}</Text>
+            <Box>{value}</Box>
+        </Flex>
+    )
+}
+
 export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ collateralAsset, debtAsset }) => {
     const { themeProps: theme } = useTheme()
     const data = generateChartData()
+
+    if (!collateralAsset || !debtAsset) return null
 
     return (
         <Stack gap={24}>
@@ -27,10 +59,10 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
             <Flex justify="space-between" align="center">
                 <Box>
                     <Text fs={24} fw={600} font="primary" mb={4}>
-                        {collateralAsset?.symbol} / {debtAsset?.symbol} Loop
+                        {collateralAsset.symbol} / {debtAsset.symbol} Loop
                     </Text>
                     <Text fs={14} color={theme.text.medium}>
-                        Supply {collateralAsset?.symbol} and borrow {debtAsset?.symbol} to amplify yield.
+                        Supply {collateralAsset.symbol} and borrow {debtAsset.symbol} to amplify yield.
                     </Text>
                 </Box>
                 <Box sx={{ textAlign: 'right' }}>
@@ -39,7 +71,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
                 </Box>
             </Flex>
 
-            {/* Chart Area */}
+            {/* Performance Chart */}
             <Paper p={24} sx={{ background: theme.surfaces.containers.high.primary }}>
                 <Flex justify="space-between" mb={20}>
                     <Text fs={16} fw={600}>Strategy Performance</Text>
@@ -62,14 +94,8 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
                                     <stop offset="95%" stopColor={theme.colors.azureBlue[500]} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <XAxis
-                                dataKey="day"
-                                hide
-                            />
-                            <YAxis
-                                hide
-                                domain={['auto', 'auto']}
-                            />
+                            <XAxis dataKey="day" hide />
+                            <YAxis hide domain={['auto', 'auto']} />
                             <Tooltip
                                 contentStyle={{
                                     backgroundColor: theme.surfaces.containers.high.hover,
@@ -92,21 +118,83 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
                 </div>
             </Paper>
 
-            {/* Strategy Mechanics / Instructions (Placeholder) */}
-            <Grid columns={2} gap={20}>
-                <Paper p={20}>
-                    <Text fs={16} fw={600} mb={12}>Risk Level: Medium</Text>
-                    <Text fs={13} color={theme.text.medium} lh={1.5}>
-                        This strategy involves leverage. While it amplifies APY, it also increases liquidation risk if the collateral value drops significantly relative to the debt.
-                    </Text>
+            {/* Looping Overview */}
+            <Paper p={24}>
+                <Text fs={18} fw={600} mb={20}>Looping Overview</Text>
+
+                <Grid columns={[1, 3]} gap={16} mb={30}>
+                    <OverviewCard
+                        title="Liquidity Available"
+                        value={`$ ${formatNumber(debtAsset.availableLiquidityUSD || 0)}`}
+                    />
+                    <OverviewCard
+                        title="Max Leverage"
+                        value="5.0x"
+                    />
+                    <OverviewCard
+                        title="Max Net APY"
+                        value="23.03%"
+                        icon={<Zap size={16} fill="currentColor" />}
+                    />
+                </Grid>
+
+                <Separator mb={10} />
+
+                <Grid columns={[1, 2]} gap={x => x.between(0, 40)}>
+                    <Box>
+                        <DetailRow
+                            label="Collateral Asset"
+                            value={
+                                <Flex align="center" gap={8}>
+                                    <AssetLogo id={collateralAsset.id} size={20} />
+                                    <Text fw={600}>{collateralAsset.symbol}</Text>
+                                </Flex>
+                            }
+                        />
+                        <DetailRow
+                            label="Debt Asset"
+                            value={
+                                <Flex align="center" gap={8}>
+                                    <AssetLogo id={debtAsset.id} size={20} />
+                                    <Text fw={600}>{debtAsset.symbol}</Text>
+                                </Flex>
+                            }
+                        />
+                        <DetailRow label="Average Leverage Taken" value={<Text fw={600}>5.69x</Text>} />
+                    </Box>
+                    <Box>
+                        <DetailRow label="Max LTV" value={<Text fw={600}>{(Number(collateralAsset.baseLTV) * 100).toFixed(1)}%</Text>} />
+                        <DetailRow label="Liquidation LTV" value={<Text fw={600}>{(Number(collateralAsset.liquidationThreshold) * 100).toFixed(1)}%</Text>} />
+                    </Box>
+                </Grid>
+            </Paper>
+
+            {/* Reserve Configurations */}
+            <Stack gap={20}>
+                {/* Collateral Asset Config (Supply Details) */}
+                <Paper p={24}>
+                    <Stack gap={20}>
+                        <Flex align="center" gap={12}>
+                            <AssetLogo id={collateralAsset.id} size={32} />
+                            <Text fs={18} fw={600}>Reserve Status & Configuration ({collateralAsset.symbol})</Text>
+                        </Flex>
+                        <Separator />
+                        <ReserveConfiguration reserve={collateralAsset} />
+                    </Stack>
                 </Paper>
-                <Paper p={20}>
-                    <Text fs={16} fw={600} mb={12}>Rewards</Text>
-                    <Text fs={13} color={theme.text.medium} lh={1.5}>
-                        Earn supply APY on the amplified collateral + additional incentives if applicable.
-                    </Text>
+
+                {/* Debt Asset Config (Borrow Details) */}
+                <Paper p={24}>
+                    <Stack gap={20}>
+                        <Flex align="center" gap={12}>
+                            <AssetLogo id={debtAsset.id} size={32} />
+                            <Text fs={18} fw={600}>Reserve Status & Configuration ({debtAsset.symbol})</Text>
+                        </Flex>
+                        <Separator />
+                        <ReserveConfiguration reserve={debtAsset} />
+                    </Stack>
                 </Paper>
-            </Grid>
+            </Stack>
         </Stack>
     )
 }

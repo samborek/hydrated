@@ -54,7 +54,6 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({ strategyId }) 
                 >
                     {/* Left Panel - Overview */}
                     <MultiplyStrategyOverview
-                        strategyId={strategyId}
                         collateralAsset={assets.collateral}
                         debtAsset={assets.debt}
                     />

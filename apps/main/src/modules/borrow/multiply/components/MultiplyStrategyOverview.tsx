@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, Text, Paper, Separator, Stack } from "@galacticcouncil/ui/components"
+import { Box, Flex, Grid, Text, Paper, Stack } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC } from "react"
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
@@ -9,7 +9,7 @@ export type MultiplyStrategyOverviewProps = {
     debtAsset: any
 }
 
-// Mock data for chart
+// MockData...
 const generateChartData = () => {
     return Array.from({ length: 30 }, (_, i) => ({
         day: i,
@@ -17,7 +17,7 @@ const generateChartData = () => {
     }))
 }
 
-export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ strategyId, collateralAsset, debtAsset }) => {
+export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ collateralAsset, debtAsset }) => {
     const { themeProps: theme } = useTheme()
     const data = generateChartData()
 

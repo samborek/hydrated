@@ -41,6 +41,7 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({ strategyId }) 
 
     return (
         <Stack gap={30}>
+            {/* HMR Force Update */}
             <Link to="/borrow/multiply" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, color: 'white' }}>
                 <Icon component={ArrowLeft} size={20} />
                 <Text>Back to Multiply</Text>

@@ -2,7 +2,6 @@ import { Box, Flex, Grid, Text, Paper, Separator, Stack } from "@galacticcouncil
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC } from "react"
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
-import { formatNumber } from "@galacticcouncil/ui/utils"
 import { AssetLogo } from "@/components/AssetLogo"
 import { ReserveConfiguration } from "@/modules/borrow/reserve/ReserveConfiguration"
 import { ComputedReserveData } from "@galacticcouncil/money-market/hooks"
@@ -19,6 +18,13 @@ const generateChartData = () => {
         day: i,
         value: 100 + Math.random() * 20 + i * 2
     }))
+}
+
+const formatUSD = (val: string | number) => {
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+    }).format(Number(val))
 }
 
 const OverviewCard = ({ title, value, subValue, icon }: { title: string, value: string, subValue?: any, icon?: any }) => {
@@ -125,7 +131,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
                 <Grid columns={[1, 3]} gap={16} mb={30}>
                     <OverviewCard
                         title="Liquidity Available"
-                        value={`$ ${formatNumber(debtAsset.availableLiquidityUSD || 0)}`}
+                        value={formatUSD(debtAsset.availableLiquidityUSD || 0)}
                     />
                     <OverviewCard
                         title="Max Leverage"
@@ -140,13 +146,13 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
 
                 <Separator mb={10} />
 
-                <Grid columns={[1, 2]} gap={x => x.between(0, 40)}>
+                <Grid columns={[1, 2]} gap={20}>
                     <Box>
                         <DetailRow
                             label="Collateral Asset"
                             value={
                                 <Flex align="center" gap={8}>
-                                    <AssetLogo id={collateralAsset.id} size={20} />
+                                    <AssetLogo id={collateralAsset.id} size="large" />
                                     <Text fw={600}>{collateralAsset.symbol}</Text>
                                 </Flex>
                             }
@@ -155,7 +161,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
                             label="Debt Asset"
                             value={
                                 <Flex align="center" gap={8}>
-                                    <AssetLogo id={debtAsset.id} size={20} />
+                                    <AssetLogo id={debtAsset.id} size="large" />
                                     <Text fw={600}>{debtAsset.symbol}</Text>
                                 </Flex>
                             }
@@ -163,8 +169,8 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
                         <DetailRow label="Average Leverage Taken" value={<Text fw={600}>5.69x</Text>} />
                     </Box>
                     <Box>
-                        <DetailRow label="Max LTV" value={<Text fw={600}>{(Number(collateralAsset.baseLTV) * 100).toFixed(1)}%</Text>} />
-                        <DetailRow label="Liquidation LTV" value={<Text fw={600}>{(Number(collateralAsset.liquidationThreshold) * 100).toFixed(1)}%</Text>} />
+                        <DetailRow label="Max LTV" value={<Text fw={600}>{(Number(collateralAsset.baseLTVasCollateral) / 100).toFixed(1)}%</Text>} />
+                        <DetailRow label="Liquidation LTV" value={<Text fw={600}>{(Number(collateralAsset.reserveLiquidationThreshold) / 100).toFixed(1)}%</Text>} />
                     </Box>
                 </Grid>
             </Paper>
@@ -175,7 +181,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
                 <Paper p={24}>
                     <Stack gap={20}>
                         <Flex align="center" gap={12}>
-                            <AssetLogo id={collateralAsset.id} size={32} />
+                            <AssetLogo id={collateralAsset.id} size="large" />
                             <Text fs={18} fw={600}>Reserve Status & Configuration ({collateralAsset.symbol})</Text>
                         </Flex>
                         <Separator />
@@ -187,7 +193,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({ co
                 <Paper p={24}>
                     <Stack gap={20}>
                         <Flex align="center" gap={12}>
-                            <AssetLogo id={debtAsset.id} size={32} />
+                            <AssetLogo id={debtAsset.id} size="large" />
                             <Text fs={18} fw={600}>Reserve Status & Configuration ({debtAsset.symbol})</Text>
                         </Flex>
                         <Separator />

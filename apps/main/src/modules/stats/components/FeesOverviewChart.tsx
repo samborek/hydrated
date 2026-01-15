@@ -85,20 +85,6 @@ const generateFeesData = (timeRange: TimeRange) => {
   return data
 }
 
-const COLORS = {
-  networkFees: '#8B5CF6',
-  tradingFees: '#3B82F6',
-  liquidityFees: '#22C55E',
-  supplyBorrowFees: '#F59E0B',
-  hollarFees: '#EC4899',
-  // Rate Colors (Aligned with Revenue Groups)
-  rateNetwork: '#8B5CF6', // Purple
-  rateTrading: '#3B82F6', // Blue
-  rateLiquidity: '#22C55E', // Green
-  rateSupplyBorrow: '#F59E0B', // Orange
-  rateHollar: '#EC4899', // Pink
-}
-
 const LABELS = {
   networkFees: 'Network Fees',
   tradingFees: 'Trading Fees',
@@ -123,6 +109,20 @@ export const FeesOverviewChart: FC = () => {
   const { themeProps: theme } = useTheme()
   const [timeRange, setTimeRange] = useState<TimeRange>('1M')
   const [viewMode, setViewMode] = useState<ViewMode>('revenue')
+
+  const COLORS = {
+    networkFees: '#8B5CF6',
+    tradingFees: theme.text.tint.secondary,
+    liquidityFees: '#22C55E',
+    supplyBorrowFees: '#F59E0B',
+    hollarFees: '#EC4899',
+    // Rate Colors (Aligned with Revenue Groups)
+    rateNetwork: '#8B5CF6', // Purple
+    rateTrading: theme.text.tint.secondary, // Blue
+    rateLiquidity: '#22C55E', // Green
+    rateSupplyBorrow: '#F59E0B', // Orange
+    rateHollar: '#EC4899', // Pink
+  }
 
   const chartData = useMemo(() => generateFeesData(timeRange), [timeRange])
 

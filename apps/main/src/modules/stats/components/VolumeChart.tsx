@@ -101,8 +101,8 @@ export const VolumeChart: FC<Props> = ({
                 <AreaChart data={filteredData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
                     <defs>
                         <linearGradient id="volumeGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.6} />
-                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
+                            <stop offset="5%" stopColor={theme.text.tint.secondary} stopOpacity={0.6} />
+                            <stop offset="95%" stopColor={theme.text.tint.secondary} stopOpacity={0.1} />
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
@@ -133,7 +133,7 @@ export const VolumeChart: FC<Props> = ({
                     <Area
                         type="monotone"
                         dataKey="volume"
-                        stroke="#3B82F6"
+                        stroke={theme.text.tint.secondary}
                         fill="url(#volumeGrad)"
                         strokeWidth={2}
                         name="Volume"

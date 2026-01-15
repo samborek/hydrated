@@ -1,11 +1,12 @@
 import { useBorrowAssetsData, useSupplyAssetsData } from "@galacticcouncil/money-market/hooks"
-import { Button, DataTable, Flex, Grid, SectionHeader, Text } from "@galacticcouncil/ui/components"
+import { Box, Button, DataTable, Flex, Grid, Text } from "@galacticcouncil/ui/components"
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { FC, useMemo } from "react"
 import { createColumnHelper } from "@tanstack/react-table"
 import { AssetLogo } from "@/components/AssetLogo"
-import { getAssetIdFromAddress } from "@galacticcouncil/utils"
+import { useAssets } from "@/providers/assetsProvider"
+import { useNavigate } from "@tanstack/react-router"
 
 const SSection = styled.section(
     ({ theme }) => css`
@@ -74,6 +75,8 @@ type StrategyRow = {
 export const MultiplyView: FC = () => {
     const { themeProps: theme } = useTheme()
     const { gte } = useBreakpoints()
+    const { tokens } = useAssets()
+    const navigate = useNavigate()
 
     const { data: supplyAssets } = useSupplyAssetsData({ showAll: true })
     const { data: borrowAssets } = useBorrowAssetsData()
@@ -83,24 +86,32 @@ export const MultiplyView: FC = () => {
         const sAssets = supplyAssets?.length ? supplyAssets : []
         const bAssets = borrowAssets?.length ? borrowAssets : []
 
-        // If no assets loaded, return empty (or could return just the strategy structure with placeholders if desired, but empty is safer provided we show a message)
-        // User said "I see no assets".
-        // Let's create dummy objects if assets are missing so the UI at least renders the cards/table for verification.
-
         return STRATEGIES.map((s, idx) => {
-            const collateral = sAssets.find(a => a.symbol === s.collateral) || {
-                symbol: s.collateral,
-                underlyingAsset: "0x0000000000000000000000000000000000000000",
-                supplyAPY: 0.12, // Mock 12%
-                id: "mock-id-c-" + idx
-            } as any
+            let collateral = sAssets.find(a => a.symbol === s.collateral) as any
 
-            const debt = bAssets.find(a => a.symbol === s.debt) || {
-                symbol: s.debt,
-                underlyingAsset: "0x0000000000000000000000000000000000000001",
-                variableBorrowRate: 0.05, // Mock 5%
-                id: "mock-id-d-" + idx
-            } as any
+            if (!collateral) {
+                const token = tokens.find(t => t.symbol === s.collateral)
+                collateral = {
+                    symbol: s.collateral,
+                    underlyingAsset: "0x0000000000000000000000000000000000000000",
+                    supplyAPY: 0.12, // Mock 12%
+                    id: token?.id || "mock-id-c-" + idx,
+                    ...token
+                }
+            }
+
+            let debt = bAssets.find(a => a.symbol === s.debt) as any
+
+            if (!debt) {
+                const token = tokens.find(t => t.symbol === s.debt)
+                debt = {
+                    symbol: s.debt,
+                    underlyingAsset: "0x0000000000000000000000000000000000000001",
+                    variableBorrowRate: 0.05, // Mock 5%
+                    id: token?.id || "mock-id-d-" + idx,
+                    ...token
+                }
+            }
 
             // Mock APY calc: SupplyAPY + (SupplyAPY - BorrowAPY) * (Lev - 1)
             const supplyApy = Number(collateral.supplyAPY) || 0
@@ -115,7 +126,7 @@ export const MultiplyView: FC = () => {
                 netApy
             }
         }).filter(Boolean) as StrategyRow[]
-    }, [supplyAssets, borrowAssets])
+    }, [supplyAssets, borrowAssets, tokens])
 
     const columnHelper = createColumnHelper<StrategyRow>()
 
@@ -131,7 +142,7 @@ export const MultiplyView: FC = () => {
                 const supplyApy = Number(s.collateralAsset.supplyAPY) || 0
                 return (
                     <Flex align="center" gap={10}>
-                        <AssetLogo id={getAssetIdFromAddress(s.collateralAsset.underlyingAsset)} size="medium" />
+                        <AssetLogo id={s.collateralAsset.id} size="medium" />
                         <Flex direction="column">
                             <Text fs={14} fw={500}>{s.collateralAsset.symbol}</Text>
                             <Text fs={12} color={theme.text.low}>APY: {supplyApy.toFixed(2)}%</Text>
@@ -151,7 +162,7 @@ export const MultiplyView: FC = () => {
                 const borrowApy = Number(s.debtAsset.variableBorrowRate) || 0
                 return (
                     <Flex align="center" gap={10}>
-                        <AssetLogo id={getAssetIdFromAddress(s.debtAsset.underlyingAsset)} size="medium" />
+                        <AssetLogo id={s.debtAsset.id} size="medium" />
                         <Flex direction="column">
                             <Text fs={14} fw={500}>{s.debtAsset.symbol}</Text>
                             <Text fs={12} color={theme.text.low}>APY: {borrowApy.toFixed(2)}%</Text>
@@ -185,7 +196,16 @@ export const MultiplyView: FC = () => {
             header: "",
             cell: () => (
                 <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
-                    <Button size="small" variant="secondary">Multiply</Button>
+                    <Button
+                        size="small"
+                        variant="secondary"
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            navigate({ to: `/borrow/multiply/${row.original.id}` })
+                        }}
+                    >
+                        Multiply
+                    </Button>
                 </div>
             ),
             meta: {
@@ -203,12 +223,12 @@ export const MultiplyView: FC = () => {
                 <Text fs={18} fw={600} mb={16} font="primary">Featured Loops</Text>
                 <Grid columns={gte("md") ? 3 : 1} gap={16}>
                     {strategies.slice(0, 3).map((s) => (
-                        <SLoopCard key={"feat-" + s.id}>
+                        <SLoopCard key={"feat-" + s.id} onClick={() => navigate({ to: `/borrow/multiply/${s.id}` })}>
                             <Flex justify="space-between" align="center">
                                 <Flex>
-                                    <AssetLogo id={getAssetIdFromAddress(s.collateralAsset.underlyingAsset)} size="large" />
+                                    <AssetLogo id={s.collateralAsset.id} size="large" />
                                     <div style={{ marginLeft: -12 }}>
-                                        <AssetLogo id={getAssetIdFromAddress(s.debtAsset.underlyingAsset)} size="large" />
+                                        <AssetLogo id={s.debtAsset.id} size="large" />
                                     </div>
                                 </Flex>
                                 <SBadge>Up to {s.leverage}x</SBadge>
@@ -231,16 +251,16 @@ export const MultiplyView: FC = () => {
             </div>
 
             {/* Strategies List */}
-            <SSection>
-                <div style={{ padding: `${theme.scales.paddings.xl}px` }}>
-                    <SectionHeader>All pairs</SectionHeader>
-                </div>
-                <DataTable
-                    data={strategies}
-                    columns={columns}
-                    onRowClick={() => { }} // TODO: Navigate to details
-                />
-            </SSection>
+            <Box>
+                <Text fs={18} fw={600} mb={16} font="primary">All pairs</Text>
+                <SSection>
+                    <DataTable
+                        data={strategies}
+                        columns={columns}
+                        onRowClick={(row) => navigate({ to: `/borrow/multiply/${row.id}` })}
+                    />
+                </SSection>
+            </Box>
         </Flex>
     )
 }

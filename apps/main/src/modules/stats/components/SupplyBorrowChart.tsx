@@ -139,6 +139,7 @@ export const SupplyBorrowChart: FC<Props> = ({
                         axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                         tickFormatter={(value) => `$${value.toFixed(0)}M`}
+                        width={45}
                     />
                     <Tooltip
                         content={({ active, payload, label }) => (

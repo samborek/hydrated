@@ -61,13 +61,7 @@ const generateFeesData = () => {
 
 const feesData = generateFeesData()
 
-const COLORS = {
-    swap: '#3B82F6',
-    liquidations: '#EF4444',
-    hollar: '#22C55E',
-    tips: '#F59E0B',
-    txFees: '#8B5CF6',
-}
+
 
 type TimeRange = '1W' | '1M' | '3M'
 
@@ -80,6 +74,14 @@ export const FeesStackedChart: FC<Props> = ({
 }) => {
     const { themeProps: theme } = useTheme()
     const [timeRange, setTimeRange] = useState<TimeRange>('1M')
+
+    const COLORS = {
+        swap: theme.text.tint.secondary,
+        liquidations: '#EF4444',
+        hollar: '#22C55E',
+        tips: '#F59E0B',
+        txFees: '#8B5CF6',
+    }
 
     // Filter data based on time range
     const getFilteredData = () => {
@@ -136,6 +138,7 @@ export const FeesStackedChart: FC<Props> = ({
                         axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                         tickFormatter={(value) => `$${(value / 1000).toFixed(1)} K`}
+                        width={45}
                     />
                     <Tooltip
                         content={({ active, payload, label }) => (

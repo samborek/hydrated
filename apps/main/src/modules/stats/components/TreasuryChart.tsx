@@ -117,6 +117,7 @@ export const TreasuryChart: FC<Props> = ({
                         axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                         tickFormatter={(value) => `$${value.toFixed(1)}M`}
+                        width={45}
                     />
                     <Tooltip
                         content={({ active, payload, label }) => (

@@ -117,6 +117,7 @@ export const VolumeChart: FC<Props> = ({
                         axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                         tickFormatter={(value) => `$${value}M`}
+                        width={45}
                     />
                     <Tooltip
                         content={({ active, payload, label }) => (

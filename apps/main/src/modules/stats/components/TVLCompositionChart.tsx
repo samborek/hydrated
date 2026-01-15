@@ -118,12 +118,7 @@ const generateMockData = () => {
 
 const chartData = generateMockData()
 
-const COLORS = {
-    omnipool: '#3B82F6',
-    stablePools: '#22C55E',
-    moneyMarket: '#F59E0B',
-    xykPools: '#A855F7',
-}
+
 
 type TimeRange = '1W' | '1M' | '3M'
 type Filter = 'All' | 'Omnipool' | 'Stable' | 'XYK' | 'MM'
@@ -158,6 +153,13 @@ export const TVLCompositionChart: FC<Props> = ({
     }
 
     const { themeProps: theme } = useTheme()
+
+    const COLORS = {
+        omnipool: theme.text.tint.secondary,
+        stablePools: '#22C55E',
+        moneyMarket: '#F59E0B',
+        xykPools: '#A855F7',
+    }
 
     return (
         <SChartContainer>
@@ -236,6 +238,7 @@ export const TVLCompositionChart: FC<Props> = ({
                         axisLine={{ stroke: theme.details.separators }}
                         tickLine={false}
                         tickFormatter={(value) => `$${value}M`}
+                        width={45}
                     />
                     <Tooltip
                         content={({ active, payload, label }) => (

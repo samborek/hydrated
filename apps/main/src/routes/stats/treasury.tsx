@@ -17,7 +17,7 @@ const SSection = styled.section(
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
     border-radius: 16px;
-    padding: ${theme.containers.paddings.secondary}px;
+    padding: ${theme.scales.paddings.xl}px;
   `
 )
 

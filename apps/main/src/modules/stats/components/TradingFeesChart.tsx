@@ -1,10 +1,12 @@
 import styled from "@emotion/styled"
 import { css } from "@galacticcouncil/ui/utils"
-import { Button, Flex, Text, Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@galacticcouncil/ui/components"
+import { Button, Flex, Text, Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
 import { FC, useState, useMemo } from "react"
 import {
     AreaChart,
     Area,
+    BarChart,
+    Bar,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -12,7 +14,7 @@ import {
     ResponsiveContainer,
     Legend,
 } from "recharts"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, BarChart2, TrendingUp } from "lucide-react"
 import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 import { useTheme } from "@galacticcouncil/ui/theme"
 
@@ -122,9 +124,11 @@ const generateTradingFeesData = (timeRange: TimeRange) => {
 }
 
 type TimeRange = '1W' | '1M' | '1Y' | 'ALL'
+type ChartType = 'line' | 'bar'
 
 export const TradingFeesChart: FC = () => {
     const [timeRange, setTimeRange] = useState<TimeRange>('1M')
+    const [chartType, setChartType] = useState<ChartType>('line')
     const [activeTypes, setActiveTypes] = useState<FeeType[]>(Object.keys(FEE_TYPES) as FeeType[])
 
     const feesData = useMemo(() => generateTradingFeesData(timeRange), [timeRange])
@@ -155,6 +159,18 @@ export const TradingFeesChart: FC = () => {
                     </Text>
                 </div>
                 <SControlsGroup>
+                    <ToggleGroup
+                        type="single"
+                        value={chartType}
+                        onValueChange={(v) => v && setChartType(v as ChartType)}
+                    >
+                        <ToggleGroupItem value="line">
+                            <TrendingUp size={16} />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="bar">
+                            <BarChart2 size={16} />
+                        </ToggleGroupItem>
+                    </ToggleGroup>
                     <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <SFilterBtn>
@@ -197,114 +213,199 @@ export const TradingFeesChart: FC = () => {
             </SChartHeader>
 
             <ResponsiveContainer width="100%" height={280}>
-                <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                    <defs>
-                        <linearGradient id="gradOmnipoolAsset" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.6} />
-                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
-                        </linearGradient>
-                        <linearGradient id="gradOmnipoolProtocol" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
-                            <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
-                        </linearGradient>
-                        <linearGradient id="gradStablepools" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.6} />
-                            <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
-                        </linearGradient>
-                        <linearGradient id="gradXykTrade" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#EC4899" stopOpacity={0.6} />
-                            <stop offset="95%" stopColor="#EC4899" stopOpacity={0.1} />
-                        </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
-                    <XAxis
-                        dataKey="date"
-                        tick={{ fill: theme.text.medium, fontSize: 11 }}
-                        axisLine={{ stroke: theme.details.separators }}
-                        tickLine={false}
-                    />
-                    <YAxis
-                        tick={{ fill: theme.text.medium, fontSize: 11 }}
-                        axisLine={{ stroke: theme.details.separators }}
-                        tickLine={false}
-                        tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
-                    />
-                    <Tooltip
-                        content={({ active, payload, label }) => (
-                            <ChartTooltipContent
-                                active={active}
-                                payload={payload as any}
-                                label={label}
-                                valueFormatter={(v) => `$${v.toFixed(2)}`}
+                {chartType === 'line' ? (
+                    <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                        <defs>
+                            <linearGradient id="gradOmnipoolAsset" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.6} />
+                                <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
+                            </linearGradient>
+                            <linearGradient id="gradOmnipoolProtocol" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
+                                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
+                            </linearGradient>
+                            <linearGradient id="gradStablepools" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.6} />
+                                <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
+                            </linearGradient>
+                            <linearGradient id="gradXykTrade" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#EC4899" stopOpacity={0.6} />
+                                <stop offset="95%" stopColor="#EC4899" stopOpacity={0.1} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
+                        <XAxis
+                            dataKey="date"
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
+                        />
+                        <YAxis
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
+                            tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
+                        />
+                        <Tooltip
+                            content={({ active, payload, label }) => (
+                                <ChartTooltipContent
+                                    active={active}
+                                    payload={payload as any}
+                                    label={label}
+                                    valueFormatter={(v) => `$${v.toFixed(2)}`}
+                                />
+                            )}
+                            cursor={chartCursorStyle}
+                        />
+                        <Legend
+                            verticalAlign="bottom"
+                            align="left"
+                            wrapperStyle={{ paddingTop: '20px' }}
+                            content={({ payload }: any) => (
+                                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                                    {payload?.map((entry: any, index: number) => (
+                                        <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div
+                                                style={{
+                                                    width: '12px',
+                                                    height: '12px',
+                                                    backgroundColor: entry.color,
+                                                    borderRadius: '4px'
+                                                }}
+                                            />
+                                            <span style={{ color: theme.text.medium, fontSize: '12px' }}>
+                                                {FEE_TYPES[entry.value as FeeType]?.label || entry.value}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        />
+                        {activeTypes.includes('omnipoolAsset') && (
+                            <Area
+                                type="monotone"
+                                dataKey="omnipoolAsset"
+                                stroke="#3B82F6"
+                                fill="url(#gradOmnipoolAsset)"
+                                strokeWidth={2}
+                                name="omnipoolAsset"
                             />
                         )}
-                        cursor={chartCursorStyle}
-                    />
-                    <Legend
-                        verticalAlign="bottom"
-                        align="left"
-                        wrapperStyle={{ paddingTop: '20px' }}
-                        content={({ payload }: any) => (
-                            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                                {payload?.map((entry: any, index: number) => (
-                                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <div
-                                            style={{
-                                                width: '12px',
-                                                height: '12px',
-                                                backgroundColor: entry.color,
-                                                borderRadius: '4px'
-                                            }}
-                                        />
-                                        <span style={{ color: theme.text.medium, fontSize: '12px' }}>
-                                            {FEE_TYPES[entry.value as FeeType]?.label || entry.value}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
+                        {activeTypes.includes('omnipoolProtocol') && (
+                            <Area
+                                type="monotone"
+                                dataKey="omnipoolProtocol"
+                                stroke="#8B5CF6"
+                                fill="url(#gradOmnipoolProtocol)"
+                                strokeWidth={2}
+                                name="omnipoolProtocol"
+                            />
                         )}
-                    />
-                    {activeTypes.includes('omnipoolAsset') && (
-                        <Area
-                            type="monotone"
-                            dataKey="omnipoolAsset"
-                            stroke="#3B82F6"
-                            fill="url(#gradOmnipoolAsset)"
-                            strokeWidth={2}
-                            name="omnipoolAsset"
+                        {activeTypes.includes('stablepools') && (
+                            <Area
+                                type="monotone"
+                                dataKey="stablepools"
+                                stroke="#F59E0B"
+                                fill="url(#gradStablepools)"
+                                strokeWidth={2}
+                                name="stablepools"
+                            />
+                        )}
+                        {activeTypes.includes('xykTrade') && (
+                            <Area
+                                type="monotone"
+                                dataKey="xykTrade"
+                                stroke="#EC4899"
+                                fill="url(#gradXykTrade)"
+                                strokeWidth={2}
+                                name="xykTrade"
+                            />
+                        )}
+                    </AreaChart>
+                ) : (
+                    <BarChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
+                        <XAxis
+                            dataKey="date"
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
                         />
-                    )}
-                    {activeTypes.includes('omnipoolProtocol') && (
-                        <Area
-                            type="monotone"
-                            dataKey="omnipoolProtocol"
-                            stroke="#8B5CF6"
-                            fill="url(#gradOmnipoolProtocol)"
-                            strokeWidth={2}
-                            name="omnipoolProtocol"
+                        <YAxis
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
+                            tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
                         />
-                    )}
-                    {activeTypes.includes('stablepools') && (
-                        <Area
-                            type="monotone"
-                            dataKey="stablepools"
-                            stroke="#F59E0B"
-                            fill="url(#gradStablepools)"
-                            strokeWidth={2}
-                            name="stablepools"
+                        <Tooltip
+                            content={({ active, payload, label }) => (
+                                <ChartTooltipContent
+                                    active={active}
+                                    payload={payload as any}
+                                    label={label}
+                                    valueFormatter={(v) => `$${v.toFixed(2)}`}
+                                />
+                            )}
+                            cursor={{ fill: theme.surfaces.containers.high.hover }}
                         />
-                    )}
-                    {activeTypes.includes('xykTrade') && (
-                        <Area
-                            type="monotone"
-                            dataKey="xykTrade"
-                            stroke="#EC4899"
-                            fill="url(#gradXykTrade)"
-                            strokeWidth={2}
-                            name="xykTrade"
+                        <Legend
+                            verticalAlign="bottom"
+                            align="left"
+                            wrapperStyle={{ paddingTop: '20px' }}
+                            content={({ payload }: any) => (
+                                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                                    {payload?.map((entry: any, index: number) => (
+                                        <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div
+                                                style={{
+                                                    width: '12px',
+                                                    height: '12px',
+                                                    backgroundColor: entry.color,
+                                                    borderRadius: '4px'
+                                                }}
+                                            />
+                                            <span style={{ color: theme.text.medium, fontSize: '12px' }}>
+                                                {FEE_TYPES[entry.value as FeeType]?.label || entry.value}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         />
-                    )}
-                </AreaChart>
+                        {activeTypes.includes('omnipoolAsset') && (
+                            <Bar
+                                dataKey="omnipoolAsset"
+                                stackId="a"
+                                fill={FEE_TYPES.omnipoolAsset.color}
+                                name="omnipoolAsset"
+                            />
+                        )}
+                        {activeTypes.includes('omnipoolProtocol') && (
+                            <Bar
+                                dataKey="omnipoolProtocol"
+                                stackId="a"
+                                fill={FEE_TYPES.omnipoolProtocol.color}
+                                name="omnipoolProtocol"
+                            />
+                        )}
+                        {activeTypes.includes('stablepools') && (
+                            <Bar
+                                dataKey="stablepools"
+                                stackId="a"
+                                fill={FEE_TYPES.stablepools.color}
+                                name="stablepools"
+                            />
+                        )}
+                        {activeTypes.includes('xykTrade') && (
+                            <Bar
+                                dataKey="xykTrade"
+                                stackId="a"
+                                fill={FEE_TYPES.xykTrade.color}
+                                name="xykTrade"
+                            />
+                        )}
+                    </BarChart>
+                )}
             </ResponsiveContainer>
         </SChartContainer>
     )

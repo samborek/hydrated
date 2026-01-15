@@ -10,7 +10,7 @@ export type MultiplyDetailPageProps = {
 }
 
 export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({ strategyId }) => {
-    const { t } = useTranslation(["borrow"])
+    // const { t } = useTranslation(["borrow"])
 
     return (
         <Stack gap={30}>

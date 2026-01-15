@@ -1,10 +1,12 @@
 import styled from "@emotion/styled"
-import { Button, Flex, Text } from "@galacticcouncil/ui/components"
+import { Button, Flex, Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState, useMemo } from "react"
 import {
     AreaChart,
     Area,
+    BarChart,
+    Bar,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -12,6 +14,7 @@ import {
     ResponsiveContainer,
     Legend,
 } from "recharts"
+import { BarChart2, TrendingUp } from "lucide-react"
 import { ChartTooltipContent } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
@@ -25,6 +28,14 @@ const SChartHeader = styled.div`
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
+`
+
+const SControlsGroup = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  align-self: center;
+  flex-wrap: wrap;
 `
 
 
@@ -54,10 +65,12 @@ const generateHollarFeesData = (timeRange: TimeRange) => {
 }
 
 type TimeRange = '1W' | '1M' | '1Y' | 'ALL'
+type ChartType = 'line' | 'bar'
 
 export const HollarFeesChart: FC = () => {
     const { themeProps: theme } = useTheme()
     const [timeRange, setTimeRange] = useState<TimeRange>('1M')
+    const [chartType, setChartType] = useState<ChartType>('line')
 
     const feesData = useMemo(() => generateHollarFeesData(timeRange), [timeRange])
 
@@ -75,89 +88,162 @@ export const HollarFeesChart: FC = () => {
                         HSM Revenue (latest)
                     </Text>
                 </div>
-                <Flex gap={6}>
-                    {(['1W', '1M', '1Y', 'ALL'] as TimeRange[]).map((range) => (
-                        <Button
-                            key={range}
-                            size="small"
-                            variant={timeRange === range ? 'secondary' : 'tertiary'}
-                            outline={timeRange !== range}
-                            onClick={() => setTimeRange(range)}
-                            sx={{ px: 12, minWidth: 42 }}
-                        >
-                            {range}
-                        </Button>
-                    ))}
-                </Flex>
+                <SControlsGroup>
+                    <ToggleGroup
+                        type="single"
+                        value={chartType}
+                        onValueChange={(v) => v && setChartType(v as ChartType)}
+                    >
+                        <ToggleGroupItem value="line">
+                            <TrendingUp size={16} />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="bar">
+                            <BarChart2 size={16} />
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+                    <Flex gap={6}>
+                        {(['1W', '1M', '1Y', 'ALL'] as TimeRange[]).map((range) => (
+                            <Button
+                                key={range}
+                                size="small"
+                                variant={timeRange === range ? 'secondary' : 'tertiary'}
+                                outline={timeRange !== range}
+                                onClick={() => setTimeRange(range)}
+                                sx={{ px: 12, minWidth: 42 }}
+                            >
+                                {range}
+                            </Button>
+                        ))}
+                    </Flex>
+                </SControlsGroup>
             </SChartHeader>
 
 
 
             <ResponsiveContainer width="100%" height={280}>
-                <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                    <defs>
-                        <linearGradient id="hollarFeesGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
-                            <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
-                        </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
-                    <XAxis
-                        dataKey="date"
-                        tick={{ fill: theme.text.low, fontSize: 11 }}
-                        axisLine={{ stroke: theme.details.separators }}
-                        tickLine={false}
-                    />
-                    <YAxis
-                        tick={{ fill: theme.text.low, fontSize: 11 }}
-                        axisLine={{ stroke: theme.details.separators }}
-                        tickLine={false}
-                        tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
-                    />
-                    <Tooltip
-                        content={({ active, payload, label }) => (
-                            <ChartTooltipContent
-                                active={active}
-                                payload={payload as any}
-                                label={label}
-                                valueFormatter={(v) => `$${v.toFixed(2)}`}
-                            />
-                        )}
-                        cursor={{ fill: theme.surfaces.containers.high.hover }}
-                    />
-                    <Legend
-                        verticalAlign="bottom"
-                        align="left"
-                        wrapperStyle={{ paddingTop: '20px' }}
-                        content={({ payload }: any) => (
-                            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                                {payload?.map((entry: any, index: number) => (
-                                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <div
-                                            style={{
-                                                width: '12px',
-                                                height: '12px',
-                                                backgroundColor: entry.color,
-                                                borderRadius: '4px'
-                                            }}
-                                        />
-                                        <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
-                                            {entry.value}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    />
-                    <Area
-                        type="monotone"
-                        dataKey="hsmRevenue"
-                        stroke="#8B5CF6"
-                        fill="url(#hollarFeesGrad)"
-                        strokeWidth={2}
-                        name="HSM Revenue"
-                    />
-                </AreaChart>
+                {chartType === 'line' ? (
+                    <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                        <defs>
+                            <linearGradient id="hollarFeesGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
+                                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
+                        <XAxis
+                            dataKey="date"
+                            tick={{ fill: theme.text.low, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
+                        />
+                        <YAxis
+                            tick={{ fill: theme.text.low, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
+                            tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
+                        />
+                        <Tooltip
+                            content={({ active, payload, label }) => (
+                                <ChartTooltipContent
+                                    active={active}
+                                    payload={payload as any}
+                                    label={label}
+                                    valueFormatter={(v) => `$${v.toFixed(2)}`}
+                                />
+                            )}
+                            cursor={{ fill: theme.surfaces.containers.high.hover }}
+                        />
+                        <Legend
+                            verticalAlign="bottom"
+                            align="left"
+                            wrapperStyle={{ paddingTop: '20px' }}
+                            content={({ payload }: any) => (
+                                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                                    {payload?.map((entry: any, index: number) => (
+                                        <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div
+                                                style={{
+                                                    width: '12px',
+                                                    height: '12px',
+                                                    backgroundColor: entry.color,
+                                                    borderRadius: '4px'
+                                                }}
+                                            />
+                                            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                                                {entry.value}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        />
+                        <Area
+                            type="monotone"
+                            dataKey="hsmRevenue"
+                            stroke="#8B5CF6"
+                            fill="url(#hollarFeesGrad)"
+                            strokeWidth={2}
+                            name="HSM Revenue"
+                        />
+                    </AreaChart>
+                ) : (
+                    <BarChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
+                        <XAxis
+                            dataKey="date"
+                            tick={{ fill: theme.text.low, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
+                        />
+                        <YAxis
+                            tick={{ fill: theme.text.low, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
+                            tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
+                        />
+                        <Tooltip
+                            content={({ active, payload, label }) => (
+                                <ChartTooltipContent
+                                    active={active}
+                                    payload={payload as any}
+                                    label={label}
+                                    valueFormatter={(v) => `$${v.toFixed(2)}`}
+                                />
+                            )}
+                            cursor={{ fill: theme.surfaces.containers.high.hover }}
+                        />
+                        <Legend
+                            verticalAlign="bottom"
+                            align="left"
+                            wrapperStyle={{ paddingTop: '20px' }}
+                            content={({ payload }: any) => (
+                                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                                    {payload?.map((entry: any, index: number) => (
+                                        <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div
+                                                style={{
+                                                    width: '12px',
+                                                    height: '12px',
+                                                    backgroundColor: entry.color,
+                                                    borderRadius: '4px'
+                                                }}
+                                            />
+                                            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                                                {entry.value}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        />
+                        <Bar
+                            dataKey="hsmRevenue"
+                            stroke={undefined}
+                            fill="#8B5CF6"
+                            name="HSM Revenue"
+                        />
+                    </BarChart>
+                )}
             </ResponsiveContainer>
         </SChartContainer >
     )

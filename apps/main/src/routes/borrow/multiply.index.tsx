@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { getPageMeta } from "@/config/navigation"
 import { MultiplyView } from "@/modules/borrow/dashboard/MultiplyView"
 
-export const Route = createFileRoute("/borrow/multiply")({
+export const Route = createFileRoute("/borrow/multiply/")({
     component: MultiplyView,
     head: ({
         match: {

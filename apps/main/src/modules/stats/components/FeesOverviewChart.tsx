@@ -390,7 +390,7 @@ export const FeesOverviewChart: FC = () => {
                 Actually, let's keep the standard one for Fees mode to avoid breaking it, unless requested.
             */}
             <Tooltip
-              content={({ active, payload, label }) => (
+              content={({ payload, label }) => (
                 <SChartTooltipContainer>
                   <Text fs={12} fw={600} color="text.high" style={{ marginBottom: 4 }}>
                     {label}

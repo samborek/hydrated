@@ -194,14 +194,17 @@ export const MultiplyView: FC = () => {
         columnHelper.display({
             id: "actions",
             header: "",
-            cell: () => (
+            cell: ({ row }) => (
                 <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
                     <Button
                         size="small"
                         variant="secondary"
                         onClick={(e) => {
                             e.stopPropagation()
-                            navigate({ to: `/borrow/multiply/${row.original.id}` })
+                            navigate({
+                                to: "/borrow/multiply/$strategyId",
+                                params: { strategyId: row.original.id }
+                            })
                         }}
                     >
                         Multiply
@@ -223,7 +226,10 @@ export const MultiplyView: FC = () => {
                 <Text fs={18} fw={600} mb={16} font="primary">Featured Loops</Text>
                 <Grid columns={gte("md") ? 3 : 1} gap={16}>
                     {strategies.slice(0, 3).map((s) => (
-                        <SLoopCard key={"feat-" + s.id} onClick={() => navigate({ to: `/borrow/multiply/${s.id}` })}>
+                        <SLoopCard key={"feat-" + s.id} onClick={() => navigate({
+                            to: "/borrow/multiply/$strategyId",
+                            params: { strategyId: s.id }
+                        })}>
                             <Flex justify="space-between" align="center">
                                 <Flex>
                                     <AssetLogo id={s.collateralAsset.id} size="large" />
@@ -257,7 +263,10 @@ export const MultiplyView: FC = () => {
                     <DataTable
                         data={strategies}
                         columns={columns}
-                        onRowClick={(row) => navigate({ to: `/borrow/multiply/${row.id}` })}
+                        onRowClick={(row) => navigate({
+                            to: "/borrow/multiply/$strategyId",
+                            params: { strategyId: row.id }
+                        })}
                     />
                 </SSection>
             </Box>

@@ -1,10 +1,12 @@
 import styled from "@emotion/styled"
 import { css } from "@galacticcouncil/ui/utils"
-import { Button, Flex, Text, Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@galacticcouncil/ui/components"
+import { Button, Flex, Text, Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
 import { FC, useState, useMemo } from "react"
 import {
     AreaChart,
     Area,
+    BarChart,
+    Bar,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -12,7 +14,7 @@ import {
     ResponsiveContainer,
     Legend,
 } from "recharts"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, BarChart2, TrendingUp } from "lucide-react"
 import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 import { useTheme } from "@galacticcouncil/ui/theme"
 
@@ -118,9 +120,11 @@ const generateLiquidityFeesData = (timeRange: TimeRange) => {
 }
 
 type TimeRange = '1W' | '1M' | '1Y' | 'ALL'
+type ChartType = 'line' | 'bar'
 
 export const LiquidityFeesChart: FC = () => {
     const [timeRange, setTimeRange] = useState<TimeRange>('1M')
+    const [chartType, setChartType] = useState<ChartType>('line')
     const [activeTypes, setActiveTypes] = useState<FeeType[]>(Object.keys(FEE_TYPES) as FeeType[])
 
     const feesData = useMemo(() => generateLiquidityFeesData(timeRange), [timeRange])
@@ -151,6 +155,18 @@ export const LiquidityFeesChart: FC = () => {
                     </Text>
                 </div>
                 <SControlsGroup>
+                    <ToggleGroup
+                        type="single"
+                        value={chartType}
+                        onValueChange={(v) => v && setChartType(v as ChartType)}
+                    >
+                        <ToggleGroupItem value="line">
+                            <TrendingUp size={16} />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="bar">
+                            <BarChart2 size={16} />
+                        </ToggleGroupItem>
+                    </ToggleGroup>
                     <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <SFilterBtn>
@@ -193,86 +209,155 @@ export const LiquidityFeesChart: FC = () => {
             </SChartHeader>
 
             <ResponsiveContainer width="100%" height={280}>
-                <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                    <defs>
-                        <linearGradient id="gradOmnipoolWithdraw" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#22C55E" stopOpacity={0.6} />
-                            <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1} />
-                        </linearGradient>
-                        <linearGradient id="gradIsolatedPoolTrade" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
-                            <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
-                        </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
-                    <XAxis
-                        dataKey="date"
-                        tick={{ fill: theme.text.medium, fontSize: 11 }}
-                        axisLine={{ stroke: theme.details.separators }}
-                        tickLine={false}
-                    />
-                    <YAxis
-                        tick={{ fill: theme.text.medium, fontSize: 11 }}
-                        axisLine={{ stroke: theme.details.separators }}
-                        tickLine={false}
-                        tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
-                    />
-                    <Tooltip
-                        content={({ active, payload, label }) => (
-                            <ChartTooltipContent
-                                active={active}
-                                payload={payload as any}
-                                label={label}
-                                valueFormatter={(v) => `$${v.toFixed(2)}`}
+                {chartType === 'line' ? (
+                    <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                        <defs>
+                            <linearGradient id="gradOmnipoolWithdraw" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#22C55E" stopOpacity={0.6} />
+                                <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1} />
+                            </linearGradient>
+                            <linearGradient id="gradIsolatedPoolTrade" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
+                                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
+                        <XAxis
+                            dataKey="date"
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
+                        />
+                        <YAxis
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
+                            tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
+                        />
+                        <Tooltip
+                            content={({ active, payload, label }) => (
+                                <ChartTooltipContent
+                                    active={active}
+                                    payload={payload as any}
+                                    label={label}
+                                    valueFormatter={(v) => `$${v.toFixed(2)}`}
+                                />
+                            )}
+                            cursor={chartCursorStyle}
+                        />
+                        <Legend
+                            verticalAlign="bottom"
+                            align="left"
+                            wrapperStyle={{ paddingTop: '20px' }}
+                            content={({ payload }: any) => (
+                                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                                    {payload?.map((entry: any, index: number) => (
+                                        <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div
+                                                style={{
+                                                    width: '12px',
+                                                    height: '12px',
+                                                    backgroundColor: entry.color,
+                                                    borderRadius: '4px'
+                                                }}
+                                            />
+                                            <span style={{ color: theme.text.medium, fontSize: '12px' }}>
+                                                {FEE_TYPES[entry.value as FeeType]?.label || entry.value}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        />
+                        {activeTypes.includes('omnipoolWithdraw') && (
+                            <Area
+                                type="monotone"
+                                dataKey="omnipoolWithdraw"
+                                stroke="#22C55E"
+                                fill="url(#gradOmnipoolWithdraw)"
+                                strokeWidth={2}
+                                name="omnipoolWithdraw"
                             />
                         )}
-                        cursor={chartCursorStyle}
-                    />
-                    <Legend
-                        verticalAlign="bottom"
-                        align="left"
-                        wrapperStyle={{ paddingTop: '20px' }}
-                        content={({ payload }: any) => (
-                            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                                {payload?.map((entry: any, index: number) => (
-                                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <div
-                                            style={{
-                                                width: '12px',
-                                                height: '12px',
-                                                backgroundColor: entry.color,
-                                                borderRadius: '4px'
-                                            }}
-                                        />
-                                        <span style={{ color: theme.text.medium, fontSize: '12px' }}>
-                                            {FEE_TYPES[entry.value as FeeType]?.label || entry.value}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
+                        {activeTypes.includes('isolatedPoolTrade') && (
+                            <Area
+                                type="monotone"
+                                dataKey="isolatedPoolTrade"
+                                stroke="#8B5CF6"
+                                fill="url(#gradIsolatedPoolTrade)"
+                                strokeWidth={2}
+                                name="isolatedPoolTrade"
+                            />
                         )}
-                    />
-                    {activeTypes.includes('omnipoolWithdraw') && (
-                        <Area
-                            type="monotone"
-                            dataKey="omnipoolWithdraw"
-                            stroke="#22C55E"
-                            fill="url(#gradOmnipoolWithdraw)"
-                            strokeWidth={2}
-                            name="omnipoolWithdraw"
+                    </AreaChart>
+                ) : (
+                    <BarChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
+                        <XAxis
+                            dataKey="date"
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
                         />
-                    )}
-                    {activeTypes.includes('isolatedPoolTrade') && (
-                        <Area
-                            type="monotone"
-                            dataKey="isolatedPoolTrade"
-                            stroke="#8B5CF6"
-                            fill="url(#gradIsolatedPoolTrade)"
-                            strokeWidth={2}
-                            name="isolatedPoolTrade"
+                        <YAxis
+                            tick={{ fill: theme.text.medium, fontSize: 11 }}
+                            axisLine={{ stroke: theme.details.separators }}
+                            tickLine={false}
+                            tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
                         />
-                    )}
-                </AreaChart>
+                        <Tooltip
+                            content={({ active, payload, label }) => (
+                                <ChartTooltipContent
+                                    active={active}
+                                    payload={payload as any}
+                                    label={label}
+                                    valueFormatter={(v) => `$${v.toFixed(2)}`}
+                                />
+                            )}
+                            cursor={{ fill: theme.surfaces.containers.high.hover }}
+                        />
+                        <Legend
+                            verticalAlign="bottom"
+                            align="left"
+                            wrapperStyle={{ paddingTop: '20px' }}
+                            content={({ payload }: any) => (
+                                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                                    {payload?.map((entry: any, index: number) => (
+                                        <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div
+                                                style={{
+                                                    width: '12px',
+                                                    height: '12px',
+                                                    backgroundColor: entry.color,
+                                                    borderRadius: '4px'
+                                                }}
+                                            />
+                                            <span style={{ color: theme.text.medium, fontSize: '12px' }}>
+                                                {FEE_TYPES[entry.value as FeeType]?.label || entry.value}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        />
+                        {activeTypes.includes('omnipoolWithdraw') && (
+                            <Bar
+                                dataKey="omnipoolWithdraw"
+                                stackId="a"
+                                fill={FEE_TYPES.omnipoolWithdraw.color}
+                                name="omnipoolWithdraw"
+                            />
+                        )}
+                        {activeTypes.includes('isolatedPoolTrade') && (
+                            <Bar
+                                dataKey="isolatedPoolTrade"
+                                stackId="a"
+                                fill={FEE_TYPES.isolatedPoolTrade.color}
+                                name="isolatedPoolTrade"
+                            />
+                        )}
+                    </BarChart>
+                )}
             </ResponsiveContainer>
         </SChartContainer>
     )

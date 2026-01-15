@@ -184,11 +184,12 @@ export const MultiplyView: FC = () => {
             id: "actions",
             header: "",
             cell: () => (
-                <Button size="small" variant="secondary">Multiply</Button>
+                <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+                    <Button size="small" variant="secondary">Multiply</Button>
+                </div>
             ),
             meta: {
                 sx: {
-                    textAlign: "right",
                     paddingRight: "20px"
                 }
             }

@@ -24,6 +24,7 @@ export const SubpageMenu: FC<Props> = ({ ignoreCurrentSearch }) => {
         title: translations[nav.key].title,
         icon: nav.icon,
         search: nav.search,
+        badge: nav.badge,
       })) || [],
     [pathname, translations],
   )

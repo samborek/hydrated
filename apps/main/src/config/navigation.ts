@@ -47,6 +47,7 @@ export const LINKS = {
   borrowDashboard: "/borrow/dashboard",
   borrowMarkets: "/borrow/markets",
   borrowHistory: "/borrow/history",
+  multiply: "/borrow/multiply",
   // memepad: "/memepad",
   // submitTransaction: "/submit-transaction",
 } satisfies Record<string, Route>
@@ -60,6 +61,7 @@ export type NavigationItem = {
   enabled?: boolean
   children?: NavigationItem[]
   search?: Record<string, string | boolean>
+  badge?: React.ReactNode
 }
 
 export const NAVIGATION: NavigationItem[] = [
@@ -78,6 +80,12 @@ export const NAVIGATION: NavigationItem[] = [
     icon: BanknoteIcon,
     children: [
       { key: "borrowDashboard", to: LINKS.borrowDashboard, icon: ChartPieIcon },
+      {
+        key: "multiply",
+        to: LINKS.multiply,
+        icon: Repeat2Icon,
+        badge: "New",
+      },
       { key: "borrowMarkets", to: LINKS.borrowMarkets, icon: Grid2X2Icon },
       { key: "borrowHistory", to: LINKS.borrowHistory, icon: HistoryIcon },
     ],
@@ -239,6 +247,10 @@ export const getMenuTranslations = (t: TFunction) =>
     // },
     borrow: {
       title: t("navigation.borrow.title"),
+      description: "",
+    },
+    multiply: {
+      title: "Multiply", // Hardcoded for now until i18n file is found/updated
       description: "",
     },
     borrowDashboard: {

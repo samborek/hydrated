@@ -44,9 +44,9 @@ export const TabMenuItem: FC<Props> = ({
       path.startsWith(to) &&
       (routeSearch
         ? Object.entries(routeSearch ?? {}).every(
-            ([key, value]) =>
-              currentSearch[key as keyof typeof currentSearch] === value,
-          )
+          ([key, value]) =>
+            currentSearch[key as keyof typeof currentSearch] === value,
+        )
         : true)
     )
   }
@@ -65,6 +65,23 @@ export const TabMenuItem: FC<Props> = ({
       >
         {IconComponent && <IconComponent />}
         {title}
+        {item.badge && (
+          <span
+            style={{
+              marginLeft: 6,
+              fontSize: 9,
+              fontWeight: 700,
+              background: "#3B82F6", // Functionally equivalent theme color if available, hardcoded for now or use theme token
+              color: "white",
+              padding: "2px 6px",
+              borderRadius: 4,
+              textTransform: "uppercase",
+              lineHeight: 1,
+            }}
+          >
+            {item.badge}
+          </span>
+        )}
       </Link>
     </Button>
   )

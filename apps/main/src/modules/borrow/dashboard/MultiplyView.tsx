@@ -123,6 +123,9 @@ export const MultiplyView: FC = () => {
         columnHelper.accessor("collateralAsset", {
             id: "supply",
             header: "Asset to Supply",
+            meta: {
+                sx: { width: "20%" }
+            },
             cell: ({ row }) => {
                 const s = row.original
                 const supplyApy = Number(s.collateralAsset.supplyAPY) || 0
@@ -141,7 +144,7 @@ export const MultiplyView: FC = () => {
             id: "borrow",
             header: "Borrow Token",
             meta: {
-                sx: { width: "100%" }
+                sx: { width: "20%" }
             },
             cell: ({ row }) => {
                 const s = row.original
@@ -159,6 +162,9 @@ export const MultiplyView: FC = () => {
         }),
         columnHelper.accessor("netApy", {
             header: "Net APY",
+            meta: {
+                sx: { width: "20%" }
+            },
             cell: ({ getValue }) => (
                 <Text color={theme.details.values.positive} fw={600}>
                     {getValue().toFixed(2)}%
@@ -167,6 +173,9 @@ export const MultiplyView: FC = () => {
         }),
         columnHelper.accessor("leverage", {
             header: "Max Leverage",
+            meta: {
+                sx: { width: "20%" }
+            },
             cell: ({ getValue }) => (
                 <Text>{getValue()}x</Text>
             )

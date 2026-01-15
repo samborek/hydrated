@@ -12,8 +12,15 @@ const SSection = styled.section(
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
     border-radius: 16px;
-    padding: ${theme.scales.paddings.xl}px;
+    padding: 0px;
     margin-bottom: 20px;
+    overflow: hidden;
+
+    /* Adjust table row padding here */
+    & table tbody td {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
   `
 )
 
@@ -114,23 +121,6 @@ export const MultiplyView: FC = () => {
 
     const columns = [
         columnHelper.accessor("collateralAsset", {
-            header: "Strategy",
-            cell: ({ row }) => {
-                const s = row.original
-                return (
-                    <Flex align="center" gap={12}>
-                        <Flex>
-                            <AssetLogo id={getAssetIdFromAddress(s.collateralAsset.underlyingAsset)} size="medium" />
-                            <div style={{ marginLeft: -10 }}>
-                                <AssetLogo id={getAssetIdFromAddress(s.debtAsset.underlyingAsset)} size="medium" />
-                            </div>
-                        </Flex>
-                        <Text fw={600} fs={14}>{s.collateralAsset.symbol} Loop</Text>
-                    </Flex>
-                )
-            }
-        }),
-        columnHelper.accessor("collateralAsset", {
             id: "supply",
             header: "Asset to Supply",
             cell: ({ row }) => {
@@ -223,7 +213,9 @@ export const MultiplyView: FC = () => {
 
             {/* Strategies List */}
             <SSection>
-                <SectionHeader>Strategies</SectionHeader>
+                <div style={{ padding: `${theme.scales.paddings.xl}px` }}>
+                    <SectionHeader>All pairs</SectionHeader>
+                </div>
                 <DataTable
                     data={strategies}
                     columns={columns}

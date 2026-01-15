@@ -27,13 +27,47 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({ strategyId }) 
         let collateral = sAssets.find(a => a.symbol === collateralSymbol) as any
         if (!collateral) {
             const token = tokens.find(t => t.symbol === collateralSymbol)
-            collateral = { ...token, symbol: collateralSymbol }
+            collateral = {
+                ...token,
+                symbol: collateralSymbol,
+                totalLiquidity: "0",
+                totalDebt: "0",
+                supplyCap: "0",
+                borrowCap: "0",
+                debtCeiling: "0",
+                availableLiquidityUSD: 0,
+                baseLTVasCollateral: "0",
+                reserveLiquidationThreshold: "0",
+                totalLiquidityUSD: "0",
+                isolationModeTotalDebt: "0",
+                isolationModeTotalDebtUSD: "0",
+                eModeCategoryId: 0,
+                borrowingEnabled: false,
+                isIsolated: false
+            }
         }
 
         let debt = bAssets.find(a => a.symbol === debtSymbol) as any
         if (!debt) {
             const token = tokens.find(t => t.symbol === debtSymbol)
-            debt = { ...token, symbol: debtSymbol }
+            debt = {
+                ...token,
+                symbol: debtSymbol,
+                totalLiquidity: "0",
+                totalDebt: "0",
+                supplyCap: "0",
+                borrowCap: "0",
+                debtCeiling: "0",
+                availableLiquidityUSD: 0,
+                baseLTVasCollateral: "0",
+                reserveLiquidationThreshold: "0",
+                totalLiquidityUSD: "0",
+                isolationModeTotalDebt: "0",
+                isolationModeTotalDebtUSD: "0",
+                eModeCategoryId: 0,
+                borrowingEnabled: false,
+                isIsolated: false
+            }
         }
 
         return { collateral, debt }

@@ -1,4 +1,4 @@
-import { Big } from "big.js"
+import Big from "big.js"
 import { createContext, ReactNode, useContext, useMemo } from "react"
 
 import { BorrowCapMaxedTooltip } from "@/components/tooltips/BorrowCapMaxedTooltip"
@@ -135,7 +135,7 @@ export const useAssetCaps = () => {
   if (context === undefined) {
     throw new Error(
       "useAssetCaps() can only be used inside of <AssetCapsProvider />, " +
-        "please declare it at a higher level.",
+      "please declare it at a higher level.",
     )
   }
 
@@ -181,7 +181,7 @@ export const getDebtCeilingData = (asset: ComputedReserveData) => {
   let debtCeilingUsage: number =
     asset && asset.debtCeiling !== "0"
       ? Big(asset.isolationModeTotalDebt).div(asset.debtCeiling).toNumber() *
-        100
+      100
       : 0
   debtCeilingUsage = debtCeilingUsage === Infinity ? 0 : debtCeilingUsage
   const debtCeilingReached = debtCeilingUsage >= 99.99

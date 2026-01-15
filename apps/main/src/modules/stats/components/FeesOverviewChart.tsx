@@ -1,7 +1,7 @@
 import styled from "@emotion/styled"
 import { Button, Flex, Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
-import { FC, useState, useMemo } from "react"
+import { FC, useState, useMemo, useEffect, useRef } from "react"
 import {
   BarChart,
   Bar,
@@ -14,7 +14,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts"
-import { ChartTooltipContent } from "./StatsChartTooltip"
+import { SChartTooltipContainer } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -36,6 +36,45 @@ const SControlsGroup = styled.div`
   align-self: center;
   flex-wrap: wrap;
 `
+
+// --- Animated Value Component ---
+const AnimatedValue = ({ value }: { value: number }) => {
+  const [displayValue, setDisplayValue] = useState(value)
+  const startTime = useRef<number | null>(null)
+  const startValue = useRef(value)
+  const endValue = useRef(value)
+  const duration = 300 // ms
+
+  useEffect(() => {
+    startValue.current = displayValue
+    endValue.current = value
+    startTime.current = null
+
+    let animationFrameId: number
+
+    const animate = (timestamp: number) => {
+      if (!startTime.current) startTime.current = timestamp
+      const progress = timestamp - startTime.current
+      const percentage = Math.min(progress / duration, 1) // 0 to 1
+
+      // Ease out cubic
+      const ease = 1 - Math.pow(1 - percentage, 3)
+
+      const current = startValue.current + (endValue.current - startValue.current) * ease
+
+      setDisplayValue(current)
+
+      if (percentage < 1) {
+        animationFrameId = requestAnimationFrame(animate)
+      }
+    }
+
+    animationFrameId = requestAnimationFrame(animate)
+    return () => cancelAnimationFrame(animationFrameId)
+  }, [value])
+
+  return <>{`$${(displayValue / 1000).toFixed(1)}K`}</>
+}
 
 
 // Generate mock fees data with realistic relative distributions
@@ -105,10 +144,66 @@ type ViewMode = 'fees' | 'revenue'
 // Display all 5 categories to match Revenue tab
 const RATE_KEYS = ['rateTrading', 'rateNetwork', 'rateLiquidity', 'rateSupplyBorrow', 'rateHollar'] as const
 
+const CustomTooltipContent = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null
+
+  // Calculate sum
+  const sum = payload.reduce((acc: number, entry: any) => acc + (Number(entry.value) || 0), 0)
+
+  // Reverse payload order to match the stacked bars (visually top to bottom in tooltip = top to bottom in stack)
+  // Actually, Recharts stacks bottom-up. So the top item in chart is the last item in keys/payload.
+  // User wants hierarchy "same as colors in bar... naturally from top to bottom".
+  // If Bar stacks A (bottom), B, C... E (top). 
+  // User wants tooltip to show E (top), D, ... A (bottom).
+  // So we reverse the payload.
+  const reversedPayload = [...payload].reverse()
+
+  return (
+    <SChartTooltipContainer>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+        <Text fs={12} fw={600} color="text.high">
+          {label}
+        </Text>
+        <Text fs={12} fw={600} color="text.high">
+          ${sum.toFixed(2)}
+        </Text>
+      </div>
+
+      {reversedPayload.map((entry: any) => (
+        <Flex key={entry.dataKey} gap={8} align="center">
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              backgroundColor: entry.color,
+              borderRadius: 2,
+              flexShrink: 0,
+            }}
+          />
+          <Flex justify="space-between" gap={16} sx={{ flex: 1, minWidth: 100 }}>
+            <Text
+              fs={10}
+              fw={500}
+              color="text.medium"
+              css={{ textTransform: 'uppercase', letterSpacing: '0.02em' }}
+            >
+              {LABELS[entry.name as keyof typeof LABELS] || entry.name}
+            </Text>
+            <Text fs={12} fw={500} color="text.high">
+              ${Number(entry.value).toFixed(2)}
+            </Text>
+          </Flex>
+        </Flex>
+      ))}
+    </SChartTooltipContainer>
+  )
+}
+
 export const FeesOverviewChart: FC = () => {
   const { themeProps: theme } = useTheme()
   const [timeRange, setTimeRange] = useState<TimeRange>('1M')
   const [viewMode, setViewMode] = useState<ViewMode>('revenue')
+  const [hoveredRevenue, setHoveredRevenue] = useState<number | null>(null)
 
   const COLORS = {
     networkFees: '#8B5CF6',
@@ -130,9 +225,9 @@ export const FeesOverviewChart: FC = () => {
   const totalRevenue = useMemo(() => chartData.reduce((acc, day) =>
     acc +
     (day.networkFees * 1.0) +
-    (day.tradingFees * 0.2) +
-    (day.liquidityFees * 0.0) +
-    (day.supplyBorrowFees * 0.2) +
+    (day.tradingFees * 1.0) +
+    (day.liquidityFees * 1.0) +
+    (day.supplyBorrowFees * 1.0) +
     (day.hollarFees * 1.0),
     0
   ), [chartData])
@@ -144,11 +239,13 @@ export const FeesOverviewChart: FC = () => {
       <SChartHeader>
         <div>
           <Text fs={14} color={theme.text.medium}>
-            {viewMode === 'revenue' ? 'Protocol Revenue' : 'Fee Rate Fluctuation'}
+            {viewMode === 'revenue'
+              ? (hoveredRevenue ? 'Daily Revenue' : 'Protocol Revenue')
+              : 'Fee Rate Fluctuation'}
           </Text>
           <Text fs={32} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif' }}>
             {viewMode === 'revenue'
-              ? `$${(totalRevenue / 1000).toFixed(1)}K`
+              ? <AnimatedValue value={hoveredRevenue ?? totalRevenue} />
               : `${currentTradingFee?.toFixed(2)}%`
             }
           </Text>
@@ -188,7 +285,17 @@ export const FeesOverviewChart: FC = () => {
       <ResponsiveContainer width="100%" height={320}>
         {viewMode === 'revenue' ? (
           // REVENUE MODE: Stacked Bar Chart with absolute $ values
-          <BarChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+          <BarChart
+            data={chartData}
+            margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+            onMouseMove={(state: any) => {
+              if (state.activePayload) {
+                const sum = state.activePayload.reduce((acc: number, entry: any) => acc + (Number(entry.value) || 0), 0)
+                setHoveredRevenue(sum)
+              }
+            }}
+            onMouseLeave={() => setHoveredRevenue(null)}
+          >
             <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
             <XAxis
               dataKey="date"
@@ -204,15 +311,7 @@ export const FeesOverviewChart: FC = () => {
               width={45}
             />
             <Tooltip
-              content={({ active, payload, label }) => (
-                <ChartTooltipContent
-                  active={active}
-                  payload={payload as any}
-                  label={label}
-                  valueFormatter={(v) => `$${v.toFixed(2)}`}
-                  nameFormatter={(name) => LABELS[name as keyof typeof LABELS] || name}
-                />
-              )}
+              content={CustomTooltipContent}
               cursor={{ fill: theme.surfaces.containers.high.hover }}
             />
             <Legend
@@ -248,6 +347,7 @@ export const FeesOverviewChart: FC = () => {
         ) : (
           // FEES MODE: Area Chart showing % fluctuation of rates with gradient fill
           <AreaChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+            {/* ... gradients ... */}
             <defs>
               <linearGradient id="gradRateTrading" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={COLORS.rateTrading} stopOpacity={0.4} />
@@ -285,17 +385,46 @@ export const FeesOverviewChart: FC = () => {
               domain={[0, 'auto']} // Let it auto-scale for larger interest rates
               width={45}
             />
+            {/* Reuse customized tooltip or standard one? User only asked for Revenue logic. Use standard for Fees for now or reused? 
+                User said "Also for Revenue, can we...". I'll assume standard for now for Fees, but maybe apply same style.
+                Actually, let's keep the standard one for Fees mode to avoid breaking it, unless requested.
+            */}
             <Tooltip
               content={({ active, payload, label }) => (
-                <ChartTooltipContent
-                  active={active}
-                  payload={payload as any}
-                  label={label}
-                  valueFormatter={(v) => `${v.toFixed(2)}%`}
-                  nameFormatter={(name) => LABELS[name as keyof typeof LABELS] || name}
-                />
+                <SChartTooltipContainer>
+                  <Text fs={12} fw={600} color="text.high" style={{ marginBottom: 4 }}>
+                    {label}
+                  </Text>
+                  {payload?.map((entry: any) => (
+                    <Flex key={entry.dataKey} gap={8} align="center">
+                      <div
+                        style={{
+                          width: 8,
+                          height: 8,
+                          backgroundColor: entry.color,
+                          borderRadius: 2,
+                          flexShrink: 0,
+                        }}
+                      />
+                      <Flex justify="space-between" gap={16} sx={{ flex: 1, minWidth: 100 }}>
+                        <Text
+                          fs={10}
+                          fw={500}
+                          color="text.medium"
+                          css={{ textTransform: 'uppercase', letterSpacing: '0.02em' }}
+                        >
+                          {LABELS[entry.name as keyof typeof LABELS] || entry.name}
+                        </Text>
+                        <Text fs={12} fw={500} color="text.high">
+                          {Number(entry.value).toFixed(2)}%
+                        </Text>
+                      </Flex>
+                    </Flex>
+                  ))}
+                </SChartTooltipContainer>
               )}
             />
+            {/* ... Legend and Areas ... */}
             <Legend
               verticalAlign="bottom"
               align="left"

@@ -29,3 +29,5 @@ Before creating any new styled components or UI elements:
    cd packages/ui && yarn storybook
 
 Overall when implementing precisely compare the styling, parameters, focus on details when comparing - this should apply when we have Figma Design provided or available component in library
+
+Don't deploy each update to GitgHub, only upon request

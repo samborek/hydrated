@@ -6,6 +6,10 @@ import {
   Flex,
   Grid,
   Stack,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Text,
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints } from "@galacticcouncil/ui/theme"
@@ -23,6 +27,7 @@ import { SuppliedAssetsTable } from "@/modules/borrow/dashboard/components/suppl
 import { SupplyAssetsTable } from "@/modules/borrow/dashboard/components/supply-assets/SupplyAssetsTable"
 import { HollarBanner } from "@/modules/borrow/hollar/HollarBanner"
 import { useRpcProvider } from "@/providers/rpcProvider"
+import { MultiplyView } from "./MultiplyView"
 
 export const BorrowDashboardPage = () => {
   const { t } = useTranslation(["borrow"])
@@ -45,68 +50,87 @@ export const BorrowDashboardPage = () => {
   return (
     <Stack gap={30}>
       <DashboardHeader />
-      <AccountBindingBanner />
-      <HollarBanner />
-      <Box>
-        {shouldRenderFilter && (
-          <Grid columns={2} gap={10} mb={10}>
-            <Button
-              variant={mode === "supply" ? "secondary" : "tertiary"}
-              onClick={() => setMode("supply")}
-            >
-              {t("borrow:supply")}
-            </Button>
-            <Button
-              variant={mode === "borrow" ? "secondary" : "tertiary"}
-              onClick={() => setMode("borrow")}
-            >
-              {t("borrow:borrow")}
-            </Button>
-          </Grid>
-        )}
-        <Grid columnTemplate={["1fr", null, null, "1fr 1fr"]} gap={20}>
-          {shouldRenderSupply && (
+
+      <Tabs defaultValue="lend-borrow">
+        <TabsList>
+          <TabsTrigger value="lend-borrow">Lend/Borrow</TabsTrigger>
+          <TabsTrigger value="multiply">Multiply</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="lend-borrow">
+          <Stack gap={24} mt={24}>
+            <AccountBindingBanner />
+            <HollarBanner />
             <Box>
-              <Text as="h2" font="primary" fw={500} fs="h7" mb={6}>
-                {t("supplied.table.title")}
-              </Text>
-              <SuppliedAssetsTable />
-            </Box>
-          )}
-          {shouldRenderBorrow && (
-            <Box>
-              <Flex justify="space-between" align="center" mb={6}>
-                <Text as="h2" font="primary" fw={500} fs="h7">
-                  {t("borrowed.table.title")}
-                </Text>
-                {isConnected && isBound && (
-                  <Flex align="center" gap={4}>
-                    <Text fw={500}>{t("emode.label")}</Text>
-                    <ManageEmodeButton />
-                  </Flex>
+              {shouldRenderFilter && (
+                <Grid columns={2} gap={10} mb={10}>
+                  <Button
+                    variant={mode === "supply" ? "secondary" : "tertiary"}
+                    onClick={() => setMode("supply")}
+                  >
+                    {t("borrow:supply")}
+                  </Button>
+                  <Button
+                    variant={mode === "borrow" ? "secondary" : "tertiary"}
+                    onClick={() => setMode("borrow")}
+                  >
+                    {t("borrow:borrow")}
+                  </Button>
+                </Grid>
+              )}
+              <Grid columnTemplate={["1fr", null, null, "1fr 1fr"]} gap={20}>
+                {shouldRenderSupply && (
+                  <Box>
+                    <Text as="h2" font="primary" fw={500} fs="h7" mb={6}>
+                      {t("supplied.table.title")}
+                    </Text>
+                    <SuppliedAssetsTable />
+                  </Box>
                 )}
-              </Flex>
-              <BorrowedAssetsTable />
+                {shouldRenderBorrow && (
+                  <Box>
+                    <Flex justify="space-between" align="center" mb={6}>
+                      <Text as="h2" font="primary" fw={500} fs="h7">
+                        {t("borrowed.table.title")}
+                      </Text>
+                      {isConnected && isBound && (
+                        <Flex align="center" gap={4}>
+                          <Text fw={500}>{t("emode.label")}</Text>
+                          <ManageEmodeButton />
+                        </Flex>
+                      )}
+                    </Flex>
+                    <BorrowedAssetsTable />
+                  </Box>
+                )}
+                {shouldRenderSupply && (
+                  <Box>
+                    <Text as="h2" font="primary" fw={500} fs="h7" mb={6}>
+                      {t("supply.table.title")}
+                    </Text>
+                    <SupplyAssetsTable />
+                  </Box>
+                )}
+                {shouldRenderBorrow && (
+                  <Box>
+                    <Text as="h2" font="primary" fw={500} fs="h7" mb={6}>
+                      {t("borrow.table.title")}
+                    </Text>
+                    <BorrowAssetsTable />
+                  </Box>
+                )}
+              </Grid>
             </Box>
-          )}
-          {shouldRenderSupply && (
-            <Box>
-              <Text as="h2" font="primary" fw={500} fs="h7" mb={6}>
-                {t("supply.table.title")}
-              </Text>
-              <SupplyAssetsTable />
-            </Box>
-          )}
-          {shouldRenderBorrow && (
-            <Box>
-              <Text as="h2" font="primary" fw={500} fs="h7" mb={6}>
-                {t("borrow.table.title")}
-              </Text>
-              <BorrowAssetsTable />
-            </Box>
-          )}
-        </Grid>
-      </Box>
+          </Stack>
+        </TabsContent>
+
+        <TabsContent value="multiply">
+          <Stack gap={24} mt={24}>
+            <AccountBindingBanner />
+            <MultiplyView />
+          </Stack>
+        </TabsContent>
+      </Tabs>
     </Stack>
   )
 }

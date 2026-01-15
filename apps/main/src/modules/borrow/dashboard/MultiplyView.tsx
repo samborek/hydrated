@@ -140,6 +140,9 @@ export const MultiplyView: FC = () => {
         columnHelper.accessor("debtAsset", {
             id: "borrow",
             header: "Borrow Token",
+            meta: {
+                sx: { width: "100%" }
+            },
             cell: ({ row }) => {
                 const s = row.original
                 const borrowApy = Number(s.debtAsset.variableBorrowRate) || 0
@@ -173,7 +176,13 @@ export const MultiplyView: FC = () => {
             header: "",
             cell: () => (
                 <Button size="small" variant="secondary">Multiply</Button>
-            )
+            ),
+            meta: {
+                sx: {
+                    textAlign: "right",
+                    paddingRight: "20px"
+                }
+            }
         })
     ]
 

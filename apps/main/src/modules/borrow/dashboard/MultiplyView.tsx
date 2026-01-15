@@ -3,7 +3,6 @@ import { Button, DataTable, Flex, Grid, SectionHeader, Text } from "@galacticcou
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { FC, useMemo } from "react"
-import { useTranslation } from "react-i18next"
 import { createColumnHelper } from "@tanstack/react-table"
 import { AssetLogo } from "@/components/AssetLogo"
 import { getAssetIdFromAddress } from "@galacticcouncil/utils"
@@ -84,7 +83,7 @@ export const MultiplyView: FC = () => {
             // Mock APY calc: SupplyAPY + (SupplyAPY - BorrowAPY) * (Lev - 1)
             // This is a rough estimation of "Looping" APY
             const supplyApy = Number(collateral.supplyAPY) || 0
-            const borrowApy = Number(debt.borrowAPY) || 0
+            const borrowApy = Number(debt.variableBorrowRate) || 0
             const netApy = supplyApy + (supplyApy - borrowApy) * (s.leverage - 1)
 
             return {

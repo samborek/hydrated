@@ -1,16 +1,43 @@
-import { Box, Grid, Paper, Stack, Text } from "@galacticcouncil/ui/components"
-import { FC } from "react"
-import { useTranslation } from "react-i18next"
+import { Box, Grid, Paper, Stack, Text, Icon } from "@galacticcouncil/ui/components"
 import { Link } from "@tanstack/react-router"
-import { Icon } from "@galacticcouncil/ui/components"
+import { FC, useMemo } from "react"
 import { ArrowLeft } from "lucide-react"
+import { useAssets } from "@/providers/assetsProvider"
+import { MultiplyActions } from "./components/MultiplyActions"
+import { MultiplyStrategyOverview } from "./components/MultiplyStrategyOverview"
+import { useBorrowAssetsData, useSupplyAssetsData } from "@galacticcouncil/money-market/hooks"
 
 export type MultiplyDetailPageProps = {
     strategyId: string
 }
 
 export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({ strategyId }) => {
-    // const { t } = useTranslation(["borrow"])
+    const { tokens } = useAssets()
+    const { data: supplyAssets } = useSupplyAssetsData({ showAll: true })
+    const { data: borrowAssets } = useBorrowAssetsData()
+
+    // Parse strategyId (format: CollateralSymbol-DebtSymbol-Index)
+    const [collateralSymbol, debtSymbol] = strategyId?.split("-") || ["DOT", "USDC"]
+
+    const assets = useMemo(() => {
+        // Fallback or empty arrays
+        const sAssets = supplyAssets?.length ? supplyAssets : []
+        const bAssets = borrowAssets?.length ? borrowAssets : []
+
+        let collateral = sAssets.find(a => a.symbol === collateralSymbol) as any
+        if (!collateral) {
+            const token = tokens.find(t => t.symbol === collateralSymbol)
+            collateral = { ...token, symbol: collateralSymbol }
+        }
+
+        let debt = bAssets.find(a => a.symbol === debtSymbol) as any
+        if (!debt) {
+            const token = tokens.find(t => t.symbol === debtSymbol)
+            debt = { ...token, symbol: debtSymbol }
+        }
+
+        return { collateral, debt }
+    }, [collateralSymbol, debtSymbol, supplyAssets, borrowAssets, tokens])
 
     return (
         <Stack gap={30}>
@@ -20,39 +47,24 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({ strategyId }) 
             </Link>
 
             <Box>
-                <Text fs="h7" fw={600} font="primary" sx={{ mb: 10 }}>
-                    Multiply Strategy: {strategyId}
-                </Text>
-
                 <Grid
-                    columnTemplate={["1fr", null, null, "1fr 380px"]}
+                    columnTemplate={["1fr", null, "1fr 380px"]}
                     gap={20}
                     alignItems="start"
                 >
                     {/* Left Panel - Overview */}
-                    <Paper p={20}>
-                        <Text>Strategy Overview (Chart & Details)</Text>
-                        <div style={{ height: 300, background: 'rgba(255,255,255,0.05)', marginTop: 20, borderRadius: 8 }}></div>
-                    </Paper>
+                    <MultiplyStrategyOverview
+                        strategyId={strategyId}
+                        collateralAsset={assets.collateral}
+                        debtAsset={assets.debt}
+                    />
 
                     {/* Right Panel - Actions */}
                     <Paper p={20}>
-                        <Text fs={18} fw={600} mb={20}>Multiply Actions</Text>
-                        <Text>Leverage Slider Placeholder</Text>
-                        {/* Slider Component Here */}
-                        <div style={{ padding: '40px 0' }}>
-                            <input type="range" min="1" max="5" step="0.1" style={{ width: '100%' }} />
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <span>1x</span>
-                                <span>5x</span>
-                            </div>
-                        </div>
-
-                        <Text fs={14} color="gray" mb={10}>Collateral Amount</Text>
-                        <div style={{ height: 50, background: 'rgba(255,255,255,0.1)', borderRadius: 4, marginBottom: 20 }}></div>
-
-                        <Text fs={14} color="gray" mb={10}>Buying Power</Text>
-                        <div style={{ height: 50, background: 'rgba(255,255,255,0.1)', borderRadius: 4 }}></div>
+                        <MultiplyActions
+                            collateralAsset={assets.collateral}
+                            debtAsset={assets.debt}
+                        />
                     </Paper>
                 </Grid>
             </Box>

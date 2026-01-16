@@ -35,6 +35,47 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
   `,
 )
 
+const STableWrapper = styled.div`
+  margin: 0 -20px; /* Counteract SSection padding roughly, or standard -16px? SSection uses theme padding. */
+  
+  @media (min-width: 577px) {
+    margin: 0;
+  }
+`
+
+const SDesktopView = styled.div`
+  @media (max-width: 576px) {
+    display: none;
+  }
+`
+
+const SMobileView = styled.div`
+  display: none;
+  @media (max-width: 576px) {
+    display: flex;
+    flex-direction: column;
+    padding: 0 16px;
+  }
+`
+
+const SMobileItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.details.separators};
+  
+  &:last-child {
+    border-bottom: none;
+  }
+`
+
+const SMobileRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
 const STable = styled.table(
   ({ theme }) => css`
     width: 100%;
@@ -192,54 +233,78 @@ function MoneyMarketStats() {
         />
       </Flex>
 
-      <SSection>
+      <SSection hasHeader>
         <SupplyBorrowChart title="Supply / Borrow History" />
       </SSection>
 
       <SSection hasHeader>
         <SectionHeader>Markets</SectionHeader>
-        <STable>
-          <thead>
-            <tr>
-              <th>Asset</th>
-              <th>Total Supply</th>
-              <th>Total Borrow</th>
-              <th>Utilization</th>
-              <th>Supply APY</th>
-              <th>Borrow APY</th>
-            </tr>
-          </thead>
-          <tbody>
+        <STableWrapper>
+          <SDesktopView>
+            <STable>
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Total Supply</th>
+                  <th>Total Borrow</th>
+                  <th>Utilization</th>
+                  <th>Supply APY</th>
+                  <th>Borrow APY</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mockMarkets.map((market, i) => (
+                  <tr key={i}>
+                    <td>
+                      <SAssetCell>
+                        <AssetLogo id={market.id} size="small" />
+                        <Text fw={500}>{market.asset}</Text>
+                      </SAssetCell>
+                    </td>
+                    <td>{market.supply}</td>
+                    <td>{market.borrow}</td>
+                    <td>
+                      <div
+                        style={{ display: "flex", alignItems: "center", gap: 8 }}
+                      >
+                        <SProgressBar $value={market.utilization} />
+                        <Text fs={12}>{market.utilization}%</Text>
+                      </div>
+                    </td>
+                    <td>
+                      <Text color={theme.details.values.positive}>
+                        {market.supplyApy}
+                      </Text>
+                    </td>
+                    <td>
+                      <Text color="#FF9800">{market.borrowApy}</Text>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </STable>
+          </SDesktopView>
+          <SMobileView>
             {mockMarkets.map((market, i) => (
-              <tr key={i}>
-                <td>
+              <SMobileItem key={i}>
+                <SMobileRow>
                   <SAssetCell>
                     <AssetLogo id={market.id} size="small" />
                     <Text fw={500}>{market.asset}</Text>
                   </SAssetCell>
-                </td>
-                <td>{market.supply}</td>
-                <td>{market.borrow}</td>
-                <td>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
-                    <SProgressBar $value={market.utilization} />
-                    <Text fs={12}>{market.utilization}%</Text>
-                  </div>
-                </td>
-                <td>
-                  <Text color={theme.details.values.positive}>
-                    {market.supplyApy}
+                  <Text fs={12} color="text.medium">
+                    Supply: <span style={{ color: theme.text.high, fontWeight: 500 }}>{market.supply}</span>
                   </Text>
-                </td>
-                <td>
-                  <Text color="#FF9800">{market.borrowApy}</Text>
-                </td>
-              </tr>
+                </SMobileRow>
+                <SMobileRow style={{ justifyContent: 'flex-end' }}>
+                  <Text fs={12} color="text.medium">
+                    Borrow: <span style={{ color: theme.text.high, fontWeight: 500 }}>{market.borrow}</span>
+                  </Text>
+                </SMobileRow>
+              </SMobileItem>
             ))}
-          </tbody>
-        </STable>
+          </SMobileView>
+        </STableWrapper>
       </SSection>
     </SPageContainer>
   )

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Button, Text, Flex, SectionHeader } from "@galacticcouncil/ui/components"
+import { Button, Text, Flex, SectionHeader, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState, useEffect } from "react"
@@ -126,25 +126,25 @@ export const SupplyBorrowChart: FC<Props> = ({
 
   return (
     <SChartContainer>
-      <SectionHeader>{title}</SectionHeader>
+      <SectionHeader style={{ marginTop: 0 }}>{title}</SectionHeader>
       <SChartHeader>
         <Flex gap={24}>
-          <Flex direction="column">
-            <Text fs={24} fw={700} style={{ color: '#22C55E' }}>
-              ${currentSupply.toFixed(2)}M
-            </Text>
-            <Text fs={12} color="text.medium" style={{ opacity: 0.7 }}>
-              Supply
-            </Text>
-          </Flex>
-          <Flex direction="column">
-            <Text fs={24} fw={700} style={{ color: '#F59E0B' }}>
-              ${currentBorrow.toFixed(2)}M
-            </Text>
-            <Text fs={12} color="text.medium" style={{ opacity: 0.7 }}>
-              Borrow
-            </Text>
-          </Flex>
+          <ValueStats
+            label="Supply"
+            customValue={
+              <ValueStatsValue style={{ color: '#22C55E' }}>
+                ${currentSupply.toFixed(2)}M
+              </ValueStatsValue>
+            }
+          />
+          <ValueStats
+            label="Borrow"
+            customValue={
+              <ValueStatsValue style={{ color: '#F59E0B' }}>
+                ${currentBorrow.toFixed(2)}M
+              </ValueStatsValue>
+            }
+          />
         </Flex>
         <SControlsGroup>
           <TimeRangeToggle

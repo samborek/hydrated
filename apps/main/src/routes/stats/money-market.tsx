@@ -2,7 +2,6 @@ import {
   Flex,
   SectionHeader,
   Separator,
-  Text,
   ValueStats,
   ValueStatsValue,
 } from "@galacticcouncil/ui/components"
@@ -10,7 +9,7 @@ import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { AssetLogo } from "@/components/AssetLogo"
+import { MarketsTable } from "@/modules/stats/components/MarketsTable"
 import { SupplyBorrowChart } from "@/modules/stats/components/SupplyBorrowChart"
 
 const SPageContainer = styled.div`
@@ -34,139 +33,6 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
     }
   `,
 )
-
-const STableWrapper = styled.div`
-  margin: 0 -20px; /* Counteract SSection padding roughly, or standard -16px? SSection uses theme padding. */
-  
-  @media (min-width: 577px) {
-    margin: 0;
-  }
-`
-
-const SDesktopView = styled.div`
-  @media (max-width: 576px) {
-    display: none;
-  }
-`
-
-const SMobileView = styled.div`
-  display: none;
-  @media (max-width: 576px) {
-    display: flex;
-    flex-direction: column;
-    padding: 0 16px;
-  }
-`
-
-const SMobileItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid ${({ theme }) => theme.details.separators};
-  
-  &:last-child {
-    border-bottom: none;
-  }
-`
-
-const SMobileRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`
-
-const STable = styled.table(
-  ({ theme }) => css`
-    width: 100%;
-    border-collapse: collapse;
-
-    th,
-    td {
-      text-align: left;
-      padding: 12px 16px;
-      border-bottom: 1px solid ${theme.details.separators};
-    }
-
-    th {
-      font-size: 12px;
-      color: ${theme.text.medium};
-    }
-
-    tbody tr:hover {
-      background: ${theme.surfaces.containers.high.hover};
-    }
-  `,
-)
-
-const SAssetCell = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`
-
-const SProgressBar = styled.div<{ $value: number }>(
-  ({ theme, $value }) => css`
-    height: 8px;
-    background: ${theme.surfaces.containers.dim.dimOnBg};
-    border-radius: 4px;
-    overflow: hidden;
-    width: 100px;
-
-    &::after {
-      content: "";
-      display: block;
-      height: 100%;
-      width: ${$value}%;
-      background: linear-gradient(
-        90deg,
-        ${theme.details.values.positive},
-        #8bc34a
-      );
-      border-radius: 4px;
-    }
-  `,
-)
-
-// Mock data with real asset IDs
-const mockMarkets = [
-  {
-    id: "5",
-    asset: "DOT",
-    supply: "$2.5M",
-    borrow: "$1.2M",
-    utilization: 48,
-    supplyApy: "3.2%",
-    borrowApy: "5.8%",
-  },
-  {
-    id: "22",
-    asset: "USDC",
-    supply: "$5.1M",
-    borrow: "$3.8M",
-    utilization: 75,
-    supplyApy: "4.5%",
-    borrowApy: "7.2%",
-  },
-  {
-    id: "20",
-    asset: "WETH",
-    supply: "$1.8M",
-    borrow: "$0.9M",
-    utilization: 50,
-    supplyApy: "2.8%",
-    borrowApy: "4.9%",
-  },
-  {
-    id: "21",
-    asset: "WBTC",
-    supply: "$3.2M",
-    borrow: "$1.6M",
-    utilization: 50,
-    supplyApy: "2.5%",
-    borrowApy: "4.5%",
-  },
-]
 
 function MoneyMarketStats() {
   const { themeProps: theme } = useTheme()
@@ -239,72 +105,7 @@ function MoneyMarketStats() {
 
       <SSection hasHeader>
         <SectionHeader>Markets</SectionHeader>
-        <STableWrapper>
-          <SDesktopView>
-            <STable>
-              <thead>
-                <tr>
-                  <th>Asset</th>
-                  <th>Total Supply</th>
-                  <th>Total Borrow</th>
-                  <th>Utilization</th>
-                  <th>Supply APY</th>
-                  <th>Borrow APY</th>
-                </tr>
-              </thead>
-              <tbody>
-                {mockMarkets.map((market, i) => (
-                  <tr key={i}>
-                    <td>
-                      <SAssetCell>
-                        <AssetLogo id={market.id} size="small" />
-                        <Text fw={500}>{market.asset}</Text>
-                      </SAssetCell>
-                    </td>
-                    <td>{market.supply}</td>
-                    <td>{market.borrow}</td>
-                    <td>
-                      <div
-                        style={{ display: "flex", alignItems: "center", gap: 8 }}
-                      >
-                        <SProgressBar $value={market.utilization} />
-                        <Text fs={12}>{market.utilization}%</Text>
-                      </div>
-                    </td>
-                    <td>
-                      <Text color={theme.details.values.positive}>
-                        {market.supplyApy}
-                      </Text>
-                    </td>
-                    <td>
-                      <Text color="#FF9800">{market.borrowApy}</Text>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </STable>
-          </SDesktopView>
-          <SMobileView>
-            {mockMarkets.map((market, i) => (
-              <SMobileItem key={i}>
-                <SMobileRow>
-                  <SAssetCell>
-                    <AssetLogo id={market.id} size="small" />
-                    <Text fw={500}>{market.asset}</Text>
-                  </SAssetCell>
-                  <Text fs={12} color="text.medium">
-                    Supply: <span style={{ color: theme.text.high, fontWeight: 500 }}>{market.supply}</span>
-                  </Text>
-                </SMobileRow>
-                <SMobileRow style={{ justifyContent: 'flex-end' }}>
-                  <Text fs={12} color="text.medium">
-                    Borrow: <span style={{ color: theme.text.high, fontWeight: 500 }}>{market.borrow}</span>
-                  </Text>
-                </SMobileRow>
-              </SMobileItem>
-            ))}
-          </SMobileView>
-        </STableWrapper>
+        <MarketsTable />
       </SSection>
     </SPageContainer>
   )

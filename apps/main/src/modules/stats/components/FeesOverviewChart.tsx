@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
 
-import { Flex, Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
+import { Button, Flex, Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState, useMemo, useEffect, useRef } from "react"
@@ -14,7 +14,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
+
 } from "recharts"
 import { SChartTooltipContainer } from "./StatsChartTooltip"
 
@@ -180,6 +180,15 @@ const LABELS = {
 
 type TimeRange = '1W' | '1M' | '1Y' | 'ALL'
 type ViewMode = 'fees' | 'revenue'
+type GroupBy = 'product' | 'destination'
+
+const DESTINATION_LABELS: Record<string, string> = {
+  treasury: 'Treasury',
+  lps: 'LPs',
+  burned: 'Burned',
+  stakers: 'Stakers',
+  users: 'Users',
+}
 
 // Display all 5 categories to match Revenue tab
 const RATE_KEYS = ['rateTrading', 'rateNetwork', 'rateLiquidity', 'rateSupplyBorrow', 'rateHollar'] as const
@@ -227,7 +236,7 @@ const CustomTooltipContent = ({ active, payload, label }: any) => {
               color="text.medium"
               css={{ textTransform: 'uppercase', letterSpacing: '0.02em' }}
             >
-              {LABELS[entry.name as keyof typeof LABELS] || entry.name}
+              {DESTINATION_LABELS[entry.name as keyof typeof DESTINATION_LABELS] || LABELS[entry.name as keyof typeof LABELS] || entry.name}
             </Text>
             <Text fs={12} fw={500} color="text.high">
               ${Number(entry.value).toFixed(2)}
@@ -244,22 +253,56 @@ export const FeesOverviewChart: FC = () => {
   const [timeRange, setTimeRange] = useState<TimeRange>('1M')
   const [viewMode, setViewMode] = useState<ViewMode>('revenue')
   const [hoveredRevenue, setHoveredRevenue] = useState<number | null>(null)
+  const [activeFilter, setActiveFilter] = useState<string>('all')
+  const [groupBy, setGroupBy] = useState<GroupBy>('product')
 
-  const COLORS = {
+  const COLORS: Record<string, string> = {
     networkFees: '#8B5CF6',
     tradingFees: theme.text.tint.secondary,
     liquidityFees: '#22C55E',
     supplyBorrowFees: '#F59E0B',
     hollarFees: '#EC4899',
-    // Rate Colors (Aligned with Revenue Groups)
-    rateNetwork: '#8B5CF6', // Purple
-    rateTrading: theme.text.tint.secondary, // Blue
-    rateLiquidity: '#22C55E', // Green
-    rateSupplyBorrow: '#F59E0B', // Orange
-    rateHollar: '#EC4899', // Pink
+    // Rate Colors
+    rateNetwork: '#8B5CF6',
+    rateTrading: theme.text.tint.secondary,
+    rateLiquidity: '#22C55E',
+    rateSupplyBorrow: '#F59E0B',
+    rateHollar: '#EC4899',
+    // Destination Colors
+    treasury: '#F59E0B',
+    lps: '#22C55E',
+    burned: '#EF4444',
+    stakers: '#8B5CF6',
+    users: theme.text.tint.secondary,
   }
 
   const chartData = useMemo(() => generateFeesData(timeRange), [timeRange])
+
+  // Transform data for Destination view
+  const destinationData = useMemo(() => {
+    return chartData.map(day => ({
+      date: day.date,
+      treasury: day.networkFees + day.hollarFees + day.supplyBorrowFees * 0.5,
+      lps: day.liquidityFees + day.tradingFees * 0.5,
+      burned: day.supplyBorrowFees * 0.5,
+      stakers: day.tradingFees * 0.35,
+      users: day.tradingFees * 0.15,
+    }))
+  }, [chartData])
+
+  const productKeys = ['networkFees', 'tradingFees', 'liquidityFees', 'supplyBorrowFees', 'hollarFees']
+  const destinationKeys = ['treasury', 'lps', 'burned', 'stakers', 'users']
+
+  const seriesKeys = useMemo(() => {
+    if (viewMode === 'fees') return RATE_KEYS as unknown as string[]
+    return groupBy === 'product' ? productKeys : destinationKeys
+  }, [viewMode, groupBy])
+
+  const hiddenSeries = useMemo(() =>
+    activeFilter === 'all'
+      ? []
+      : seriesKeys.filter(key => key !== activeFilter)
+    , [activeFilter, seriesKeys])
 
   // Calculate total revenue
   const totalRevenue = useMemo(() => chartData.reduce((acc, day) =>
@@ -305,6 +348,17 @@ export const FeesOverviewChart: FC = () => {
             <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
             <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
           </ToggleGroup>
+          {viewMode === 'revenue' && (
+            <ToggleGroup
+              size="small"
+              type="single"
+              value={groupBy}
+              onValueChange={(v) => v && setGroupBy(v as GroupBy)}
+            >
+              <ToggleGroupItem value="product">By Product</ToggleGroupItem>
+              <ToggleGroupItem value="destination">By Destination</ToggleGroupItem>
+            </ToggleGroup>
+          )}
           <TimeRangeToggle
             value={timeRange}
             items={['1W', '1M', '1Y', 'ALL']}
@@ -317,7 +371,7 @@ export const FeesOverviewChart: FC = () => {
         {viewMode === 'revenue' ? (
           // REVENUE MODE: Stacked Bar Chart with absolute $ values
           <BarChart
-            data={chartData}
+            data={groupBy === 'destination' ? destinationData : chartData}
             margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
             onMouseMove={(state: any) => {
               if (state.activePayload) {
@@ -345,35 +399,17 @@ export const FeesOverviewChart: FC = () => {
               content={CustomTooltipContent}
               cursor={{ fill: theme.surfaces.containers.high.hover }}
             />
-            <Legend
-              verticalAlign="bottom"
-              align="left"
-              wrapperStyle={{ paddingTop: '20px' }}
-              content={({ payload }: any) => (
-                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                  {payload?.map((entry: any, index: number) => (
-                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div
-                        style={{
-                          width: '12px',
-                          height: '12px',
-                          backgroundColor: entry.color,
-                          borderRadius: '4px'
-                        }}
-                      />
-                      <span style={{ color: theme.text.low, fontSize: '12px' }}>
-                        {LABELS[entry.value as keyof typeof LABELS] || entry.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            />
-            <Bar dataKey="networkFees" stackId="a" fill={COLORS.networkFees} name="networkFees" />
-            <Bar dataKey="tradingFees" stackId="a" fill={COLORS.tradingFees} name="tradingFees" />
-            <Bar dataKey="liquidityFees" stackId="a" fill={COLORS.liquidityFees} name="liquidityFees" />
-            <Bar dataKey="supplyBorrowFees" stackId="a" fill={COLORS.supplyBorrowFees} name="supplyBorrowFees" />
-            <Bar dataKey="hollarFees" stackId="a" fill={COLORS.hollarFees} name="hollarFees" radius={[4, 4, 0, 0]} />
+            {seriesKeys.map((key, index) => (
+              <Bar
+                key={key}
+                dataKey={key}
+                stackId="a"
+                fill={COLORS[key]}
+                name={key}
+                hide={hiddenSeries.includes(key)}
+                radius={index === seriesKeys.length - 1 ? [4, 4, 0, 0] : undefined}
+              />
+            ))}
           </BarChart>
         ) : (
           // FEES MODE: Area Chart showing % fluctuation of rates with gradient fill
@@ -456,30 +492,6 @@ export const FeesOverviewChart: FC = () => {
               )}
             />
             {/* ... Legend and Areas ... */}
-            <Legend
-              verticalAlign="bottom"
-              align="left"
-              wrapperStyle={{ paddingTop: '20px' }}
-              content={({ payload }: any) => (
-                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                  {payload?.map((entry: any, index: number) => (
-                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div
-                        style={{
-                          width: '12px',
-                          height: '12px',
-                          backgroundColor: entry.color,
-                          borderRadius: '4px'
-                        }}
-                      />
-                      <span style={{ color: theme.text.low, fontSize: '12px' }}>
-                        {LABELS[entry.value as keyof typeof LABELS] || entry.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            />
             {RATE_KEYS.map((key) => (
               <Area
                 key={key}
@@ -489,11 +501,51 @@ export const FeesOverviewChart: FC = () => {
                 fill={`url(#grad${key.charAt(0).toUpperCase() + key.slice(1)})`}
                 strokeWidth={2}
                 name={key}
+                hide={hiddenSeries.includes(key)}
               />
             ))}
           </AreaChart>
         )}
       </ResponsiveContainer>
+
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '20px', marginBottom: '20px' }}>
+        {/* Toggle Buttons: mimic TimeRangeToggle logic (Exclusive selection) */}
+        {['all', ...seriesKeys].map((key) => {
+          const isActive = activeFilter === key
+          const isAll = key === 'all'
+
+          return (
+            <Button
+              key={key}
+              size="small"
+              variant={isActive ? "secondary" : "restSubtle"}
+              outline={!isActive}
+              onClick={() => setActiveFilter(key)}
+              sx={{
+                gap: 8,
+                height: 30,
+                px: 12,
+                minWidth: 30,
+                borderRadius: 32, // Pill shape like TimeRangeToggle
+              }}
+            >
+              {!isAll && (
+                <div
+                  style={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: isActive ? 'currentColor' : COLORS[key], // Use currentColor if active (likely white), else series color
+                    borderRadius: '50%',
+                  }}
+                />
+              )}
+              <Text fs={11} fw={500} color="text.high">
+                {isAll ? "All" : (DESTINATION_LABELS[key as keyof typeof DESTINATION_LABELS] || LABELS[key as keyof typeof LABELS] || key)}
+              </Text>
+            </Button>
+          )
+        })}
+      </div>
 
       <SChartFooter>
         <div style={{ flex: 1 }}>

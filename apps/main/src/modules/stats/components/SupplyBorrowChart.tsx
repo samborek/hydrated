@@ -1,8 +1,8 @@
 import styled from "@emotion/styled"
-import { Button, Text } from "@galacticcouncil/ui/components"
+import { Button, Text, Flex, SectionHeader } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
-import { FC, useMemo, useState } from "react"
+import { FC, useMemo, useState, useEffect } from "react"
 import {
   Area,
   AreaChart,
@@ -105,6 +105,7 @@ export const SupplyBorrowChart: FC<Props> = ({
 }) => {
   const { themeProps: theme } = useTheme()
   const [timeRange, setTimeRange] = useState<TimeRange>("30D")
+  const [activeData, setActiveData] = useState<any | null>(null)
 
   // Generate data once with useMemo to avoid regenerating on every render
   const chartData = useMemo(() => generateSupplyBorrowData(), [])
@@ -115,14 +116,36 @@ export const SupplyBorrowChart: FC<Props> = ({
     return chartData.slice(-days)
   }, [chartData, timeRange])
 
+  // Reset/Set active data logic
+  useEffect(() => {
+    setActiveData(filteredData[filteredData.length - 1])
+  }, [filteredData])
+
+  const currentSupply = activeData?.supply ?? 0
+  const currentBorrow = activeData?.borrow ?? 0
+
   return (
     <SChartContainer>
+      <SectionHeader>{title}</SectionHeader>
       <SChartHeader>
-        <div>
-          <Text fs={14} color={theme.text.medium}>
-            {title}
-          </Text>
-        </div>
+        <Flex gap={24}>
+          <Flex direction="column">
+            <Text fs={24} fw={700} style={{ color: '#22C55E' }}>
+              ${currentSupply.toFixed(2)}M
+            </Text>
+            <Text fs={12} color="text.medium" style={{ opacity: 0.7 }}>
+              Supply
+            </Text>
+          </Flex>
+          <Flex direction="column">
+            <Text fs={24} fw={700} style={{ color: '#F59E0B' }}>
+              ${currentBorrow.toFixed(2)}M
+            </Text>
+            <Text fs={12} color="text.medium" style={{ opacity: 0.7 }}>
+              Borrow
+            </Text>
+          </Flex>
+        </Flex>
         <SControlsGroup>
           <TimeRangeToggle
             value={timeRange}
@@ -136,6 +159,14 @@ export const SupplyBorrowChart: FC<Props> = ({
         <AreaChart
           data={filteredData}
           margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+          onMouseMove={(state: any) => {
+            if (state.activePayload && state.activePayload[0]) {
+              setActiveData(state.activePayload[0].payload)
+            }
+          }}
+          onMouseLeave={() => {
+            setActiveData(filteredData[filteredData.length - 1])
+          }}
         >
           <defs>
             <linearGradient id="supplyGrad" x1="0" y1="0" x2="0" y2="1">

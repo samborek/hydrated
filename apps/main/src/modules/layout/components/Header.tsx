@@ -26,20 +26,22 @@ type Props = {
   onDepositClick?: () => void
 }
 
-export const Header = forwardRef<HTMLDivElement, Props>(({ onDepositClick }, ref) => {
-  const hasTopNavbar = useHasTopNavbar()
+export const Header = forwardRef<HTMLDivElement, Props>(
+  ({ onDepositClick }, ref) => {
+    const hasTopNavbar = useHasTopNavbar()
 
-  const Logo: LazyExoticComponent<FC<SVGProps<SVGSVGElement>>> = hasTopNavbar
-    ? HydrationLogoFull
-    : HydrationLogo
+    const Logo: LazyExoticComponent<FC<SVGProps<SVGSVGElement>>> = hasTopNavbar
+      ? HydrationLogoFull
+      : HydrationLogo
 
-  return (
-    <SHeader ref={ref}>
-      <Logo />
-      {hasTopNavbar && <HeaderMenu />}
-      <HeaderToolbar onDepositClick={onDepositClick} />
-    </SHeader>
-  )
-})
+    return (
+      <SHeader ref={ref}>
+        <Logo />
+        {hasTopNavbar && <HeaderMenu />}
+        <HeaderToolbar onDepositClick={onDepositClick} />
+      </SHeader>
+    )
+  },
+)
 
 Header.displayName = "Header"

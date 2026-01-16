@@ -7,8 +7,8 @@ import { useActiveProviderProps, useSquidUrl } from "@/api/provider"
 import { RpcSelectModal } from "@/components/ProviderRpcSelect/components/RpcSelectModal"
 import { RpcStatus } from "@/components/ProviderRpcSelect/components/RpcStatus"
 import { SContainer } from "@/components/ProviderRpcSelect/ProviderRpcSelect.styled"
-import { useRpcProvider } from "@/providers/rpcProvider"
 import { UiSwitcher } from "@/modules/layout/components/UiSwitcher"
+import { useRpcProvider } from "@/providers/rpcProvider"
 
 type Props = {
   readonly bottomPinned?: boolean

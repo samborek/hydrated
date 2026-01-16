@@ -1,5 +1,7 @@
 import styled from "@emotion/styled"
-import { Button, Flex, Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
+
+import { Flex, Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
+import { TimeRangeToggle } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState, useMemo, useEffect, useRef } from "react"
 import {
@@ -27,6 +29,12 @@ const SChartHeader = styled.div`
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
+  
+  @media (max-width: 576px) {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 16px;
+  }
 `
 
 const SControlsGroup = styled.div`
@@ -35,6 +43,38 @@ const SControlsGroup = styled.div`
   align-items: center;
   align-self: center;
   flex-wrap: wrap;
+  
+  @media (max-width: 576px) {
+    display: none;
+  }
+`
+
+const SChartFooter = styled.div`
+  display: none;
+  
+  @media (max-width: 576px) {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    align-items: center;
+  }
+`
+
+const SFullWidthToggleGroup = styled(ToggleGroup)`
+    width: 100%;
+    display: flex;
+    height: 40px;
+    background: ${({ theme }) => theme.surfaces.themeBasePalette?.surfaceHigh || 'transparent'};
+    padding: 4px;
+    border-radius: ${({ theme }) => theme.containers.cornerRadius?.buttonsPrimary || 4}px;
+    border: 1px solid ${({ theme }) => theme.buttons.outlineDark?.onOutline || 'transparent'};
+`
+
+const SToggleGroupItem = styled(ToggleGroupItem)`
+    flex: 1;
+    justify-content: center;
+    text-align: center;
 `
 
 // --- Animated Value Component ---
@@ -84,7 +124,7 @@ const generateFeesData = (timeRange: TimeRange) => {
 
   // Determine number of data points and granularity
   const isWeekly = timeRange === '1Y' || timeRange === 'ALL'
-  const days = timeRange === '1W' ? 7 : timeRange === '1M' ? 30 : timeRange === '1Y' ? 52 : 365
+  const days = timeRange === '1W' ? 7 : timeRange === '1M' ? 30 : timeRange === '1Y' ? 52 : 104
   const step = isWeekly ? 7 : 1
 
   let lastAssetFee = 2.5 // Start mid-range
@@ -257,6 +297,7 @@ export const FeesOverviewChart: FC = () => {
         </div>
         <SControlsGroup>
           <ToggleGroup
+            size="small"
             type="single"
             value={viewMode}
             onValueChange={(v) => v && setViewMode(v as ViewMode)}
@@ -264,23 +305,13 @@ export const FeesOverviewChart: FC = () => {
             <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
             <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
           </ToggleGroup>
-          <Flex gap={6}>
-            {(['1W', '1M', '1Y', 'ALL'] as TimeRange[]).map((range) => (
-              <Button
-                key={range}
-                size="small"
-                variant={timeRange === range ? 'secondary' : 'tertiary'}
-                outline={timeRange !== range}
-                onClick={() => setTimeRange(range)}
-                sx={{ px: 12, minWidth: 42 }}
-              >
-                {range}
-              </Button>
-            ))}
-          </Flex>
+          <TimeRangeToggle
+            value={timeRange}
+            items={['1W', '1M', '1Y', 'ALL']}
+            onValueChange={(v) => setTimeRange(v as TimeRange)}
+          />
         </SControlsGroup>
       </SChartHeader>
-
 
       <ResponsiveContainer width="100%" height={320}>
         {viewMode === 'revenue' ? (
@@ -463,6 +494,23 @@ export const FeesOverviewChart: FC = () => {
           </AreaChart>
         )}
       </ResponsiveContainer>
-    </SChartContainer>
+
+      <SChartFooter>
+        <div style={{ flex: 1 }}>
+          <SFullWidthToggleGroup type="single" value={viewMode} onValueChange={(val) => val && setViewMode(val as 'revenue' | 'fees')}>
+            <SToggleGroupItem value="revenue">Revenue</SToggleGroupItem>
+            <SToggleGroupItem value="fees">Fees %</SToggleGroupItem>
+          </SFullWidthToggleGroup>
+        </div>
+
+        <div style={{ flex: 1 }}>
+          <SFullWidthToggleGroup type="single" value={timeRange} onValueChange={(val) => val && setTimeRange(val as TimeRange)}>
+            {['1W', '1M', '1Y', 'ALL'].map(range => (
+              <SToggleGroupItem key={range} value={range}>{range}</SToggleGroupItem>
+            ))}
+          </SFullWidthToggleGroup>
+        </div>
+      </SChartFooter>
+    </SChartContainer >
   )
 }

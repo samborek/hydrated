@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { css, styled } from "@galacticcouncil/ui/utils"
 import { SectionHeader } from "@galacticcouncil/ui/components"
+import { css, styled } from "@galacticcouncil/ui/utils"
+import { createFileRoute } from "@tanstack/react-router"
+
 import { FeesOverviewChart } from "@/modules/stats/components/FeesOverviewChart"
-import { TradingFeesChart } from "@/modules/stats/components/TradingFeesChart"
+import { HollarFeesChart } from "@/modules/stats/components/HollarFeesChart"
 import { LiquidityFeesChart } from "@/modules/stats/components/LiquidityFeesChart"
 import { SupplyBorrowFeesChart } from "@/modules/stats/components/SupplyBorrowFeesChart"
-import { HollarFeesChart } from "@/modules/stats/components/HollarFeesChart"
+import { TradingFeesChart } from "@/modules/stats/components/TradingFeesChart"
 
 const SPageContainer = styled.div`
   display: flex;
@@ -14,13 +15,19 @@ const SPageContainer = styled.div`
   padding: 0 0 24px 0;
 `
 
-const SSection = styled.section(
-  ({ theme }) => css`
+const SSection = styled.section<{ hasHeader?: boolean }>(
+  ({ theme, hasHeader }) => css`
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
     border-radius: 16px;
-    padding: ${theme.scales.paddings.xl}px;
-  `
+    padding: ${theme.containers.paddings.primary}px;
+
+    @media (max-width: 576px) {
+      padding: ${hasHeader ? 0 : theme.containers.paddings.secondary}px
+        ${theme.containers.paddings.secondary}px
+        ${theme.containers.paddings.secondary}px;
+    }
+  `,
 )
 
 function FeesStats() {
@@ -36,25 +43,25 @@ function FeesStats() {
       </SSection>
 
       {/* Trading Fees / Revenue Section */}
-      <SSection>
+      <SSection hasHeader>
         <SectionHeader>Trading Fees</SectionHeader>
         <TradingFeesChart />
       </SSection>
 
       {/* Liquidity Fees Section */}
-      <SSection>
+      <SSection hasHeader>
         <SectionHeader>Liquidity / Withdraw Fees</SectionHeader>
         <LiquidityFeesChart />
       </SSection>
 
       {/* Supply & Borrow Fees Section */}
-      <SSection>
+      <SSection hasHeader>
         <SectionHeader>Supply & Borrow Fees</SectionHeader>
         <SupplyBorrowFeesChart />
       </SSection>
 
       {/* Hollar Fees Section */}
-      <SSection>
+      <SSection hasHeader>
         <SectionHeader>Hollar Fees</SectionHeader>
         <HollarFeesChart />
       </SSection>

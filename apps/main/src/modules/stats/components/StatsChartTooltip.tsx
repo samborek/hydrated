@@ -1,5 +1,5 @@
-import styled from "@emotion/styled"
 import { css } from "@emotion/react"
+import styled from "@emotion/styled"
 import { Flex, Text } from "@galacticcouncil/ui/components"
 
 /**
@@ -11,7 +11,7 @@ import { Flex, Text } from "@galacticcouncil/ui/components"
  * - Padding: 16px horizontal, 12px vertical
  */
 export const SChartTooltipContainer = styled.div(
-    ({ theme }) => css`
+  ({ theme }) => css`
     display: grid;
     align-items: start;
     gap: 8px;
@@ -24,19 +24,19 @@ export const SChartTooltipContainer = styled.div(
 )
 
 type TooltipPayloadItem = {
-    name: string
-    value: number
-    color: string
-    dataKey: string
+  name: string
+  value: number
+  color: string
+  dataKey: string
 }
 
 type ChartTooltipContentProps = {
-    active?: boolean
-    payload?: TooltipPayloadItem[]
-    label?: string | number
-    valueFormatter?: (value: number, name: string) => string
-    labelFormatter?: (label: string | number) => string
-    nameFormatter?: (name: string) => string
+  active?: boolean
+  payload?: TooltipPayloadItem[]
+  label?: string | number
+  valueFormatter?: (value: number, name: string) => string
+  labelFormatter?: (label: string | number) => string
+  nameFormatter?: (name: string) => string
 }
 
 /**
@@ -44,48 +44,52 @@ type ChartTooltipContentProps = {
  * Uses Figma specs: 10px uppercase labels, 12px values
  */
 export const ChartTooltipContent = ({
-    active,
-    payload,
-    label,
-    valueFormatter = (v) => v.toFixed(2),
-    labelFormatter = (l) => String(l),
-    nameFormatter = (n) => n,
+  active,
+  payload,
+  label,
+  valueFormatter = (v) => v.toFixed(2),
+  labelFormatter = (l) => String(l),
+  nameFormatter = (n) => n,
 }: ChartTooltipContentProps) => {
-    if (!active || !payload?.length) return null
+  if (!active || !payload?.length) return null
 
-    return (
-        <SChartTooltipContainer>
-            <Text fs={12} fw={500} color="text.high">
-                {labelFormatter(label || "")}
+  return (
+    <SChartTooltipContainer>
+      <Text fs={12} fw={500} color="text.high">
+        {labelFormatter(label || "")}
+      </Text>
+      {payload.map((entry) => (
+        <Flex key={entry.dataKey} gap={8} align="center">
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              backgroundColor: entry.color,
+              borderRadius: 2,
+              flexShrink: 0,
+            }}
+          />
+          <Flex
+            justify="space-between"
+            gap={16}
+            sx={{ flex: 1, minWidth: 100 }}
+          >
+            <Text
+              fs={10}
+              fw={500}
+              color="text.medium"
+              css={{ textTransform: "uppercase", letterSpacing: "0.02em" }}
+            >
+              {nameFormatter(entry.name)}
             </Text>
-            {payload.map((entry) => (
-                <Flex key={entry.dataKey} gap={8} align="center">
-                    <div
-                        style={{
-                            width: 8,
-                            height: 8,
-                            backgroundColor: entry.color,
-                            borderRadius: 2,
-                            flexShrink: 0,
-                        }}
-                    />
-                    <Flex justify="space-between" gap={16} sx={{ flex: 1, minWidth: 100 }}>
-                        <Text
-                            fs={10}
-                            fw={500}
-                            color="text.medium"
-                            css={{ textTransform: 'uppercase', letterSpacing: '0.02em' }}
-                        >
-                            {nameFormatter(entry.name)}
-                        </Text>
-                        <Text fs={12} fw={500} color="text.high">
-                            {valueFormatter(entry.value, entry.name)}
-                        </Text>
-                    </Flex>
-                </Flex>
-            ))}
-        </SChartTooltipContainer>
-    )
+            <Text fs={12} fw={500} color="text.high">
+              {valueFormatter(entry.value, entry.name)}
+            </Text>
+          </Flex>
+        </Flex>
+      ))}
+    </SChartTooltipContainer>
+  )
 }
 
 /**

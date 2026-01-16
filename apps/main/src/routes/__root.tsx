@@ -1,7 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-
 import { createRootRouteWithContext, HeadContent } from "@tanstack/react-router"
-
 import { lazy } from "react"
 
 import { useAccountUniques } from "@/api/account"

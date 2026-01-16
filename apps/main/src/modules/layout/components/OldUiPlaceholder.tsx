@@ -1,5 +1,6 @@
-import { FC } from "react"
 import styled from "@emotion/styled"
+import { FC } from "react"
+
 import { OldUiBanner } from "./OldUiBanner"
 
 const Container = styled.div`
@@ -18,7 +19,7 @@ export const OldUiPlaceholder: FC = () => {
   return (
     <Container>
       Old UI
-      <OldUiBanner onOpenMarketing={() => { }} />
+      <OldUiBanner onOpenMarketing={() => {}} />
     </Container>
   )
 }

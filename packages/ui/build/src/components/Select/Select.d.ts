@@ -15,6 +15,7 @@ type SelectPropsCustom<TKey extends string> = Omit<SelectProps, "onValueChange">
     placeholder?: string;
     items: ReadonlyArray<SelectItem<TKey>>;
     onValueChange: (value: TKey) => void;
+    modal?: boolean;
 };
 export declare const Select: <TKey extends string = string>({ label, placeholder, items, renderTrigger, ...props }: SelectPropsCustom<TKey>) => import("react").JSX.Element;
 type SelectLabelProps = {

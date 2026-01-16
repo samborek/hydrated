@@ -21,13 +21,13 @@ export type SelectItem<TKey extends string> = {
 
 type RenderProps =
   | {
-      label?: string
-      renderTrigger?: never
-    }
+    label?: string
+    renderTrigger?: never
+  }
   | {
-      label?: never
-      renderTrigger: () => ReactNode
-    }
+    label?: never
+    renderTrigger: () => ReactNode
+  }
 
 type SelectPropsCustom<TKey extends string> = Omit<
   SelectProps,
@@ -37,6 +37,7 @@ type SelectPropsCustom<TKey extends string> = Omit<
     placeholder?: string
     items: ReadonlyArray<SelectItem<TKey>>
     onValueChange: (value: TKey) => void
+    modal?: boolean
   }
 
 export const Select = <TKey extends string = string>({

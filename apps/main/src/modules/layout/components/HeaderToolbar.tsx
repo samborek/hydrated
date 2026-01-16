@@ -1,5 +1,10 @@
 import { QuestionCircleRegular } from "@galacticcouncil/ui/assets/icons"
-import { Button, ButtonIcon, ExternalLink, Icon } from "@galacticcouncil/ui/components"
+import {
+  Button,
+  ButtonIcon,
+  ExternalLink,
+  Icon,
+} from "@galacticcouncil/ui/components"
 import { FC, lazy } from "react"
 
 import { HYDRATION_DOCS_LINK } from "@/config/links"

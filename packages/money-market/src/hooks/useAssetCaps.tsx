@@ -1,4 +1,4 @@
-import Big from "big.js"
+import { Big } from "big.js"
 import { createContext, ReactNode, useContext, useMemo } from "react"
 
 import { BorrowCapMaxedTooltip } from "@/components/tooltips/BorrowCapMaxedTooltip"

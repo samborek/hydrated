@@ -81,6 +81,7 @@ const variants = createVariants((theme) => ({
     transparent: variantStyles(theme.text.high, "transparent", theme.colors.darkBlue.alpha[200]),
     sliderTabActive: variantStyles(theme.buttons.primary.medium.onButton, theme.buttons.primary.medium.rest, theme.buttons.primary.medium.hover),
     sliderTabInactive: variantStyles(theme.buttons.primary.low.onButton, theme.buttons.primary.low.rest, theme.buttons.primary.low.hover),
+    restSubtle: variantStyles(theme.buttons.secondary.low.onRest, "transparent", theme.buttons.outlineDark.hover, theme.buttons.outlineDark.onRest),
 }));
 const microVariants = createVariants((theme) => ({
     low: microVariantStyles(theme.text.medium, theme.buttons.secondary.low.rest, theme.buttons.secondary.low.borderRest, theme.buttons.secondary.low.hover, theme.text.high),
@@ -98,6 +99,7 @@ const outlineVariants = createVariants((theme) => ({
     muted: outlineVariantStyles(theme.text.medium, theme.buttons.secondary.low.borderRest, theme.buttons.outlineDark.rest, theme.buttons.secondary.low.hover),
     sliderTabActive: outlineVariantStyles(theme.buttons.primary.medium.onOutline, theme.buttons.primary.medium.rest, "transparent", theme.buttons.primary.medium.hover),
     sliderTabInactive: outlineVariantStyles(theme.text.medium, "none", "transparent", theme.buttons.secondary.low.hover),
+    restSubtle: outlineVariantStyles(theme.buttons.secondary.low.onRest, "transparent", "transparent", theme.buttons.outlineDark.hover),
 }));
 const sizes = createVariants((theme) => ({
     small: css `

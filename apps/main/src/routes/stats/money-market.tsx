@@ -1,7 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { css, styled } from "@galacticcouncil/ui/utils"
-import { Flex, SectionHeader, Separator, Text, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
+import {
+  Flex,
+  SectionHeader,
+  Separator,
+  Text,
+  ValueStats,
+  ValueStatsValue,
+} from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
+import { css, styled } from "@galacticcouncil/ui/utils"
+import { createFileRoute } from "@tanstack/react-router"
+
 import { AssetLogo } from "@/components/AssetLogo"
 import { SupplyBorrowChart } from "@/modules/stats/components/SupplyBorrowChart"
 
@@ -12,23 +20,28 @@ const SPageContainer = styled.div`
   padding: 0 0 24px 0;
 `
 
-const SSection = styled.section(
-  ({ theme }) => css`
+const SSection = styled.section<{ hasHeader?: boolean }>(
+  ({ theme, hasHeader }) => css`
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
     border-radius: 16px;
-    padding: ${theme.scales.paddings.xl}px;
-  `
+    padding: ${theme.containers.paddings.primary}px;
+
+    @media (max-width: 576px) {
+      padding: ${hasHeader ? 0 : theme.containers.paddings.secondary}px
+        ${theme.containers.paddings.secondary}px
+        ${theme.containers.paddings.secondary}px;
+    }
+  `,
 )
-
-
 
 const STable = styled.table(
   ({ theme }) => css`
     width: 100%;
     border-collapse: collapse;
 
-    th, td {
+    th,
+    td {
       text-align: left;
       padding: 12px 16px;
       border-bottom: 1px solid ${theme.details.separators};
@@ -42,7 +55,7 @@ const STable = styled.table(
     tbody tr:hover {
       background: ${theme.surfaces.containers.high.hover};
     }
-  `
+  `,
 )
 
 const SAssetCell = styled.div`
@@ -60,22 +73,58 @@ const SProgressBar = styled.div<{ $value: number }>(
     width: 100px;
 
     &::after {
-      content: '';
+      content: "";
       display: block;
       height: 100%;
       width: ${$value}%;
-      background: linear-gradient(90deg, ${theme.details.values.positive}, #8BC34A);
+      background: linear-gradient(
+        90deg,
+        ${theme.details.values.positive},
+        #8bc34a
+      );
       border-radius: 4px;
     }
-  `
+  `,
 )
 
 // Mock data with real asset IDs
 const mockMarkets = [
-  { id: '5', asset: 'DOT', supply: '$2.5M', borrow: '$1.2M', utilization: 48, supplyApy: '3.2%', borrowApy: '5.8%' },
-  { id: '22', asset: 'USDC', supply: '$5.1M', borrow: '$3.8M', utilization: 75, supplyApy: '4.5%', borrowApy: '7.2%' },
-  { id: '20', asset: 'WETH', supply: '$1.8M', borrow: '$0.9M', utilization: 50, supplyApy: '2.8%', borrowApy: '4.9%' },
-  { id: '21', asset: 'WBTC', supply: '$3.2M', borrow: '$1.6M', utilization: 50, supplyApy: '2.5%', borrowApy: '4.5%' },
+  {
+    id: "5",
+    asset: "DOT",
+    supply: "$2.5M",
+    borrow: "$1.2M",
+    utilization: 48,
+    supplyApy: "3.2%",
+    borrowApy: "5.8%",
+  },
+  {
+    id: "22",
+    asset: "USDC",
+    supply: "$5.1M",
+    borrow: "$3.8M",
+    utilization: 75,
+    supplyApy: "4.5%",
+    borrowApy: "7.2%",
+  },
+  {
+    id: "20",
+    asset: "WETH",
+    supply: "$1.8M",
+    borrow: "$0.9M",
+    utilization: 50,
+    supplyApy: "2.8%",
+    borrowApy: "4.9%",
+  },
+  {
+    id: "21",
+    asset: "WBTC",
+    supply: "$3.2M",
+    borrow: "$1.6M",
+    utilization: 50,
+    supplyApy: "2.5%",
+    borrowApy: "4.5%",
+  },
 ]
 
 function MoneyMarketStats() {
@@ -83,15 +132,21 @@ function MoneyMarketStats() {
 
   return (
     <SPageContainer>
-      <SectionHeader as="h1" sx={{ p: 0 }} mb={-12}>Money Market</SectionHeader>
+      <SectionHeader as="h1" sx={{ p: 0 }} mb={-12}>
+        Money Market
+      </SectionHeader>
 
-      <Flex gap={20} justify="space-between" sx={{ py: 10, overflowX: 'auto', height: 80 }}>
+      <Flex
+        gap={20}
+        justify="space-between"
+        sx={{ py: 10, overflowX: "auto", height: 80 }}
+      >
         <ValueStats
           label="Total Value Locked"
           size="large"
           wrap
           customValue={
-            <ValueStatsValue size="large" style={{ color: '#F59E0B' }}>
+            <ValueStatsValue size="large" style={{ color: "#F59E0B" }}>
               $12.6M
             </ValueStatsValue>
           }
@@ -102,7 +157,10 @@ function MoneyMarketStats() {
           size="large"
           wrap
           customValue={
-            <ValueStatsValue size="large" style={{ color: theme.details.values.positive }}>
+            <ValueStatsValue
+              size="large"
+              style={{ color: theme.details.values.positive }}
+            >
               $12.6M
             </ValueStatsValue>
           }
@@ -113,7 +171,7 @@ function MoneyMarketStats() {
           size="large"
           wrap
           customValue={
-            <ValueStatsValue size="large" style={{ color: '#F59E0B' }}>
+            <ValueStatsValue size="large" style={{ color: "#F59E0B" }}>
               $7.5M
             </ValueStatsValue>
           }
@@ -124,7 +182,10 @@ function MoneyMarketStats() {
           size="large"
           wrap
           customValue={
-            <ValueStatsValue size="large" style={{ color: theme.details.values.negative }}>
+            <ValueStatsValue
+              size="large"
+              style={{ color: theme.details.values.negative }}
+            >
               $45,230
             </ValueStatsValue>
           }
@@ -135,7 +196,7 @@ function MoneyMarketStats() {
         <SupplyBorrowChart title="Supply / Borrow History" />
       </SSection>
 
-      <SSection>
+      <SSection hasHeader>
         <SectionHeader>Markets</SectionHeader>
         <STable>
           <thead>
@@ -160,13 +221,21 @@ function MoneyMarketStats() {
                 <td>{market.supply}</td>
                 <td>{market.borrow}</td>
                 <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
                     <SProgressBar $value={market.utilization} />
                     <Text fs={12}>{market.utilization}%</Text>
                   </div>
                 </td>
-                <td><Text color={theme.details.values.positive}>{market.supplyApy}</Text></td>
-                <td><Text color="#FF9800">{market.borrowApy}</Text></td>
+                <td>
+                  <Text color={theme.details.values.positive}>
+                    {market.supplyApy}
+                  </Text>
+                </td>
+                <td>
+                  <Text color="#FF9800">{market.borrowApy}</Text>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -179,4 +248,3 @@ function MoneyMarketStats() {
 export const Route = createFileRoute("/stats/money-market")({
   component: MoneyMarketStats,
 })
-

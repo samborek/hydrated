@@ -1,7 +1,7 @@
-import { X, ExternalLink } from "lucide-react"
+import styled from "@emotion/styled"
 import { ButtonIcon, Icon, Text } from "@galacticcouncil/ui/components"
 import { mq } from "@galacticcouncil/ui/theme"
-import styled from "@emotion/styled"
+import { ExternalLink, X } from "lucide-react"
 import { FC } from "react"
 
 const SBanner = styled.div`
@@ -12,15 +12,15 @@ const SBanner = styled.div`
   max-width: 382px;
   height: 120px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #E8F4FD 0%, #D6E8F7 100%);
+  background: linear-gradient(135deg, #e8f4fd 0%, #d6e8f7 100%);
   box-shadow: 0px 19px 23px 0px rgba(0, 0, 0, 0.1);
   display: flex;
   z-index: 1000;
   cursor: pointer;
   box-sizing: border-box;
-  
+
   // No overflow hidden so the close button can pop out
-  
+
   ${mq("sm")} {
     max-width: 420px;
   }
@@ -48,7 +48,7 @@ const SImageArea = styled.div`
   background-position: center;
   border-radius: 0 8px 8px 0;
   overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent 0%, black 0%);
+  mask-image: linear-gradient(90deg, transparent 0%, black 10%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 80%);
 `
 
@@ -56,7 +56,7 @@ const SCloseButton = styled(ButtonIcon)`
   position: absolute;
   top: -12px;
   right: -12px;
-  background: #A0AEC0; 
+  background: #a0aec0;
   border-radius: 50%;
   width: 24px;
   height: 24px;
@@ -64,7 +64,7 @@ const SCloseButton = styled(ButtonIcon)`
   align-items: center;
   justify-content: center;
   z-index: 10;
-  
+
   &:hover {
     background: #718096;
   }
@@ -78,19 +78,17 @@ const SLearnMore = styled.button`
   border: none;
   padding: 0;
   margin-top: 12px;
-  color: #1A1D26;
+  color: #1a1d26;
   font-size: 11px;
   font-weight: 500;
   text-decoration: underline;
   cursor: pointer;
   font-family: inherit;
-  
+
   &:hover {
     opacity: 0.8;
   }
 `
-
-
 
 type Props = {
   onOpen: () => void
@@ -100,7 +98,12 @@ type Props = {
 export const MarketingBanner: FC<Props> = ({ onOpen, onClose }) => {
   return (
     <SBanner onClick={onOpen}>
-      <SCloseButton onClick={(e) => { e.stopPropagation(); onClose(); }}>
+      <SCloseButton
+        onClick={(e) => {
+          e.stopPropagation()
+          onClose()
+        }}
+      >
         <Icon component={X} size={16} color="#1A1D26" />
       </SCloseButton>
       <STextArea>
@@ -108,7 +111,11 @@ export const MarketingBanner: FC<Props> = ({ onOpen, onClose }) => {
           fs={17.5}
           fw={500}
           color="#1A1D26"
-          style={{ marginBottom: 4, lineHeight: '21px', fontFamily: "Gazpacho" }}
+          style={{
+            marginBottom: 4,
+            lineHeight: "21px",
+            fontFamily: "Gazpacho",
+          }}
         >
           BTC / PAX Gold Trading
         </Text>
@@ -116,15 +123,21 @@ export const MarketingBanner: FC<Props> = ({ onOpen, onClose }) => {
           fs={12}
           fw={400}
           color="#1A1D26"
-          style={{ lineHeight: '15px', opacity: 0.9 }}
+          style={{ lineHeight: "15px", opacity: 0.9 }}
         >
-          Get started with BTC and PAX Gold. <br /> Start trading in just a few steps.
+          Get started with BTC and PAX Gold. <br /> Start trading in just a few
+          steps.
         </Text>
-        <SLearnMore onClick={(e) => { e.stopPropagation(); onOpen(); }}>
+        <SLearnMore
+          onClick={(e) => {
+            e.stopPropagation()
+            onOpen()
+          }}
+        >
           LEARN MORE <Icon component={ExternalLink} size={11} />
         </SLearnMore>
       </STextArea>
       <SImageArea />
-    </SBanner >
+    </SBanner>
   )
 }

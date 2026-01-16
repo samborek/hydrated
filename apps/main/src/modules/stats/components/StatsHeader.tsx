@@ -1,6 +1,11 @@
-import { Flex, Separator, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
-import { FC, Fragment } from "react"
+import {
+  Flex,
+  Separator,
+  ValueStats,
+  ValueStatsValue,
+} from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
+import { FC, Fragment } from "react"
 
 // Mock data - replace with real data from API
 const stats = [
@@ -15,7 +20,11 @@ export const StatsHeader: FC = () => {
   const { themeProps: theme } = useTheme()
 
   return (
-    <Flex gap={20} justify="space-between" sx={{ py: 10, overflowX: 'auto', height: 80 }}>
+    <Flex
+      gap={20}
+      justify="space-between"
+      sx={{ py: 10, overflowX: "auto", height: 80 }}
+    >
       {stats.map((stat, index) => (
         <Fragment key={stat.label}>
           <ValueStats
@@ -23,11 +32,16 @@ export const StatsHeader: FC = () => {
             size="large"
             wrap
             value={!stat.highlight ? stat.value : undefined}
-            customValue={stat.highlight ? (
-              <ValueStatsValue size="large" style={{ color: theme.secondaryColors.pink.coralPink }}>
-                {stat.value}
-              </ValueStatsValue>
-            ) : undefined}
+            customValue={
+              stat.highlight ? (
+                <ValueStatsValue
+                  size="large"
+                  style={{ color: theme.secondaryColors.pink.coralPink }}
+                >
+                  {stat.value}
+                </ValueStatsValue>
+              ) : undefined
+            }
           />
           {index < stats.length - 1 && (
             <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />

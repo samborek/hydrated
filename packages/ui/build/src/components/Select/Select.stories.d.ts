@@ -13,6 +13,7 @@ declare const _default: {
         placeholder?: string;
         items: readonly import("./Select").SelectItem<TKey>[];
         onValueChange: (value: TKey) => void;
+        modal?: boolean;
     })) => React.JSX.Element;
 };
 export default _default;

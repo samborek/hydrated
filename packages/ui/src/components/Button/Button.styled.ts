@@ -15,7 +15,10 @@ export type ButtonVariant =
   | "muted"
   | "transparent"
   | "sliderTabActive"
+  | "sliderTabActive"
   | "sliderTabInactive"
+  | "restSubtle"
+  | "restSubtle"
 
 export type MicroButtonVariant = "low" | "emphasis"
 
@@ -173,6 +176,12 @@ const variants = createVariants<ButtonVariant>((theme) => ({
     theme.buttons.primary.low.rest,
     theme.buttons.primary.low.hover,
   ),
+  restSubtle: variantStyles(
+    theme.buttons.secondary.low.onRest,
+    "transparent",
+    theme.buttons.outlineDark.hover,
+    theme.buttons.outlineDark.onRest,
+  ),
 }))
 
 const microVariants = createVariants<MicroButtonVariant>((theme) => ({
@@ -257,6 +266,12 @@ const outlineVariants = createVariants<ButtonVariant>((theme) => ({
     "none",
     "transparent",
     theme.buttons.secondary.low.hover,
+  ),
+  restSubtle: outlineVariantStyles(
+    theme.buttons.secondary.low.onRest,
+    "transparent",
+    "transparent",
+    theme.buttons.outlineDark.hover,
   ),
 }))
 

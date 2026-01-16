@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { css, styled } from "@galacticcouncil/ui/utils"
 import { SectionHeader } from "@galacticcouncil/ui/components"
-import { StatsHeader } from "@/modules/stats/components/StatsHeader"
+import { css, styled } from "@galacticcouncil/ui/utils"
+import { createFileRoute } from "@tanstack/react-router"
+
+import { FeesStackedChart } from "@/modules/stats/components/FeesStackedChart"
 import { RecentTrades } from "@/modules/stats/components/RecentTrades"
+import { StatsHeader } from "@/modules/stats/components/StatsHeader"
 import { TVLCompositionChart } from "@/modules/stats/components/TVLCompositionChart"
 import { VolumeChart } from "@/modules/stats/components/VolumeChart"
-import { FeesStackedChart } from "@/modules/stats/components/FeesStackedChart"
 
 const SPageContainer = styled.div`
   display: flex;
@@ -14,20 +15,26 @@ const SPageContainer = styled.div`
   padding: 0 0 24px 0;
 `
 
-const SSection = styled.section(
-  ({ theme }) => css`
+const SSection = styled.section<{ hasHeader?: boolean }>(
+  ({ theme, hasHeader }) => css`
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
     border-radius: 16px;
-    padding: ${theme.scales.paddings.xl}px;
-  `
+    padding: ${theme.containers.paddings.primary}px;
+
+    @media (max-width: 576px) {
+      padding: ${hasHeader ? 0 : theme.containers.paddings.secondary}px
+        ${theme.containers.paddings.secondary}px
+        ${theme.containers.paddings.secondary}px;
+    }
+  `,
 )
 
 const SChartsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  
+
   @media (max-width: 1200px) {
     grid-template-columns: 1fr;
   }
@@ -36,7 +43,9 @@ const SChartsGrid = styled.div`
 function PlatformOverview() {
   return (
     <SPageContainer>
-      <SectionHeader as="h1" sx={{ p: 0 }} mb={-18}>Hydration Dashboard</SectionHeader>
+      <SectionHeader as="h1" sx={{ p: 0 }} mb={-18}>
+        Hydration Dashboard
+      </SectionHeader>
 
       {/* Key Metrics */}
       <StatsHeader />
@@ -57,7 +66,7 @@ function PlatformOverview() {
       </SChartsGrid>
 
       {/* Recent Trades */}
-      <SSection>
+      <SSection hasHeader>
         <SectionHeader>Recent trades</SectionHeader>
         <RecentTrades />
       </SSection>
@@ -68,4 +77,3 @@ function PlatformOverview() {
 export const Route = createFileRoute("/stats/overview")({
   component: PlatformOverview,
 })
-

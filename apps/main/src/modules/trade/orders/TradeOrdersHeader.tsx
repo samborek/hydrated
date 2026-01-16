@@ -9,7 +9,6 @@ import {
   ToggleRoot,
 } from "@galacticcouncil/ui/components"
 import { getToken, getTokenPx } from "@galacticcouncil/ui/utils"
-
 import { safeConvertSS58toPublicKey } from "@galacticcouncil/utils"
 import { useAccount } from "@galacticcouncil/web3-connect"
 import { useQuery } from "@tanstack/react-query"
@@ -105,7 +104,9 @@ export const TradeOrdersHeader = () => {
           <ToggleLabel>
             Show:{" "}
             <Text as="span" color={getToken("text.tint.secondary")}>
-              {allPairs ? t("trade.orders.allPairs") : t("trade.orders.selectedPair")}
+              {allPairs
+                ? t("trade.orders.allPairs")
+                : t("trade.orders.selectedPair")}
             </Text>
           </ToggleLabel>
           <Toggle

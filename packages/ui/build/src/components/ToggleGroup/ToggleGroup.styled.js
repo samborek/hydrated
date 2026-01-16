@@ -5,11 +5,12 @@ import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import { createVariants } from "@/utils";
 const sizes = createVariants((theme) => ({
     small: css `
-    padding: ${theme.scales.paddings.s}px;
+    padding: 0 ${theme.scales.paddings.m}px;
+    height: 30px;
     font-size: ${theme.paragraphSize.p6};
     svg {
-      width: 16px;
-      height: 16px;
+      width: 12px;
+      height: 12px;
     }
   `,
     medium: css `
@@ -42,10 +43,10 @@ export const SToggleGroup = styled(ToggleGroupPrimitive.Root, {
     display: flex;
     align-items: center;
     gap: ${size === "small"
-        ? theme.scales.paddings.xs
+        ? theme.scales.paddings.s
         : theme.scales.paddings.s}px;
     padding: ${size === "small"
-        ? theme.scales.paddings.xs
+        ? theme.scales.paddings.s
         : theme.scales.paddings.s}px;
 
     border-radius: ${theme.radii.full}px;
@@ -71,13 +72,23 @@ export const SToggleGroupItem = styled(ToggleGroupPrimitive.Item, {
     border-radius: ${theme.radii.full}px;
 
     transition: ${theme.transitions.colors};
-
+    
+    // Inactive state (matches Button restSubtle)
     background-color: transparent;
-    color: ${theme.icons.onSurface};
+    color: ${theme.buttons.secondary.low.onRest};
+
+    &:hover {
+      background-color: ${theme.buttons.outlineDark.hover};
+      color: ${theme.buttons.outlineDark.onRest};
+    }
 
     &[data-state="on"] {
       background-color: ${theme.buttons.primary.medium.rest};
       color: ${theme.buttons.primary.medium.onButton};
+
+      &:hover {
+        background-color: ${theme.buttons.primary.medium.hover};
+      }
     }
   `,
     sizes(size),

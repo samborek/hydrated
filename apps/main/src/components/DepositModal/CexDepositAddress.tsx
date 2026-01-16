@@ -1,9 +1,10 @@
-import { FC } from "react"
 import styled from "@emotion/styled"
-import { Text, Button, Icon } from "@galacticcouncil/ui/components"
-import { Copy, Info, Loader2 } from "lucide-react"
-import { AssetLogo } from "@/components/AssetLogo"
+import { Button, Icon, Text } from "@galacticcouncil/ui/components"
 import { useAccount } from "@galacticcouncil/web3-connect"
+import { Copy, Info, Loader2 } from "lucide-react"
+import { FC } from "react"
+
+import { AssetLogo } from "@/components/AssetLogo"
 
 const Container = styled.div`
   display: flex;
@@ -43,7 +44,7 @@ const AddressCard = styled.div`
 
 const AddressText = styled(Text)`
   word-break: break-all;
-  font-family: 'Space Mono', monospace;
+  font-family: "Space Mono", monospace;
   font-size: 14px;
   color: #fff;
   line-height: 1.5;
@@ -67,11 +68,11 @@ const ActionButton = styled(Button)`
 `
 
 const PinkButton = styled(ActionButton)`
-  background: #F43C6D;
+  background: #f43c6d;
   color: white;
   border: none;
   &:hover {
-    background: #D92B5A;
+    background: #d92b5a;
   }
 `
 
@@ -134,56 +135,124 @@ const AlertBox = styled.div`
 `
 
 type Props = {
-  exchange: { id: string, name: string } | null
+  exchange: { id: string; name: string } | null
   asset: any
   accountName?: string
   accountAddress?: string
 }
 
-export const CexDepositAddress: FC<Props> = ({ exchange, asset, accountName, accountAddress }) => {
+export const CexDepositAddress: FC<Props> = ({
+  exchange,
+  asset,
+  accountName,
+  accountAddress,
+}) => {
   const { account } = useAccount()
 
-  const displayAddress = accountAddress || account?.address || "Address not connected"
+  const displayAddress =
+    accountAddress || account?.address || "Address not connected"
   const displayName = accountName || account?.name || "Account"
 
   return (
     <Container>
       <FromRow>
-        <Text color="neutral.gray.300" fs={14}>From</Text>
-        <div style={{ width: 16, height: 16, borderRadius: '50%', background: '#F43C6D' }} />
-        <Text fw={600} fs={14}>{exchange?.name || "Exchange"}</Text>
+        <Text color="neutral.gray.300" fs={14}>
+          From
+        </Text>
+        <div
+          style={{
+            width: 16,
+            height: 16,
+            borderRadius: "50%",
+            background: "#F43C6D",
+          }}
+        />
+        <Text fw={600} fs={14}>
+          {exchange?.name || "Exchange"}
+        </Text>
       </FromRow>
 
       <AssetSelector>
-        {asset?.id ? <AssetLogo id={asset.id} size="small" /> : <div style={{ width: 24, height: 24, background: '#333', borderRadius: '50%' }} />}
-        <Text fw={600} fs={16}>{asset?.symbol || "Select Asset"}</Text>
+        {asset?.id ? (
+          <AssetLogo id={asset.id} size="small" />
+        ) : (
+          <div
+            style={{
+              width: 24,
+              height: 24,
+              background: "#333",
+              borderRadius: "50%",
+            }}
+          />
+        )}
+        <Text fw={600} fs={16}>
+          {asset?.symbol || "Select Asset"}
+        </Text>
         <div style={{ flex: 1 }} />
       </AssetSelector>
 
       <AddressCard>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Text color="neutral.gray.400" fs={13}>Deposit to</Text>
-          <div style={{ width: 16, height: 16, borderRadius: '50%', background: '#666' }} />
-          <Text fw={600} fs={13}>{displayName}</Text>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <Text color="neutral.gray.400" fs={13}>
+            Deposit to
+          </Text>
+          <div
+            style={{
+              width: 16,
+              height: 16,
+              borderRadius: "50%",
+              background: "#666",
+            }}
+          />
+          <Text fw={600} fs={13}>
+            {displayName}
+          </Text>
         </div>
 
         <AddressText>{displayAddress}</AddressText>
 
         <ButtonRow>
-          <GhostButton onClick={() => navigator.clipboard.writeText(displayAddress)}>
+          <GhostButton
+            onClick={() => navigator.clipboard.writeText(displayAddress)}
+          >
             <Icon component={Copy} size={14} />
             Copy address
           </GhostButton>
-          <PinkButton onClick={() => window.open(`https://www.${exchange?.id || 'google'}.com`, '_blank')}>
+          <PinkButton
+            onClick={() =>
+              window.open(
+                `https://www.${exchange?.id || "google"}.com`,
+                "_blank",
+              )
+            }
+          >
             Open {exchange?.name || "Exchange"}
           </PinkButton>
         </ButtonRow>
 
-        <div style={{ width: '100%', height: 1, background: 'rgba(255,255,255,0.06)', margin: '8px 0' }} />
+        <div
+          style={{
+            width: "100%",
+            height: 1,
+            background: "rgba(255,255,255,0.06)",
+            margin: "8px 0",
+          }}
+        />
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-          <Text color="neutral.gray.400" fs={12}>Minimal deposit amount:</Text>
-          <Text fw={600} fs={12}>2 {asset?.symbol || "DOT"}</Text>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+            alignItems: "center",
+          }}
+        >
+          <Text color="neutral.gray.400" fs={12}>
+            Minimal deposit amount:
+          </Text>
+          <Text fw={600} fs={12}>
+            2 {asset?.symbol || "DOT"}
+          </Text>
         </div>
 
         <StatusPill>
@@ -193,7 +262,11 @@ export const CexDepositAddress: FC<Props> = ({ exchange, asset, accountName, acc
       </AddressCard>
 
       <div>
-        <Text fs={18} fw={600} style={{ fontFamily: "Gazpacho", color: "#EFB0FF", marginBottom: 8 }}>
+        <Text
+          fs={18}
+          fw={600}
+          style={{ fontFamily: "Gazpacho", color: "#EFB0FF", marginBottom: 8 }}
+        >
           How to bridge assets into Hydration from a CEX?
         </Text>
 
@@ -201,45 +274,93 @@ export const CexDepositAddress: FC<Props> = ({ exchange, asset, accountName, acc
           <StepItem>
             <StepNumber>1</StepNumber>
             <div>
-              <Text fw={600} fs={14} style={{ marginBottom: 4 }}>Login to your CEX account</Text>
-              <Text color="neutral.gray.400" fs={13} style={{ lineHeight: 1.4 }}>Log in and check that you've got the asset you want to send.</Text>
+              <Text fw={600} fs={14} style={{ marginBottom: 4 }}>
+                Login to your CEX account
+              </Text>
+              <Text
+                color="neutral.gray.400"
+                fs={13}
+                style={{ lineHeight: 1.4 }}
+              >
+                Log in and check that you've got the asset you want to send.
+              </Text>
             </div>
           </StepItem>
           <StepItem>
             <StepNumber>2</StepNumber>
             <div>
-              <Text fw={600} fs={14} style={{ marginBottom: 4 }}>Select 'Withdraw'</Text>
-              <Text color="neutral.gray.400" fs={13} style={{ lineHeight: 1.4 }}>Hit the “Withdraw” button next to the asset you want to transfer.</Text>
+              <Text fw={600} fs={14} style={{ marginBottom: 4 }}>
+                Select 'Withdraw'
+              </Text>
+              <Text
+                color="neutral.gray.400"
+                fs={13}
+                style={{ lineHeight: 1.4 }}
+              >
+                Hit the “Withdraw” button next to the asset you want to
+                transfer.
+              </Text>
             </div>
           </StepItem>
           <StepItem>
             <StepNumber>3</StepNumber>
             <div>
-              <Text fw={600} fs={14} style={{ marginBottom: 4 }}>Chose Polkadot network</Text>
-              <Text color="neutral.gray.400" fs={13} style={{ lineHeight: 1.4 }}>Pick Polkadot from the list of tokens.</Text>
+              <Text fw={600} fs={14} style={{ marginBottom: 4 }}>
+                Chose Polkadot network
+              </Text>
+              <Text
+                color="neutral.gray.400"
+                fs={13}
+                style={{ lineHeight: 1.4 }}
+              >
+                Pick Polkadot from the list of tokens.
+              </Text>
             </div>
           </StepItem>
           <StepItem>
             <StepNumber>4</StepNumber>
             <div>
-              <Text fw={600} fs={14} style={{ marginBottom: 4 }}>Don't have HDX?</Text>
-              <Text color="neutral.gray.400" fs={13} style={{ lineHeight: 1.4 }}>Make sure you are pasting the same wallet as copied below</Text>
+              <Text fw={600} fs={14} style={{ marginBottom: 4 }}>
+                Don't have HDX?
+              </Text>
+              <Text
+                color="neutral.gray.400"
+                fs={13}
+                style={{ lineHeight: 1.4 }}
+              >
+                Make sure you are pasting the same wallet as copied below
+              </Text>
             </div>
           </StepItem>
           <StepItem>
             <StepNumber>5</StepNumber>
             <div>
-              <Text fw={600} fs={14} style={{ marginBottom: 4 }}>Enter the amount</Text>
-              <Text color="neutral.gray.400" fs={13} style={{ lineHeight: 1.4 }}>Just enter how much cryptocurrency you want to send. Keep in mind there’s usually a minimum amount and a fee for withdrawing.</Text>
+              <Text fw={600} fs={14} style={{ marginBottom: 4 }}>
+                Enter the amount
+              </Text>
+              <Text
+                color="neutral.gray.400"
+                fs={13}
+                style={{ lineHeight: 1.4 }}
+              >
+                Just enter how much cryptocurrency you want to send. Keep in
+                mind there’s usually a minimum amount and a fee for withdrawing.
+              </Text>
             </div>
           </StepItem>
         </InstructionList>
       </div>
 
       <AlertBox>
-        <Icon component={Info} size={20} color="#85D1FF" style={{ marginTop: 2 }} />
+        <Icon
+          component={Info}
+          size={20}
+          color="#85D1FF"
+          style={{ marginTop: 2 }}
+        />
         <Text fs={12} color="#85D1FF" style={{ lineHeight: 1.4 }}>
-          Please don't close this tab while proceeding with your deposit, it might cause unexpected errors. Only click shiny buttons.
+          Please don't close this tab while proceeding with your deposit, it
+          might cause unexpected errors. Only click shiny buttons.
         </Text>
       </AlertBox>
     </Container>

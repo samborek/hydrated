@@ -44,9 +44,9 @@ export const TabMenuItem: FC<Props> = ({
       path.startsWith(to) &&
       (routeSearch
         ? Object.entries(routeSearch ?? {}).every(
-          ([key, value]) =>
-            currentSearch[key as keyof typeof currentSearch] === value,
-        )
+            ([key, value]) =>
+              currentSearch[key as keyof typeof currentSearch] === value,
+          )
         : true)
     )
   }

@@ -1,4 +1,4 @@
-import { Flex, FlexProps, ScrollArea } from "@galacticcouncil/ui/components"
+import { Flex, FlexProps } from "@galacticcouncil/ui/components"
 import { FC, Fragment } from "react"
 
 import {
@@ -34,7 +34,7 @@ export const TabMenu: FC<Props> = ({
   ...props
 }) => {
   return (
-    <ScrollArea orientation="horizontal" sx={{ overflowX: "auto" }}>
+    <div className="no-scrollbar" style={{ overflowX: "auto", display: "flex", width: "100%" }}>
       <Flex gap={gap} {...props}>
         {items.map((item, index) =>
           renderItem ? (
@@ -51,6 +51,6 @@ export const TabMenu: FC<Props> = ({
           ),
         )}
       </Flex>
-    </ScrollArea>
+    </div>
   )
 }

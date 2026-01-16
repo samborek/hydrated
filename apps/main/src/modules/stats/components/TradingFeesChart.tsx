@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
 import { css } from "@galacticcouncil/ui/utils"
-import { Button, Text, Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
+import { Button, Text, Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, ToggleGroup, ToggleGroupItem, ValueStats } from "@galacticcouncil/ui/components"
 import { SelectDropdown } from "./SelectDropdown"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components"
 import { FC, useState, useMemo } from "react"
@@ -175,20 +175,22 @@ export const TradingFeesChart: FC = () => {
   return (
     <SChartContainer>
       <SChartHeader>
-        <div>
-          <Text fs={24} fw={700} color="#3B82F6" style={{ fontFamily: 'Gazpacho, sans-serif' }}>
-            ${(total / 1000).toFixed(2)}K
-          </Text>
-          <Text fs={12} color="text.medium">
-            Latest period total
-          </Text>
-        </div>
+        <ValueStats
+          customValue={
+            <Text fs={24} fw={700} color="#3B82F6" style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
+              ${(total / 1000).toFixed(2)}K
+            </Text>
+          }
+          bottomLabel="Latest period total"
+          size="medium"
+          style={{ justifyContent: 'flex-start' }}
+        />
         <SControlsGroup>
           <ToggleGroup
             size="small"
             type="single"
             value={chartType}
-            onValueChange={(v) => v && setChartType(v as ChartType)}
+            onValueChange={(v: string) => v && setChartType(v as ChartType)}
           >
             <ToggleGroupItem value="line">
               <TrendingUp size={16} />
@@ -454,7 +456,7 @@ export const TradingFeesChart: FC = () => {
           size="small"
           type="single"
           value={chartType}
-          onValueChange={(v) => v && setChartType(v as ChartType)}
+          onValueChange={(v: string) => v && setChartType(v as ChartType)}
         >
           <ToggleGroupItem value="line" style={{ padding: 8 }}>
             <TrendingUp size={16} />
@@ -467,7 +469,7 @@ export const TradingFeesChart: FC = () => {
         <div style={{ flex: 1 }}>
           <SelectDropdown
             value={timeRange}
-            onValueChange={(val) => setTimeRange(val as TimeRange)}
+            onValueChange={(val: string) => setTimeRange(val as TimeRange)}
             items={(['1W', '1M', '1Y', 'ALL'] as TimeRange[]).map(range => ({ key: range, label: range }))}
           />
         </div>

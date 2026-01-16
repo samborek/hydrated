@@ -23,6 +23,7 @@ export const StatsHeader: FC = () => {
     <Flex
       gap={20}
       justify="space-between"
+      className="no-scrollbar"
       sx={{ py: 10, overflowX: "auto", height: 80 }}
     >
       {stats.map((stat, index) => (

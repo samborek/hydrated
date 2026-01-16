@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
-import { Flex, Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
+import { Flex, Text, ToggleGroup, ToggleGroupItem, ValueStats } from "@galacticcouncil/ui/components"
+import { SelectDropdown } from "./SelectDropdown"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components"
 
 import { FC, useState } from "react"
@@ -51,21 +52,7 @@ const SChartFooter = styled.div`
 
 
 
-const SFullWidthToggleGroup = styled(ToggleGroup)`
-    width: 100%;
-    display: flex;
-    height: 40px;
-    background: ${({ theme }) => theme.surfaces.themeBasePalette?.surfaceHigh || 'transparent'};
-    padding: 4px;
-    border-radius: ${({ theme }) => theme.containers.cornerRadius?.buttonsPrimary || 4}px;
-    border: 1px solid ${({ theme }) => theme.buttons.outlineDark?.onOutline || 'transparent'};
-`
 
-const SToggleGroupItem = styled(ToggleGroupItem)`
-    flex: 1;
-    justify-content: center;
-    text-align: center;
-`
 
 const SChartWrapper = styled.div`
   width: 100%;
@@ -124,58 +111,67 @@ export const AssetPriceChart: FC<Props> = ({ symbol }) => {
   return (
     <>
       <SChartHeader>
-        <Flex direction="column" gap={8}>
-          <SDesktopToggleGroup>
-            <ToggleGroup
-              size="small"
-              type="single"
-              value={mode}
-              onValueChange={(v) => v && setMode(v as ChartMode)}
-            >
-              <ToggleGroupItem value="TVL">TVL</ToggleGroupItem>
-              <ToggleGroupItem value="Volume">Volume</ToggleGroupItem>
-            </ToggleGroup>
-          </SDesktopToggleGroup>
-          <Flex gap={8} align="baseline">
-            <Text fs={18} fw={600} color="text.high">
-              {currentPrice.toFixed(9)} {symbol}
-            </Text>
-            <Text
-              fs={14}
-              fw={500}
-              color={priceChange >= 0 ? "successGreen.500" : "error.default"}
-            >
-              {priceChange >= 0 ? '+' : ''}{priceChange.toFixed(2)}%
-            </Text>
-          </Flex>
-        </Flex>
+        <ValueStats
+          customLabel={
+            <SDesktopToggleGroup>
+              <ToggleGroup
+                size="small"
+                type="single"
+                value={mode}
+                onValueChange={(v: string) => v && setMode(v as ChartMode)}
+              >
+                <ToggleGroupItem value="TVL">TVL</ToggleGroupItem>
+                <ToggleGroupItem value="Volume">Volume</ToggleGroupItem>
+              </ToggleGroup>
+            </SDesktopToggleGroup>
+          }
+          customValue={
+            <Flex gap={8} align="baseline">
+              <Text fs={18} fw={600} color="text.high">
+                {currentPrice.toFixed(9)} {symbol}
+              </Text>
+              <Text
+                fs={14}
+                fw={500}
+                color={priceChange >= 0 ? "successGreen.500" : "error.default"}
+              >
+                {priceChange >= 0 ? '+' : ''}{priceChange.toFixed(2)}%
+              </Text>
+            </Flex>
+          }
+          wrap={true}
+          size="medium"
+          style={{ alignItems: 'flex-start' }}
+        />
         <div className="desktop-only">
           <TimeRangeToggle
             value={timeRange}
             items={['ALL', '1H', '1D', '1W', '1M']}
-            onValueChange={(v) => setTimeRange(v as TimeRange)}
+            onValueChange={(v: string) => setTimeRange(v as TimeRange)}
           />
         </div>
       </SChartHeader>
 
+
       <SChartFooter>
         <div style={{ flex: 1 }}>
-          <SFullWidthToggleGroup
+          <ToggleGroup
             type="single"
             value={mode}
-            onValueChange={(v) => v && setMode(v as ChartMode)}
+            onValueChange={(v: string) => v && setMode(v as ChartMode)}
+            style={{ width: '100%' }}
           >
-            <SToggleGroupItem value="TVL">TVL</SToggleGroupItem>
-            <SToggleGroupItem value="Volume">Volume</SToggleGroupItem>
-          </SFullWidthToggleGroup>
+            <ToggleGroupItem value="TVL">TVL</ToggleGroupItem>
+            <ToggleGroupItem value="Volume">Volume</ToggleGroupItem>
+          </ToggleGroup>
         </div>
 
         <div style={{ flex: 1 }}>
-          <SFullWidthToggleGroup type="single" value={timeRange} onValueChange={(val) => val && setTimeRange(val as TimeRange)}>
-            {(['ALL', '1H', '1D', '1W', '1M'] as TimeRange[]).map(range => (
-              <SToggleGroupItem key={range} value={range}>{range}</SToggleGroupItem>
-            ))}
-          </SFullWidthToggleGroup>
+          <SelectDropdown
+            value={timeRange}
+            items={['ALL', '1H', '1D', '1W', '1M'].map(range => ({ key: range, label: range }))}
+            onValueChange={(val: string) => setTimeRange(val as TimeRange)}
+          />
         </div>
       </SChartFooter>
 

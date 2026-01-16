@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Text, ToggleGroup, ToggleGroupItem, TimeRangeToggle } from "@galacticcouncil/ui/components"
+import { Text, ToggleGroup, ToggleGroupItem, TimeRangeToggle, ValueStats } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState, useMemo } from "react"
 import {
@@ -16,6 +16,7 @@ import {
 } from "recharts"
 import { BarChart2, TrendingUp } from "lucide-react"
 import { ChartTooltipContent } from "./StatsChartTooltip"
+import { SelectDropdown } from "./SelectDropdown"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -60,21 +61,7 @@ const SChartFooter = styled.div`
   }
 `
 
-const SFullWidthToggleGroup = styled(ToggleGroup)`
-    width: 100%;
-    display: flex;
-    height: 40px;
-    background: ${({ theme }) => theme.surfaces.themeBasePalette?.surfaceHigh || 'transparent'};
-    padding: 4px;
-    border-radius: ${({ theme }) => theme.containers.cornerRadius?.buttonsPrimary || 4}px;
-    border: 1px solid ${({ theme }) => theme.buttons.outlineDark?.onOutline || 'transparent'};
-`
 
-const SToggleGroupItem = styled(ToggleGroupItem)`
-    flex: 1;
-    justify-content: center;
-    text-align: center;
-`
 // Generate mock Hollar fees data
 const generateHollarFeesData = (timeRange: TimeRange) => {
   const data = []
@@ -116,20 +103,22 @@ export const HollarFeesChart: FC = () => {
   return (
     <SChartContainer>
       <SChartHeader>
-        <div>
-          <Text fs={24} fw={700} color="#8B5CF6" style={{ fontFamily: 'Gazpacho, sans-serif' }}>
-            ${(latestValue / 1000).toFixed(2)}K
-          </Text>
-          <Text fs={12} color={theme.text.low}>
-            HSM Revenue (latest)
-          </Text>
-        </div>
+        <ValueStats
+          customValue={
+            <Text fs={24} fw={700} color="#8B5CF6" style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
+              ${(latestValue / 1000).toFixed(2)}K
+            </Text>
+          }
+          bottomLabel="HSM Revenue (latest)"
+          size="medium"
+          style={{ justifyContent: 'flex-start' }}
+        />
         <SControlsGroup>
           <ToggleGroup
             size="small"
             type="single"
             value={chartType}
-            onValueChange={(v) => v && setChartType(v as ChartType)}
+            onValueChange={(v: string) => v && setChartType(v as ChartType)}
           >
             <ToggleGroupItem value="line">
               <TrendingUp size={16} />
@@ -141,7 +130,7 @@ export const HollarFeesChart: FC = () => {
           <TimeRangeToggle
             value={timeRange}
             items={['1W', '1M', '1Y', 'ALL']}
-            onValueChange={(v) => setTimeRange(v as TimeRange)}
+            onValueChange={(v: string) => setTimeRange(v as TimeRange)}
           />
         </SControlsGroup>
       </SChartHeader>
@@ -279,7 +268,7 @@ export const HollarFeesChart: FC = () => {
           size="small"
           type="single"
           value={chartType}
-          onValueChange={(v) => v && setChartType(v as ChartType)}
+          onValueChange={(v: string) => v && setChartType(v as ChartType)}
         >
           <ToggleGroupItem value="line">
             <TrendingUp size={16} />
@@ -290,11 +279,11 @@ export const HollarFeesChart: FC = () => {
         </ToggleGroup>
 
         <div style={{ flex: 1 }}>
-          <SFullWidthToggleGroup type="single" value={timeRange} onValueChange={(val) => val && setTimeRange(val as TimeRange)}>
-            {(['1W', '1M', '1Y', 'ALL'] as TimeRange[]).map(range => (
-              <SToggleGroupItem key={range} value={range}>{range}</SToggleGroupItem>
-            ))}
-          </SFullWidthToggleGroup>
+          <SelectDropdown
+            value={timeRange}
+            items={['1W', '1M', '1Y', 'ALL'].map(range => ({ key: range, label: range }))}
+            onValueChange={(val: string) => setTimeRange(val as TimeRange)}
+          />
         </div>
       </SChartFooter>
     </SChartContainer >

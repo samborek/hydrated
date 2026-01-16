@@ -1,7 +1,8 @@
 import styled from "@emotion/styled"
 
-import { Button, Flex, Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
+import { Button, Flex, Text, ToggleGroup, ToggleGroupItem, ValueStats } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components"
+import { SelectDropdown } from "./SelectDropdown"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState, useMemo, useEffect, useRef } from "react"
 import {
@@ -60,22 +61,25 @@ const SChartFooter = styled.div`
     align-items: center;
   }
 `
+// Removed SFullWidthToggleGroup, SToggleGroupItem
 
-const SFullWidthToggleGroup = styled(ToggleGroup)`
-    width: 100%;
-    display: flex;
-    height: 40px;
-    background: ${({ theme }) => theme.surfaces.themeBasePalette?.surfaceHigh || 'transparent'};
-    padding: 4px;
-    border-radius: ${({ theme }) => theme.containers.cornerRadius?.buttonsPrimary || 4}px;
-    border: 1px solid ${({ theme }) => theme.buttons.outlineDark?.onOutline || 'transparent'};
+
+const SLegendContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  @media (max-width: 576px) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    /* Optional: Add fade effect or padding */
+  }
 `
 
-const SToggleGroupItem = styled(ToggleGroupItem)`
-    flex: 1;
-    justify-content: center;
-    text-align: center;
-`
+
 
 // --- Animated Value Component ---
 const AnimatedValue = ({ value }: { value: number }) => {
@@ -190,6 +194,9 @@ const DESTINATION_LABELS: Record<string, string> = {
   users: 'Users',
 }
 
+const productKeys = ['networkFees', 'tradingFees', 'liquidityFees', 'supplyBorrowFees', 'hollarFees']
+const destinationKeys = ['treasury', 'lps', 'burned', 'stakers', 'users']
+
 // Display all 5 categories to match Revenue tab
 const RATE_KEYS = ['rateTrading', 'rateNetwork', 'rateLiquidity', 'rateSupplyBorrow', 'rateHollar'] as const
 
@@ -252,7 +259,7 @@ export const FeesOverviewChart: FC = () => {
   const { themeProps: theme } = useTheme()
   const [timeRange, setTimeRange] = useState<TimeRange>('1M')
   const [viewMode, setViewMode] = useState<ViewMode>('revenue')
-  const [hoveredRevenue, setHoveredRevenue] = useState<number | null>(null)
+  const [activeData, setActiveData] = useState<any | null>(null)
   const [activeFilter, setActiveFilter] = useState<string>('all')
   const [groupBy, setGroupBy] = useState<GroupBy>('product')
 
@@ -281,7 +288,7 @@ export const FeesOverviewChart: FC = () => {
   // Transform data for Destination view
   const destinationData = useMemo(() => {
     return chartData.map(day => ({
-      date: day.date,
+      ...day,
       treasury: day.networkFees + day.hollarFees + day.supplyBorrowFees * 0.5,
       lps: day.liquidityFees + day.tradingFees * 0.5,
       burned: day.supplyBorrowFees * 0.5,
@@ -290,8 +297,23 @@ export const FeesOverviewChart: FC = () => {
     }))
   }, [chartData])
 
-  const productKeys = ['networkFees', 'tradingFees', 'liquidityFees', 'supplyBorrowFees', 'hollarFees']
-  const destinationKeys = ['treasury', 'lps', 'burned', 'stakers', 'users']
+  // Set default active data to last data point
+  useEffect(() => {
+    const data = groupBy === 'destination' ? destinationData : chartData
+    setActiveData(data[data.length - 1])
+  }, [chartData, destinationData, groupBy])
+
+  // Calculate hovered total revenue from activeData
+  const hoveredValues = useMemo(() => {
+    if (!activeData) return { total: null }
+
+    // Calculate sum based on current view/keys
+    const keys = groupBy === 'product' ? productKeys : destinationKeys
+    const sum = keys.reduce((acc, key) => acc + (Number(activeData[key]) || 0), 0)
+    return { total: sum }
+  }, [activeData, groupBy])
+
+
 
   const seriesKeys = useMemo(() => {
     if (viewMode === 'fees') return RATE_KEYS as unknown as string[]
@@ -321,29 +343,35 @@ export const FeesOverviewChart: FC = () => {
     <SChartContainer>
       <SChartHeader>
         <div>
-          <Text fs={14} color={theme.text.medium}>
+          <Text fs={22} color="text.high" style={{ fontFamily: 'Gazpacho, sans-serif', marginBottom: 4 }}>
             {viewMode === 'revenue'
-              ? (hoveredRevenue ? 'Daily Revenue' : 'Protocol Revenue')
-              : 'Fee Rate Fluctuation'}
-          </Text>
-          <Text fs={32} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif' }}>
-            {viewMode === 'revenue'
-              ? <AnimatedValue value={hoveredRevenue ?? totalRevenue} />
-              : `${currentTradingFee?.toFixed(2)}%`
+              ? (hoveredValues.total ? 'Daily Revenue' : 'Protocol Revenue')
+              : 'Fee Rate Fluctuation'
             }
           </Text>
-          <Text fs={12} color={theme.text.low}>
-            {timeRange === '1W' ? 'Last 7 days' :
+          <ValueStats
+            customValue={
+              <Text fs={24} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
+                {viewMode === 'revenue'
+                  ? <AnimatedValue value={hoveredValues.total ?? totalRevenue} />
+                  : `${currentTradingFee?.toFixed(2)}%`
+                }
+              </Text>
+            }
+            bottomLabel={timeRange === '1W' ? 'Last 7 days' :
               timeRange === '1M' ? 'Last 30 days' :
                 timeRange === '1Y' ? 'Last year' : 'All time'}
-          </Text>
+            wrap={true}
+            size="medium"
+            style={{ alignItems: 'flex-start' }}
+          />
         </div>
         <SControlsGroup>
           <ToggleGroup
             size="small"
             type="single"
             value={viewMode}
-            onValueChange={(v) => v && setViewMode(v as ViewMode)}
+            onValueChange={(v: string) => v && setViewMode(v as ViewMode)}
           >
             <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
             <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
@@ -353,7 +381,7 @@ export const FeesOverviewChart: FC = () => {
               size="small"
               type="single"
               value={groupBy}
-              onValueChange={(v) => v && setGroupBy(v as GroupBy)}
+              onValueChange={(v: string) => v && setGroupBy(v as GroupBy)}
             >
               <ToggleGroupItem value="product">By Product</ToggleGroupItem>
               <ToggleGroupItem value="destination">By Destination</ToggleGroupItem>
@@ -362,7 +390,7 @@ export const FeesOverviewChart: FC = () => {
           <TimeRangeToggle
             value={timeRange}
             items={['1W', '1M', '1Y', 'ALL']}
-            onValueChange={(v) => setTimeRange(v as TimeRange)}
+            onValueChange={(v: string) => setTimeRange(v as TimeRange)}
           />
         </SControlsGroup>
       </SChartHeader>
@@ -374,12 +402,15 @@ export const FeesOverviewChart: FC = () => {
             data={groupBy === 'destination' ? destinationData : chartData}
             margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
             onMouseMove={(state: any) => {
-              if (state.activePayload) {
-                const sum = state.activePayload.reduce((acc: number, entry: any) => acc + (Number(entry.value) || 0), 0)
-                setHoveredRevenue(sum)
+              if (state.activePayload && state.activePayload[0]) {
+                setActiveData(state.activePayload[0].payload)
               }
             }}
-            onMouseLeave={() => setHoveredRevenue(null)}
+            onMouseLeave={() => {
+              // Reset to last data point
+              const data = groupBy === 'destination' ? destinationData : chartData
+              setActiveData(data[data.length - 1])
+            }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
             <XAxis
@@ -413,7 +444,20 @@ export const FeesOverviewChart: FC = () => {
           </BarChart>
         ) : (
           // FEES MODE: Area Chart showing % fluctuation of rates with gradient fill
-          <AreaChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+          <AreaChart
+            data={chartData}
+            margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+            onMouseMove={(state: any) => {
+              if (state.activePayload && state.activePayload[0]) {
+                setActiveData(state.activePayload[0].payload)
+              }
+            }}
+            onMouseLeave={() => {
+              // Reset to last data point
+              const data = groupBy === 'destination' ? destinationData : chartData
+              setActiveData(data[data.length - 1])
+            }}
+          >
             {/* ... gradients ... */}
             <defs>
               <linearGradient id="gradRateTrading" x1="0" y1="0" x2="0" y2="1">
@@ -458,7 +502,7 @@ export const FeesOverviewChart: FC = () => {
             */}
             <Tooltip
               content={({ payload, label }) => (
-                <SChartTooltipContainer>
+                <SChartTooltipContainer className="chart-tooltip">
                   <Text fs={12} fw={600} color="text.high" style={{ marginBottom: 4 }}>
                     {label}
                   </Text>
@@ -508,7 +552,7 @@ export const FeesOverviewChart: FC = () => {
         )}
       </ResponsiveContainer>
 
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '20px', marginBottom: '20px' }}>
+      <SLegendContainer className="no-scrollbar">
         {/* Toggle Buttons: mimic TimeRangeToggle logic (Exclusive selection) */}
         {['all', ...seriesKeys].map((key) => {
           const isActive = activeFilter === key
@@ -527,6 +571,7 @@ export const FeesOverviewChart: FC = () => {
                 px: 12,
                 minWidth: 30,
                 borderRadius: 32, // Pill shape like TimeRangeToggle
+                flexShrink: 0, // Prevent shrinking in scroll container
               }}
             >
               {!isAll && (
@@ -542,25 +587,33 @@ export const FeesOverviewChart: FC = () => {
               <Text fs={11} fw={500} color="text.high">
                 {isAll ? "All" : (DESTINATION_LABELS[key as keyof typeof DESTINATION_LABELS] || LABELS[key as keyof typeof LABELS] || key)}
               </Text>
+              {!isAll && activeData && (
+                <Text fs={11} fw={500} color="text.medium">
+                  {viewMode === 'revenue'
+                    ? `$${(activeData[key] ?? 0).toFixed(0)}` // Compact number for mobile
+                    : `${(activeData[key] ?? 0).toFixed(1)}%`
+                  }
+                </Text>
+              )}
             </Button>
           )
         })}
-      </div>
+      </SLegendContainer>
 
       <SChartFooter>
         <div style={{ flex: 1 }}>
-          <SFullWidthToggleGroup type="single" value={viewMode} onValueChange={(val) => val && setViewMode(val as 'revenue' | 'fees')}>
-            <SToggleGroupItem value="revenue">Revenue</SToggleGroupItem>
-            <SToggleGroupItem value="fees">Fees %</SToggleGroupItem>
-          </SFullWidthToggleGroup>
+          <ToggleGroup type="single" value={viewMode} onValueChange={(val: string) => val && setViewMode(val as 'revenue' | 'fees')} style={{ width: '100%' }}>
+            <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
+            <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
+          </ToggleGroup>
         </div>
 
         <div style={{ flex: 1 }}>
-          <SFullWidthToggleGroup type="single" value={timeRange} onValueChange={(val) => val && setTimeRange(val as TimeRange)}>
-            {['1W', '1M', '1Y', 'ALL'].map(range => (
-              <SToggleGroupItem key={range} value={range}>{range}</SToggleGroupItem>
-            ))}
-          </SFullWidthToggleGroup>
+          <SelectDropdown
+            value={timeRange}
+            items={['1W', '1M', '1Y', 'ALL'].map(range => ({ key: range, label: range }))}
+            onValueChange={(val: string) => setTimeRange(val as TimeRange)}
+          />
         </div>
       </SChartFooter>
     </SChartContainer >

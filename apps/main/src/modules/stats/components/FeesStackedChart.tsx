@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Text, ToggleGroup, ToggleGroupItem, TimeRangeToggle } from "@galacticcouncil/ui/components"
+import { Text, TimeRangeToggle, ValueStats } from "@galacticcouncil/ui/components"
 
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState, useMemo } from "react"
@@ -14,6 +14,7 @@ import {
   Legend,
 } from "recharts"
 import { ChartTooltipContent } from "./StatsChartTooltip"
+import { SelectDropdown } from "./SelectDropdown"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -55,21 +56,7 @@ const SChartFooter = styled.div`
   }
 `
 
-const SFullWidthToggleGroup = styled(ToggleGroup)`
-    width: 100%;
-    display: flex;
-    height: 40px;
-    background: ${({ theme }) => theme.surfaces.themeBasePalette?.surfaceHigh || 'transparent'};
-    padding: 4px;
-    border-radius: ${({ theme }) => theme.containers.cornerRadius?.buttonsPrimary || 4}px;
-    border: 1px solid ${({ theme }) => theme.buttons.outlineDark?.onOutline || 'transparent'};
-`
 
-const SToggleGroupItem = styled(ToggleGroupItem)`
-    flex: 1;
-    justify-content: center;
-    text-align: center;
-`
 
 
 // Generate mock fees data with realistic relative distributions
@@ -140,20 +127,23 @@ export const FeesStackedChart: FC<Props> = ({
   return (
     <SChartContainer>
       <SChartHeader>
-        <div>
-          <Text fs={14} color={theme.text.medium}>{title}</Text>
-          <Text fs={28} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif' }}>
-            ${(totalFees / 1000).toFixed(1)}K
-          </Text>
-          <Text fs={12} color={theme.text.low}>
-            Last {timeRange === '1W' ? '7 days' : timeRange === '1M' ? '30 days' : '90 days'}
-          </Text>
-        </div>
+        <ValueStats
+          label={title}
+          customValue={
+            <Text fs={28} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
+              ${(totalFees / 1000).toFixed(1)}K
+            </Text>
+          }
+          bottomLabel={`Last ${timeRange === '1W' ? '7 days' : timeRange === '1M' ? '30 days' : '90 days'}`}
+          wrap={true}
+          size="medium"
+          style={{ alignItems: 'flex-start' }}
+        />
         <SControlsGroup>
           <TimeRangeToggle
             value={timeRange}
             items={['1W', '1M', '3M']}
-            onValueChange={(v) => setTimeRange(v as TimeRange)}
+            onValueChange={(v: string) => setTimeRange(v as TimeRange)}
           />
         </SControlsGroup>
       </SChartHeader>
@@ -219,11 +209,11 @@ export const FeesStackedChart: FC<Props> = ({
 
       <SChartFooter>
         <div style={{ flex: 1 }}>
-          <SFullWidthToggleGroup type="single" value={timeRange} onValueChange={(val) => val && setTimeRange(val as TimeRange)}>
-            {(['1W', '1M', '3M'] as TimeRange[]).map(range => (
-              <SToggleGroupItem key={range} value={range}>{range}</SToggleGroupItem>
-            ))}
-          </SFullWidthToggleGroup>
+          <SelectDropdown
+            value={timeRange}
+            items={['1W', '1M', '3M'].map(range => ({ key: range, label: range }))}
+            onValueChange={(val: string) => setTimeRange(val as TimeRange)}
+          />
         </div>
       </SChartFooter>
     </SChartContainer>

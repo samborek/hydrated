@@ -19,7 +19,7 @@ export const HeaderMenu: React.FC<
 
   return (
     <NavigationMenu {...props}>
-      <NavigationMenuList>
+      <NavigationMenuList className="no-scrollbar">
         {NAVIGATION.map(({ key, children, to, search }) => (
           <NavigationMenuItem key={key} data-intersect={key}>
             <NavigationMenuTrigger asChild>

@@ -18,7 +18,7 @@ export const ValueStatsLabel = SValueStatsLabel
 export const ValueStatsValue = SValueStatsValue
 export const ValueStatsBottomValue = SValueStatsBottomValue
 
-type ValueStatsProps = {
+type ValueStatsProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly font?: ValueStatsFont
   readonly wrap?: ResponsiveStyleValue<boolean>
   readonly size?: ValueStatsSize
@@ -44,11 +44,12 @@ export const ValueStats: FC<ValueStatsProps> = ({
   customBottomLabel,
   isLoading,
   className,
+  ...props
 }) => {
   const shouldWrap = useResponsiveValue(wrap, false)
 
   return (
-    <SValueStats shouldWrap={shouldWrap} size={size} className={className}>
+    <SValueStats shouldWrap={shouldWrap} size={size} className={className} {...props}>
       {customLabel ?? <SValueStatsLabel>{label}</SValueStatsLabel>}
       <SValueStatsValueContainer size={size}>
         {isLoading ? (

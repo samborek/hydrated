@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
+import { Text, ToggleGroup, ToggleGroupItem, ValueStats } from "@galacticcouncil/ui/components"
 import { SelectDropdown } from "./SelectDropdown"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components"
 import { FC, useState, useMemo } from "react"
@@ -44,26 +44,7 @@ const SControlsGroup = styled.div`
     }
 `
 
-const SFullWidthToggleGroup = styled(ToggleGroup)`
-    width: 100%;
-    display: flex;
-    height: 40px;
-    background: ${({ theme }) => theme.surfaces.themeBasePalette.surfaceHigh};
-    padding: 4px;
-    border-radius: ${({ theme }) => theme.containers.cornerRadius.buttonsPrimary}px;
-    border: 1px solid ${({ theme }) => theme.buttons.outlineDark.onOutline};
-`
 
-const SToggleGroupItem = styled(ToggleGroupItem)`
-    flex: 1;
-    justify-content: center;
-    text-align: center;
-    
-    // Override styling if needed to match mobile expectations? 
-    // Assuming base ToggleGroupItem is flexible enough or handled by library.
-    // If not, we might need more CSS.
-    // But usually standard item works.
-`
 
 const SChartFooter = styled.div`
   display: none;
@@ -174,18 +155,23 @@ export const TVLCompositionChart: FC<Props> = ({
   return (
     <SChartContainer>
       <SChartHeader>
-        <div>
-          <Text fs={14} color="text.medium">{title}</Text>
-          <Text fs={32} fw={700} color="secondaryColors.pink.coralPink" style={{ fontFamily: 'Gazpacho, sans-serif' }}>
-            {value}
-          </Text>
-        </div>
+        <ValueStats
+          label={title}
+          customValue={
+            <Text fs={32} fw={700} color="secondaryColors.pink.coralPink" style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
+              {value}
+            </Text>
+          }
+          wrap={true}
+          size="medium"
+          style={{ alignItems: 'flex-start' }}
+        />
         <SControlsGroup>
           <ToggleGroup
             size="small"
             type="single"
             value={filter}
-            onValueChange={(v) => v && setFilter(v as Filter)}
+            onValueChange={(v: string) => v && setFilter(v as Filter)}
           >
             {(['All', 'Omnipool', 'Stable', 'XYK', 'MM'] as Filter[]).map((f) => (
               <ToggleGroupItem
@@ -317,7 +303,7 @@ export const TVLCompositionChart: FC<Props> = ({
         <div style={{ flex: 1 }}>
           <SelectDropdown
             value={filter}
-            onValueChange={(value) => setFilter(value as Filter)}
+            onValueChange={(value: string) => setFilter(value as Filter)}
             items={[
               { key: 'All', label: 'All (5/5)' },
               { key: 'Omnipool', label: 'Omnipool' },
@@ -330,11 +316,11 @@ export const TVLCompositionChart: FC<Props> = ({
         </div>
 
         <div style={{ flex: 1 }}>
-          <SFullWidthToggleGroup type="single" value={timeRange} onValueChange={(val) => val && setTimeRange(val as TimeRange)}>
-            {['1W', '1M', '3M'].map(range => (
-              <SToggleGroupItem key={range} value={range}>{range}</SToggleGroupItem>
-            ))}
-          </SFullWidthToggleGroup>
+          <SelectDropdown
+            value={timeRange}
+            items={['1W', '1M', '3M'].map(range => ({ key: range, label: range }))}
+            onValueChange={(val: string) => setTimeRange(val as TimeRange)}
+          />
         </div>
       </SChartFooter>
     </SChartContainer >

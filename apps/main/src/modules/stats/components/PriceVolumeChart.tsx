@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
-import { Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
+import { Text, ValueStats } from "@galacticcouncil/ui/components"
+import { SelectDropdown } from "./SelectDropdown"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components"
 import { FC, useState, useMemo } from "react"
 import {
@@ -76,25 +77,9 @@ const SMobileTimeWrapper = styled.div`
 
 
 
-const SFullWidthToggleGroup = styled(ToggleGroup)`
-    width: 100%;
-    display: flex;
-    height: 40px;
-    background: ${({ theme }) => theme.surfaces.themeBasePalette?.surfaceHigh || 'transparent'};
-    padding: 4px;
-    border-radius: ${({ theme }) => theme.containers.cornerRadius?.buttonsPrimary || 4}px;
-    border: 1px solid ${({ theme }) => theme.buttons.outlineDark?.onOutline || 'transparent'};
-`
 
-const SToggleGroupItem = styled(ToggleGroupItem)`
-    flex: 1;
-    justify-content: center;
-    text-align: center;
-`
 
-const SChartValue = styled.div`
-  margin-bottom: 0;
-`
+
 
 const SControlsFooter = styled.div`
   display: flex;
@@ -169,22 +154,16 @@ export const PriceVolumeChart: FC<Props> = ({
     <SChartContainer>
       <SChartHeader>
         {title && <Text fs={14} fw={500} color="rgba(255,255,255,0.6)" className="mb-1">{title}</Text>}
-        <SChartValue>
-          {/* <Text fs={12} color="text.medium">
-                        {chartType === 'price' ? 'Price' : 'Volume'}
-                    </Text> */}
-          {/* The label seemed redundant if Title is present, or I can align with Figma */}
-          {/* Figma screenshot shows Price top left. */}
-          <Text fs={12} color="text.medium">
-            {chartType === 'price' ? 'Price' : 'Volume'}
-          </Text>
-          <Text fs={24} fw={600}>
-            {chartType === 'price'
-              ? `${latestPrice.toFixed(9)} HDX`
-              : `$${((priceData[priceData.length - 1]?.volume ?? 0) / 1000).toFixed(0)} K`
-            }
-          </Text>
-        </SChartValue>
+        <ValueStats
+          label={chartType === 'price' ? 'Price' : 'Volume'}
+          value={chartType === 'price'
+            ? `${latestPrice.toFixed(9)} HDX`
+            : `$${((priceData[priceData.length - 1]?.volume ?? 0) / 1000).toFixed(0)} K`
+          }
+          wrap={true}
+          size="medium"
+          style={{ alignItems: 'flex-start' }}
+        />
       </SChartHeader>
 
 
@@ -338,16 +317,16 @@ export const PriceVolumeChart: FC<Props> = ({
           <TimeRangeToggle
             value={timeRange}
             items={['ALL', '1D', '1W', '1M']}
-            onValueChange={(v) => setTimeRange(v as TimeRange)}
+            onValueChange={(v: string) => setTimeRange(v as TimeRange)}
           />
         </STimeRangeGroup>
 
         <SMobileTimeWrapper>
-          <SFullWidthToggleGroup type="single" value={timeRange} onValueChange={(val) => val && setTimeRange(val as TimeRange)}>
-            {(['ALL', '1D', '1W', '1M'] as TimeRange[]).map(range => (
-              <SToggleGroupItem key={range} value={range}>{range}</SToggleGroupItem>
-            ))}
-          </SFullWidthToggleGroup>
+          <SelectDropdown
+            value={timeRange}
+            items={['ALL', '1D', '1W', '1M'].map(range => ({ key: range, label: range }))}
+            onValueChange={(val: string) => setTimeRange(val as TimeRange)}
+          />
         </SMobileTimeWrapper>
       </SControlsFooter>
     </SChartContainer>

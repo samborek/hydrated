@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Button, Text, TimeRangeToggle } from "@galacticcouncil/ui/components"
+import { Text, TimeRangeToggle } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState } from "react"
 import {
@@ -13,6 +13,7 @@ import {
 } from "recharts"
 
 import { ChartTooltipContent } from "./StatsChartTooltip"
+import { SelectDropdown } from "./SelectDropdown"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -118,7 +119,7 @@ export const HollarSupplyChart: FC<Props> = ({
           <TimeRangeToggle
             value={timeRange}
             items={["7D", "30D", "MAX"]}
-            onValueChange={(v) => setTimeRange(v as TimeRange)}
+            onValueChange={(v: string) => setTimeRange(v as TimeRange)}
           />
         </SControlsGroup>
       </SChartHeader>
@@ -172,18 +173,13 @@ export const HollarSupplyChart: FC<Props> = ({
       </ResponsiveContainer>
 
       <SChartFooter>
-        {(["7D", "30D", "MAX"] as TimeRange[]).map((range) => (
-          <Button
-            key={range}
-            size="medium"
-            variant={timeRange === range ? "secondary" : "restSubtle"}
-            outline={timeRange !== range}
-            onClick={() => setTimeRange(range)}
-            sx={{ flex: 1 }}
-          >
-            {range}
-          </Button>
-        ))}
+        <div style={{ flex: 1 }}>
+          <SelectDropdown
+            value={timeRange}
+            items={['7D', '30D', 'MAX'].map(range => ({ key: range, label: range }))}
+            onValueChange={(val: string) => setTimeRange(val as TimeRange)}
+          />
+        </div>
       </SChartFooter>
     </SChartContainer>
   )

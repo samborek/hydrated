@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Button, Text, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
+import { Text, ToggleGroup, ToggleGroupItem, TimeRangeToggle } from "@galacticcouncil/ui/components"
 
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState, useMemo } from "react"
@@ -150,18 +150,11 @@ export const FeesStackedChart: FC<Props> = ({
           </Text>
         </div>
         <SControlsGroup>
-          {(['1W', '1M', '3M'] as TimeRange[]).map((range) => (
-            <Button
-              key={range}
-              size="small"
-              variant={timeRange === range ? 'secondary' : 'tertiary'}
-              outline={timeRange !== range}
-              onClick={() => setTimeRange(range)}
-              sx={{ px: 12, minWidth: 42 }}
-            >
-              {range}
-            </Button>
-          ))}
+          <TimeRangeToggle
+            value={timeRange}
+            items={['1W', '1M', '3M']}
+            onValueChange={(v) => setTimeRange(v as TimeRange)}
+          />
         </SControlsGroup>
       </SChartHeader>
 

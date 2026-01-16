@@ -180,7 +180,7 @@ const variants = createVariants<ButtonVariant>((theme) => ({
     theme.buttons.secondary.low.onRest,
     "transparent",
     theme.buttons.outlineDark.hover,
-    theme.text.high,
+    theme.buttons.outlineDark.onRest,
   ),
 }))
 

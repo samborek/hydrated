@@ -92,7 +92,7 @@ export const SToggleGroupItem = styled(ToggleGroupPrimitive.Item, {
 
     &:hover {
       background-color: ${theme.buttons.outlineDark.hover};
-      color: ${theme.text.high};
+      color: ${theme.buttons.outlineDark.onRest};
     }
 
     &[data-state="on"] {

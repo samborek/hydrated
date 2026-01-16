@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
 
-import { Button, Flex, Text, ToggleGroup, ToggleGroupItem, ValueStats } from "@galacticcouncil/ui/components"
+import { Button, Flex, Text, ToggleGroup, ToggleGroupItem, ValueStats, SectionHeader } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components"
 import { SelectDropdown } from "./SelectDropdown"
 import { useTheme } from "@galacticcouncil/ui/theme"
@@ -339,8 +339,13 @@ export const FeesOverviewChart: FC = () => {
 
   const currentTradingFee = chartData[chartData.length - 1]?.rateTrading
 
+  const headerTitle = viewMode === 'revenue'
+    ? (hoveredValues.total ? 'Daily Revenue' : 'Protocol Revenue')
+    : 'Fee Rate Fluctuation'
+
   return (
     <SChartContainer>
+      <SectionHeader>{headerTitle}</SectionHeader>
       <SChartHeader>
         <div>
           <ValueStats

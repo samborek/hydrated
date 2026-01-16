@@ -343,13 +343,12 @@ export const FeesOverviewChart: FC = () => {
     <SChartContainer>
       <SChartHeader>
         <div>
-          <Text fs={22} color="text.high" style={{ fontFamily: 'Gazpacho, sans-serif', marginBottom: 4 }}>
-            {viewMode === 'revenue'
-              ? (hoveredValues.total ? 'Daily Revenue' : 'Protocol Revenue')
-              : 'Fee Rate Fluctuation'
-            }
-          </Text>
           <ValueStats
+            label={
+              viewMode === 'revenue'
+                ? (hoveredValues.total ? 'Daily Revenue' : 'Protocol Revenue')
+                : 'Fee Rate Fluctuation'
+            }
             customValue={
               <Text fs={24} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
                 {viewMode === 'revenue'

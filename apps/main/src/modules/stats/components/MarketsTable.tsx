@@ -3,39 +3,32 @@ import { DataTable, Flex, Text } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { css } from "@galacticcouncil/ui/utils"
 import { ColumnDef } from "@tanstack/react-table"
-import { FC } from "react"
+import { FC, useMemo, useState, useEffect } from "react"
 
 import { AssetLogo } from "@/components/AssetLogo"
 
+const useIsMobile = () => {
+    const [isMobile, setIsMobile] = useState(false)
+    useEffect(() => {
+        const check = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches)
+        check()
+        window.addEventListener('resize', check)
+        return () => window.removeEventListener('resize', check)
+    }, [])
+    return isMobile
+}
+
 const STableWrapper = styled.div`
   margin: 0 -16px;
-`
-
-const SDesktopView = styled.div`
-  @media (max-width: 576px) {
+  overflow-x: auto;
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
     display: none;
   }
-`
-
-const SMobileView = styled.div`
-  display: none;
-  @media (max-width: 576px) {
-    display: flex;
-    flex-direction: column;
-    padding: 0 16px;
-  }
-`
-
-const SMobileItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid ${({ theme }) => theme.details.separators};
-  
-  &:last-child {
-    border-bottom: none;
-  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 `
 
 const SAssetCell = styled.div`
@@ -119,6 +112,7 @@ const mockMarkets: Market[] = [
 
 export const MarketsTable: FC = () => {
     const { themeProps: theme } = useTheme()
+    const isMobile = useIsMobile()
 
     const columns: ColumnDef<Market>[] = [
         {
@@ -167,33 +161,24 @@ export const MarketsTable: FC = () => {
         },
     ]
 
+    const tableColumns = useMemo(() => {
+        if (isMobile) {
+            return columns.filter(col =>
+                (col as any).accessorKey === 'asset' ||
+                (col as any).accessorKey === 'supply' ||
+                (col as any).accessorKey === 'borrow'
+            )
+        }
+        return columns
+    }, [isMobile, columns])
+
     return (
         <STableWrapper>
-            <SDesktopView>
-                <DataTable
-                    data={mockMarkets}
-                    columns={columns}
-                    size="medium"
-                />
-            </SDesktopView>
-            <SMobileView>
-                {mockMarkets.map((market) => (
-                    <SMobileItem key={market.id}>
-                        <SAssetCell>
-                            <AssetLogo id={market.id} size="small" />
-                            <Text fw={500}>{market.asset}</Text>
-                        </SAssetCell>
-                        <Flex direction="column" align="flex-end" gap={4}>
-                            <Text fs={13} fw={500} color="text.high">
-                                {market.supply}
-                            </Text>
-                            <Text fs={12} color="text.medium">
-                                {market.borrow}
-                            </Text>
-                        </Flex>
-                    </SMobileItem>
-                ))}
-            </SMobileView>
+            <DataTable
+                data={mockMarkets}
+                columns={tableColumns}
+                size="medium"
+            />
         </STableWrapper>
     )
 }

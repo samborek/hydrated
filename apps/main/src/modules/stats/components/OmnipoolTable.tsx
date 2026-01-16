@@ -3,9 +3,19 @@ import { DataTable, Flex, Text } from "@galacticcouncil/ui/components"
 import { getToken } from "@galacticcouncil/ui/utils"
 import { useNavigate } from "@tanstack/react-router"
 import { ColumnDef } from "@tanstack/react-table"
-import { FC } from "react"
-
+import { FC, useMemo, useState, useEffect } from "react"
 import { AssetLogo } from "@/components/AssetLogo"
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+  return isMobile
+}
 
 const SAssetCell = styled.div`
   display: flex;
@@ -15,6 +25,15 @@ const SAssetCell = styled.div`
 
 const STableWrapper = styled.div`
   margin: 0 -16px;
+  overflow-x: auto;
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 `
 
 type OmnipoolAsset = {
@@ -178,6 +197,18 @@ const columns: ColumnDef<OmnipoolAsset>[] = [
 
 export const OmnipoolTable: FC = () => {
   const navigate = useNavigate()
+  const isMobile = useIsMobile()
+
+  const tableColumns = useMemo(() => {
+    if (isMobile) {
+      return columns.filter(col =>
+        (col as any).accessorKey === 'symbol' ||
+        (col as any).accessorKey === 'volume' ||
+        (col as any).accessorKey === 'apy'
+      )
+    }
+    return columns
+  }, [isMobile])
 
   const handleRowClick = (row: OmnipoolAsset) => {
     navigate({
@@ -190,7 +221,7 @@ export const OmnipoolTable: FC = () => {
     <STableWrapper>
       <DataTable
         data={mockAssets}
-        columns={columns}
+        columns={tableColumns}
         paginated
         pageSize={5}
         size="large"

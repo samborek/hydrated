@@ -38,7 +38,7 @@ function FeesStats() {
       </SectionHeader>
 
       {/* Overview Chart - Stacked Bar Chart */}
-      <SSection>
+      <SSection hasHeader>
         <FeesOverviewChart />
       </SSection>
 

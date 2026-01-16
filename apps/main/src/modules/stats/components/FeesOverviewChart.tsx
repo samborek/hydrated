@@ -46,6 +46,14 @@ const SControlsGroup = styled.div`
   flex-wrap: wrap;
   
   @media (max-width: 576px) {
+    width: 100%;
+    justify-content: flex-end;
+    align-self: auto;
+  }
+`
+
+const SDesktopOnly = styled.div`
+  @media (max-width: 576px) {
     display: none;
   }
 `
@@ -371,15 +379,17 @@ export const FeesOverviewChart: FC = () => {
           />
         </div>
         <SControlsGroup>
-          <ToggleGroup
-            size="small"
-            type="single"
-            value={viewMode}
-            onValueChange={(v: string) => v && setViewMode(v as ViewMode)}
-          >
-            <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
-            <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
-          </ToggleGroup>
+          <SDesktopOnly>
+            <ToggleGroup
+              size="small"
+              type="single"
+              value={viewMode}
+              onValueChange={(v: string) => v && setViewMode(v as ViewMode)}
+            >
+              <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
+              <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
+            </ToggleGroup>
+          </SDesktopOnly>
           {viewMode === 'revenue' && (
             <ToggleGroup
               size="small"
@@ -391,11 +401,13 @@ export const FeesOverviewChart: FC = () => {
               <ToggleGroupItem value="destination">By Destination</ToggleGroupItem>
             </ToggleGroup>
           )}
-          <TimeRangeToggle
-            value={timeRange}
-            items={['1W', '1M', '1Y', 'ALL']}
-            onValueChange={(v: string) => setTimeRange(v as TimeRange)}
-          />
+          <SDesktopOnly>
+            <TimeRangeToggle
+              value={timeRange}
+              items={['1W', '1M', '1Y', 'ALL']}
+              onValueChange={(v: string) => setTimeRange(v as TimeRange)}
+            />
+          </SDesktopOnly>
         </SControlsGroup>
       </SChartHeader>
 

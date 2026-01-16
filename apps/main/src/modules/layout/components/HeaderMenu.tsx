@@ -27,7 +27,7 @@ export const HeaderMenu: React.FC<
                 {translations[key].title}
               </Link>
             </NavigationMenuTrigger>
-            {children && children.length > 1 && (
+            {children && children.length > 1 && key !== "stats" && (
               <NavigationMenuContent>
                 {children.map(({ to, search, key, icon }) => (
                   <DetailedLink

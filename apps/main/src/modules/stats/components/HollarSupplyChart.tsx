@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Button, Text } from "@galacticcouncil/ui/components"
+import { Button, Text, TimeRangeToggle } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState } from "react"
 import {
@@ -115,18 +115,11 @@ export const HollarSupplyChart: FC<Props> = ({
           </Text>
         </div>
         <SControlsGroup>
-          {(["7D", "30D", "MAX"] as TimeRange[]).map((range) => (
-            <Button
-              key={range}
-              size="small"
-              variant={timeRange === range ? "secondary" : "tertiary"}
-              outline={timeRange !== range}
-              onClick={() => setTimeRange(range)}
-              sx={{ px: 12, minWidth: 42 }}
-            >
-              {range}
-            </Button>
-          ))}
+          <TimeRangeToggle
+            value={timeRange}
+            items={["7D", "30D", "MAX"]}
+            onValueChange={(v) => setTimeRange(v as TimeRange)}
+          />
         </SControlsGroup>
       </SChartHeader>
 
@@ -183,7 +176,7 @@ export const HollarSupplyChart: FC<Props> = ({
           <Button
             key={range}
             size="medium"
-            variant={timeRange === range ? "secondary" : "tertiary"}
+            variant={timeRange === range ? "secondary" : "restSubtle"}
             outline={timeRange !== range}
             onClick={() => setTimeRange(range)}
             sx={{ flex: 1 }}

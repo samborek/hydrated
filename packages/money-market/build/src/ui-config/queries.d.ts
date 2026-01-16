@@ -3,7 +3,7 @@ export declare const queryKeysFactory: {
     pool: readonly ["pool"];
     incentives: readonly ["incentives"];
     gho: readonly ["gho"];
-    market: (marketData: MarketDataType) => (boolean | import("./networksConfig").ChainId | import("./marketsConfig").CustomMarket)[];
+    market: (marketData: MarketDataType) => (boolean | import("./marketsConfig").CustomMarket | import("./networksConfig").ChainId)[];
     user: (user: string) => string[];
     transactionHistory: (user: string, marketData: MarketDataType) => (string | boolean | import("./networksConfig").ChainId)[];
     poolTokens: (user: string, marketData: MarketDataType) => (string | boolean | import("./networksConfig").ChainId)[];

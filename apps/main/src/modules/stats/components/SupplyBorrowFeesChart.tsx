@@ -222,7 +222,7 @@ export const SupplyBorrowFeesChart: FC = () => {
           <TimeRangeToggle
             value={timeRange}
             items={['1W', '1M', '1Y', 'ALL']}
-            onValueChange={(v) => setTimeRange(v as TimeRange)}
+            onValueChange={(v: string) => setTimeRange(v as TimeRange)}
           />
         </SControlsGroup>
       </SChartHeader>

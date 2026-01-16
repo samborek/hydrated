@@ -457,7 +457,8 @@
             "primaryActive": "#53a4f3",
             "hover": "rgb(33.569% 35.765% 40.157% / 0.1)",
             "onActive": "rgb(100% 100% 100%)",
-            "activeSubtle": "rgb(6.5098% 12.863% 19.059%)"
+            "activeSubtle": "rgb(6.5098% 12.863% 19.059%)",
+            "onRest": "#030816"
         },
         "secondary": {
             "low": {

@@ -117,7 +117,7 @@ export const VolumeChart: FC<Props> = ({
           <TimeRangeToggle
             value={timeRange}
             items={["7D", "30D", "MAX"]}
-            onValueChange={(v) => setTimeRange(v as TimeRange)}
+            onValueChange={(v: string) => setTimeRange(v as TimeRange)}
           />
         </SControlsGroup>
       </SChartHeader>

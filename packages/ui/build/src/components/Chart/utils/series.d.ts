@@ -30,8 +30,8 @@ export declare const getDerivedChartProps: <T extends TChartData>(config: ChartC
         top: number;
         bottom: number;
     };
-    labelFormatter: ((value: T[keyof T]) => string) | ((date?: Date | number) => string) | undefined;
-    tooltipFormatter: ((value: T[keyof T]) => string) | ((date?: Date | number) => string) | undefined;
+    labelFormatter: ((date?: Date | number) => string) | ((value: T[keyof T]) => string) | undefined;
+    tooltipFormatter: ((date?: Date | number) => string) | ((value: T[keyof T]) => string) | undefined;
     valueFormatter: ((value: number) => string) | undefined;
     tooltipWrapperStyles: {
         readonly position: "static";

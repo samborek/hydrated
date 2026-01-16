@@ -199,7 +199,7 @@ export const TVLCompositionChart: FC<Props> = ({
           <TimeRangeToggle
             value={timeRange}
             items={['1W', '1M', '3M']}
-            onValueChange={(v) => setTimeRange(v as TimeRange)}
+            onValueChange={(v: string) => setTimeRange(v as TimeRange)}
             className="desktop-only"
           />
         </SControlsGroup>

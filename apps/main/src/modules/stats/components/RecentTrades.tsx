@@ -12,6 +12,34 @@ const STableWrapper = styled.div`
   margin: 0 -16px;
 `
 
+const SDesktopView = styled.div`
+  @media (max-width: 576px) {
+    display: none;
+  }
+`
+
+const SMobileView = styled.div`
+  display: none;
+  @media (max-width: 576px) {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 16px;
+  }
+`
+
+const SMobileItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.details.separators};
+  
+  &:last-child {
+    border-bottom: none;
+  }
+`
+
 // Asset ID mapping for logos
 const ASSET_IDS: Record<string, string> = {
   DOT: "5",
@@ -200,14 +228,39 @@ export const RecentTrades: FC = () => {
 
   return (
     <STableWrapper>
-      <DataTable
-        data={mockTrades}
-        columns={columns}
-        paginated
-        pageSize={5}
-        size="large"
-        onRowClick={() => {}}
-      />
+      <SDesktopView>
+        <DataTable
+          data={mockTrades}
+          columns={columns}
+          paginated
+          pageSize={5}
+          size="large"
+          onRowClick={() => { }}
+        />
+      </SDesktopView>
+      <SMobileView>
+        {mockTrades.slice(0, 5).map((trade, i) => (
+          <SMobileItem key={i}>
+            <Flex direction="column" gap={6}>
+              {/* Asset Pair */}
+              <SwapFlow
+                fromAmount={trade.fromAmount}
+                fromAsset={trade.fromAsset}
+                toAmount={trade.toAmount}
+                toAsset={trade.toAsset}
+              />
+              {/* Date */}
+              <Text fs={12} color="text.medium">
+                {trade.date}
+              </Text>
+            </Flex>
+            {/* Value */}
+            <Text fs={13} fw={500} color="text.high" style={{ whiteSpace: 'nowrap', marginLeft: 12 }}>
+              {trade.value}
+            </Text>
+          </SMobileItem>
+        ))}
+      </SMobileView>
     </STableWrapper>
   )
 }

@@ -35,6 +35,40 @@ const STableWrapper = styled.div`
   margin: 0 -16px;
 `
 
+const SDesktopView = styled.div`
+  @media (max-width: 576px) {
+    display: none;
+  }
+`
+
+const SMobileView = styled.div`
+  display: none;
+  @media (max-width: 576px) {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 16px;
+  }
+`
+
+const SMobileItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.details.separators};
+  
+  &:last-child {
+    border-bottom: none;
+  }
+`
+
+const SMobileRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
 const SAccountCell = styled.div`
   display: flex;
   align-items: center;
@@ -115,13 +149,45 @@ export const TransactionsTable: FC = () => {
 
   return (
     <STableWrapper>
-      <DataTable
-        data={data}
-        columns={columns}
-        paginated
-        pageSize={10}
-        size="medium"
-      />
+      <SDesktopView>
+        <DataTable
+          data={data}
+          columns={columns}
+          paginated
+          pageSize={10}
+          size="medium"
+        />
+      </SDesktopView>
+      <SMobileView>
+        {data.slice(0, 10).map((tx) => (
+          <SMobileItem key={tx.id}>
+            <SMobileRow>
+              <SAccountCell>
+                <SAccountIcon>👤</SAccountIcon>
+                <Text fs={13} color="text.high">
+                  {tx.account}
+                </Text>
+              </SAccountCell>
+              <Text fs={13} fw={500} color="text.high">
+                {tx.volume}
+              </Text>
+            </SMobileRow>
+            <SMobileRow>
+              <Text fs={12} color="text.medium">
+                {tx.action}
+              </Text>
+              <Flex gap={8} align="center">
+                <Text fs={12} color="text.low">
+                  {tx.date}
+                </Text>
+                <SExternalLinkIcon>
+                  <ExternalLink size={14} />
+                </SExternalLinkIcon>
+              </Flex>
+            </SMobileRow>
+          </SMobileItem>
+        ))}
+      </SMobileView>
     </STableWrapper>
   )
 }

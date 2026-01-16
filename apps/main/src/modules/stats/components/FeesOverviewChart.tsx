@@ -58,6 +58,23 @@ const SDesktopOnly = styled.div`
   }
 `
 
+const SMobileOnly = styled.div`
+  @media (min-width: 577px) {
+    display: none;
+  }
+  
+  /* Ensure dropdown doesn't overflow or break layout */
+  flex-shrink: 0;
+`
+
+const SHeaderWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Match SectionHeader usual spacing */
+  margin-bottom: 20px;
+`
+
 const SChartFooter = styled.div`
   display: none;
   
@@ -359,7 +376,21 @@ export const FeesOverviewChart: FC = () => {
 
   return (
     <SChartContainer>
-      <SectionHeader>{headerTitle}</SectionHeader>
+      <SHeaderWrapper>
+        <SectionHeader style={{ marginBottom: 0 }}>{headerTitle}</SectionHeader>
+        {viewMode === 'revenue' && (
+          <SMobileOnly>
+            <SelectDropdown
+              value={groupBy}
+              items={[
+                { key: 'product', label: 'By Product' },
+                { key: 'destination', label: 'By Destination' }
+              ]}
+              onValueChange={(v: string) => v && setGroupBy(v as GroupBy)}
+            />
+          </SMobileOnly>
+        )}
+      </SHeaderWrapper>
       <SChartHeader>
         <div>
           <SAlignedValueStats
@@ -391,15 +422,17 @@ export const FeesOverviewChart: FC = () => {
             </ToggleGroup>
           </SDesktopOnly>
           {viewMode === 'revenue' && (
-            <ToggleGroup
-              size="small"
-              type="single"
-              value={groupBy}
-              onValueChange={(v: string) => v && setGroupBy(v as GroupBy)}
-            >
-              <ToggleGroupItem value="product">By Product</ToggleGroupItem>
-              <ToggleGroupItem value="destination">By Destination</ToggleGroupItem>
-            </ToggleGroup>
+            <SDesktopOnly>
+              <ToggleGroup
+                size="small"
+                type="single"
+                value={groupBy}
+                onValueChange={(v: string) => v && setGroupBy(v as GroupBy)}
+              >
+                <ToggleGroupItem value="product">By Product</ToggleGroupItem>
+                <ToggleGroupItem value="destination">By Destination</ToggleGroupItem>
+              </ToggleGroup>
+            </SDesktopOnly>
           )}
           <SDesktopOnly>
             <TimeRangeToggle

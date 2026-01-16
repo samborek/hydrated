@@ -36,8 +36,8 @@ export const SValueStatsLabel = styled.div(({ theme }) => css `
     font-family: ${theme.fontFamilies1.secondary};
     font-weight: 400;
 
-    font-size: 11px;
-    line-height: 15px;
+    font-size: 13px;
+    line-height: 18px;
     color: ${theme.text.low};
 
     white-space: nowrap;
@@ -90,7 +90,7 @@ export const SValueStatsValue = styled.div(({ theme, size = "large", font = "pri
 export const SValueStatsBottomValue = styled.div(({ theme }) => css `
     font-family: ${theme.fontFamilies1.secondary};
     font-weight: 400;
-    font-size: 10px;
+    font-size: 12px;
     line-height: 1;
 
     color: ${theme.text.low};

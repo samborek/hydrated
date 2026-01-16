@@ -61,7 +61,13 @@ const SChartFooter = styled.div`
     align-items: center;
   }
 `
-// Removed SFullWidthToggleGroup, SToggleGroupItem
+const SAlignedValueStats = styled(ValueStats)`
+  align-items: flex-start;
+`
+
+const SFullWidthToggleGroup = styled(ToggleGroup)`
+  width: 100%;
+`
 
 
 const SLegendContainer = styled.div`
@@ -348,7 +354,7 @@ export const FeesOverviewChart: FC = () => {
       <SectionHeader>{headerTitle}</SectionHeader>
       <SChartHeader>
         <div>
-          <ValueStats
+          <SAlignedValueStats
             customValue={
               <Text fs={24} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
                 {viewMode === 'revenue'
@@ -362,7 +368,6 @@ export const FeesOverviewChart: FC = () => {
                 timeRange === '1Y' ? 'Last year' : 'All time'}
             wrap={true}
             size="medium"
-            style={{ alignItems: 'flex-start' }}
           />
         </div>
         <SControlsGroup>
@@ -601,10 +606,10 @@ export const FeesOverviewChart: FC = () => {
 
       <SChartFooter>
         <div style={{ flex: 1 }}>
-          <ToggleGroup type="single" value={viewMode} onValueChange={(val: string) => val && setViewMode(val as 'revenue' | 'fees')} style={{ width: '100%' }}>
+          <SFullWidthToggleGroup type="single" value={viewMode} onValueChange={(val: string) => val && setViewMode(val as 'revenue' | 'fees')}>
             <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
             <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
-          </ToggleGroup>
+          </SFullWidthToggleGroup>
         </div>
 
         <div style={{ flex: 1 }}>

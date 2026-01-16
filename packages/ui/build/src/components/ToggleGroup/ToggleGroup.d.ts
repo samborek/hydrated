@@ -1,6 +1,6 @@
 import * as React from "react";
 import { SToggleGroupItem, ToggleGroupProps, ToggleGroupSize } from "./ToggleGroup.styled";
-type ToggleGroupCommonProps = ToggleGroupProps & {
+type ToggleGroupCommonProps = ToggleGroupProps & Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'dir' | 'defaultValue' | 'value'> & {
     children: React.ReactNode;
     disabled?: boolean;
 };

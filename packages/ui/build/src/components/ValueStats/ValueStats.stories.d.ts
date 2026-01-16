@@ -2,7 +2,7 @@ import type { StoryObj } from "@storybook/react";
 import { ValueStats } from "./ValueStats";
 type Story = StoryObj<typeof ValueStats>;
 declare const _default: {
-    component: import("react").FC<{
+    component: import("react").FC<import("react").HTMLAttributes<HTMLDivElement> & {
         readonly font?: import("./ValueStats.styled").ValueStatsFont;
         readonly wrap?: import("@theme-ui/css").ResponsiveStyleValue<boolean>;
         readonly size?: import("./ValueStats.styled").ValueStatsSize;

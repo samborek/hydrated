@@ -50,6 +50,14 @@ const SChartFooter = styled.div`
   }
 `
 
+const SAlignedValueStats = styled(ValueStats)`
+  align-items: flex-start;
+`
+
+const SFullWidthToggleGroup = styled(ToggleGroup)`
+  width: 100%;
+`
+
 
 
 
@@ -111,7 +119,7 @@ export const AssetPriceChart: FC<Props> = ({ symbol }) => {
   return (
     <>
       <SChartHeader>
-        <ValueStats
+        <SAlignedValueStats
           customLabel={
             <SDesktopToggleGroup>
               <ToggleGroup
@@ -141,7 +149,6 @@ export const AssetPriceChart: FC<Props> = ({ symbol }) => {
           }
           wrap={true}
           size="medium"
-          style={{ alignItems: 'flex-start' }}
         />
         <div className="desktop-only">
           <TimeRangeToggle
@@ -155,15 +162,14 @@ export const AssetPriceChart: FC<Props> = ({ symbol }) => {
 
       <SChartFooter>
         <div style={{ flex: 1 }}>
-          <ToggleGroup
+          <SFullWidthToggleGroup
             type="single"
             value={mode}
             onValueChange={(v: string) => v && setMode(v as ChartMode)}
-            style={{ width: '100%' }}
           >
             <ToggleGroupItem value="TVL">TVL</ToggleGroupItem>
             <ToggleGroupItem value="Volume">Volume</ToggleGroupItem>
-          </ToggleGroup>
+          </SFullWidthToggleGroup>
         </div>
 
         <div style={{ flex: 1 }}>

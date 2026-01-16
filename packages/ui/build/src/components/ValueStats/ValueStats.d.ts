@@ -16,7 +16,7 @@ export declare const ValueStatsBottomValue: import("@emotion/styled").StyledComp
     theme?: import("@emotion/react").Theme;
     as?: React.ElementType;
 }, import("react").DetailedHTMLProps<import("react").HTMLAttributes<HTMLDivElement>, HTMLDivElement>, {}>;
-type ValueStatsProps = {
+type ValueStatsProps = React.HTMLAttributes<HTMLDivElement> & {
     readonly font?: ValueStatsFont;
     readonly wrap?: ResponsiveStyleValue<boolean>;
     readonly size?: ValueStatsSize;

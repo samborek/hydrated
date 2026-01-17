@@ -46,28 +46,36 @@ function FeesStats() {
       </SSection>
 
       {/* Trading Fees / Revenue Section */}
-      <SSection hasHeader>
+      <div>
         <SectionHeader>Trading Fees</SectionHeader>
-        <TradingFeesChart />
-      </SSection>
+        <SSection>
+          <TradingFeesChart />
+        </SSection>
+      </div>
 
       {/* Liquidity Fees Section */}
-      <SSection hasHeader>
+      <div>
         <SectionHeader>Liquidity / Withdraw Fees</SectionHeader>
-        <LiquidityFeesChart />
-      </SSection>
+        <SSection>
+          <LiquidityFeesChart />
+        </SSection>
+      </div>
 
       {/* Supply & Borrow Fees Section */}
-      <SSection hasHeader>
+      <div>
         <SectionHeader>Supply & Borrow Fees</SectionHeader>
-        <SupplyBorrowFeesChart />
-      </SSection>
+        <SSection>
+          <SupplyBorrowFeesChart />
+        </SSection>
+      </div>
 
       {/* Hollar Fees Section */}
-      <SSection hasHeader>
+      <div>
         <SectionHeader>Hollar Fees</SectionHeader>
-        <HollarFeesChart />
-      </SSection>
+        <SSection>
+          <HollarFeesChart />
+        </SSection>
+      </div>
     </SPageContainer>
   )
 }

@@ -222,6 +222,7 @@ export const useWeb3Connect = create<WalletProviderStore>()(
       name: "web3-connect",
       partialize: omit(["open", "error", "accounts"]),
       version: 9,
+      migrate: (persistedState) => persistedState as WalletProviderState,
     },
   ),
 )

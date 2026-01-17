@@ -11,6 +11,7 @@ export type ProviderProps = {
 const MAINNET_INDEXER_URL = "https://explorer.hydradx.cloud/graphql"
 const MAINNET_SQUID_URL =
   "https://galacticcouncil.squids.live/hydration-pools:unified-prod/api/graphql"
+const ACTIVE_ENV = import.meta.env.VITE_ENV ?? "production"
 
 export const createProvider = (
   name: string,
@@ -72,3 +73,20 @@ export const PROVIDERS: ProviderProps[] = [
     "testnet",
   ),
 ]
+
+export const PROVIDER_LIST = PROVIDERS.filter((provider) =>
+  provider.env.includes(ACTIVE_ENV),
+)
+
+export const PROVIDER_URLS = PROVIDER_LIST.map(({ url }) => url)
+
+export const getDefaultDataEnv = (): TDataEnv => {
+  const env = import.meta.env.VITE_ENV
+  if (env === "production") return "mainnet"
+  return "testnet"
+}
+
+export const getProviderDataEnv = (rpcUrl: string) => {
+  const provider = PROVIDERS.find((provider) => provider.url === rpcUrl)
+  return provider ? provider.dataEnv : getDefaultDataEnv()
+}

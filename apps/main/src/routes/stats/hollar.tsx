@@ -4,8 +4,6 @@ import {
   SectionHeader,
   Separator,
   Text,
-  ValueStats,
-  ValueStatsValue,
 } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
@@ -19,6 +17,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { Fragment } from "react"
 
 import { AssetLogo } from "@/components/AssetLogo"
+import { StatsHeader } from "@/modules/stats/components/StatsHeader"
 import { HollarSupplyChart } from "@/modules/stats/components/HollarSupplyChart"
 
 const SPageContainer = styled.div`
@@ -167,6 +166,20 @@ const collaterals = [
 
 function HollarStats() {
   const { themeProps: theme } = useTheme()
+  const stats = [
+    {
+      label: "Total Hollar Supply",
+      value: "$8.5M",
+      valueColor: theme.colors.lavender["700"],
+    },
+    { label: "Total Borrowed", value: "$5.2M" },
+    { label: "Total from HSM", value: "$3.3M" },
+    {
+      label: "Hollar Peg",
+      value: "$1.0001",
+      valueColor: theme.details.values.positive,
+    },
+  ]
 
   return (
     <SPageContainer>
@@ -174,40 +187,7 @@ function HollarStats() {
         Hollar (HUSD)
       </SectionHeader>
 
-      <Flex
-        gap={20}
-        justify="space-between"
-        sx={{ py: 10, overflowX: "auto", height: 80 }}
-      >
-        <ValueStats
-          label="Total Hollar Supply"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue size="large" style={{ color: "#8B5CF6" }}>
-              $8.5M
-            </ValueStatsValue>
-          }
-        />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats label="Total Borrowed" value="$5.2M" size="large" wrap />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats label="Total from HSM" value="$3.3M" size="large" wrap />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats
-          label="Hollar Peg"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue
-              size="large"
-              style={{ color: theme.details.values.positive }}
-            >
-              $1.0001
-            </ValueStatsValue>
-          }
-        />
-      </Flex>
+      <StatsHeader stats={stats} />
 
       <SSection>
         <HollarSupplyChart title="Hollar Supply History" value="$8.5M" />

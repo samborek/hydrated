@@ -1,13 +1,9 @@
 import {
   DataTable,
-  Flex,
   Paper,
   SectionHeader,
-  Separator,
   TableContainer,
   Text,
-  ValueStats,
-  ValueStatsValue,
 } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
@@ -15,6 +11,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { ColumnDef } from "@tanstack/react-table"
 
 import { AssetLogo } from "@/components/AssetLogo"
+import { StatsHeader } from "@/modules/stats/components/StatsHeader"
 
 const SPageContainer = styled.div`
   display: flex;
@@ -265,6 +262,50 @@ const poolColumns: ColumnDef<PoolData>[] = [
 
 function AMMStats() {
   const { themeProps: theme } = useTheme()
+  const omnipoolStats = [
+    {
+      label: "Total Value Locked",
+      value: "$10.75M",
+      valueColor: theme.colors.skyBlue["600"],
+    },
+    { label: "24h Volume", value: "$2.36M" },
+    { label: "Total Volume", value: "$892.5M" },
+    {
+      label: "24h Fees",
+      value: "$11,775",
+      valueColor: theme.details.values.positive,
+    },
+  ]
+
+  const stableswapStats = [
+    {
+      label: "Total Value Locked",
+      value: "$5.2M",
+      valueColor: theme.colors.successGreen["500"],
+    },
+    { label: "24h Volume", value: "$1.8M" },
+    { label: "Total Volume", value: "$245.8M" },
+    {
+      label: "24h Fees",
+      value: "$3,600",
+      valueColor: theme.details.values.positive,
+    },
+  ]
+
+  const xykStats = [
+    {
+      label: "Total Value Locked",
+      value: "$2.15M",
+      valueColor: theme.colors.lavender["700"],
+    },
+    { label: "24h Volume", value: "$485K" },
+    { label: "Total Volume", value: "$58.2M" },
+    {
+      label: "24h Fees",
+      value: "$1,455",
+      valueColor: theme.details.values.positive,
+    },
+  ]
 
   return (
     <SPageContainer>
@@ -277,40 +318,7 @@ function AMMStats() {
         Omnipool
       </SSectionTitle>
 
-      <Flex
-        gap={20}
-        justify="space-between"
-        sx={{ py: 10, overflowX: "auto", height: 80 }}
-      >
-        <ValueStats
-          label="Total Value Locked"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue size="large" style={{ color: "#3B82F6" }}>
-              $10.75M
-            </ValueStatsValue>
-          }
-        />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats label="24h Volume" value="$2.36M" size="large" wrap />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats label="Total Volume" value="$892.5M" size="large" wrap />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats
-          label="24h Fees"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue
-              size="large"
-              style={{ color: theme.details.values.positive }}
-            >
-              $11,775
-            </ValueStatsValue>
-          }
-        />
-      </Flex>
+      <StatsHeader stats={omnipoolStats} />
 
       <TableContainer as={Paper}>
         <DataTable
@@ -327,40 +335,7 @@ function AMMStats() {
         Stableswap
       </SSectionTitle>
 
-      <Flex
-        gap={20}
-        justify="space-between"
-        sx={{ py: 10, overflowX: "auto", height: 80 }}
-      >
-        <ValueStats
-          label="Total Value Locked"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue size="large" style={{ color: "#22C55E" }}>
-              $5.2M
-            </ValueStatsValue>
-          }
-        />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats label="24h Volume" value="$1.8M" size="large" wrap />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats label="Total Volume" value="$245.8M" size="large" wrap />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats
-          label="24h Fees"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue
-              size="large"
-              style={{ color: theme.details.values.positive }}
-            >
-              $3,600
-            </ValueStatsValue>
-          }
-        />
-      </Flex>
+      <StatsHeader stats={stableswapStats} />
 
       <TableContainer as={Paper}>
         <DataTable data={stableswapPools} columns={poolColumns} size="large" />
@@ -371,40 +346,7 @@ function AMMStats() {
         Isolated Pools (XYK)
       </SSectionTitle>
 
-      <Flex
-        gap={20}
-        justify="space-between"
-        sx={{ py: 10, overflowX: "auto", height: 80 }}
-      >
-        <ValueStats
-          label="Total Value Locked"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue size="large" style={{ color: "#A855F7" }}>
-              $2.15M
-            </ValueStatsValue>
-          }
-        />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats label="24h Volume" value="$485K" size="large" wrap />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats label="Total Volume" value="$58.2M" size="large" wrap />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats
-          label="24h Fees"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue
-              size="large"
-              style={{ color: theme.details.values.positive }}
-            >
-              $1,455
-            </ValueStatsValue>
-          }
-        />
-      </Flex>
+      <StatsHeader stats={xykStats} />
 
       <TableContainer as={Paper}>
         <DataTable data={xykPools} columns={poolColumns} size="large" />

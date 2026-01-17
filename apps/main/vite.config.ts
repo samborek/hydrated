@@ -30,6 +30,9 @@ const loaderHtml = fs.readFileSync(
 )
 
 export default defineConfig({
+  define: {
+    global: "globalThis",
+  },
   build: {
     target: "es2022",
     outDir: "dist",
@@ -47,6 +50,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      buffer: "buffer/",
       "@polkadot-api/descriptors": resolve(
         __dirname,
         "../../.papi/descriptors/dist/index.mjs",

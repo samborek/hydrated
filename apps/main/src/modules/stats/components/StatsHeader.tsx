@@ -1,54 +1,87 @@
 import {
   Flex,
+  FlexProps,
   Separator,
   ValueStats,
+  ValueStatsSize,
   ValueStatsValue,
 } from "@galacticcouncil/ui/components"
-import { useTheme } from "@galacticcouncil/ui/theme"
-import { FC, Fragment } from "react"
+import { getTokenPx } from "@galacticcouncil/ui/utils"
+import { FC, Fragment, ReactNode } from "react"
 
-// Mock data - replace with real data from API
-const stats = [
-  { label: "Total Value Locked", value: "$183.59M", highlight: true },
-  { label: "24h Volume", value: "$10.3M" },
-  { label: "Fee APY (7D)", value: "2.02-29.75%" },
-  { label: "Transactions (24h)", value: "12,453" },
-  { label: "Protocol Revenue (24h)", value: "$45.2K" },
-]
+type StatItem = {
+  readonly label: string
+  readonly value?: string
+  readonly valueColor?: string
+  readonly customValue?: ReactNode
+  readonly bottomLabel?: string
+  readonly customBottomLabel?: ReactNode
+  readonly isLoading?: boolean
+  readonly size?: ValueStatsSize
+  readonly wrap?: boolean
+}
 
-export const StatsHeader: FC = () => {
-  const { themeProps: theme } = useTheme()
+type StatsHeaderProps = Omit<FlexProps, "children"> & {
+  readonly stats: StatItem[]
+}
+
+export const StatsHeader: FC<StatsHeaderProps> = ({
+  stats,
+  gap = getTokenPx("containers.paddings.primary"),
+  justify = "space-between",
+  className,
+  sx,
+  ...props
+}) => {
+  const mergedClassName = ["no-scrollbar", className].filter(Boolean).join(" ")
 
   return (
     <Flex
-      gap={20}
-      justify="space-between"
-      className="no-scrollbar"
-      sx={{ py: 10, overflowX: "auto", height: 80 }}
+      gap={gap}
+      justify={justify}
+      className={mergedClassName}
+      sx={{
+        pt: getTokenPx("containers.paddings.tertiary"),
+        pb: getTokenPx("containers.paddings.tertiary"),
+        overflowX: "auto",
+        ...sx,
+      }}
+      {...props}
     >
-      {stats.map((stat, index) => (
-        <Fragment key={stat.label}>
-          <ValueStats
-            label={stat.label}
-            size="large"
-            wrap
-            value={!stat.highlight ? stat.value : undefined}
-            customValue={
-              stat.highlight ? (
-                <ValueStatsValue
-                  size="large"
-                  style={{ color: theme.secondaryColors.pink.coralPink }}
-                >
-                  {stat.value}
-                </ValueStatsValue>
-              ) : undefined
-            }
-          />
-          {index < stats.length - 1 && (
-            <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-          )}
-        </Fragment>
-      ))}
+      {stats.map((stat, index) => {
+        const size = stat.size ?? "large"
+        const customValue =
+          stat.customValue ??
+          (stat.valueColor ? (
+            <ValueStatsValue size={size} style={{ color: stat.valueColor }}>
+              {stat.value}
+            </ValueStatsValue>
+          ) : undefined)
+
+        return (
+          <Fragment key={`${stat.label}-${index}`}>
+            <ValueStats
+              label={stat.label}
+              size={size}
+              wrap={stat.wrap ?? true}
+              value={!customValue ? stat.value : undefined}
+              customValue={customValue}
+              bottomLabel={stat.bottomLabel}
+              customBottomLabel={stat.customBottomLabel}
+              isLoading={stat.isLoading}
+            />
+            {index < stats.length - 1 && (
+              <Separator
+                orientation="vertical"
+                sx={{
+                  my: getTokenPx("containers.paddings.quart"),
+                  flexShrink: 0,
+                }}
+              />
+            )}
+          </Fragment>
+        )
+      })}
     </Flex>
   )
 }

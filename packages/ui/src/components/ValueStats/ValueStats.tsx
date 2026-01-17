@@ -70,7 +70,7 @@ export const ValueStats: FC<ValueStatsProps> = ({
           </SValueStatsBottomValue>
         ) : (
           (customBottomLabel ?? (
-            <SValueStatsBottomValue>{bottomLabel}</SValueStatsBottomValue>
+            bottomLabel ? <SValueStatsBottomValue>{bottomLabel}</SValueStatsBottomValue> : null
           ))
         )}
       </SValueStatsValueContainer>

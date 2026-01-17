@@ -1,3 +1,6 @@
+import { Buffer } from "buffer"
+globalThis.Buffer = Buffer
+
 import { patchBigJs } from "@galacticcouncil/utils"
 import Big from "big.js"
 import { enableMapSet } from "immer"

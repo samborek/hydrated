@@ -4,7 +4,7 @@ import { PropsWithChildren, useEffect, useState } from "react"
 import { useAsyncFn } from "react-use"
 import { first, prop } from "remeda"
 
-import { PROVIDER_URLS } from "@/api/provider"
+import { PROVIDER_URLS } from "@/config/rpc"
 import { rpcStatusQueryOptions } from "@/api/rpc"
 import { useProviderRpcUrlStore } from "@/states/provider"
 

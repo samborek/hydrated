@@ -49,9 +49,10 @@ type ModalOverlayProps = React.ComponentPropsWithoutRef<
   ref?: Ref<React.ElementRef<typeof DialogPrimitive.Overlay>>
 }
 
-const ModalOverlay: FC<ModalOverlayProps & { animationDurationMs?: number }> = (
-  props,
-) => <SModalOverlay ref={props.ref} {...props} />
+const ModalOverlay: FC<ModalOverlayProps & { animationDurationMs?: number }> = ({
+  animationDurationMs,
+  ...props
+}) => <SModalOverlay ref={props.ref} $animationDurationMs={animationDurationMs} {...props} />
 
 type ModalContentProps = React.ComponentPropsWithoutRef<
   typeof DialogPrimitive.Content
@@ -73,9 +74,9 @@ const ModalContent: FC<ModalContentProps> = ({
     <ModalOverlay animationDurationMs={animationDurationMs} />
     <SModalWrapper
       onClick={(e) => e.stopPropagation()}
-      animationDurationMs={animationDurationMs}
+      $animationDurationMs={animationDurationMs}
     >
-      <SModalContent ref={ref} {...props} hasTopContent={!!topContent}>
+      <SModalContent ref={ref} {...props} $hasTopContent={!!topContent}>
         {topContent && <SModalTopContent>{topContent}</SModalTopContent>}
         <SModalPaper>{children}</SModalPaper>
       </SModalContent>

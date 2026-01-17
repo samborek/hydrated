@@ -1,15 +1,12 @@
 import {
-  Flex,
   SectionHeader,
-  Separator,
-  ValueStats,
-  ValueStatsValue,
 } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { MarketsTable } from "@/modules/stats/components/MarketsTable"
+import { StatsHeader } from "@/modules/stats/components/StatsHeader"
 import { SupplyBorrowChart } from "@/modules/stats/components/SupplyBorrowChart"
 
 const SPageContainer = styled.div`
@@ -36,6 +33,28 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
 
 function MoneyMarketStats() {
   const { themeProps: theme } = useTheme()
+  const stats = [
+    {
+      label: "Total Value Locked",
+      value: "$12.6M",
+      valueColor: theme.colors.utility.warningPrimary["500"],
+    },
+    {
+      label: "Total Supplied",
+      value: "$12.6M",
+      valueColor: theme.details.values.positive,
+    },
+    {
+      label: "Total Borrowed",
+      value: "$7.5M",
+      valueColor: theme.colors.utility.warningPrimary["500"],
+    },
+    {
+      label: "Liquidations (24h)",
+      value: "$45,230",
+      valueColor: theme.details.values.negative,
+    },
+  ]
 
   return (
     <SPageContainer>
@@ -43,61 +62,7 @@ function MoneyMarketStats() {
         Money Market
       </SectionHeader>
 
-      <Flex
-        gap={20}
-        justify="space-between"
-        sx={{ py: 10, overflowX: "auto", height: 80 }}
-      >
-        <ValueStats
-          label="Total Value Locked"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue size="large" style={{ color: "#F59E0B" }}>
-              $12.6M
-            </ValueStatsValue>
-          }
-        />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats
-          label="Total Supplied"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue
-              size="large"
-              style={{ color: theme.details.values.positive }}
-            >
-              $12.6M
-            </ValueStatsValue>
-          }
-        />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats
-          label="Total Borrowed"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue size="large" style={{ color: "#F59E0B" }}>
-              $7.5M
-            </ValueStatsValue>
-          }
-        />
-        <Separator orientation="vertical" sx={{ my: 10, flexShrink: 0 }} />
-        <ValueStats
-          label="Liquidations (24h)"
-          size="large"
-          wrap
-          customValue={
-            <ValueStatsValue
-              size="large"
-              style={{ color: theme.details.values.negative }}
-            >
-              $45,230
-            </ValueStatsValue>
-          }
-        />
-      </Flex>
+      <StatsHeader stats={stats} />
 
       <SSection hasHeader>
         <SupplyBorrowChart title="Supply / Borrow History" />

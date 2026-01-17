@@ -1,4 +1,5 @@
 import { SectionHeader } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { createFileRoute } from "@tanstack/react-router"
 
@@ -31,6 +32,8 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
 )
 
 function FeesStats() {
+  const { themeProps: theme } = useTheme()
+
   return (
     <SPageContainer>
       <SectionHeader as="h1" sx={{ p: 0 }} mb={-18}>
@@ -38,7 +41,7 @@ function FeesStats() {
       </SectionHeader>
 
       {/* Overview Chart - Stacked Bar Chart */}
-      <SSection hasHeader>
+      <SSection hasHeader style={{ paddingBottom: theme.scales.paddings.primary }}>
         <FeesOverviewChart />
       </SSection>
 

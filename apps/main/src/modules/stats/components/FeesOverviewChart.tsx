@@ -106,6 +106,7 @@ const SLegendContainer = styled.div`
     flex-wrap: nowrap;
     overflow-x: auto;
     padding-bottom: 4px;
+    margin-bottom: 0;
     /* Optional: Add fade effect or padding */
   }
 `

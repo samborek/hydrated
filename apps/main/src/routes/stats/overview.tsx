@@ -1,4 +1,5 @@
 import { SectionHeader } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { createFileRoute } from "@tanstack/react-router"
 
@@ -41,6 +42,20 @@ const SChartsGrid = styled.div`
 `
 
 function PlatformOverview() {
+  const { themeProps: theme } = useTheme()
+
+  const stats = [
+    {
+      label: "Total Value Locked",
+      value: "$183.59M",
+      valueColor: theme.secondaryColors.pink.coralPink,
+    },
+    { label: "24h Volume", value: "$10.3M" },
+    { label: "Fee APY (7D)", value: "2.02-29.75%" },
+    { label: "Transactions (24h)", value: "12,453" },
+    { label: "Protocol Revenue (24h)", value: "$45.2K" },
+  ]
+
   return (
     <SPageContainer>
       <SectionHeader as="h1" sx={{ p: 0 }} mb={-18}>
@@ -48,7 +63,7 @@ function PlatformOverview() {
       </SectionHeader>
 
       {/* Key Metrics */}
-      <StatsHeader />
+      <StatsHeader stats={stats} />
 
       {/* TVL Chart - Full width */}
       <SSection>
@@ -66,7 +81,7 @@ function PlatformOverview() {
       </SChartsGrid>
 
       {/* Recent Trades */}
-      <SSection hasHeader>
+      <SSection hasHeader style={{ paddingBottom: 0 }}>
         <SectionHeader>Recent trades</SectionHeader>
         <RecentTrades />
       </SSection>

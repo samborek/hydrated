@@ -12,10 +12,10 @@ import {
 } from "react"
 
 import {
-  getProviderDataEnv,
   providerQuery,
   TProviderData,
 } from "@/api/provider"
+import { getProviderDataEnv } from "@/config/rpc"
 import { useAssetRegistry } from "@/states/assetRegistry"
 import { useProviderRpcUrlStore } from "@/states/provider"
 

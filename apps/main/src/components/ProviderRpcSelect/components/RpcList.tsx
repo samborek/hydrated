@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { prop, uniqueBy } from "remeda"
 
-import { PROVIDER_LIST } from "@/api/provider"
+import { PROVIDER_LIST } from "@/config/rpc"
 import { useRpcsStatus } from "@/api/rpc"
 import {
   RpcListHeader,

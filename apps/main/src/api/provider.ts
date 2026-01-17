@@ -16,7 +16,9 @@ import { createPublicClient, custom, PublicClient } from "viem"
 import { chainSpecDataQuery } from "@/api/chain"
 import {
   createProvider,
+  getDefaultDataEnv,
   ProviderProps,
+  PROVIDER_LIST,
   PROVIDERS,
   TDataEnv,
 } from "@/config/rpc"
@@ -41,25 +43,8 @@ export type TProviderData = {
   metadata: AssetMetadataFactory
 }
 
-export const PROVIDER_LIST = PROVIDERS.filter((provider) =>
-  provider.env.includes(import.meta.env.VITE_ENV),
-)
-
-export const PROVIDER_URLS = PROVIDER_LIST.map(({ url }) => url)
-
 export const getProviderProps = (url: string) =>
   PROVIDERS.find((p) => p.url === url)
-
-export const getDefaultDataEnv = (): TDataEnv => {
-  const env = import.meta.env.VITE_ENV
-  if (env === "production") return "mainnet"
-  return "testnet"
-}
-
-export const getProviderDataEnv = (rpcUrl: string) => {
-  const provider = PROVIDERS.find((provider) => provider.url === rpcUrl)
-  return provider ? provider.dataEnv : getDefaultDataEnv()
-}
 
 export const providerQuery = (rpcUrlList: string[]) => {
   return queryOptions({

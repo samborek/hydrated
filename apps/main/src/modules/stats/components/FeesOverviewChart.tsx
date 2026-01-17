@@ -105,7 +105,7 @@ const SLegendContainer = styled.div`
   @media (max-width: 576px) {
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding-bottom: ${({ theme }) => theme.scales.paddings.tertiary}px;
+    padding-bottom: ${({ theme }) => theme.scales.paddings.m}px;
     margin-bottom: 0;
     /* Optional: Add fade effect or padding */
   }

@@ -42,7 +42,8 @@ export const StatsHeader: FC<StatsHeaderProps> = ({
       className={mergedClassName}
       sx={{
         pt: getTokenPx("containers.paddings.tertiary"),
-        pb: getTokenPx("containers.paddings.tertiary"),
+        pb: 0,
+        my: 0,
         overflowX: "auto",
         ...sx,
       }}

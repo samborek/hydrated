@@ -81,7 +81,7 @@ function PlatformOverview() {
       </SChartsGrid>
 
       {/* Recent Trades */}
-      <SSection hasHeader style={{ paddingBottom: 0 }}>
+      <SSection hasHeader style={{ paddingBottom: theme.scales.paddings.m, paddingTop: 0 }}>
         <SectionHeader>Recent trades</SectionHeader>
         <RecentTrades />
       </SSection>

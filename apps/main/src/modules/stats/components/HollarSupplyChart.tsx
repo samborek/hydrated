@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
-import { Text, TimeRangeToggle } from "@galacticcouncil/ui/components"
+import { Text } from "@galacticcouncil/ui/components"
+import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState } from "react"
 import {

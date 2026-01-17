@@ -2,7 +2,7 @@ import styled from "@emotion/styled"
 import { css } from "@galacticcouncil/ui/utils"
 import { Button, Text, Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, ToggleGroup, ToggleGroupItem, ValueStats } from "@galacticcouncil/ui/components"
 import { SelectDropdown } from "./SelectDropdown"
-import { TimeRangeToggle } from "@galacticcouncil/ui/components"
+import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { FC, useState, useMemo } from "react"
 import {
   AreaChart,

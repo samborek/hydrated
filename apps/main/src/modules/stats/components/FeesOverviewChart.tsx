@@ -1,7 +1,7 @@
 import styled from "@emotion/styled"
 
 import { Button, Flex, Text, ToggleGroup, ToggleGroupItem, ValueStats, SectionHeader } from "@galacticcouncil/ui/components"
-import { TimeRangeToggle } from "@galacticcouncil/ui/components"
+import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { SelectDropdown } from "./SelectDropdown"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState, useMemo, useEffect, useRef } from "react"
@@ -105,7 +105,7 @@ const SLegendContainer = styled.div`
   @media (max-width: 576px) {
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding-bottom: ${({ theme }) => theme.scales.paddings.tertiary}px;
     margin-bottom: 0;
     /* Optional: Add fade effect or padding */
   }

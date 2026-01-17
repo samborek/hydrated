@@ -3,13 +3,13 @@ import { mq } from "@galacticcouncil/ui/theme";
 import { createVariants, css } from "@galacticcouncil/ui/utils";
 const containerSizeVariants = createVariants((theme) => ({
     small: css `
-    gap: 2px;
+    gap: ${theme.scales.paddings.s}px;
   `,
     medium: css `
-    gap: ${theme.scales.paddings.xs}px;
+    gap: ${theme.scales.paddings.base}px;
   `,
     large: css `
-    gap: ${theme.scales.paddings.s}px;
+    gap: ${theme.scales.paddings.m}px;
   `,
 }));
 export const SValueStatsValueContainer = styled.div(({ size = "large" }) => [

@@ -7,13 +7,13 @@ export type ValueStatsFont = Exclude<ThemeFont, "mono">
 
 const containerSizeVariants = createVariants<ValueStatsSize>((theme) => ({
   small: css`
-    gap: 2px;
+    gap: ${theme.scales.paddings.s}px;
   `,
   medium: css`
-    gap: ${theme.scales.paddings.xs}px;
+    gap: ${theme.scales.paddings.base}px;
   `,
   large: css`
-    gap: ${theme.scales.paddings.s}px;
+    gap: ${theme.scales.paddings.m}px;
   `,
 }))
 

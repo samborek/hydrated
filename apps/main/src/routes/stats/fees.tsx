@@ -3,7 +3,7 @@ import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { FeeDestinationChart } from "@/modules/stats/components/FeeDestinationChart"
+import { FeeFlowChart } from "@/modules/stats/components/FeeFlowChart"
 import { FeesOverviewChart } from "@/modules/stats/components/FeesOverviewChart"
 import { HollarFeesChart } from "@/modules/stats/components/HollarFeesChart"
 import { LiquidityFeesChart } from "@/modules/stats/components/LiquidityFeesChart"
@@ -38,10 +38,10 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
 
 const SFeesOverviewGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 520px;
   gap: 24px;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1400px) {
     grid-template-columns: 1fr;
   }
 `
@@ -59,7 +59,7 @@ function FeesStats() {
             <FeesOverviewChart />
           </SSection>
           <SSection>
-            <FeeDestinationChart />
+            <FeeFlowChart />
           </SSection>
         </SFeesOverviewGrid>
       </div>

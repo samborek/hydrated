@@ -19,6 +19,7 @@ import {
 import { ChevronDown, BarChart2, TrendingUp } from "lucide-react"
 import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 import { useTheme } from "@galacticcouncil/ui/theme"
+import { getFeeColors } from "@/modules/stats/utils/feeColors"
 
 
 
@@ -111,15 +112,14 @@ const SFilterItem = styled.div(
 )
 
 
-// Fee types in Trading Fees
-const FEE_TYPES = {
-  omnipoolAsset: { label: 'Omnipool Asset Fee', color: '#3B82F6' },
-  omnipoolProtocol: { label: 'Omnipool Protocol Fee', color: '#8B5CF6' },
-  stablepools: { label: 'Stablepools', color: '#F59E0B' },
-  xykTrade: { label: 'XYK Trade Fee', color: '#EC4899' },
-} as const
+const getTradingFeeTypes = (colors: ReturnType<typeof getFeeColors>) => ({
+  omnipoolAsset: { label: "Omnipool Asset Fee", color: colors.omnipoolAssetFee },
+  omnipoolProtocol: { label: "Omnipool Protocol Fee", color: colors.omnipoolProtocolFee },
+  stablepools: { label: "Stablepools", color: colors.stablepools },
+  xykTrade: { label: "XYK Trade Fee", color: colors.xykTradeFee },
+} as const)
 
-type FeeType = keyof typeof FEE_TYPES
+type FeeType = keyof ReturnType<typeof getTradingFeeTypes>
 
 // Generate mock trading fees data
 const generateTradingFeesData = (timeRange: TimeRange) => {
@@ -152,6 +152,10 @@ type TimeRange = '1W' | '1M' | '1Y' | 'ALL'
 type ChartType = 'line' | 'bar'
 
 export const TradingFeesChart: FC = () => {
+  const { themeProps: theme } = useTheme()
+  const feeColors = getFeeColors(theme)
+  const FEE_TYPES = getTradingFeeTypes(feeColors)
+
   const [timeRange, setTimeRange] = useState<TimeRange>('1M')
   const [chartType, setChartType] = useState<ChartType>('line')
   const [activeTypes, setActiveTypes] = useState<FeeType[]>(Object.keys(FEE_TYPES) as FeeType[])
@@ -170,14 +174,17 @@ export const TradingFeesChart: FC = () => {
   const latestData = feesData[feesData.length - 1]
   const total = activeTypes.reduce((acc, type) => acc + (latestData?.[type] || 0), 0)
 
-  const { themeProps: theme } = useTheme()
-
   return (
     <SChartContainer>
       <SChartHeader>
         <ValueStats
           customValue={
-            <Text fs={24} fw={700} color="#3B82F6" style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
+            <Text
+              fs={24}
+              fw={700}
+              color={feeColors.tradingFees}
+              style={{ fontFamily: "Gazpacho, sans-serif", lineHeight: 1 }}
+            >
               ${(total / 1000).toFixed(2)}K
             </Text>
           }
@@ -236,20 +243,20 @@ export const TradingFeesChart: FC = () => {
           <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="gradOmnipoolAsset" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.6} />
-                <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
+                <stop offset="5%" stopColor={FEE_TYPES.omnipoolAsset.color} stopOpacity={0.6} />
+                <stop offset="95%" stopColor={FEE_TYPES.omnipoolAsset.color} stopOpacity={0.1} />
               </linearGradient>
               <linearGradient id="gradOmnipoolProtocol" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
-                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
+                <stop offset="5%" stopColor={FEE_TYPES.omnipoolProtocol.color} stopOpacity={0.6} />
+                <stop offset="95%" stopColor={FEE_TYPES.omnipoolProtocol.color} stopOpacity={0.1} />
               </linearGradient>
               <linearGradient id="gradStablepools" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.6} />
-                <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
+                <stop offset="5%" stopColor={FEE_TYPES.stablepools.color} stopOpacity={0.6} />
+                <stop offset="95%" stopColor={FEE_TYPES.stablepools.color} stopOpacity={0.1} />
               </linearGradient>
               <linearGradient id="gradXykTrade" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#EC4899" stopOpacity={0.6} />
-                <stop offset="95%" stopColor="#EC4899" stopOpacity={0.1} />
+                <stop offset="5%" stopColor={FEE_TYPES.xykTrade.color} stopOpacity={0.6} />
+                <stop offset="95%" stopColor={FEE_TYPES.xykTrade.color} stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
@@ -304,7 +311,7 @@ export const TradingFeesChart: FC = () => {
               <Area
                 type="monotone"
                 dataKey="omnipoolAsset"
-                stroke="#3B82F6"
+                stroke={FEE_TYPES.omnipoolAsset.color}
                 fill="url(#gradOmnipoolAsset)"
                 strokeWidth={2}
                 name="omnipoolAsset"
@@ -314,7 +321,7 @@ export const TradingFeesChart: FC = () => {
               <Area
                 type="monotone"
                 dataKey="omnipoolProtocol"
-                stroke="#8B5CF6"
+                stroke={FEE_TYPES.omnipoolProtocol.color}
                 fill="url(#gradOmnipoolProtocol)"
                 strokeWidth={2}
                 name="omnipoolProtocol"
@@ -324,7 +331,7 @@ export const TradingFeesChart: FC = () => {
               <Area
                 type="monotone"
                 dataKey="stablepools"
-                stroke="#F59E0B"
+                stroke={FEE_TYPES.stablepools.color}
                 fill="url(#gradStablepools)"
                 strokeWidth={2}
                 name="stablepools"
@@ -334,7 +341,7 @@ export const TradingFeesChart: FC = () => {
               <Area
                 type="monotone"
                 dataKey="xykTrade"
-                stroke="#EC4899"
+                stroke={FEE_TYPES.xykTrade.color}
                 fill="url(#gradXykTrade)"
                 strokeWidth={2}
                 name="xykTrade"

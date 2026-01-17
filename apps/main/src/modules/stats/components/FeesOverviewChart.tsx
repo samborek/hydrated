@@ -4,6 +4,7 @@ import { Button, Flex, Text, ToggleGroup, ToggleGroupItem, ValueStats } from "@g
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { SelectDropdown } from "./SelectDropdown"
 import { useTheme } from "@galacticcouncil/ui/theme"
+import { getFeeColors } from "@/modules/stats/utils/feeColors"
 import { FC, useState, useMemo, useEffect, useRef } from "react"
 import {
   BarChart,
@@ -299,24 +300,25 @@ export const FeesOverviewChart: FC = () => {
   const [activeFilter, setActiveFilter] = useState<string>('all')
   const [groupBy, setGroupBy] = useState<GroupBy>('product')
 
+  const feeColors = getFeeColors(theme)
   const COLORS: Record<string, string> = {
-    networkFees: '#8B5CF6',
-    tradingFees: theme.text.tint.secondary,
-    liquidityFees: '#22C55E',
-    supplyBorrowFees: '#F59E0B',
-    hollarFees: '#EC4899',
+    networkFees: feeColors.networkFees,
+    tradingFees: feeColors.tradingFees,
+    liquidityFees: feeColors.liquidityFees,
+    supplyBorrowFees: feeColors.supplyBorrowFees,
+    hollarFees: feeColors.hollarFees,
     // Rate Colors
-    rateNetwork: '#8B5CF6',
-    rateTrading: theme.text.tint.secondary,
-    rateLiquidity: '#22C55E',
-    rateSupplyBorrow: '#F59E0B',
-    rateHollar: '#EC4899',
+    rateNetwork: feeColors.networkFees,
+    rateTrading: feeColors.tradingFees,
+    rateLiquidity: feeColors.liquidityFees,
+    rateSupplyBorrow: feeColors.supplyBorrowFees,
+    rateHollar: feeColors.hollarFees,
     // Destination Colors
-    treasury: '#F59E0B',
-    lps: '#22C55E',
-    burned: '#EF4444',
-    stakers: '#8B5CF6',
-    users: theme.text.tint.secondary,
+    treasury: feeColors.treasury,
+    lps: feeColors.lps,
+    burned: feeColors.burned,
+    stakers: feeColors.stakers,
+    users: feeColors.users,
   }
 
   const chartData = useMemo(() => generateFeesData(timeRange), [timeRange])

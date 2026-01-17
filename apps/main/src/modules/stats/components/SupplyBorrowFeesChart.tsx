@@ -19,6 +19,7 @@ import {
 import { ChevronDown, BarChart2, TrendingUp } from "lucide-react"
 import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 import { useTheme } from "@galacticcouncil/ui/theme"
+import { getFeeColors } from "@/modules/stats/utils/feeColors"
 
 
 
@@ -111,14 +112,13 @@ const SFilterItem = styled.div(
 )
 
 
-// Fee types in Supply & Borrow
-const FEE_TYPES = {
-  liquidationPenalty: { label: 'Liquidation Penalty', color: '#EF4444' },
-  pepl: { label: 'PEPL', color: '#F59E0B' },
-  assetReserve: { label: 'Asset Reserve', color: '#22C55E' },
-} as const
+const getSupplyBorrowFeeTypes = (colors: ReturnType<typeof getFeeColors>) => ({
+  liquidationPenalty: { label: "Liquidation Penalty", color: colors.liquidationPenalty },
+  pepl: { label: "PEPL", color: colors.pepl },
+  assetReserve: { label: "Asset Reserve", color: colors.assetReserve },
+} as const)
 
-type FeeType = keyof typeof FEE_TYPES
+type FeeType = keyof ReturnType<typeof getSupplyBorrowFeeTypes>
 
 // Generate mock supply/borrow fees data
 const generateSupplyBorrowFeesData = (timeRange: TimeRange) => {
@@ -150,6 +150,10 @@ type TimeRange = '1W' | '1M' | '1Y' | 'ALL'
 type ChartType = 'line' | 'bar'
 
 export const SupplyBorrowFeesChart: FC = () => {
+  const { themeProps: theme } = useTheme()
+  const feeColors = getFeeColors(theme)
+  const FEE_TYPES = getSupplyBorrowFeeTypes(feeColors)
+
   const [timeRange, setTimeRange] = useState<TimeRange>('1M')
   const [chartType, setChartType] = useState<ChartType>('line')
   const [activeTypes, setActiveTypes] = useState<FeeType[]>(Object.keys(FEE_TYPES) as FeeType[])
@@ -168,14 +172,17 @@ export const SupplyBorrowFeesChart: FC = () => {
   const latestData = feesData[feesData.length - 1]
   const total = activeTypes.reduce((acc, type) => acc + (latestData?.[type] || 0), 0)
 
-  const { themeProps: theme } = useTheme()
-
   return (
     <SChartContainer>
       <SChartHeader>
         <ValueStats
           customValue={
-            <Text fs={24} fw={700} color="#F59E0B" style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
+            <Text
+              fs={24}
+              fw={700}
+              color={feeColors.supplyBorrowFees}
+              style={{ fontFamily: "Gazpacho, sans-serif", lineHeight: 1 }}
+            >
               ${(total / 1000).toFixed(2)}K
             </Text>
           }
@@ -234,16 +241,16 @@ export const SupplyBorrowFeesChart: FC = () => {
           <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="gradLiquidationPenalty" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#EF4444" stopOpacity={0.6} />
-                <stop offset="95%" stopColor="#EF4444" stopOpacity={0.1} />
+                <stop offset="5%" stopColor={FEE_TYPES.liquidationPenalty.color} stopOpacity={0.6} />
+                <stop offset="95%" stopColor={FEE_TYPES.liquidationPenalty.color} stopOpacity={0.1} />
               </linearGradient>
               <linearGradient id="gradPepl" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.6} />
-                <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
+                <stop offset="5%" stopColor={FEE_TYPES.pepl.color} stopOpacity={0.6} />
+                <stop offset="95%" stopColor={FEE_TYPES.pepl.color} stopOpacity={0.1} />
               </linearGradient>
               <linearGradient id="gradAssetReserve" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#22C55E" stopOpacity={0.6} />
-                <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1} />
+                <stop offset="5%" stopColor={FEE_TYPES.assetReserve.color} stopOpacity={0.6} />
+                <stop offset="95%" stopColor={FEE_TYPES.assetReserve.color} stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
@@ -298,7 +305,7 @@ export const SupplyBorrowFeesChart: FC = () => {
               <Area
                 type="monotone"
                 dataKey="liquidationPenalty"
-                stroke="#EF4444"
+                stroke={FEE_TYPES.liquidationPenalty.color}
                 fill="url(#gradLiquidationPenalty)"
                 strokeWidth={2}
                 name="liquidationPenalty"
@@ -308,7 +315,7 @@ export const SupplyBorrowFeesChart: FC = () => {
               <Area
                 type="monotone"
                 dataKey="pepl"
-                stroke="#F59E0B"
+                stroke={FEE_TYPES.pepl.color}
                 fill="url(#gradPepl)"
                 strokeWidth={2}
                 name="pepl"
@@ -318,7 +325,7 @@ export const SupplyBorrowFeesChart: FC = () => {
               <Area
                 type="monotone"
                 dataKey="assetReserve"
-                stroke="#22C55E"
+                stroke={FEE_TYPES.assetReserve.color}
                 fill="url(#gradAssetReserve)"
                 strokeWidth={2}
                 name="assetReserve"

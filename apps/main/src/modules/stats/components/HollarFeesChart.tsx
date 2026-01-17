@@ -16,11 +16,14 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
+  type LegendPayload,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts"
+
+import { getFeeColors } from "@/modules/stats/utils/feeColors"
 
 import { SelectDropdown } from "./SelectDropdown"
 import { ChartTooltipContent } from "./StatsChartTooltip"
@@ -105,9 +108,16 @@ const generateHollarFeesData = (timeRange: TimeRange) => {
 
 type TimeRange = "1W" | "1M" | "1Y" | "ALL"
 type ChartType = "line" | "bar"
+type TooltipPayloadItem = {
+  name: string
+  value: number
+  color: string
+  dataKey: string
+}
 
 export const HollarFeesChart: FC = () => {
   const { themeProps: theme } = useTheme()
+  const feeColors = getFeeColors(theme)
   const [timeRange, setTimeRange] = useState<TimeRange>("1M")
   const [chartType, setChartType] = useState<ChartType>("line")
 
@@ -124,7 +134,7 @@ export const HollarFeesChart: FC = () => {
             <Text
               fs={24}
               fw={700}
-              color="#8B5CF6"
+              color={feeColors.hollarFees}
               style={{ fontFamily: "Gazpacho, sans-serif", lineHeight: 1 }}
             >
               ${(latestValue / 1000).toFixed(2)}K
@@ -164,8 +174,16 @@ export const HollarFeesChart: FC = () => {
           >
             <defs>
               <linearGradient id="hollarFeesGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
-                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
+                <stop
+                  offset="5%"
+                  stopColor={feeColors.hollarFees}
+                  stopOpacity={0.6}
+                />
+                <stop
+                  offset="95%"
+                  stopColor={feeColors.hollarFees}
+                  stopOpacity={0.1}
+                />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -188,7 +206,7 @@ export const HollarFeesChart: FC = () => {
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}
-                  payload={payload as any}
+                  payload={payload as TooltipPayloadItem[]}
                   label={label}
                   valueFormatter={(v) => `$${v.toFixed(2)}`}
                 />
@@ -199,9 +217,13 @@ export const HollarFeesChart: FC = () => {
               verticalAlign="bottom"
               align="left"
               wrapperStyle={{ paddingTop: "20px" }}
-              content={({ payload }: any) => (
+              content={({
+                payload,
+              }: {
+                payload?: readonly LegendPayload[]
+              }) => (
                 <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
-                  {payload?.map((entry: any, index: number) => (
+                  {payload?.map((entry, index: number) => (
                     <div
                       key={index}
                       style={{
@@ -220,7 +242,7 @@ export const HollarFeesChart: FC = () => {
                       />
                       <span
                         style={{
-                          color: "rgba(255,255,255,0.6)",
+                          color: theme.text.medium,
                           fontSize: "12px",
                         }}
                       >
@@ -234,7 +256,7 @@ export const HollarFeesChart: FC = () => {
             <Area
               type="monotone"
               dataKey="hsmRevenue"
-              stroke="#8B5CF6"
+              stroke={feeColors.hollarFees}
               fill="url(#hollarFeesGrad)"
               strokeWidth={2}
               name="HSM Revenue"
@@ -265,7 +287,7 @@ export const HollarFeesChart: FC = () => {
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}
-                  payload={payload as any}
+                  payload={payload as TooltipPayloadItem[]}
                   label={label}
                   valueFormatter={(v) => `$${v.toFixed(2)}`}
                 />
@@ -276,9 +298,13 @@ export const HollarFeesChart: FC = () => {
               verticalAlign="bottom"
               align="left"
               wrapperStyle={{ paddingTop: "20px" }}
-              content={({ payload }: any) => (
+              content={({
+                payload,
+              }: {
+                payload?: readonly LegendPayload[]
+              }) => (
                 <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
-                  {payload?.map((entry: any, index: number) => (
+                  {payload?.map((entry, index: number) => (
                     <div
                       key={index}
                       style={{
@@ -311,7 +337,7 @@ export const HollarFeesChart: FC = () => {
             <Bar
               dataKey="hsmRevenue"
               stroke={undefined}
-              fill="#8B5CF6"
+              fill={feeColors.hollarFees}
               name="HSM Revenue"
             />
           </BarChart>

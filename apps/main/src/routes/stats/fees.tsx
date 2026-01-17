@@ -3,6 +3,7 @@ import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { createFileRoute } from "@tanstack/react-router"
 
+import { FeeDestinationChart } from "@/modules/stats/components/FeeDestinationChart"
 import { FeesOverviewChart } from "@/modules/stats/components/FeesOverviewChart"
 import { HollarFeesChart } from "@/modules/stats/components/HollarFeesChart"
 import { LiquidityFeesChart } from "@/modules/stats/components/LiquidityFeesChart"
@@ -35,17 +36,32 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
   `,
 )
 
+const SFeesOverviewGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+`
+
 function FeesStats() {
   const { themeProps: theme } = useTheme()
 
   return (
     <SPageContainer>
-      {/* Overview Chart - Stacked Bar Chart */}
+      {/* Overview Chart - Stacked Bar Chart + Fee Destination Pie */}
       <div>
         <SectionHeader>Fees & Revenue</SectionHeader>
-        <SSection style={{ paddingBottom: theme.scales.paddings.m }}>
-        <FeesOverviewChart />
-      </SSection>
+        <SFeesOverviewGrid>
+          <SSection style={{ paddingBottom: theme.scales.paddings.m }}>
+            <FeesOverviewChart />
+          </SSection>
+          <SSection>
+            <FeeDestinationChart />
+          </SSection>
+        </SFeesOverviewGrid>
       </div>
 
       {/* Trading Fees / Revenue Section */}

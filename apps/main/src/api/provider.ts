@@ -18,7 +18,6 @@ import {
   createProvider,
   getDefaultDataEnv,
   ProviderProps,
-  PROVIDER_LIST,
   PROVIDERS,
   TDataEnv,
 } from "@/config/rpc"

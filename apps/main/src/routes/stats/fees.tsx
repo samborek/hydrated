@@ -41,7 +41,7 @@ function FeesStats() {
       </SectionHeader>
 
       {/* Overview Chart - Stacked Bar Chart */}
-      <SSection hasHeader style={{ paddingBottom: theme.scales.paddings.primary }}>
+      <SSection hasHeader style={{ paddingBottom: theme.scales.paddings.m }}>
         <FeesOverviewChart />
       </SSection>
 

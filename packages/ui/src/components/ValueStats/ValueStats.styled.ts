@@ -16,7 +16,7 @@ const containerSizeVariants = createVariants<ValueStatsSize>((theme) => ({
     gap: ${theme.scales.paddings.s}px;
   `,
   header: css`
-    gap: ${theme.scales.paddings.base}px;
+    gap: ${theme.scales.paddings.s}px;
   `,
 }))
 
@@ -59,7 +59,7 @@ export const SValueStatsLabel = styled.div(
     white-space: nowrap;
 
     ${mq("sm")} {
-      font-size: ${theme.paragraphSize.p6};
+      font-size: ${theme.paragraphSize.p5};
       line-height: 1.4;
       color: ${theme.text.medium};
     }

@@ -25,6 +25,10 @@ const SPageContainer = styled.div`
   flex-direction: column;
   gap: 24px;
   padding: 0 0 24px 0;
+
+  @media (max-width: 576px) {
+    gap: 8px;
+  }
 `
 
 const SSection = styled.section<{ hasHeader?: boolean }>(

@@ -1,23 +1,29 @@
 import styled from "@emotion/styled"
-import { Text, ToggleGroup, ToggleGroupItem, ValueStats } from "@galacticcouncil/ui/components"
+import {
+  Text,
+  ToggleGroup,
+  ToggleGroupItem,
+  ValueStats,
+} from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { useTheme } from "@galacticcouncil/ui/theme"
-import { FC, useState, useMemo } from "react"
+import { BarChart2, TrendingUp } from "lucide-react"
+import { FC, useMemo, useState } from "react"
 import {
-  AreaChart,
   Area,
-  BarChart,
+  AreaChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
 } from "recharts"
-import { BarChart2, TrendingUp } from "lucide-react"
-import { ChartTooltipContent } from "./StatsChartTooltip"
+
 import { SelectDropdown } from "./SelectDropdown"
+import { ChartTooltipContent } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -30,7 +36,7 @@ const SChartHeader = styled.div`
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.scales.paddings.m}px;
   margin-bottom: ${({ theme }) => theme.scales.paddings.l}px;
-  
+
   @media (max-width: 576px) {
     flex-direction: column-reverse;
     align-items: stretch;
@@ -44,7 +50,7 @@ const SControlsGroup = styled.div`
   align-items: center;
   align-self: center;
   flex-wrap: wrap;
-  
+
   @media (max-width: 576px) {
     display: none;
   }
@@ -52,7 +58,7 @@ const SControlsGroup = styled.div`
 
 const SChartFooter = styled.div`
   display: none;
-  
+
   @media (max-width: 576px) {
     display: flex;
     justify-content: space-between;
@@ -62,25 +68,34 @@ const SChartFooter = styled.div`
   }
 `
 
-
 // Generate mock Hollar fees data
 const generateHollarFeesData = (timeRange: TimeRange) => {
   const data = []
   const now = new Date()
 
-  const isWeekly = timeRange === '1Y' || timeRange === 'ALL'
-  const days = timeRange === '1W' ? 7 : timeRange === '1M' ? 30 : timeRange === '1Y' ? 52 : 104
+  const isWeekly = timeRange === "1Y" || timeRange === "ALL"
+  const days =
+    timeRange === "1W"
+      ? 7
+      : timeRange === "1M"
+        ? 30
+        : timeRange === "1Y"
+          ? 52
+          : 104
   const step = isWeekly ? 7 : 1
 
   for (let i = days - 1; i >= 0; i--) {
     const date = new Date(now)
-    date.setDate(date.getDate() - (i * step))
+    date.setDate(date.getDate() - i * step)
 
     const multiplier = isWeekly ? 7 : 1
 
     // HSM revenue from yield-bearing stablecoins
     data.push({
-      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      date: date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
       hsmRevenue: (Math.random() * 800 + 200) * multiplier,
     })
   }
@@ -88,13 +103,13 @@ const generateHollarFeesData = (timeRange: TimeRange) => {
   return data
 }
 
-type TimeRange = '1W' | '1M' | '1Y' | 'ALL'
-type ChartType = 'line' | 'bar'
+type TimeRange = "1W" | "1M" | "1Y" | "ALL"
+type ChartType = "line" | "bar"
 
 export const HollarFeesChart: FC = () => {
   const { themeProps: theme } = useTheme()
-  const [timeRange, setTimeRange] = useState<TimeRange>('1M')
-  const [chartType, setChartType] = useState<ChartType>('line')
+  const [timeRange, setTimeRange] = useState<TimeRange>("1M")
+  const [chartType, setChartType] = useState<ChartType>("line")
 
   const feesData = useMemo(() => generateHollarFeesData(timeRange), [timeRange])
 
@@ -106,13 +121,18 @@ export const HollarFeesChart: FC = () => {
       <SChartHeader>
         <ValueStats
           customValue={
-            <Text fs={24} fw={700} color="#8B5CF6" style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
+            <Text
+              fs={24}
+              fw={700}
+              color="#8B5CF6"
+              style={{ fontFamily: "Gazpacho, sans-serif", lineHeight: 1 }}
+            >
               ${(latestValue / 1000).toFixed(2)}K
             </Text>
           }
           bottomLabel="HSM Revenue (latest)"
           size="header"
-          style={{ justifyContent: 'flex-start' }}
+          style={{ justifyContent: "flex-start" }}
         />
         <SControlsGroup>
           <ToggleGroup
@@ -130,24 +150,28 @@ export const HollarFeesChart: FC = () => {
           </ToggleGroup>
           <TimeRangeToggle
             value={timeRange}
-            items={['1W', '1M', '1Y', 'ALL']}
+            items={["1W", "1M", "1Y", "ALL"]}
             onValueChange={(v: string) => setTimeRange(v as TimeRange)}
           />
         </SControlsGroup>
       </SChartHeader>
 
-
-
       <ResponsiveContainer width="100%" height={280}>
-        {chartType === 'line' ? (
-          <AreaChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+        {chartType === "line" ? (
+          <AreaChart
+            data={feesData}
+            margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+          >
             <defs>
               <linearGradient id="hollarFeesGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
                 <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke={theme.details.separators}
+            />
             <XAxis
               dataKey="date"
               tick={{ fill: theme.text.low, fontSize: 11 }}
@@ -174,20 +198,32 @@ export const HollarFeesChart: FC = () => {
             <Legend
               verticalAlign="bottom"
               align="left"
-              wrapperStyle={{ paddingTop: '20px' }}
+              wrapperStyle={{ paddingTop: "20px" }}
               content={({ payload }: any) => (
-                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
                   {payload?.map((entry: any, index: number) => (
-                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div
+                      key={index}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
                       <div
                         style={{
-                          width: '12px',
-                          height: '12px',
+                          width: "12px",
+                          height: "12px",
                           backgroundColor: entry.color,
-                          borderRadius: '4px'
+                          borderRadius: "4px",
                         }}
                       />
-                      <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                      <span
+                        style={{
+                          color: "rgba(255,255,255,0.6)",
+                          fontSize: "12px",
+                        }}
+                      >
                         {entry.value}
                       </span>
                     </div>
@@ -205,8 +241,14 @@ export const HollarFeesChart: FC = () => {
             />
           </AreaChart>
         ) : (
-          <BarChart data={feesData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
+          <BarChart
+            data={feesData}
+            margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke={theme.details.separators}
+            />
             <XAxis
               dataKey="date"
               tick={{ fill: theme.text.low, fontSize: 11 }}
@@ -233,20 +275,32 @@ export const HollarFeesChart: FC = () => {
             <Legend
               verticalAlign="bottom"
               align="left"
-              wrapperStyle={{ paddingTop: '20px' }}
+              wrapperStyle={{ paddingTop: "20px" }}
               content={({ payload }: any) => (
-                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
                   {payload?.map((entry: any, index: number) => (
-                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div
+                      key={index}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
                       <div
                         style={{
-                          width: '12px',
-                          height: '12px',
+                          width: "12px",
+                          height: "12px",
                           backgroundColor: entry.color,
-                          borderRadius: '4px'
+                          borderRadius: "4px",
                         }}
                       />
-                      <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                      <span
+                        style={{
+                          color: "rgba(255,255,255,0.6)",
+                          fontSize: "12px",
+                        }}
+                      >
                         {entry.value}
                       </span>
                     </div>
@@ -282,11 +336,14 @@ export const HollarFeesChart: FC = () => {
         <div style={{ flex: 1 }}>
           <SelectDropdown
             value={timeRange}
-            items={['1W', '1M', '1Y', 'ALL'].map(range => ({ key: range, label: range }))}
+            items={["1W", "1M", "1Y", "ALL"].map((range) => ({
+              key: range,
+              label: range,
+            }))}
             onValueChange={(val: string) => setTimeRange(val as TimeRange)}
           />
         </div>
       </SChartFooter>
-    </SChartContainer >
+    </SChartContainer>
   )
 }

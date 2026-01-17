@@ -61,33 +61,13 @@ export type WalletProviderStore = WalletProviderState & {
 };
 export declare const useWeb3Connect: import("zustand").UseBoundStore<Omit<import("zustand").StoreApi<WalletProviderStore>, "persist"> & {
     persist: {
-        setOptions: (options: Partial<import("zustand/middleware").PersistOptions<WalletProviderStore, Omit<WalletProviderState & {
-            toggle: (mode?: WalletMode, meta?: Web3ConnectModalMeta) => void;
-            setAccount: (account: StoredAccount | null) => void;
-            setAccounts: (accounts: StoredAccount[]) => void;
-            setBalances: (balances: ReadonlyMap<string, number>) => void;
-            setStatus: (provider: WalletProviderType | null, status: WalletProviderStatus) => void;
-            getStatus: (provider: WalletProviderType | null) => WalletProviderStatus;
-            getConnectedProviders: (mode: WalletMode) => WalletProviderEntry[];
-            setError: (error: string) => void;
-            disconnect: (provider?: WalletProviderType) => void;
-        }, "open" | "error" | "accounts">>>) => void;
+        setOptions: (options: Partial<import("zustand/middleware").PersistOptions<WalletProviderStore, any>>) => void;
         clearStorage: () => void;
         rehydrate: () => Promise<void> | void;
         hasHydrated: () => boolean;
         onHydrate: (fn: (state: WalletProviderStore) => void) => () => void;
         onFinishHydration: (fn: (state: WalletProviderStore) => void) => () => void;
-        getOptions: () => Partial<import("zustand/middleware").PersistOptions<WalletProviderStore, Omit<WalletProviderState & {
-            toggle: (mode?: WalletMode, meta?: Web3ConnectModalMeta) => void;
-            setAccount: (account: StoredAccount | null) => void;
-            setAccounts: (accounts: StoredAccount[]) => void;
-            setBalances: (balances: ReadonlyMap<string, number>) => void;
-            setStatus: (provider: WalletProviderType | null, status: WalletProviderStatus) => void;
-            getStatus: (provider: WalletProviderType | null) => WalletProviderStatus;
-            getConnectedProviders: (mode: WalletMode) => WalletProviderEntry[];
-            setError: (error: string) => void;
-            disconnect: (provider?: WalletProviderType) => void;
-        }, "open" | "error" | "accounts">>>;
+        getOptions: () => Partial<import("zustand/middleware").PersistOptions<WalletProviderStore, any>>;
     };
 }>;
 export {};

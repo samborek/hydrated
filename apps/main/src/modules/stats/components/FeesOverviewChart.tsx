@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
 
-import { Button, Flex, Text, ToggleGroup, ToggleGroupItem, ValueStats, SectionHeader } from "@galacticcouncil/ui/components"
+import { Button, Flex, Text, ToggleGroup, ToggleGroupItem, ValueStats } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { SelectDropdown } from "./SelectDropdown"
 import { useTheme } from "@galacticcouncil/ui/theme"
@@ -28,13 +28,13 @@ const SChartHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: ${({ theme }) => theme.scales.paddings.m}px;
+  margin-bottom: ${({ theme }) => theme.scales.paddings.l}px;
   
   @media (max-width: 576px) {
     flex-direction: column-reverse;
     align-items: stretch;
-    gap: 16px;
+    gap: ${({ theme }) => theme.scales.paddings.l}px;
   }
 `
 
@@ -73,6 +73,10 @@ const SHeaderWrapper = styled.div`
   align-items: center;
   /* Match SectionHeader usual spacing */
   margin-bottom: 20px;
+  
+  @media (min-width: 577px) {
+    display: none;
+  }
 `
 
 const SChartFooter = styled.div`
@@ -371,14 +375,9 @@ export const FeesOverviewChart: FC = () => {
 
   const currentTradingFee = chartData[chartData.length - 1]?.rateTrading
 
-  const headerTitle = viewMode === 'revenue'
-    ? (hoveredValues.total ? 'Daily Revenue' : 'Protocol Revenue')
-    : 'Fee Rate Fluctuation'
-
   return (
     <SChartContainer>
       <SHeaderWrapper>
-        <SectionHeader style={{ marginBottom: 0 }}>{headerTitle}</SectionHeader>
         {viewMode === 'revenue' && (
           <SMobileOnly>
             <SelectDropdown

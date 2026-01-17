@@ -17,8 +17,8 @@ const ModalRoot = DialogPrimitive.Root;
 const ModalTrigger = DialogPrimitive.Trigger;
 const ModalPortal = DialogPrimitive.Portal;
 const ModalCloseTrigger = DialogPrimitive.Close;
-const ModalOverlay = (props) => _jsx(SModalOverlay, { ref: props.ref, ...props });
-const ModalContent = ({ children, ref, topContent, forceMount, animationDurationMs, ...props }) => (_jsxs(ModalPortal, { forceMount: forceMount, children: [_jsx(ModalOverlay, { animationDurationMs: animationDurationMs }), _jsx(SModalWrapper, { onClick: (e) => e.stopPropagation(), animationDurationMs: animationDurationMs, children: _jsxs(SModalContent, { ref: ref, ...props, hasTopContent: !!topContent, children: [topContent && _jsx(SModalTopContent, { children: topContent }), _jsx(SModalPaper, { children: children })] }) })] }));
+const ModalOverlay = ({ animationDurationMs, ...props }) => _jsx(SModalOverlay, { ref: props.ref, "$animationDurationMs": animationDurationMs, ...props });
+const ModalContent = ({ children, ref, topContent, forceMount, animationDurationMs, ...props }) => (_jsxs(ModalPortal, { forceMount: forceMount, children: [_jsx(ModalOverlay, { animationDurationMs: animationDurationMs }), _jsx(SModalWrapper, { onClick: (e) => e.stopPropagation(), "$animationDurationMs": animationDurationMs, children: _jsxs(SModalContent, { ref: ref, ...props, "$hasTopContent": !!topContent, children: [topContent && _jsx(SModalTopContent, { children: topContent }), _jsx(SModalPaper, { children: children })] }) })] }));
 const ModalTitle = ({ children, ref, ...props }) => (_jsx(DialogPrimitive.Title, { ref: ref, asChild: true, ...props, children: _jsx(SModalTitle, { as: "h2", children: children }) }));
 const ModalDescription = ({ children, ref, ...props }) => (_jsx(DialogPrimitive.Description, { ref: ref, asChild: true, ...props, children: _jsx(SModalDescription, { children: children }) }));
 const ModalClose = (props) => {

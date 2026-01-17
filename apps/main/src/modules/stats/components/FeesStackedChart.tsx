@@ -26,13 +26,13 @@ const SChartHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: ${({ theme }) => theme.scales.paddings.m}px;
+  margin-bottom: ${({ theme }) => theme.scales.paddings.l}px;
   
   @media (max-width: 576px) {
     flex-direction: column-reverse;
     align-items: stretch;
-    gap: 16px;
+    gap: ${({ theme }) => theme.scales.paddings.l}px;
   }
 `
 
@@ -65,7 +65,7 @@ const generateFeesData = () => {
   const data = []
   const now = new Date()
 
-  for (let i = 30; i >= 0; i--) {
+  for (let i = 90; i >= 0; i--) {
     const date = new Date(now)
     date.setDate(date.getDate() - i)
 
@@ -149,7 +149,7 @@ export const FeesStackedChart: FC<Props> = ({
         </SControlsGroup>
       </SChartHeader>
 
-      <ResponsiveContainer width="100%" height={280}>
+      <ResponsiveContainer width="100%" height={330}>
         <BarChart data={filteredData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
           <XAxis
@@ -200,11 +200,11 @@ export const FeesStackedChart: FC<Props> = ({
               </div>
             )}
           />
-          <Bar dataKey="swap" stackId="a" fill={COLORS.swap} name="Swap Fees" radius={[0, 0, 0, 0]} />
-          <Bar dataKey="liquidations" stackId="a" fill={COLORS.liquidations} name="Liquidations" />
-          <Bar dataKey="hollar" stackId="a" fill={COLORS.hollar} name="Hollar" />
-          <Bar dataKey="tips" stackId="a" fill={COLORS.tips} name="Tips" />
-          <Bar dataKey="txFees" stackId="a" fill={COLORS.txFees} name="TX Fees" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="swap" stackId="a" fill={COLORS.swap} name="Swap Fees" radius={2} />
+          <Bar dataKey="liquidations" stackId="a" fill={COLORS.liquidations} name="Liquidations" radius={2} />
+          <Bar dataKey="hollar" stackId="a" fill={COLORS.hollar} name="Hollar" radius={2} />
+          <Bar dataKey="tips" stackId="a" fill={COLORS.tips} name="Tips" radius={2} />
+          <Bar dataKey="txFees" stackId="a" fill={COLORS.txFees} name="TX Fees" radius={2} />
         </BarChart>
       </ResponsiveContainer>
 

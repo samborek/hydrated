@@ -1,4 +1,5 @@
 export declare const useWeb3ConnectModal: () => {
+    open: boolean;
     meta?: ({
         title?: string;
         description?: string;
@@ -7,5 +8,4 @@ export declare const useWeb3ConnectModal: () => {
         title?: string;
         description?: string;
     }) => void;
-    open: boolean;
 };

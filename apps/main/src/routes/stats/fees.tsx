@@ -36,45 +36,44 @@ function FeesStats() {
 
   return (
     <SPageContainer>
-      <SectionHeader as="h1" sx={{ p: 0 }} mb={-18}>
-        Fees & Revenue
-      </SectionHeader>
-
       {/* Overview Chart - Stacked Bar Chart */}
-      <SSection hasHeader style={{ paddingBottom: theme.scales.paddings.m }}>
+      <div>
+        <SectionHeader>Fees & Revenue</SectionHeader>
+        <SSection style={{ paddingBottom: theme.scales.paddings.m }}>
         <FeesOverviewChart />
       </SSection>
+      </div>
 
       {/* Trading Fees / Revenue Section */}
       <div>
         <SectionHeader>Trading Fees</SectionHeader>
         <SSection>
-          <TradingFeesChart />
-        </SSection>
+        <TradingFeesChart />
+      </SSection>
       </div>
 
       {/* Liquidity Fees Section */}
       <div>
         <SectionHeader>Liquidity / Withdraw Fees</SectionHeader>
         <SSection>
-          <LiquidityFeesChart />
-        </SSection>
+        <LiquidityFeesChart />
+      </SSection>
       </div>
 
       {/* Supply & Borrow Fees Section */}
       <div>
         <SectionHeader>Supply & Borrow Fees</SectionHeader>
         <SSection>
-          <SupplyBorrowFeesChart />
-        </SSection>
+        <SupplyBorrowFeesChart />
+      </SSection>
       </div>
 
       {/* Hollar Fees Section */}
       <div>
         <SectionHeader>Hollar Fees</SectionHeader>
         <SSection>
-          <HollarFeesChart />
-        </SSection>
+        <HollarFeesChart />
+      </SSection>
       </div>
     </SPageContainer>
   )

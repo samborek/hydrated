@@ -45,20 +45,18 @@ function TreasuryStats() {
 
   return (
     <SPageContainer>
-      <SectionHeader as="h1" sx={{ p: 0 }} mb={-12}>
-        Treasury
-      </SectionHeader>
-
       <StatsHeader stats={stats} />
 
       <SSection>
         <TreasuryChart title="Treasury Value History" value="$2.85M" />
       </SSection>
 
-      <SSection hasHeader>
+      <div>
         <SectionHeader>Omnipool assets</SectionHeader>
+        <SSection style={{ paddingTop: 0 }}>
         <OmnipoolTable />
       </SSection>
+      </div>
     </SPageContainer>
   )
 }

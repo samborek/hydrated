@@ -4,7 +4,7 @@ export declare const SDrawerOverlay: import("@emotion/styled").StyledComponent<O
 export declare const SDrawerContent: import("@emotion/styled").StyledComponent<Omit<import("@radix-ui/react-dialog").DialogContentProps & import("react").RefAttributes<HTMLDivElement>, "ref"> & import("react").RefAttributes<HTMLDivElement> & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SDrawerHeader: import("@emotion/styled").StyledComponent<import("@/components/Flex").FlexOwnProps & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SDrawerHeader: import("@emotion/styled").StyledComponent<import("@/components/Flex").FlexOwnProps & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -20,7 +20,7 @@ export declare const SDrawerHeader: import("@emotion/styled").StyledComponent<im
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SDrawerBody: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SDrawerBody: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -34,7 +34,7 @@ export declare const SDrawerBody: import("@emotion/styled").StyledComponent<Part
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SDrawerHandle: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SDrawerHandle: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -48,7 +48,7 @@ export declare const SDrawerHandle: import("@emotion/styled").StyledComponent<Pa
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SDrawerFooter: import("@emotion/styled").StyledComponent<import("@/components/Flex").FlexOwnProps & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SDrawerFooter: import("@emotion/styled").StyledComponent<import("@/components/Flex").FlexOwnProps & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -64,7 +64,7 @@ export declare const SDrawerFooter: import("@emotion/styled").StyledComponent<im
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SDrawerTitle: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SDrawerTitle: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -90,7 +90,7 @@ export declare const SDrawerTitle: import("@emotion/styled").StyledComponent<Par
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SDrawerDescription: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SDrawerDescription: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;

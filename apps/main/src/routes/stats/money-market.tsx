@@ -58,20 +58,21 @@ function MoneyMarketStats() {
 
   return (
     <SPageContainer>
-      <SectionHeader as="h1" sx={{ p: 0 }} mb={-12}>
-        Money Market
-      </SectionHeader>
-
       <StatsHeader stats={stats} />
 
-      <SSection hasHeader>
-        <SupplyBorrowChart title="Supply / Borrow History" />
+      <div>
+        <SectionHeader>Supply / Borrow History</SectionHeader>
+        <SSection>
+          <SupplyBorrowChart />
       </SSection>
+      </div>
 
-      <SSection hasHeader>
+      <div>
         <SectionHeader>Markets</SectionHeader>
+        <SSection style={{ paddingTop: 0, overflow: "hidden" }}>
         <MarketsTable />
       </SSection>
+      </div>
     </SPageContainer>
   )
 }

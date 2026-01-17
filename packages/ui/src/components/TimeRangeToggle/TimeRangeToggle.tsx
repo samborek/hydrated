@@ -1,4 +1,3 @@
-
 import styled from "@emotion/styled"
 import { Button } from "@/components/Button"
 import { FC } from "react"
@@ -27,7 +26,7 @@ export const TimeRangeToggle: FC<TimeRangeToggleProps> = ({ value, items, onValu
                     size="small"
                     variant={value === item ? 'secondary' : 'restSubtle'}
                     outline={value !== item}
-                    onClick={() => !disabled && onValueChange(item)}
+                    onClick={() => onValueChange(item)}
                     disabled={disabled}
                     sx={{
                         // Figma specs:

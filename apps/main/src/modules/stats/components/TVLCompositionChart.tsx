@@ -25,8 +25,8 @@ const SChartHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: ${({ theme }) => theme.scales.paddings.m}px;
+  margin-bottom: ${({ theme }) => theme.scales.paddings.l}px;
 `
 
 const SControlsGroup = styled.div`
@@ -158,7 +158,7 @@ export const TVLCompositionChart: FC<Props> = ({
         <ValueStats
           label={title}
           customValue={
-            <Text fs={32} fw={700} color="secondaryColors.pink.coralPink" style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
+            <Text fs={28} fw={700} color="secondaryColors.pink.coralPink" style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
               {value}
             </Text>
           }

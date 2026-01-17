@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Button, Text, SectionHeader } from "@galacticcouncil/ui/components"
+import { Button, Flex, Text, ValueStats } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState } from "react"
@@ -21,11 +21,11 @@ const SChartContainer = styled.div`
 
 const SChartHeader = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: ${({ theme }) => theme.scales.paddings.m}px;
+  margin-bottom: ${({ theme }) => theme.scales.paddings.l}px;
 `
 
 const SControlsGroup = styled.div`
@@ -96,13 +96,7 @@ const generateSupplyBorrowData = () => {
 
 type TimeRange = "7D" | "30D" | "MAX"
 
-type Props = {
-  title?: string
-}
-
-export const SupplyBorrowChart: FC<Props> = ({
-  title = "Supply / Borrow History",
-}) => {
+export const SupplyBorrowChart: FC = () => {
   const { themeProps: theme } = useTheme()
   const [timeRange, setTimeRange] = useState<TimeRange>("30D")
 
@@ -116,11 +110,45 @@ export const SupplyBorrowChart: FC<Props> = ({
     return chartData.slice(-days)
   }, [chartData, timeRange])
 
+  const currentData = filteredData[filteredData.length - 1]
+
   return (
     <SChartContainer>
-      <SectionHeader style={{ marginTop: 0 }}>{title}</SectionHeader>
       <SChartHeader>
-
+        <Flex gap={Number(theme.scales.paddings.l)} align="flex-start" wrap>
+          <ValueStats
+            label="Total Supply"
+            customValue={
+              <Text
+                fs={28}
+                fw={700}
+                color="#22C55E"
+                style={{ fontFamily: "Gazpacho, sans-serif", lineHeight: 1 }}
+              >
+                ${currentData?.supply.toFixed(1)}M
+              </Text>
+            }
+            wrap={true}
+            size="medium"
+            style={{ alignItems: "flex-start" }}
+          />
+          <ValueStats
+            label="Total Borrow"
+            customValue={
+              <Text
+                fs={28}
+                fw={700}
+                color="#F59E0B"
+                style={{ fontFamily: "Gazpacho, sans-serif", lineHeight: 1 }}
+              >
+                ${currentData?.borrow.toFixed(1)}M
+              </Text>
+            }
+            wrap={true}
+            size="medium"
+            style={{ alignItems: "flex-start" }}
+          />
+        </Flex>
         <SControlsGroup>
           <TimeRangeToggle
             value={timeRange}

@@ -51,17 +51,13 @@ function PlatformOverview() {
       valueColor: theme.secondaryColors.pink.coralPink,
     },
     { label: "24h Volume", value: "$10.3M" },
-    { label: "Fee APY (7D)", value: "2.02-29.75%" },
+    { label: "Fee APY (7D)", value: "2.02-29.75%" }, // <--- Edit this line
     { label: "Transactions (24h)", value: "12,453" },
     { label: "Protocol Revenue (24h)", value: "$45.2K" },
   ]
 
   return (
     <SPageContainer>
-      <SectionHeader as="h1" sx={{ p: 0 }} mb={-18}>
-        Hydration Dashboard
-      </SectionHeader>
-
       {/* Key Metrics */}
       <StatsHeader stats={stats} />
 
@@ -81,10 +77,12 @@ function PlatformOverview() {
       </SChartsGrid>
 
       {/* Recent Trades */}
-      <SSection hasHeader style={{ paddingBottom: theme.scales.paddings.m, paddingTop: 0 }}>
+      <div>
         <SectionHeader>Recent trades</SectionHeader>
+        <SSection style={{ paddingTop: 0 }}>
         <RecentTrades />
       </SSection>
+      </div>
     </SPageContainer>
   )
 }

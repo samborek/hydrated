@@ -17,8 +17,8 @@ import { createFileRoute } from "@tanstack/react-router"
 import { Fragment } from "react"
 
 import { AssetLogo } from "@/components/AssetLogo"
-import { StatsHeader } from "@/modules/stats/components/StatsHeader"
 import { HollarSupplyChart } from "@/modules/stats/components/HollarSupplyChart"
+import { StatsHeader } from "@/modules/stats/components/StatsHeader"
 
 const SPageContainer = styled.div`
   display: flex;
@@ -60,8 +60,8 @@ const SCollateralGrid = styled.div`
 
 const SCollateralCard = styled.div(
   ({ theme }) => css`
-    background: ${theme.surfaces.containers.high.accent};
-    border: 1px solid ${theme.details.borders};
+    background: transparent;
+    border: 1px solid ${theme.details.borders} !important;
     border-radius: 8px;
     padding: 16px;
   `,
@@ -71,7 +71,7 @@ const SProgressBar = styled.div<{ $value: number; $color: string }>(
   ({ theme, $value, $color }) => css`
     height: 24px;
     background: ${theme.surfaces.containers.dim.dimOnBg};
-    border-radius: 4px;
+    border-radius: 30px;
     overflow: hidden;
     margin-top: 8px;
 
@@ -81,7 +81,7 @@ const SProgressBar = styled.div<{ $value: number; $color: string }>(
       height: 100%;
       width: ${$value}%;
       background: ${$color};
-      border-radius: 4px;
+      border-radius: 30px;
     }
   `,
 )
@@ -183,25 +183,22 @@ function HollarStats() {
 
   return (
     <SPageContainer>
-      <SectionHeader as="h1" sx={{ p: 0 }} mb={-12}>
-        Hollar (HUSD)
-      </SectionHeader>
-
       <StatsHeader stats={stats} />
 
       <SSection>
         <HollarSupplyChart title="Hollar Supply History" value="$8.5M" />
       </SSection>
 
-      <SSection hasHeader>
-        <SectionHeader mb={Number(theme.scales.paddings.xl)}>
-          Stablepool Reserves
-        </SectionHeader>
+      <div>
+        <SectionHeader>Stablepool Reserves</SectionHeader>
+        <SSection style={{ padding: Number(theme.scales.paddings.xl) }}>
         <Flex justify="space-between" gap={0}>
           {reserves.map((reserve, index) => (
             <Fragment key={reserve.asset}>
               <SStatCard>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
                   <AssetLogo id={reserve.id} size="medium" />
                   <AssetLabel symbol={reserve.asset} name={reserve.name} />
                 </div>
@@ -225,14 +222,20 @@ function HollarStats() {
           ))}
         </Flex>
       </SSection>
+      </div>
 
-      <SSection hasHeader>
+      <div>
         <SectionHeader>HSM Collateral Caps</SectionHeader>
+        <SSection style={{ padding: Number(theme.scales.paddings.xl) }}>
         <SCollateralGrid>
           {collaterals.map((col) => (
             <SCollateralCard key={col.asset}>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
                   <AssetLogo id={col.id} size="medium" />
                   <AssetLabel symbol={col.asset} name={col.name} />
                 </div>
@@ -248,6 +251,7 @@ function HollarStats() {
           ))}
         </SCollateralGrid>
       </SSection>
+      </div>
     </SPageContainer>
   )
 }

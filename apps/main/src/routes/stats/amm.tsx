@@ -1,7 +1,6 @@
 import {
   DataTable,
   Paper,
-  SectionHeader,
   TableContainer,
   Text,
 } from "@galacticcouncil/ui/components"
@@ -309,10 +308,6 @@ function AMMStats() {
 
   return (
     <SPageContainer>
-      <SectionHeader as="h1" sx={{ p: 0 }} mb={-18}>
-        AMM Dashboard
-      </SectionHeader>
-
       {/* ===== OMNIPOOL SECTION ===== */}
       <SSectionTitle color={theme.colors.skyBlue["600"]}>
         Omnipool

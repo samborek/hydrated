@@ -1,19 +1,19 @@
 export declare const SModalOverlay: import("@emotion/styled").StyledComponent<import("@radix-ui/react-dialog").DialogOverlayProps & import("react").RefAttributes<HTMLDivElement> & {
     theme?: import("@emotion/react").Theme;
 } & {
-    animationDurationMs?: number;
+    $animationDurationMs?: number;
 }, {}, {}>;
 export declare const SModalWrapper: import("@emotion/styled").StyledComponent<import("@radix-ui/react-dialog").DialogOverlayProps & import("react").RefAttributes<HTMLDivElement> & {
     theme?: import("@emotion/react").Theme;
 } & {
-    animationDurationMs?: number;
+    $animationDurationMs?: number;
 }, {}, {}>;
 export declare const SModalContent: import("@emotion/styled").StyledComponent<import("@radix-ui/react-dialog").DialogContentProps & import("react").RefAttributes<HTMLDivElement> & {
     theme?: import("@emotion/react").Theme;
 } & {
-    hasTopContent?: boolean;
+    $hasTopContent?: boolean;
 }, {}, {}>;
-export declare const SModalPaper: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SModalPaper: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -31,7 +31,7 @@ export declare const SModalPaper: import("@emotion/styled").StyledComponent<Part
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SModalHeader: import("@emotion/styled").StyledComponent<import("@/components/Flex").FlexOwnProps & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SModalHeader: import("@emotion/styled").StyledComponent<import("@/components/Flex").FlexOwnProps & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -47,7 +47,7 @@ export declare const SModalHeader: import("@emotion/styled").StyledComponent<imp
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SModalHeaderButton: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SModalHeaderButton: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -65,7 +65,7 @@ export declare const SModalHeaderButton: import("@emotion/styled").StyledCompone
 } & {
     align?: "left" | "right";
 }, {}, {}>;
-export declare const SModalTitleContainer: import("@emotion/styled").StyledComponent<import("@/components/Flex").FlexOwnProps & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SModalTitleContainer: import("@emotion/styled").StyledComponent<import("@/components/Flex").FlexOwnProps & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -81,7 +81,7 @@ export declare const SModalTitleContainer: import("@emotion/styled").StyledCompo
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SModalBody: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SModalBody: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -97,7 +97,7 @@ export declare const SModalBody: import("@emotion/styled").StyledComponent<Parti
 } & {
     noPadding?: boolean;
 }, {}, {}>;
-export declare const SModalFooter: import("@emotion/styled").StyledComponent<import("@/components/Flex").FlexOwnProps & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SModalFooter: import("@emotion/styled").StyledComponent<import("@/components/Flex").FlexOwnProps & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -113,7 +113,7 @@ export declare const SModalFooter: import("@emotion/styled").StyledComponent<imp
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SModalTitle: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SModalTitle: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -139,7 +139,7 @@ export declare const SModalTitle: import("@emotion/styled").StyledComponent<Part
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SModalDescription: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SModalDescription: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -165,7 +165,7 @@ export declare const SModalDescription: import("@emotion/styled").StyledComponen
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SModalContentDivider: import("@emotion/styled").StyledComponent<Omit<Omit<import("@radix-ui/react-separator").SeparatorProps & import("react").RefAttributes<HTMLDivElement>, "ref">, "orientation"> & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SModalContentDivider: import("@emotion/styled").StyledComponent<Omit<Omit<import("@radix-ui/react-separator").SeparatorProps & import("react").RefAttributes<HTMLDivElement>, "ref">, "orientation"> & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;
@@ -182,7 +182,7 @@ export declare const SModalContentDivider: import("@emotion/styled").StyledCompo
 } & {
     theme?: import("@emotion/react").Theme;
 }, {}, {}>;
-export declare const SModalTopContent: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "size" | "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SModalTopContent: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;

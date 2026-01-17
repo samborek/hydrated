@@ -37,6 +37,12 @@ Before creating any new styled components or UI elements:
 - When implementing, precisely compare the styling, parameters, and focus on details when comparing.
 - This applies especially when Figma Design is provided or when using an available component from the library.
 
-## Deployment
-- Don't deploy each update to GitHub automatically.
-- Only push changes upon explicit request.
+## Git Push Policy
+
+**DO NOT auto-push to git after every code change.**
+
+- **STRICTLY PROHIBITED:** Do not push to git unless explicitly requested by the user.
+- Only push when explicitly asked by the user - and then push only single time upon request, without continuity
+- Or when a significant milestone/feature is complete but then ask 
+- Bundle multiple related changes into a single commit when possible
+- **When asked for Git Push - run `yarn turbo run build --filter=@galacticcouncil/main`** before pushing to ensure type safety and build success. This matches Vercel's build process and prevents deployment failures.

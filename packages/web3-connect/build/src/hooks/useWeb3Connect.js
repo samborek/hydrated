@@ -137,4 +137,5 @@ export const useWeb3Connect = create()(persist((set, get) => ({
     name: "web3-connect",
     partialize: omit(["open", "error", "accounts"]),
     version: 9,
+    migrate: (persistedState) => persistedState,
 }));

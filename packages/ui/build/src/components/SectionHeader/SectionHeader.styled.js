@@ -8,7 +8,8 @@ export const SSectionHeader = styled(Box)(({ theme, hasDescription }) => css `
       ${theme.containers.paddings.quint}px;
 
     font-family: ${theme.fontFamilies1.primary};
-    font-size: 14px;
+    font-weight: 500;
+    font-size: 16px;
     line-height: 15px;
 
     color: ${theme.text.high};

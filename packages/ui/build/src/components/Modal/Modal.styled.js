@@ -9,7 +9,7 @@ import { Separator } from "@/components/Separator";
 import { Text } from "@/components/Text";
 import { mq } from "@/theme";
 const DEFAULT_ANIMATION_DURATION = 200;
-export const SModalOverlay = styled(Overlay)(({ theme, animationDurationMs = DEFAULT_ANIMATION_DURATION }) => css `
+export const SModalOverlay = styled(Overlay)(({ theme, $animationDurationMs = DEFAULT_ANIMATION_DURATION }) => css `
     position: fixed;
     inset: 0;
 
@@ -22,17 +22,17 @@ export const SModalOverlay = styled(Overlay)(({ theme, animationDurationMs = DEF
 
     &[data-state="open"] {
       animation: ${theme.animations.fadeIn};
-      animation-duration: ${animationDurationMs}ms;
+      animation-duration: ${$animationDurationMs}ms;
     }
 
     &[data-state="closed"] {
       animation: ${theme.animations.fadeOut};
-      animation-duration: ${animationDurationMs}ms;
+      animation-duration: ${$animationDurationMs}ms;
     }
   `);
 export const SModalWrapper = styled(Overlay) `
   --modal-block-offset: 10vh;
-  --modal-animation-duration: ${({ animationDurationMs = DEFAULT_ANIMATION_DURATION, }) => animationDurationMs}ms;
+  --modal-animation-duration: ${({ $animationDurationMs = DEFAULT_ANIMATION_DURATION, }) => $animationDurationMs}ms;
 
   position: fixed;
   inset: 0;
@@ -51,10 +51,10 @@ export const SModalWrapper = styled(Overlay) `
       var(--modal-animation-duration);
   }
 `;
-export const SModalContent = styled(Content)(({ theme, hasTopContent }) => css `
+export const SModalContent = styled(Content)(({ theme, $hasTopContent }) => css `
     --modal-content-padding: 20px;
     --modal-content-inset: calc(var(--modal-content-padding) * -1);
-    --modal-top-content-height: ${hasTopContent ? "50px" : "0px"};
+    --modal-top-content-height: ${$hasTopContent ? "50px" : "0px"};
 
     position: fixed;
     inset: 0;

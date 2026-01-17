@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Text } from "@galacticcouncil/ui/components"
+import { Text, ValueStats } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState } from "react"
@@ -24,12 +24,14 @@ const SChartHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.scales.paddings.m}px;
+  margin-bottom: ${({ theme }) => theme.scales.paddings.l}px;
 
   @media (max-width: 576px) {
     flex-direction: column-reverse;
     align-items: stretch;
-    gap: 16px;
+    gap: ${({ theme }) => theme.scales.paddings.l}px;
   }
 `
 
@@ -103,19 +105,22 @@ export const HollarSupplyChart: FC<Props> = ({
   return (
     <SChartContainer>
       <SChartHeader>
-        <div>
-          <Text fs={14} color={theme.text.medium}>
-            {title}
-          </Text>
-          <Text
-            fs={28}
-            fw={700}
-            color="#8B5CF6"
-            style={{ fontFamily: "Gazpacho, sans-serif" }}
-          >
-            {value}
-          </Text>
-        </div>
+        <ValueStats
+          label={title}
+          customValue={
+            <Text
+              fs={28}
+              fw={700}
+              color="#8B5CF6"
+              style={{ fontFamily: "Gazpacho, sans-serif", lineHeight: 1 }}
+            >
+              {value}
+            </Text>
+          }
+          wrap={true}
+          size="medium"
+          style={{ alignItems: "flex-start" }}
+        />
         <SControlsGroup>
           <TimeRangeToggle
             value={timeRange}

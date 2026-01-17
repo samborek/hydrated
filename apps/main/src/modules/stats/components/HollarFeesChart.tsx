@@ -28,13 +28,13 @@ const SChartHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: ${({ theme }) => theme.scales.paddings.m}px;
+  margin-bottom: ${({ theme }) => theme.scales.paddings.l}px;
   
   @media (max-width: 576px) {
     flex-direction: column-reverse;
     align-items: stretch;
-    gap: 16px;
+    gap: ${({ theme }) => theme.scales.paddings.l}px;
   }
 `
 

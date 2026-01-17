@@ -12,7 +12,8 @@ export const SSectionHeader = styled(Box)<{
       ${theme.containers.paddings.quint}px;
 
     font-family: ${theme.fontFamilies1.primary};
-    font-size: 14px;
+    font-weight: 500;
+    font-size: 16px;
     line-height: 15px;
 
     color: ${theme.text.high};
@@ -21,8 +22,8 @@ export const SSectionHeader = styled(Box)<{
       padding-inline: 0;
       padding-top: 0;
       padding-bottom: ${hasDescription
-      ? 0
-      : theme.containers.paddings.tertiary}px;
+        ? 0
+        : theme.containers.paddings.tertiary}px;
 
       font-weight: 500;
       font-size: 17.5px;

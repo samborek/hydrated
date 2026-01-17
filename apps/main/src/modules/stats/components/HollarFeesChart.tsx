@@ -111,7 +111,7 @@ export const HollarFeesChart: FC = () => {
             </Text>
           }
           bottomLabel="HSM Revenue (latest)"
-          size="medium"
+          size="header"
           style={{ justifyContent: 'flex-start' }}
         />
         <SControlsGroup>

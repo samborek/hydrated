@@ -2,18 +2,21 @@ import styled from "@emotion/styled"
 import { mq, ThemeFont } from "@galacticcouncil/ui/theme"
 import { createVariants, css } from "@galacticcouncil/ui/utils"
 
-export type ValueStatsSize = "small" | "medium" | "large"
+export type ValueStatsSize = "small" | "medium" | "large" | "header"
 export type ValueStatsFont = Exclude<ThemeFont, "mono">
 
 const containerSizeVariants = createVariants<ValueStatsSize>((theme) => ({
   small: css`
-    gap: ${theme.scales.paddings.s}px;
+    gap: 2px;
   `,
   medium: css`
-    gap: ${theme.scales.paddings.base}px;
+    gap: ${theme.scales.paddings.xs}px;
   `,
   large: css`
-    gap: ${theme.scales.paddings.m}px;
+    gap: ${theme.scales.paddings.s}px;
+  `,
+  header: css`
+    gap: ${theme.scales.paddings.base}px;
   `,
 }))
 
@@ -88,6 +91,15 @@ const valueSizeVariants = createVariants<ValueStatsSize>((theme) => ({
     ${mq("sm")} {
       font-size: ${theme.headlineSize.h5};
       line-height: ${theme.lineHeight["2xl"]}px;
+    }
+  `,
+  header: css`
+    font-size: ${theme.headlineSize.h7};
+    line-height: 1;
+
+    ${mq("sm")} {
+      font-size: ${theme.headlineSize.h6};
+      line-height: ${theme.lineHeight.xl}px;
     }
   `,
 }))

@@ -1,5 +1,5 @@
 import { ThemeFont } from "@galacticcouncil/ui/theme";
-export type ValueStatsSize = "small" | "medium" | "large";
+export type ValueStatsSize = "small" | "medium" | "large" | "header";
 export type ValueStatsFont = Exclude<ThemeFont, "mono">;
 export declare const SValueStatsValueContainer: import("@emotion/styled").StyledComponent<{
     theme?: import("@emotion/react").Theme;

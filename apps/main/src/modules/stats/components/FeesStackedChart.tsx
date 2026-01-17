@@ -137,7 +137,7 @@ export const FeesStackedChart: FC<Props> = ({
           }
           bottomLabel={`Last ${timeRange === '1W' ? '7 days' : timeRange === '1M' ? '30 days' : '90 days'}`}
           wrap={true}
-          size="medium"
+          size="header"
           style={{ alignItems: 'flex-start' }}
         />
         <SControlsGroup>

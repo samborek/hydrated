@@ -161,7 +161,7 @@ export const PriceVolumeChart: FC<Props> = ({
             : `$${((priceData[priceData.length - 1]?.volume ?? 0) / 1000).toFixed(0)} K`
           }
           wrap={true}
-          size="medium"
+          size="header"
           style={{ alignItems: 'flex-start' }}
         />
       </SChartHeader>

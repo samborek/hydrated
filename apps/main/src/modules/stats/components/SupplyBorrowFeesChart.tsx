@@ -180,7 +180,7 @@ export const SupplyBorrowFeesChart: FC = () => {
             </Text>
           }
           bottomLabel="Latest period total"
-          size="medium"
+          size="header"
           style={{ justifyContent: 'flex-start' }}
         />
         <SControlsGroup>

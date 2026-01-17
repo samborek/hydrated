@@ -129,7 +129,7 @@ export const SupplyBorrowChart: FC = () => {
               </Text>
             }
             wrap={true}
-            size="medium"
+            size="header"
             style={{ alignItems: "flex-start" }}
           />
           <ValueStats
@@ -145,7 +145,7 @@ export const SupplyBorrowChart: FC = () => {
               </Text>
             }
             wrap={true}
-            size="medium"
+            size="header"
             style={{ alignItems: "flex-start" }}
           />
         </Flex>

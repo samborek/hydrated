@@ -50,7 +50,7 @@ export const StatsHeader: FC<StatsHeaderProps> = ({
       {...props}
     >
       {stats.map((stat, index) => {
-        const size = stat.size ?? "large"
+        const size = stat.size ?? "header"
         const customValue =
           stat.customValue ??
           (stat.valueColor ? (

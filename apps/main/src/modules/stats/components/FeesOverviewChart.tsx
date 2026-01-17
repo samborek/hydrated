@@ -406,7 +406,7 @@ export const FeesOverviewChart: FC = () => {
               timeRange === '1M' ? 'Last 30 days' :
                 timeRange === '1Y' ? 'Last year' : 'All time'}
             wrap={true}
-            size="medium"
+            size="header"
           />
         </div>
         <SControlsGroup>

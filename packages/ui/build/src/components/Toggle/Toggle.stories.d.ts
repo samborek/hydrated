@@ -3,7 +3,7 @@ import { Toggle } from "./Toggle";
 type Story = StoryObj<typeof Toggle>;
 declare const _default: {
     component: import("react").FC<import("@radix-ui/react-switch").SwitchProps & {
-        size?: "large" | "medium";
+        size?: "medium" | "large";
         onCheckedChange: (v: boolean) => void;
     } & {
         ref?: import("react").Ref<HTMLButtonElement>;

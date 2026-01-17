@@ -163,7 +163,7 @@ export const TVLCompositionChart: FC<Props> = ({
             </Text>
           }
           wrap={true}
-          size="medium"
+          size="header"
           style={{ alignItems: 'flex-start' }}
         />
         <SControlsGroup>

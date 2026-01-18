@@ -57,7 +57,7 @@ function TreasuryStats() {
 
       <div>
         <SectionHeader>Omnipool assets</SectionHeader>
-        <SSection style={{ paddingTop: 0 }}>
+        <SSection style={{ paddingTop: 0, paddingBottom: 0 }}>
         <OmnipoolTable />
       </SSection>
       </div>

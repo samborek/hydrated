@@ -6,7 +6,7 @@ import { FC } from "react"
 
 const SBanner = styled.div`
   position: fixed;
-  bottom: 20px;
+  bottom: 80px;
   left: 20px;
   width: calc(100% - 40px);
   max-width: 382px;
@@ -23,6 +23,10 @@ const SBanner = styled.div`
 
   ${mq("sm")} {
     max-width: 420px;
+  }
+
+  ${mq("lg")} {
+    bottom: 20px;
   }
 `
 

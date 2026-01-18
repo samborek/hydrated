@@ -26,6 +26,6 @@ export const SContent = styled(Box)(
 export const SMainContent = styled(SContent)`
   display: flex;
   flex-direction: column;
-  padding-block: 8px;
+  padding-top: 0;
   padding-bottom: var(--layout-bottom-safe-area);
 `

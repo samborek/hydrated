@@ -19,6 +19,7 @@ import {
   NAV_ITEMS_SHOWN_TABLET,
   NAVIGATION,
 } from "@/config/navigation"
+import { useScrollDirection } from "@/hooks/useScrollDirection"
 import { useMenuTranslations } from "@/modules/layout/components/HeaderMenu.utils"
 import {
   SMobileTabBar,
@@ -40,6 +41,7 @@ export const MobileTabBar: FC = () => {
   const translations = useMenuTranslations()
   const { isMobile } = useBreakpoints()
   const hasMobNavbar = useHasMobNavbar()
+  const { scrollDirection, isScrolling } = useScrollDirection()
 
   const [drawer, setDrawer] = useState<MobileTabBarDrawer | null>(null)
   const closeDrawer = () => setDrawer(null)
@@ -53,8 +55,10 @@ export const MobileTabBar: FC = () => {
 
   if (!hasMobNavbar) return null
 
+  const isHidden = scrollDirection === "down" && isScrolling
+
   return (
-    <SMobileTabBar>
+    <SMobileTabBar $hidden={isHidden}>
       {navItems
         .slice(0, itemsShown)
         .map(({ key, icon, to, children }, index) => (

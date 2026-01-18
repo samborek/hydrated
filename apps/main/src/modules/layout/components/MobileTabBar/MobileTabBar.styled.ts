@@ -2,8 +2,8 @@ import styled from "@emotion/styled"
 import { Icon } from "@galacticcouncil/ui/components"
 import { css } from "@galacticcouncil/ui/utils"
 
-export const SMobileTabBar = styled.nav(
-  ({ theme }) => css`
+export const SMobileTabBar = styled.nav<{ $hidden?: boolean }>(
+  ({ theme, $hidden }) => css`
     position: fixed;
     left: 0;
     bottom: 0;
@@ -15,6 +15,9 @@ export const SMobileTabBar = styled.nav(
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    transition: transform 0.3s ease-in-out;
+    transform: translateY(${$hidden ? "100%" : "0"});
 
     background-color: ${theme.surfaces.containers.high.accent};
     border-top: 1px solid ${theme.details.separators};

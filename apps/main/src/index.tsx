@@ -1,6 +1,6 @@
-import { Buffer } from "buffer"
-import { jsx, jsxs } from "@theme-ui/core/jsx-runtime"
 import styled from "@emotion/styled"
+import { jsx, jsxs } from "@theme-ui/core/jsx-runtime"
+import { Buffer } from "buffer"
 globalThis.Buffer = Buffer
 
 import { patchBigJs } from "@galacticcouncil/utils"

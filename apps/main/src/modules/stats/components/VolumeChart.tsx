@@ -4,8 +4,8 @@ import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState } from "react"
 import {
-  Area,
-  AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
@@ -117,24 +117,10 @@ export const VolumeChart: FC<Props> = ({
       </SChartHeader>
 
       <ResponsiveContainer width="100%" height={330}>
-        <AreaChart
+        <BarChart
           data={filteredData}
           margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
         >
-          <defs>
-            <linearGradient id="volumeGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor={theme.text.tint.secondary}
-                stopOpacity={0.6}
-              />
-              <stop
-                offset="95%"
-                stopColor={theme.text.tint.secondary}
-                stopOpacity={0.1}
-              />
-            </linearGradient>
-          </defs>
           <CartesianGrid
             strokeDasharray="3 3"
             stroke={theme.details.separators}
@@ -164,15 +150,13 @@ export const VolumeChart: FC<Props> = ({
             cursor={{ fill: theme.surfaces.containers.high.hover }}
           />
 
-          <Area
-            type="monotone"
+          <Bar
             dataKey="volume"
-            stroke={theme.text.tint.secondary}
-            fill="url(#volumeGrad)"
-            strokeWidth={2}
+            fill={theme.text.tint.secondary}
+            radius={[4, 4, 0, 0]}
             name="Volume"
           />
-        </AreaChart>
+        </BarChart>
       </ResponsiveContainer>
 
       <SChartFooter>

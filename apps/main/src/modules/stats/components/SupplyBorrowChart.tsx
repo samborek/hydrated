@@ -14,18 +14,10 @@ import {
 } from "recharts"
 
 import { ChartTooltipContent } from "./StatsChartTooltip"
+import { SChartHeader } from "./ChartLayout"
 
 const SChartContainer = styled.div`
   width: 100%;
-`
-
-const SChartHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.scales.paddings.m}px;
-  margin-bottom: ${({ theme }) => theme.scales.paddings.l}px;
 `
 
 const SControlsGroup = styled.div`
@@ -114,7 +106,7 @@ export const SupplyBorrowChart: FC = () => {
 
   return (
     <SChartContainer>
-      <SChartHeader>
+      <SChartHeader $enableMobile={false}>
         <Flex gap={Number(theme.scales.paddings.l)} align="flex-start" wrap>
           <ValueStats
             label="Total Supply"

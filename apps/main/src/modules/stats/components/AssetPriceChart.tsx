@@ -16,21 +16,7 @@ import {
 import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 
 import { useTheme } from "@galacticcouncil/ui/theme"
-
-const SChartHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 24px;
-  
-  @media (max-width: 576px) {
-    flex-direction: column-reverse;
-    align-items: stretch;
-    gap: 16px;
-  }
-`
+import { SChartHeader } from "./ChartLayout"
 
 const SDesktopToggleGroup = styled.div`
   @media (max-width: 576px) {
@@ -118,7 +104,7 @@ export const AssetPriceChart: FC<Props> = ({ symbol }) => {
 
   return (
     <>
-      <SChartHeader>
+      <SChartHeader $align="flex-start">
         <SAlignedValueStats
           customLabel={
             <SDesktopToggleGroup>

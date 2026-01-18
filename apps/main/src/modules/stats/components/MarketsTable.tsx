@@ -21,6 +21,8 @@ const useIsMobile = () => {
 const STableWrapper = styled.div`
   margin: 0 -16px;
   overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: inherit;
   
   /* Hide scrollbar for Chrome, Safari and Opera */
   &::-webkit-scrollbar {

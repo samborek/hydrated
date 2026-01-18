@@ -34,6 +34,8 @@ const columnHelper = createColumnHelper<LiquidityProvider>()
 
 const STableWrapper = styled.div`
   margin: 0 -16px;
+  border-radius: inherit;
+  overflow: hidden;
 `
 
 const SDesktopView = styled.div`
@@ -48,15 +50,29 @@ const SMobileView = styled.div`
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: 0 16px;
+    padding: 0;
   }
+`
+
+const SMobileHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid ${({ theme }) => theme.details.separators};
+`
+
+const SMobileHeaderRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `
 
 const SMobileItem = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 12px 0;
+  padding: 16px 16px;
   border-bottom: 1px solid ${({ theme }) => theme.details.separators};
   
   &:last-child {
@@ -165,6 +181,24 @@ export const LiquidityProvidersTable: FC = () => {
         />
       </SDesktopView>
       <SMobileView>
+        <SMobileHeader>
+          <SMobileHeaderRow>
+            <Text fs={11} fw={500} color="text.medium">
+              Account
+            </Text>
+            <Text fs={11} fw={500} color="text.medium">
+              Total value locked
+            </Text>
+          </SMobileHeaderRow>
+          <SMobileHeaderRow>
+            <Text fs={11} fw={500} color="text.medium">
+              Position
+            </Text>
+            <Text fs={11} fw={500} color="text.medium">
+              %Share
+            </Text>
+          </SMobileHeaderRow>
+        </SMobileHeader>
         {data.slice(0, 10).map((provider) => (
           <SMobileItem key={provider.id}>
             <SMobileRow>

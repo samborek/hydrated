@@ -3,18 +3,12 @@ import { Text, ValueStats } from "@galacticcouncil/ui/components"
 import { css } from "@galacticcouncil/ui/utils"
 import { FC, useState } from "react"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
+import { SChartHeader } from "./ChartLayout"
 
 const SChartContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-`
-
-const SChartHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: ${({ theme }) => theme.scales.paddings.m}px;
 `
 
 const SChartWrapper = styled.div`
@@ -104,7 +98,7 @@ export const FeeDestinationChart: FC<Props> = ({
 
   return (
     <SChartContainer>
-      <SChartHeader>
+      <SChartHeader $align="flex-start" $marginBottom="m" $wrap={false} $enableMobile={false}>
         <ValueStats
           label={title}
           customValue={

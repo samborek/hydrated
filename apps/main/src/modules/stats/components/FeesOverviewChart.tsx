@@ -19,24 +19,10 @@ import {
 
 } from "recharts"
 import { SChartTooltipContainer } from "./StatsChartTooltip"
+import { SChartHeader } from "./ChartLayout"
 
 const SChartContainer = styled.div`
   width: 100%;
-`
-
-const SChartHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.scales.paddings.m}px;
-  margin-bottom: ${({ theme }) => theme.scales.paddings.l}px;
-  
-  @media (max-width: 576px) {
-    flex-direction: column-reverse;
-    align-items: stretch;
-    gap: ${({ theme }) => theme.scales.paddings.l}px;
-  }
 `
 
 const SControlsGroup = styled.div`
@@ -47,9 +33,7 @@ const SControlsGroup = styled.div`
   flex-wrap: wrap;
   
   @media (max-width: 576px) {
-    width: 100%;
-    justify-content: flex-end;
-    align-self: auto;
+    display: none;
   }
 `
 
@@ -59,45 +43,47 @@ const SDesktopOnly = styled.div`
   }
 `
 
-const SMobileOnly = styled.div`
-  @media (min-width: 577px) {
-    display: none;
-  }
-  
-  /* Ensure dropdown doesn't overflow or break layout */
-  flex-shrink: 0;
-`
-
-const SHeaderWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  /* Match SectionHeader usual spacing */
-  margin-bottom: 20px;
-  
-  @media (min-width: 577px) {
-    display: none;
-  }
-`
-
 const SChartFooter = styled.div`
   display: none;
-  
+
   @media (max-width: 576px) {
     display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 16px;
-    align-items: center;
+    flex-direction: column;
+    gap: ${({ theme }) => theme.scales.paddings.s}px;
+    margin-top: ${({ theme }) => theme.scales.paddings.m}px;
   }
 `
-const SAlignedValueStats = styled(ValueStats)`
-  align-items: flex-start;
+
+const SFooterRow = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.scales.paddings.s}px;
+  align-items: center;
 `
 
-const SFullWidthToggleGroup = styled(ToggleGroup)`
-  width: 100%;
+const SFillToggleGroup = styled(ToggleGroup)`
+  flex: 1;
+  min-width: 0;
 `
+
+const SFooterRowSplit = styled.div<{ $collapsed?: boolean }>`
+  display: grid;
+  align-items: center;
+  grid-template-columns: ${({ $collapsed }) => ($collapsed ? "0 minmax(0, 1fr)" : "minmax(0, 1fr) minmax(0, 1fr)")};
+  column-gap: ${({ theme, $collapsed }) => ($collapsed ? 0 : theme.scales.paddings.s)}px;
+`
+
+const SFlexGrow = styled.div`
+  flex: 1;
+  min-width: 0;
+`
+
+const SGroupBySlot = styled.div<{ $hidden?: boolean }>`
+  min-width: 0;
+  overflow: hidden;
+  opacity: ${({ $hidden }) => ($hidden ? 0 : 1)};
+  pointer-events: ${({ $hidden }) => ($hidden ? "none" : "auto")};
+`
+
 
 
 const SLegendContainer = styled.div`
@@ -108,13 +94,10 @@ const SLegendContainer = styled.div`
   margin-bottom: 20px;
 
   @media (max-width: 576px) {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: ${({ theme }) => theme.scales.paddings.m}px;
-    margin-bottom: 0;
-    /* Optional: Add fade effect or padding */
+    display: none;
   }
 `
+
 
 
 
@@ -377,40 +360,37 @@ export const FeesOverviewChart: FC = () => {
 
   const currentTradingFee = chartData[chartData.length - 1]?.rateTrading
 
+  // Build legend items for the dropdown
+  const legendItems = useMemo(() => {
+    const keys = seriesKeys
+    const labels = groupBy === 'destination' ? DESTINATION_LABELS : LABELS
+    return [
+      { key: 'all', label: 'All Categories' },
+      ...keys.map(key => ({
+        key,
+        label: labels[key as keyof typeof labels] || key
+      }))
+    ]
+  }, [seriesKeys, groupBy])
+
   return (
     <SChartContainer>
-      <SHeaderWrapper>
-        {viewMode === 'revenue' && (
-          <SMobileOnly>
-            <SelectDropdown
-              value={groupBy}
-              items={[
-                { key: 'product', label: 'By Product' },
-                { key: 'destination', label: 'By Destination' }
-              ]}
-              onValueChange={(v: string) => v && setGroupBy(v as GroupBy)}
-            />
-          </SMobileOnly>
-        )}
-      </SHeaderWrapper>
       <SChartHeader>
-        <div>
-          <SAlignedValueStats
-            customValue={
-              <Text fs={24} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
-                {viewMode === 'revenue'
-                  ? <AnimatedValue value={hoveredValues.total ?? totalRevenue} />
-                  : `${currentTradingFee?.toFixed(2)}%`
-                }
-              </Text>
-            }
-            bottomLabel={timeRange === '1W' ? 'Last 7 days' :
-              timeRange === '1M' ? 'Last 30 days' :
-                timeRange === '1Y' ? 'Last year' : 'All time'}
-            wrap={true}
-            size="header"
-          />
-        </div>
+        <ValueStats
+          customValue={
+            <Text fs={24} fw={700} style={{ fontFamily: 'Gazpacho, sans-serif', lineHeight: 1 }}>
+              {viewMode === 'revenue'
+                ? <AnimatedValue value={hoveredValues.total ?? totalRevenue} />
+                : `${currentTradingFee?.toFixed(2)}%`
+              }
+            </Text>
+          }
+          bottomLabel={timeRange === '1W' ? 'Last 7 days' :
+            timeRange === '1M' ? 'Last 30 days' :
+              timeRange === '1Y' ? 'Last year' : 'All time'}
+          size="header"
+          style={{ justifyContent: 'flex-start' }}
+        />
         <SControlsGroup>
           <SDesktopOnly>
             <ToggleGroup
@@ -603,8 +583,8 @@ export const FeesOverviewChart: FC = () => {
         )}
       </ResponsiveContainer>
 
+      {/* Desktop Legend */}
       <SLegendContainer className="no-scrollbar">
-        {/* Toggle Buttons: mimic TimeRangeToggle logic (Exclusive selection) */}
         {['all', ...seriesKeys].map((key) => {
           const isActive = activeFilter === key
           const isAll = key === 'all'
@@ -621,8 +601,8 @@ export const FeesOverviewChart: FC = () => {
                 height: 30,
                 px: 12,
                 minWidth: 30,
-                borderRadius: 32, // Pill shape like TimeRangeToggle
-                flexShrink: 0, // Prevent shrinking in scroll container
+                borderRadius: 32,
+                flexShrink: 0,
               }}
             >
               {!isAll && (
@@ -630,7 +610,7 @@ export const FeesOverviewChart: FC = () => {
                   style={{
                     width: 8,
                     height: 8,
-                    backgroundColor: isActive ? 'currentColor' : COLORS[key], // Use currentColor if active (likely white), else series color
+                    backgroundColor: isActive ? 'currentColor' : COLORS[key],
                     borderRadius: '50%',
                   }}
                 />
@@ -641,7 +621,7 @@ export const FeesOverviewChart: FC = () => {
               {!isAll && activeData && (
                 <Text fs={11} fw={500} color="text.medium">
                   {viewMode === 'revenue'
-                    ? `$${(activeData[key] ?? 0).toFixed(0)}` // Compact number for mobile
+                    ? `$${(activeData[key] ?? 0).toFixed(0)}`
                     : `${(activeData[key] ?? 0).toFixed(1)}%`
                   }
                 </Text>
@@ -651,21 +631,42 @@ export const FeesOverviewChart: FC = () => {
         })}
       </SLegendContainer>
 
+      {/* Mobile Footer Controls - 2 rows */}
       <SChartFooter>
-        <div style={{ flex: 1 }}>
-          <SFullWidthToggleGroup type="single" value={viewMode} onValueChange={(val: string) => val && setViewMode(val as 'revenue' | 'fees')}>
+        {/* Row 1: View mode toggle + Time range */}
+        <SFooterRow>
+          <SFillToggleGroup size="small" type="single" value={viewMode} onValueChange={(val: string) => val && setViewMode(val as 'revenue' | 'fees')}>
             <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
             <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
-          </SFullWidthToggleGroup>
-        </div>
+          </SFillToggleGroup>
+          <SFlexGrow>
+            <SelectDropdown
+              value={timeRange}
+              items={['1W', '1M', '1Y', 'ALL'].map(range => ({ key: range, label: range }))}
+              onValueChange={(val: string) => setTimeRange(val as TimeRange)}
+            />
+          </SFlexGrow>
+        </SFooterRow>
 
-        <div style={{ flex: 1 }}>
+        {/* Row 2: GroupBy (revenue only) + Filter */}
+        <SFooterRowSplit $collapsed={viewMode !== 'revenue'}>
+          <SGroupBySlot $hidden={viewMode !== 'revenue'}>
+            <SelectDropdown
+              value={groupBy}
+              items={[
+                { key: 'product', label: 'Product' },
+                { key: 'destination', label: 'Destination' }
+              ]}
+              onValueChange={(v: string) => v && setGroupBy(v as GroupBy)}
+            />
+          </SGroupBySlot>
           <SelectDropdown
-            value={timeRange}
-            items={['1W', '1M', '1Y', 'ALL'].map(range => ({ key: range, label: range }))}
-            onValueChange={(val: string) => setTimeRange(val as TimeRange)}
+            label="Filter:"
+            value={activeFilter}
+            items={legendItems}
+            onValueChange={(val: string) => setActiveFilter(val)}
           />
-        </div>
+        </SFooterRowSplit>
       </SChartFooter>
     </SChartContainer >
   )

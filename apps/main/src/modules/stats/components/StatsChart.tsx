@@ -2,26 +2,10 @@ import styled from "@emotion/styled"
 import { Text } from "@galacticcouncil/ui/components"
 import { css } from "@galacticcouncil/ui/utils"
 import { FC, useState } from "react"
+import { SChartHeader } from "./ChartLayout"
 const SChartContainer = styled.div`
   width: 100%;
 `
-
-const SChartHeader = styled.div(
-  () => css`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-
-    @media (max-width: 576px) {
-      flex-direction: column-reverse;
-      gap: 16px;
-      align-items: stretch;
-      margin-bottom: 16px;
-      margin-top: 0;
-    }
-  `,
-)
 
 const SToggleGroup = styled.div(
   ({ theme }) => css`
@@ -151,7 +135,7 @@ export const StatsChart: FC = () => {
 
   return (
     <SChartContainer>
-      <SChartHeader>
+      <SChartHeader $wrap={false}>
         <SToggleGroup>
           <SToggleButton
             $active={chartType === "price"}

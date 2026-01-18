@@ -18,13 +18,10 @@ import {
 import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 import { css } from "@galacticcouncil/ui/utils"
 import { useTheme } from "@galacticcouncil/ui/theme"
+import { SChartHeader } from "./ChartLayout"
 
 const SChartContainer = styled.div`
   width: 100%;
-`
-
-const SChartHeader = styled.div`
-  margin-bottom: 8px;
 `
 
 
@@ -152,7 +149,14 @@ export const PriceVolumeChart: FC<Props> = ({
 
   return (
     <SChartContainer>
-      <SChartHeader>
+      <SChartHeader
+        $direction="column"
+        $justify="flex-start"
+        $align="flex-start"
+        $gap={0}
+        $marginBottom="s"
+        $enableMobile={false}
+      >
         {title && <Text fs={14} fw={500} color="rgba(255,255,255,0.6)" className="mb-1">{title}</Text>}
         <ValueStats
           label={chartType === 'price' ? 'Price' : 'Volume'}

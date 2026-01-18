@@ -48,9 +48,12 @@ export const ValueStats: FC<ValueStatsProps> = ({
 }) => {
   const shouldWrap = useResponsiveValue(wrap, false)
 
+  const resolvedLabel =
+    customLabel !== undefined ? customLabel : label ? <SValueStatsLabel>{label}</SValueStatsLabel> : null
+
   return (
     <SValueStats shouldWrap={shouldWrap} size={size} className={className} {...props}>
-      {customLabel ?? <SValueStatsLabel>{label}</SValueStatsLabel>}
+      {resolvedLabel}
       <SValueStatsValueContainer size={size}>
         {isLoading ? (
           <SValueStatsValue font={font} size={size}>

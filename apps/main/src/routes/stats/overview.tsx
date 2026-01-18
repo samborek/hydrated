@@ -12,12 +12,8 @@ import { VolumeChart } from "@/modules/stats/components/VolumeChart"
 const SPageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 0 0 24px 0;
-
-  @media (max-width: 576px) {
-    gap: 8px;
-  }
+  gap: ${({ theme }) => theme.scales.paddings.l}px;
+  padding: 0 0 ${({ theme }) => theme.scales.paddings.l}px 0;
 `
 
 const SSection = styled.section<{ hasHeader?: boolean }>(
@@ -38,7 +34,7 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
 const SChartsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: ${({ theme }) => theme.scales.paddings.l}px;
 
   @media (max-width: 1200px) {
     grid-template-columns: 1fr;
@@ -82,10 +78,10 @@ function PlatformOverview() {
 
       {/* Recent Trades */}
       <div>
-        <SectionHeader>Recent trades</SectionHeader>
+        <SectionHeader pt={theme.scales.paddings.m}>Recent trades</SectionHeader>
         <SSection style={{ paddingTop: 0 }}>
-        <RecentTrades />
-      </SSection>
+          <RecentTrades />
+        </SSection>
       </div>
     </SPageContainer>
   )

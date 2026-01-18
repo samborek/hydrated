@@ -57,7 +57,7 @@ declare const Modal: ({ children, variant, disableInteractOutside, topContent, a
 declare const ModalContainer: ({ children, className, ...props }: React.ComponentProps<typeof ModalRoot> & {
     className?: string;
 }) => import("react").JSX.Element;
-declare const ModalContentDivider: import("@emotion/styled").StyledComponent<Omit<Omit<import("@radix-ui/react-separator").SeparatorProps & import("react").RefAttributes<HTMLDivElement>, "ref">, "orientation"> & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "p" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderRadius" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "size" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+declare const ModalContentDivider: import("@emotion/styled").StyledComponent<Omit<Omit<import("@radix-ui/react-separator").SeparatorProps & import("react").RefAttributes<HTMLDivElement>, "ref">, "orientation"> & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "p" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "pt" | "pr" | "pb" | "pl" | "px" | "py" | "size">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;

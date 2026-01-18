@@ -33,6 +33,11 @@ Before creating any new styled components or UI elements:
    cd packages/ui && yarn storybook
    ```
 
+6. **Avoid Custom Headers** - Use shared components where available:
+   - Chart headers: use `SChartHeader` from `apps/main/src/modules/stats/components/ChartLayout.tsx`
+   - Section titles: use `SectionHeader` from `@galacticcouncil/ui/components`
+   - Table headers: use `TableHead` / `TableHeader` from `@galacticcouncil/ui/components` (avoid custom header rows)
+
 ## Design Fidelity & Implementation
 - When implementing, precisely compare the styling, parameters, and focus on details when comparing.
 - This applies especially when Figma Design is provided or when using an available component from the library.

@@ -20,7 +20,7 @@ export const SSectionHeader = styled(Box)<{
 
     ${mq("sm")} {
       padding-inline: 0;
-      padding-top: 0;
+      padding-top: ${theme.scales.paddings.m}px;
       padding-bottom: ${hasDescription
         ? 0
         : theme.containers.paddings.tertiary}px;

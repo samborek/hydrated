@@ -15,24 +15,10 @@ import {
 
 import { ChartTooltipContent } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
+import { SChartHeader } from "./ChartLayout"
 
 const SChartContainer = styled.div`
   width: 100%;
-`
-
-const SChartHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.scales.paddings.m}px;
-  margin-bottom: ${({ theme }) => theme.scales.paddings.l}px;
-
-  @media (max-width: 576px) {
-    flex-direction: column-reverse;
-    align-items: stretch;
-    gap: ${({ theme }) => theme.scales.paddings.l}px;
-  }
 `
 
 const SControlsGroup = styled.div`

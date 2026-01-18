@@ -12,17 +12,12 @@ import {
 
 import { getFeeColors } from "@/modules/stats/utils/feeColors"
 
+import { SChartHeader } from "./ChartLayout"
+
 const SChartContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-`
-
-const SChartHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: ${({ theme }) => theme.scales.paddings.m}px;
 `
 
 const SChartWrapper = styled.div`
@@ -354,7 +349,12 @@ export const FeeFlowChart: FC<Props> = ({ title = "Fee Flow" }) => {
 
   return (
     <SChartContainer>
-      <SChartHeader>
+      <SChartHeader
+        $align="flex-start"
+        $marginBottom="m"
+        $wrap={false}
+        $enableMobile={false}
+      >
         <ValueStats
           label={title}
           customValue={

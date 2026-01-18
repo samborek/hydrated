@@ -1,0 +1,1 @@
+export { RuntimeErrorBoundary } from "./RuntimeErrorBoundary"

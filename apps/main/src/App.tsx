@@ -7,6 +7,7 @@ import { createRouter, RouterProvider } from "@tanstack/react-router"
 import { Toaster } from "sonner"
 
 import { ProvideRpcResolver } from "@/components/ProviderRpcSelect/ProviderRpcResolver"
+import { RuntimeErrorBoundary } from "@/components/RuntimeErrorBoundary"
 import i18n from "@/i18n"
 import { AssetsProvider } from "@/providers/assetsProvider"
 import { RpcProvider } from "@/providers/rpcProvider"
@@ -45,22 +46,24 @@ declare module "@tanstack/react-router" {
 
 export const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <UiProvider>
-        <ThemeProvider>
-          <ProvideRpcResolver>
-            <AssetsProvider>
-              <RpcProvider>
-                <TooltipProvider delayDuration={0}>
-                  <RouterProvider router={router} />
-                  <Toaster />
-                </TooltipProvider>
-              </RpcProvider>
-            </AssetsProvider>
-          </ProvideRpcResolver>
-        </ThemeProvider>
-      </UiProvider>
-    </QueryClientProvider>
+    <RuntimeErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <UiProvider>
+          <ThemeProvider>
+            <ProvideRpcResolver>
+              <AssetsProvider>
+                <RpcProvider>
+                  <TooltipProvider delayDuration={0}>
+                    <RouterProvider router={router} />
+                    <Toaster />
+                  </TooltipProvider>
+                </RpcProvider>
+              </AssetsProvider>
+            </ProvideRpcResolver>
+          </ThemeProvider>
+        </UiProvider>
+      </QueryClientProvider>
+    </RuntimeErrorBoundary>
   )
 }
 

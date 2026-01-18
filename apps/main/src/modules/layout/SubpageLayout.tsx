@@ -34,7 +34,8 @@ const SStickyTabsWrapper = styled.div<SStickyTabsWrapperProps>(
     padding-left: var(--layout-gutter);
     padding-right: var(--layout-gutter);
 
-    transition: top 0.3s ease-in-out;
+    /* Match header's transition timing */
+    transition: top 0.3s linear;
 
     ${mq(TOP_NAVBAR_BREAKPOINT)} {
       top: ${$headerVisible ? HEADER_HEIGHT : 0}px;

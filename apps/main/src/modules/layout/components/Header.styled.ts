@@ -30,7 +30,7 @@ export const SHeader = styled.header<SHeaderProps>(
     border-color: ${theme.details.separators};
     background: ${theme.surfaces.themeBasePalette.background};
 
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s linear;
     transform: translateY(${$hidden ? "-100%" : "0"});
 
     ${mq(TOP_NAVBAR_BREAKPOINT)} {

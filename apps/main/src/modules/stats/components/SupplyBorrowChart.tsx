@@ -15,6 +15,7 @@ import {
 
 import { ChartTooltipContent } from "./StatsChartTooltip"
 import { SChartHeader } from "./ChartLayout"
+import { getFeeColors } from "../utils/feeColors"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -92,6 +93,8 @@ export const SupplyBorrowChart: FC = () => {
   const { themeProps: theme } = useTheme()
   const [timeRange, setTimeRange] = useState<TimeRange>("30D")
 
+  const { liquidityFees: supplyColor, supplyBorrowFees: borrowColor } =
+    getFeeColors(theme)
 
   // Generate data once with useMemo to avoid regenerating on every render
   const chartData = useMemo(() => generateSupplyBorrowData(), [])
@@ -114,7 +117,7 @@ export const SupplyBorrowChart: FC = () => {
               <Text
                 fs={28}
                 fw={700}
-                color="#22C55E"
+                color={supplyColor}
                 style={{ fontFamily: "Gazpacho, sans-serif", lineHeight: 1 }}
               >
                 ${currentData?.supply.toFixed(1)}M
@@ -130,7 +133,7 @@ export const SupplyBorrowChart: FC = () => {
               <Text
                 fs={28}
                 fw={700}
-                color="#F59E0B"
+                color={borrowColor}
                 style={{ fontFamily: "Gazpacho, sans-serif", lineHeight: 1 }}
               >
                 ${currentData?.borrow.toFixed(1)}M
@@ -157,12 +160,12 @@ export const SupplyBorrowChart: FC = () => {
         >
           <defs>
             <linearGradient id="supplyGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#22C55E" stopOpacity={0.6} />
-              <stop offset="95%" stopColor="#22C55E" stopOpacity={0.1} />
+              <stop offset="5%" stopColor={supplyColor} stopOpacity={0.6} />
+              <stop offset="95%" stopColor={supplyColor} stopOpacity={0.1} />
             </linearGradient>
             <linearGradient id="borrowGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.6} />
-              <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
+              <stop offset="5%" stopColor={borrowColor} stopOpacity={0.6} />
+              <stop offset="95%" stopColor={borrowColor} stopOpacity={0.1} />
             </linearGradient>
           </defs>
           <CartesianGrid
@@ -196,7 +199,7 @@ export const SupplyBorrowChart: FC = () => {
           <Area
             type="monotone"
             dataKey="supply"
-            stroke="#22C55E"
+            stroke={supplyColor}
             fill="url(#supplyGrad)"
             strokeWidth={2}
             name="Supply"
@@ -204,7 +207,7 @@ export const SupplyBorrowChart: FC = () => {
           <Area
             type="monotone"
             dataKey="borrow"
-            stroke="#F59E0B"
+            stroke={borrowColor}
             fill="url(#borrowGrad)"
             strokeWidth={2}
             name="Borrow"
@@ -214,13 +217,13 @@ export const SupplyBorrowChart: FC = () => {
 
       <SLegendRow>
         <SLegendItem>
-          <SLegendDot $color="#22C55E" />
+          <SLegendDot $color={supplyColor} />
           <Text fs={12} color={theme.text.low}>
             Supply
           </Text>
         </SLegendItem>
         <SLegendItem>
-          <SLegendDot $color="#F59E0B" />
+          <SLegendDot $color={borrowColor} />
           <Text fs={12} color={theme.text.low}>
             Borrow
           </Text>

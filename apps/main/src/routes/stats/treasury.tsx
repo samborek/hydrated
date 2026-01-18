@@ -8,6 +8,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { OmnipoolTable } from "@/modules/stats/components/OmnipoolTable"
 import { StatsHeader } from "@/modules/stats/components/StatsHeader"
 import { TreasuryChart } from "@/modules/stats/components/TreasuryChart"
+import { getFeeColors } from "@/modules/stats/utils/feeColors"
 
 const SPageContainer = styled.div`
   display: flex;
@@ -37,11 +38,12 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
 
 function TreasuryStats() {
   const { themeProps: theme } = useTheme()
+  const { treasury: treasuryColor } = getFeeColors(theme)
   const stats = [
     {
       label: "Total Treasury Value",
       value: "$2,852,500",
-      valueColor: theme.details.values.positive,
+      valueColor: treasuryColor,
     },
     { label: "LP Positions Value", value: "$1,200,000" },
     { label: "Staked Assets Value", value: "$225,000" },

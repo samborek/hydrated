@@ -16,6 +16,7 @@ import {
 import { ChartTooltipContent } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
 import { SChartHeader } from "./ChartLayout"
+import { getFeeColors } from "../utils/feeColors"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -78,6 +79,7 @@ export const TreasuryChart: FC<Props> = ({
   value = "$2.85M",
 }) => {
   const { themeProps: theme } = useTheme()
+  const { treasury: treasuryColor } = getFeeColors(theme)
   const [timeRange, setTimeRange] = useState<TimeRange>("30D")
 
   // Generate data once with useMemo to avoid regenerating on every render
@@ -98,7 +100,7 @@ export const TreasuryChart: FC<Props> = ({
             <Text
               fs={28}
               fw={700}
-              color={theme.text.tint.secondary}
+              color={treasuryColor}
               style={{ fontFamily: "Gazpacho, sans-serif", lineHeight: 1 }}
             >
               {value}
@@ -126,12 +128,12 @@ export const TreasuryChart: FC<Props> = ({
             <linearGradient id="treasuryGrad" x1="0" y1="0" x2="0" y2="1">
               <stop
                 offset="5%"
-                stopColor={theme.text.tint.secondary}
+                stopColor={treasuryColor}
                 stopOpacity={0.6}
               />
               <stop
                 offset="95%"
-                stopColor={theme.text.tint.secondary}
+                stopColor={treasuryColor}
                 stopOpacity={0.1}
               />
             </linearGradient>
@@ -167,7 +169,7 @@ export const TreasuryChart: FC<Props> = ({
           <Area
             type="monotone"
             dataKey="value"
-            stroke={theme.text.tint.secondary}
+            stroke={treasuryColor}
             fill="url(#treasuryGrad)"
             strokeWidth={2}
           />

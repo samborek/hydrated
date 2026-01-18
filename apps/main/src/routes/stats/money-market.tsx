@@ -8,6 +8,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { MarketsTable } from "@/modules/stats/components/MarketsTable"
 import { StatsHeader } from "@/modules/stats/components/StatsHeader"
 import { SupplyBorrowChart } from "@/modules/stats/components/SupplyBorrowChart"
+import { getFeeColors } from "@/modules/stats/utils/feeColors"
 
 const SPageContainer = styled.div`
   display: flex;
@@ -37,21 +38,24 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
 
 function MoneyMarketStats() {
   const { themeProps: theme } = useTheme()
+  const { liquidityFees: supplyColor, supplyBorrowFees: borrowColor } =
+    getFeeColors(theme)
+  const moneyMarketColor = theme.colors.azureBlue[500]
   const stats = [
     {
       label: "Total Value Locked",
       value: "$12.6M",
-      valueColor: theme.colors.utility.warningPrimary["500"],
+      valueColor: moneyMarketColor,
     },
     {
       label: "Total Supplied",
       value: "$12.6M",
-      valueColor: theme.details.values.positive,
+      valueColor: supplyColor,
     },
     {
       label: "Total Borrowed",
       value: "$7.5M",
-      valueColor: theme.colors.utility.warningPrimary["500"],
+      valueColor: borrowColor,
     },
     {
       label: "Liquidations (24h)",

@@ -39,3 +39,20 @@ export const getFeeColors = (theme: ThemeProps) => ({
   protocol: theme.secondaryColors.blues.deepBlue,
   referrersAndStakers: theme.accents.alertAlt.primary,
 })
+
+/**
+ * TVL chart colors.
+ *
+ * NOTE: Kept in this module intentionally so "stats chart colors" stay centralized.
+ * (This file historically started as fee colors, but it's now the shared palette source.)
+ */
+export const getTvlColors = (theme: ThemeProps) => ({
+  omnipool: theme.text.tint.secondary,
+
+  // TODO: migrate remaining hardcoded colors to theme tokens
+  stablePools: "#22C55E",
+  xykPools: "#A855F7",
+
+  // Requested token: colors.azureBlue.500
+  moneyMarket: theme.colors.azureBlue[500],
+})

@@ -16,6 +16,7 @@ import {
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 import { SChartHeader } from "./ChartLayout"
+import { getTvlColors } from "../utils/feeColors"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -137,12 +138,7 @@ export const TVLCompositionChart: FC<Props> = ({
 
   const { themeProps: theme } = useTheme()
 
-  const COLORS = {
-    omnipool: theme.text.tint.secondary,
-    stablePools: '#22C55E',
-    moneyMarket: '#F59E0B',
-    xykPools: '#A855F7',
-  }
+  const COLORS = getTvlColors(theme)
 
   return (
     <SChartContainer>

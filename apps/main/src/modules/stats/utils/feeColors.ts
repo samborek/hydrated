@@ -2,7 +2,7 @@ import { ThemeProps } from "@galacticcouncil/ui/theme"
 
 export const getFeeColors = (theme: ThemeProps) => ({
   // High-level groups
-  networkFees: theme.secondaryColors.blues.blueViolet,
+  networkFees: theme.colors.basePalette.lavender,
   tradingFees: theme.secondaryColors.blues.vibrantBlue,
   liquidityFees: theme.accents.success.primary,
   supplyBorrowFees: theme.accents.alertAlt.primary,

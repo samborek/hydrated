@@ -27,6 +27,9 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
     border: 1px solid ${theme.details.borders};
     border-radius: 16px;
     padding: ${theme.containers.paddings.primary}px;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
 
     @media (max-width: 576px) {
       padding: ${hasHeader ? 0 : theme.containers.paddings.secondary}px
@@ -40,6 +43,12 @@ const SFeesOverviewGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 520px;
   gap: 24px;
+  width: 100%;
+  min-width: 0;
+
+  > * {
+    min-width: 0;
+  }
 
   @media (max-width: 1400px) {
     grid-template-columns: 1fr;

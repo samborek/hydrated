@@ -24,7 +24,15 @@ export const useScrollDirection = (threshold = 10, scrollStopDelay = 150) => {
         return
       }
 
-      setScrollDirection(scrollY > lastScrollY ? "down" : "up")
+      // If scrolling up, only show header if we're near the top
+      if (scrollY < lastScrollY) {
+        if (scrollY < threshold * 2) {
+          setScrollDirection("up")
+        }
+      } else {
+        setScrollDirection("down")
+      }
+
       lastScrollY = scrollY > 0 ? scrollY : 0
       ticking = false
     }

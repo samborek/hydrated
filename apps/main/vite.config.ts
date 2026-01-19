@@ -33,6 +33,13 @@ export default defineConfig({
   define: {
     global: "globalThis",
   },
+  server: {
+    host: true, // Allow external connections
+    allowedHosts: [
+      ".trycloudflare.com", // Allow all Cloudflare tunnel domains
+      "localhost",
+    ],
+  },
   build: {
     target: "es2022",
     outDir: "dist",

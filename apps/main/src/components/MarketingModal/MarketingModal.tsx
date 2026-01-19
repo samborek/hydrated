@@ -242,14 +242,24 @@ const SCloseButton = styled.div`
   right: 0;
   z-index: 11;
   padding: var(--modal-content-padding);
+
+  button {
+    color: ${({ theme }) => theme.icons.primary} !important;
+
+    svg {
+      color: ${({ theme }) => theme.icons.primary} !important;
+    }
+  }
 `
 
 // Hero section configuration - adjust these values to control layout
 const HERO_CONFIG = {
   imageHeight: 387, // Total height of the hero image area (desktop)
   imageHeightMobile: 280, // Total height on mobile
-  imageFadeStart: 60, // Percentage where fade starts (higher = more visible image)
-  imageFadeEnd: 100, // Percentage where fade ends
+  imageFadeStart: 60, // Percentage where fade starts (higher = more visible image) - desktop
+  imageFadeEnd: 100, // Percentage where fade ends - desktop
+  imageFadeStartMobile: 40, // Percentage where fade starts on mobile (lower = fade starts earlier, more visible)
+  imageFadeEndMobile: 80, // Percentage where fade ends on mobile (lower = fade ends earlier, more visible)
   textOverlap: 60, // How much the text section overlaps into the hero image (negative margin)
   textOverlapMobile: 40, // Overlap on mobile
   textGap: 8, // Gap between title and subtitle
@@ -283,15 +293,30 @@ const SHeroShader = styled.div`
   mask-image: linear-gradient(
     180deg,
     black 0%,
-    black ${HERO_CONFIG.imageFadeStart}%,
-    transparent ${HERO_CONFIG.imageFadeEnd}%
+    black ${HERO_CONFIG.imageFadeStartMobile}%,
+    transparent ${HERO_CONFIG.imageFadeEndMobile}%
   );
   -webkit-mask-image: linear-gradient(
     180deg,
     black 0%,
-    black ${HERO_CONFIG.imageFadeStart}%,
-    transparent ${HERO_CONFIG.imageFadeEnd}%
+    black ${HERO_CONFIG.imageFadeStartMobile}%,
+    transparent ${HERO_CONFIG.imageFadeEndMobile}%
   );
+
+  ${mq("sm")} {
+    mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black ${HERO_CONFIG.imageFadeStart}%,
+      transparent ${HERO_CONFIG.imageFadeEnd}%
+    );
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black ${HERO_CONFIG.imageFadeStart}%,
+      transparent ${HERO_CONFIG.imageFadeEnd}%
+    );
+  }
 `
 
 const SHeroTextSection = styled.div<{ $overlap?: number; $gap?: number }>`
@@ -397,7 +422,7 @@ const MarketingModalContent: FC<Props> = ({
       page,
       setPage,
       squidSdk,
-      onAccountSelect: () => {},
+      onAccountSelect: () => { },
       mode: WalletMode.Default,
       onBackToParent: handleBackToIntro,
     }),
@@ -479,7 +504,7 @@ const MarketingModalContent: FC<Props> = ({
                 <SCloseButton>
                   <ModalCloseTrigger asChild>
                     <ButtonIcon>
-                      <Icon component={Close} size={20} />
+                      <Icon component={Close} size={20} color="icons.primary" />
                     </ButtonIcon>
                   </ModalCloseTrigger>
                 </SCloseButton>
@@ -816,5 +841,6 @@ const MarketingModalContent: FC<Props> = ({
 export const MarketingModal: FC<Props> = (props) => {
   if (!props.open) return null
 
-  return <MarketingModalContent {...props} />
+  // Key forces complete remount when modal opens, ensuring fresh WebGL context
+  return <MarketingModalContent key={`modal-${Date.now()}`} {...props} />
 }

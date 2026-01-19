@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import styled from "@emotion/styled"
 
 const SContainer = styled.div`
@@ -31,11 +31,9 @@ const SSceneWrapper = styled.div`
     height: 100% !important;
     display: block;
     background: transparent;
-    /* Use browser's default smooth rendering for WebGL */
     image-rendering: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Force hardware acceleration for smoother rendering */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
@@ -78,95 +76,156 @@ declare global {
   }
 }
 
+// Check if WebGL is available
+const isWebGLAvailable = (): boolean => {
+  try {
+    const canvas = document.createElement("canvas")
+    const gl =
+      canvas.getContext("webgl") || canvas.getContext("experimental-webgl")
+    return gl !== null
+  } catch {
+    return false
+  }
+}
+
+// Unique ID generator that's stable across re-renders but unique per mount
+let instanceCounter = 0
+
 export const HalftoneShader: React.FC<HalftoneShaderProps> = ({ className }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const sceneRef = useRef<UnicornScene | null>(null)
-  const elementId = useId().replace(/:/g, "")
+  const initAttemptRef = useRef(0)
+  const [instanceId] = useState(() => `halftone-${++instanceCounter}`)
+  const [isReady, setIsReady] = useState(false)
+  const [hasError, setHasError] = useState(false)
+  const mountedRef = useRef(true)
+
+  const elementId = `unicorn-scene-${instanceId}`
+
+  const isMobile =
+    typeof navigator !== "undefined" &&
+    (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+      (typeof window !== "undefined" && window.innerWidth < 768))
+
+  const initScene = useCallback(async () => {
+    const wrapper = wrapperRef.current
+    if (!wrapper || !mountedRef.current) return false
+
+    // Check WebGL support
+    if (!isWebGLAvailable()) {
+      console.warn("WebGL not available on this device")
+      setHasError(true)
+      return false
+    }
+
+    try {
+      // Clear any existing content
+      wrapper.innerHTML = ""
+
+      // Wait for SDK to be ready
+      if (!window.UnicornStudio) {
+        // Load the SDK if not already loaded
+        const existing = document.querySelector<HTMLScriptElement>(
+          'script[data-unicornstudio-sdk="true"]',
+        )
+
+        if (!existing) {
+          const script = document.createElement("script")
+          script.src = "/unicornStudio.umd.js"
+          script.async = true
+          script.setAttribute("data-unicornstudio-sdk", "true")
+          document.head.appendChild(script)
+
+          await new Promise<void>((resolve, reject) => {
+            script.onload = () => resolve()
+            script.onerror = () => reject(new Error("Failed to load SDK"))
+          })
+        } else {
+          // Wait a bit for SDK to initialize
+          await new Promise((r) => setTimeout(r, 100))
+        }
+      }
+
+      if (!window.UnicornStudio || !mountedRef.current) {
+        console.error("Unicorn Studio SDK not available")
+        return false
+      }
+
+      // Determine optimal settings for device
+      const devicePixelRatio = window.devicePixelRatio || 1
+      let targetDpi = 1.2
+      if (devicePixelRatio >= 3) {
+        targetDpi = Math.min(2.0, devicePixelRatio * 0.7)
+      } else if (devicePixelRatio >= 2) {
+        targetDpi = Math.min(1.8, devicePixelRatio * 0.8)
+      }
+
+      // Lower settings for mobile
+      const targetFps = isMobile ? 24 : 60
+      const targetScale = isMobile ? 0.8 : 1
+
+      const scene = await window.UnicornStudio.addScene({
+        elementId,
+        fps: targetFps,
+        scale: targetScale,
+        dpi: targetDpi,
+        filePath: "/halftone-effect.json",
+        interactivity: {
+          mouse: {
+            disableMobile: true,
+            disabled: true,
+          },
+        },
+      })
+
+      if (!mountedRef.current) {
+        // Component unmounted during init, clean up
+        try {
+          scene.destroy()
+        } catch { }
+        return false
+      }
+
+      sceneRef.current = scene
+      setIsReady(true)
+      setHasError(false)
+      return true
+    } catch (err) {
+      console.error("Failed to initialize Unicorn Studio scene:", err)
+      if (mountedRef.current) {
+        setHasError(true)
+      }
+      return false
+    }
+  }, [elementId, isMobile])
 
   useEffect(() => {
+    mountedRef.current = true
     const container = containerRef.current
     const wrapper = wrapperRef.current
     if (!container || !wrapper) return
 
-    // Detect device capabilities for optimal rendering
-    const devicePixelRatio = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
-                     (typeof window !== "undefined" && window.innerWidth < 768)
-    
-    // Adjust DPI based on device pixel ratio and device type
-    // Higher DPR devices (mobile) need higher DPI for crisp rendering
-    // Cap at 2.5 to balance quality and performance
-    let targetDpi = 1.5
-    if (devicePixelRatio >= 3) {
-      // Very high DPR (e.g., iPhone Retina displays)
-      targetDpi = Math.min(2.5, devicePixelRatio * 0.8)
-    } else if (devicePixelRatio >= 2) {
-      // High DPR (most modern mobile devices)
-      targetDpi = Math.min(2.0, devicePixelRatio * 0.9)
-    } else if (devicePixelRatio >= 1.5) {
-      // Medium DPR
-      targetDpi = 1.5
-    } else {
-      // Standard DPR (most desktops)
-      targetDpi = 1.2
-    }
+    // Reset state
+    setIsReady(false)
+    setHasError(false)
+    initAttemptRef.current = 0
 
-    // Adjust FPS for mobile to improve performance
-    const targetFps = isMobile ? 30 : 60
+    // Small delay before init to ensure DOM is ready
+    const initTimer = setTimeout(async () => {
+      const maxAttempts = isMobile ? 3 : 1
 
-    // Load Unicorn Studio SDK
-    const loadSDK = async () => {
-      if (!window.UnicornStudio) {
-        const existing = document.querySelector<HTMLScriptElement>(
-          'script[data-unicornstudio-sdk="true"]',
-        )
-        const script =
-          existing ??
-          Object.assign(document.createElement("script"), {
-            src: "/unicornStudio.umd.js",
-            async: true,
-          })
+      for (let i = 0; i < maxAttempts && mountedRef.current; i++) {
+        initAttemptRef.current = i + 1
+        const success = await initScene()
+        if (success) break
 
-        if (!existing) {
-          script.setAttribute("data-unicornstudio-sdk", "true")
-          document.head.appendChild(script)
+        // Wait before retry on mobile
+        if (i < maxAttempts - 1) {
+          await new Promise((r) => setTimeout(r, 500))
         }
-
-        await new Promise<void>((resolve, reject) => {
-          script.onload = () => resolve()
-          script.onerror = () =>
-            reject(new Error("Failed to load Unicorn Studio SDK"))
-        })
       }
-
-      if (!window.UnicornStudio) {
-        console.error("Unicorn Studio SDK not available")
-        return
-      }
-
-      try {
-        const scene = await window.UnicornStudio.addScene({
-          elementId,
-          fps: targetFps,
-          scale: 1,
-          dpi: targetDpi,
-          filePath: "/halftone-effect.json",
-          interactivity: {
-            mouse: {
-              disableMobile: true,
-              disabled: true,
-            },
-          },
-        })
-
-        sceneRef.current = scene
-      } catch (err) {
-        console.error("Failed to initialize Unicorn Studio scene:", err)
-      }
-    }
-
-    loadSDK()
+    }, isMobile ? 200 : 50)
 
     // Handle scaling to cover
     const handleResize = () => {
@@ -175,10 +234,8 @@ export const HalftoneShader: React.FC<HalftoneShaderProps> = ({ className }) => 
       const ch = container.clientHeight
       const tw = 1440
       const th = 900
-      
-      // Scale to cover, ensuring we fill the container completely
+
       const scale = Math.max(cw / tw, ch / th)
-      
       wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`
     }
 
@@ -187,17 +244,38 @@ export const HalftoneShader: React.FC<HalftoneShaderProps> = ({ className }) => 
     handleResize()
 
     return () => {
+      mountedRef.current = false
+      clearTimeout(initTimer)
       ro.disconnect()
+
       if (sceneRef.current) {
-        sceneRef.current.destroy()
+        try {
+          sceneRef.current.destroy()
+        } catch (e) {
+          console.warn("Error destroying scene:", e)
+        }
         sceneRef.current = null
       }
+
+      // Clear wrapper contents
+      if (wrapperRef.current) {
+        wrapperRef.current.innerHTML = ""
+      }
     }
-  }, [elementId])
+  }, [initScene, isMobile])
 
   return (
     <SContainer ref={containerRef} className={className}>
-      <SSceneWrapper id={elementId} ref={wrapperRef} />
+      <SSceneWrapper
+        id={elementId}
+        ref={wrapperRef}
+        style={{
+          // Hide wrapper until ready to prevent white flash
+          opacity: isReady ? 1 : 0,
+          transition: "opacity 0.3s ease-in-out",
+        }}
+      />
+      {/* Show nothing while loading - background shows through */}
     </SContainer>
   )
 }

@@ -10,6 +10,8 @@
     "dev": "turbo dev",
     "dev:production": "turbo dev:production",
     "preview": "turbo preview",
+    "preview:tunnel": "yarn build && yarn preview & cloudflared tunnel --url http://localhost:4173",
+    "dev:tunnel": "yarn dev & cloudflared tunnel --url http://localhost:5173",
     "lint": "turbo lint",
     "i18n": "turbo i18n",
     "postinstall": "papi"

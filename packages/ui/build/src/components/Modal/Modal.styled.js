@@ -144,7 +144,10 @@ export const SModalTitleContainer = styled(Flex) `
   min-height: var(--modal-header-button-size);
 `;
 export const SModalBody = styled(Box) `
-  padding: ${({ noPadding }) => noPadding ? 0 : "var(--modal-content-padding)"};
+  padding-top: ${({ noPadding }) => noPadding ? 0 : "var(--modal-content-padding)"};
+  padding-bottom: ${({ noPadding }) => noPadding ? 0 : "var(--modal-content-padding)"};
+  padding-left: ${({ noPadding }) => noPadding ? 0 : "var(--modal-content-padding)"};
+  padding-right: ${({ noPadding }) => noPadding ? 0 : "var(--modal-content-padding)"};
 
   flex: 1;
 

@@ -9,7 +9,7 @@ import {
   Stepper,
 } from "@galacticcouncil/ui/components"
 import { Button, ButtonIcon, Icon, Text } from "@galacticcouncil/ui/components"
-import { useTheme } from "@galacticcouncil/ui/theme"
+import { mq, useTheme } from "@galacticcouncil/ui/theme"
 import {
   AccountSelectContent,
   ErrorContent,
@@ -71,6 +71,12 @@ const SReviewContent = styled.div`
   padding-left: 12px;
   padding-right: 12px;
   overflow: visible;
+  min-height: 0;
+
+  ${mq("sm")} {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 `
 
 const SFeatureRow = styled.div`
@@ -191,6 +197,10 @@ const contentMap: Record<Web3ConnectModalPage, React.ReactNode> = {
 
 const SIntroWrapper = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
 
   && {
     [class*="Paper"] {
@@ -198,6 +208,10 @@ const SIntroWrapper = styled.div`
       border-top-left-radius: 16px !important;
       border-top-right-radius: 16px !important;
       max-width: 640px !important;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow-y: auto;
     }
 
     [class*="ModalHeader"],
@@ -205,6 +219,11 @@ const SIntroWrapper = styled.div`
     [class*="SHeroContent"],
     [class*="NoBorderWrapper"] {
       border-top: none !important;
+    }
+
+    [class*="ModalBody"] {
+      overflow-y: auto;
+      min-height: 0;
     }
   }
 `
@@ -227,20 +246,29 @@ const SCloseButton = styled.div`
 
 // Hero section configuration - adjust these values to control layout
 const HERO_CONFIG = {
-  imageHeight: 387, // Total height of the hero image area
+  imageHeight: 387, // Total height of the hero image area (desktop)
+  imageHeightMobile: 280, // Total height on mobile
   imageFadeStart: 60, // Percentage where fade starts (higher = more visible image)
   imageFadeEnd: 100, // Percentage where fade ends
   textOverlap: 60, // How much the text section overlaps into the hero image (negative margin)
+  textOverlapMobile: 40, // Overlap on mobile
   textGap: 8, // Gap between title and subtitle
 }
 
 const SHeroImageSection = styled.div<{ $height?: number }>`
   position: relative;
   width: 100%;
-  height: ${({ $height }) => $height ?? HERO_CONFIG.imageHeight}px;
+  height: ${({ $height }) => $height ?? HERO_CONFIG.imageHeightMobile}px;
   border-radius: 16px 16px 0 0;
   overflow: hidden;
   flex-shrink: 0;
+  background: transparent;
+  isolation: isolate;
+  contain: layout style paint;
+
+  ${mq("sm")} {
+    height: ${({ $height }) => $height ?? HERO_CONFIG.imageHeight}px;
+  }
 `
 
 const SHeroShader = styled.div`
@@ -249,6 +277,9 @@ const SHeroShader = styled.div`
   width: 100%;
   height: 100%;
   pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+  clip-path: inset(0 round 16px 16px 0 0);
   mask-image: linear-gradient(
     180deg,
     black 0%,
@@ -271,10 +302,43 @@ const SHeroTextSection = styled.div<{ $overlap?: number; $gap?: number }>`
   flex-direction: column;
   align-items: center;
   gap: ${({ $gap }) => $gap ?? HERO_CONFIG.textGap}px;
-  margin-top: ${({ $overlap }) => -($overlap ?? HERO_CONFIG.textOverlap)}px;
-  padding-left: ${({ theme }) => theme.scales.paddings.xxxl}px;
-  padding-right: ${({ theme }) => theme.scales.paddings.xxxl}px;
+  margin-top: ${({ $overlap }) =>
+    -($overlap ?? HERO_CONFIG.textOverlapMobile)}px;
+  padding-left: ${({ theme }) => theme.scales.paddings.l}px;
+  padding-right: ${({ theme }) => theme.scales.paddings.l}px;
   box-sizing: border-box;
+
+  ${mq("sm")} {
+    margin-top: ${({ $overlap }) => -($overlap ?? HERO_CONFIG.textOverlap)}px;
+    padding-left: ${({ theme }) => theme.scales.paddings.xxxl}px;
+    padding-right: ${({ theme }) => theme.scales.paddings.xxxl}px;
+  }
+`
+
+const SHeroTitle = styled(Text)`
+  font-family: Gazpacho;
+  line-height: 24px;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 22px;
+
+  ${mq("sm")} {
+    font-size: 28px;
+    line-height: 30px;
+  }
+`
+
+const SHeroSubtitle = styled(Text)`
+  font-family: Geist;
+  line-height: 1.3;
+  text-align: center;
+  width: 483px;
+  max-width: 100%;
+  font-size: 12px;
+
+  ${mq("sm")} {
+    font-size: 14px;
+  }
 `
 
 const NoBorderWrapper = styled.div`
@@ -429,36 +493,14 @@ const MarketingModalContent: FC<Props> = ({
 
               {/* Hero Text - adjust $overlap to move text up/down, $gap for spacing */}
               <SHeroTextSection>
-                <Text
-                  fs={28}
-                  fw={500}
-                  color="text.high"
-                  style={{
-                    fontFamily: "Gazpacho",
-                    lineHeight: "30px",
-                    textAlign: "center",
-                    whiteSpace: "nowrap",
-                  }}
-                >
+                <SHeroTitle fw={500} color="text.high">
                   Ready to stack some sats?
-                </Text>
-                <Text
-                  fs={14}
-                  fw={400}
-                  color="text.high"
-                  style={{
-                    fontFamily: "Geist",
-                    lineHeight: 1.3,
-                    textAlign: "center",
-                    width: 483,
-                    maxWidth: "100%",
-                    fontSize: 14,
-                  }}
-                >
+                </SHeroTitle>
+                <SHeroSubtitle fw={400} color="text.high">
                   Time to get your hands on some real value. Whether you're
                   stacking BTC or hedging with PAX Gold, we've got you covered.
                   Let's get you set up in just a few clicks.
-                </Text>
+                </SHeroSubtitle>
               </SHeroTextSection>
               <NoBorderWrapper>
                 <ModalBody
@@ -467,6 +509,9 @@ const MarketingModalContent: FC<Props> = ({
                     zIndex: 1,
                     background: "transparent",
                     paddingTop: 0,
+                    overflowY: "auto",
+                    minHeight: 0,
+                    flex: "1 1 auto",
                   }}
                 >
                   <SReviewContent>
@@ -610,7 +655,7 @@ const MarketingModalContent: FC<Props> = ({
                         }}
                         onClick={() => onOpenChange(false)}
                       >
-                        Explore platform
+                        Skip
                       </Button>
                       <Button
                         variant="primary"

@@ -46,14 +46,14 @@ const SImageArea = styled.div`
   top: 0;
   right: 0;
   bottom: 0;
-  width: 240px;
-  background-image: url("/gold-rush.png");
+  width: 200px;
+  background-image: url("/hollar-cans.png");
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   border-radius: 0 8px 8px 0;
   overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent 0%, black 10%);
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 80%);
+  mask-image: linear-gradient(90deg, transparent 0%, black 20%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 60%);
 `
 
 const SCloseButton = styled(ButtonIcon)`
@@ -121,7 +121,7 @@ export const MarketingBanner: FC<Props> = ({ onOpen, onClose }) => {
             fontFamily: "Gazpacho",
           }}
         >
-          BTC / PAX Gold Trading
+          Ready to stack some sats?
         </Text>
         <Text
           fs={12}

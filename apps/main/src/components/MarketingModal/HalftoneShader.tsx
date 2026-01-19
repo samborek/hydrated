@@ -7,6 +7,10 @@ const SContainer = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: transparent;
+  border-radius: inherit;
+  clip-path: inset(0);
+  contain: strict;
 `
 
 const SSceneWrapper = styled.div`
@@ -17,11 +21,23 @@ const SSceneWrapper = styled.div`
   left: 50%;
   transform-origin: center center;
   pointer-events: none;
+  will-change: transform;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 
   canvas {
     width: 100% !important;
     height: 100% !important;
     display: block;
+    background: transparent;
+    /* Use browser's default smooth rendering for WebGL */
+    image-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Force hardware acceleration for smoother rendering */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
   }
 `
 
@@ -73,6 +89,32 @@ export const HalftoneShader: React.FC<HalftoneShaderProps> = ({ className }) => 
     const wrapper = wrapperRef.current
     if (!container || !wrapper) return
 
+    // Detect device capabilities for optimal rendering
+    const devicePixelRatio = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                     (typeof window !== "undefined" && window.innerWidth < 768)
+    
+    // Adjust DPI based on device pixel ratio and device type
+    // Higher DPR devices (mobile) need higher DPI for crisp rendering
+    // Cap at 2.5 to balance quality and performance
+    let targetDpi = 1.5
+    if (devicePixelRatio >= 3) {
+      // Very high DPR (e.g., iPhone Retina displays)
+      targetDpi = Math.min(2.5, devicePixelRatio * 0.8)
+    } else if (devicePixelRatio >= 2) {
+      // High DPR (most modern mobile devices)
+      targetDpi = Math.min(2.0, devicePixelRatio * 0.9)
+    } else if (devicePixelRatio >= 1.5) {
+      // Medium DPR
+      targetDpi = 1.5
+    } else {
+      // Standard DPR (most desktops)
+      targetDpi = 1.2
+    }
+
+    // Adjust FPS for mobile to improve performance
+    const targetFps = isMobile ? 30 : 60
+
     // Load Unicorn Studio SDK
     const loadSDK = async () => {
       if (!window.UnicornStudio) {
@@ -106,9 +148,9 @@ export const HalftoneShader: React.FC<HalftoneShaderProps> = ({ className }) => 
       try {
         const scene = await window.UnicornStudio.addScene({
           elementId,
-          fps: 60,
+          fps: targetFps,
           scale: 1,
-          dpi: 1.5,
+          dpi: targetDpi,
           filePath: "/halftone-effect.json",
           interactivity: {
             mouse: {
@@ -134,6 +176,7 @@ export const HalftoneShader: React.FC<HalftoneShaderProps> = ({ className }) => 
       const tw = 1440
       const th = 900
       
+      // Scale to cover, ensuring we fill the container completely
       const scale = Math.max(cw / tw, ch / th)
       
       wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`

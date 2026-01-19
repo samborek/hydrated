@@ -29,6 +29,7 @@ import { useSquidClient } from "@/api/provider"
 import { AssetLogo } from "@/components/AssetLogo"
 import { useAssets } from "@/providers/assetsProvider"
 
+import { HalftoneShader } from "./HalftoneShader"
 import { MarketingTradeForm } from "./MarketingTradeForm"
 
 const SCard = styled.div`
@@ -240,27 +241,26 @@ const SHeroImageSection = styled.div<{ $height?: number }>`
   border-radius: 16px 16px 0 0;
   overflow: hidden;
   flex-shrink: 0;
+`
 
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("/hollar-cans.png");
-    background-size: cover;
-    background-position: center top;
-    mask-image: linear-gradient(
-      180deg,
-      black 0%,
-      black ${HERO_CONFIG.imageFadeStart}%,
-      transparent ${HERO_CONFIG.imageFadeEnd}%
-    );
-    -webkit-mask-image: linear-gradient(
-      180deg,
-      black 0%,
-      black ${HERO_CONFIG.imageFadeStart}%,
-      transparent ${HERO_CONFIG.imageFadeEnd}%
-    );
-  }
+const SHeroShader = styled.div`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mask-image: linear-gradient(
+    180deg,
+    black 0%,
+    black ${HERO_CONFIG.imageFadeStart}%,
+    transparent ${HERO_CONFIG.imageFadeEnd}%
+  );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    black 0%,
+    black ${HERO_CONFIG.imageFadeStart}%,
+    transparent ${HERO_CONFIG.imageFadeEnd}%
+  );
 `
 
 const SHeroTextSection = styled.div<{ $overlap?: number; $gap?: number }>`
@@ -420,8 +420,12 @@ const MarketingModalContent: FC<Props> = ({
                   </ModalCloseTrigger>
                 </SCloseButton>
               </SHeaderWrapper>
-              {/* Hero Image - adjust $height to make image taller/shorter */}
-              <SHeroImageSection />
+              {/* Hero Shader - adjust $height to make shader taller/shorter */}
+              <SHeroImageSection>
+                <SHeroShader>
+                  <HalftoneShader />
+                </SHeroShader>
+              </SHeroImageSection>
 
               {/* Hero Text - adjust $overlap to move text up/down, $gap for spacing */}
               <SHeroTextSection>

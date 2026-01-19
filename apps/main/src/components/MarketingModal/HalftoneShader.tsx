@@ -98,7 +98,6 @@ export const HalftoneShader: React.FC<HalftoneShaderProps> = ({ className }) => 
   const initAttemptRef = useRef(0)
   const [instanceId] = useState(() => `halftone-${++instanceCounter}`)
   const [isReady, setIsReady] = useState(false)
-  const [hasError, setHasError] = useState(false)
   const mountedRef = useRef(true)
 
   const elementId = `unicorn-scene-${instanceId}`
@@ -115,7 +114,7 @@ export const HalftoneShader: React.FC<HalftoneShaderProps> = ({ className }) => 
     // Check WebGL support
     if (!isWebGLAvailable()) {
       console.warn("WebGL not available on this device")
-      setHasError(true)
+
       return false
     }
 
@@ -189,12 +188,12 @@ export const HalftoneShader: React.FC<HalftoneShaderProps> = ({ className }) => 
 
       sceneRef.current = scene
       setIsReady(true)
-      setHasError(false)
+
       return true
     } catch (err) {
       console.error("Failed to initialize Unicorn Studio scene:", err)
       if (mountedRef.current) {
-        setHasError(true)
+
       }
       return false
     }
@@ -208,7 +207,7 @@ export const HalftoneShader: React.FC<HalftoneShaderProps> = ({ className }) => 
 
     // Reset state
     setIsReady(false)
-    setHasError(false)
+
     initAttemptRef.current = 0
 
     // Small delay before init to ensure DOM is ready

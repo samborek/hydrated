@@ -1,13 +1,15 @@
 import { css, Global } from "@emotion/react"
 import styled from "@emotion/styled"
-import { AssetIcon } from "@galacticcouncil/ui/assets/icons"
+import { AssetIcon, Close } from "@galacticcouncil/ui/assets/icons"
 import {
   Modal,
   ModalBody,
+  ModalCloseTrigger,
   ModalHeader,
   Stepper,
 } from "@galacticcouncil/ui/components"
-import { Button, Icon, Text } from "@galacticcouncil/ui/components"
+import { Button, ButtonIcon, Icon, Text } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import {
   AccountSelectContent,
   ErrorContent,
@@ -20,33 +22,110 @@ import {
   Web3ConnectModalPage,
   Web3ConnectProvider,
 } from "@galacticcouncil/web3-connect"
-import { ArrowRight, Check } from "lucide-react"
+import { ArrowRight, Coins, Sparkles } from "lucide-react"
 import { FC, useEffect, useMemo, useState } from "react"
 
 import { useSquidClient } from "@/api/provider"
+import { AssetLogo } from "@/components/AssetLogo"
+import { useAssets } from "@/providers/assetsProvider"
 
 import { MarketingTradeForm } from "./MarketingTradeForm"
 
 const SCard = styled.div`
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  padding: 16px;
-  flex: 1;
+  &&&& {
+    background: transparent;
+    border: 1px solid ${({ theme }) => theme.details.borders};
+    border-top: 1px solid ${({ theme }) => theme.details.borders};
+    border-radius: ${({ theme }) => theme.scales.cornerRadius.m}px;
+    padding: ${({ theme }) => theme.containers.paddings.secondary}px;
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    gap: ${({ theme }) => theme.scales.paddings.m}px;
+    min-width: 0;
+    overflow: hidden;
+  }
+`
+
+const SCardText = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
+  min-width: 0;
 `
 
 const SRow = styled.div`
   display: flex;
-  gap: 12px;
+  gap: ${({ theme }) => theme.scales.paddings.base}px;
+  width: 100%;
 `
 
-const SListItem = styled.div`
+const SReviewContent = styled.div`
   display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.scales.paddings.l}px;
+  width: 100%;
+  padding: ${({ theme }) => theme.containers.paddings.primary}px
+    ${({ theme }) => theme.scales.paddings.xxxl}px;
+  overflow: visible;
+`
+
+const SFeatureRow = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.scales.paddings.l}px;
   align-items: center;
-  gap: 8px;
+  padding: ${({ theme }) => theme.scales.paddings.base}px 0;
+  width: 100%;
+  min-width: 0;
+`
+
+const SFeatureIcon = styled.div`
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+`
+
+const SFeatureText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.scales.paddings.xs}px;
+  min-width: 0;
+  flex: 1;
+`
+
+const SFeatureDivider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: ${({ theme }) => theme.details.separators};
+`
+
+const SFullWidthDivider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: ${({ theme }) => theme.details.separators};
+  margin: 0;
+`
+
+const SModalActions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  margin-top: ${({ theme }) => theme.scales.paddings.s}px;
+  width: 100%;
+`
+
+const SModalActionsRow = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.scales.paddings.xl}px;
+  width: 100%;
+  padding: ${({ theme }) => theme.containers.paddings.primary}px
+    ${({ theme }) => theme.scales.paddings.xxxl}px;
+  box-sizing: border-box;
+  justify-content: stretch;
 `
 
 const SOptionCard = styled.button`
@@ -113,12 +192,15 @@ const SIntroWrapper = styled.div`
   && {
     [class*="Paper"] {
       border-top: none !important;
-      border-top-left-radius: 12px !important;
-      border-top-right-radius: 12px !important;
+      border-top-left-radius: 16px !important;
+      border-top-right-radius: 16px !important;
       max-width: 640px !important;
     }
 
-    * {
+    [class*="ModalHeader"],
+    [class*="ModalBody"],
+    [class*="SHeroContent"],
+    [class*="NoBorderWrapper"] {
       border-top: none !important;
     }
   }
@@ -132,33 +214,65 @@ const SHeaderWrapper = styled.div`
   }
 `
 
-const SModalHero = styled.div`
+const SCloseButton = styled.div`
   position: absolute;
   top: 0;
-  left: 0;
   right: 0;
-  height: 280px;
-  background-image: url("/gold-rush.png");
-  background-size: cover;
-  background-position: center;
-  z-index: 0;
-  border-radius: 12px 12px 0 0;
-
-  /* Use mask-image gradient like banner - fades to transparent at bottom */
-  mask-image: linear-gradient(180deg, black 0%, black 50%, transparent 100%);
-  -webkit-mask-image: linear-gradient(
-    180deg,
-    black 0%,
-    black 50%,
-    transparent 100%
-  );
+  z-index: 11;
+  padding: var(--modal-content-padding);
 `
 
-const SHeroContent = styled.div`
+// Hero section configuration - adjust these values to control layout
+const HERO_CONFIG = {
+  imageHeight: 387, // Total height of the hero image area
+  imageFadeStart: 60, // Percentage where fade starts (higher = more visible image)
+  imageFadeEnd: 100, // Percentage where fade ends
+  textOverlap: 60, // How much the text section overlaps into the hero image (negative margin)
+  textGap: 8, // Gap between title and subtitle
+}
+
+const SHeroImageSection = styled.div<{ $height?: number }>`
+  position: relative;
+  width: 100%;
+  height: ${({ $height }) => $height ?? HERO_CONFIG.imageHeight}px;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("/hollar-cans.png");
+    background-size: cover;
+    background-position: center top;
+    mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black ${HERO_CONFIG.imageFadeStart}%,
+      transparent ${HERO_CONFIG.imageFadeEnd}%
+    );
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black ${HERO_CONFIG.imageFadeStart}%,
+      transparent ${HERO_CONFIG.imageFadeEnd}%
+    );
+  }
+`
+
+const SHeroTextSection = styled.div<{ $overlap?: number; $gap?: number }>`
   position: relative;
   z-index: 1;
-  padding-top: 200px; // Push text down over the gradient
-  border-top: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${({ $gap }) => $gap ?? HERO_CONFIG.textGap}px;
+  margin-top: ${({ $overlap }) => -($overlap ?? HERO_CONFIG.textOverlap)}px;
+  padding-left: ${({ theme }) => theme.scales.paddings.xxxl}px;
+  padding-right: ${({ theme }) => theme.scales.paddings.xxxl}px;
+  box-sizing: border-box;
 `
 
 const NoBorderWrapper = styled.div`
@@ -176,6 +290,8 @@ const MarketingModalContent: FC<Props> = ({
   const squidSdk = useSquidClient()
   const { page, setPage } = useWeb3ConnectInit({ mode: WalletMode.Default })
   const { isConnected } = useAccount()
+  const { all } = useAssets()
+  const theme = useTheme()
 
   useEffect(() => {
     if (open) {
@@ -234,6 +350,18 @@ const MarketingModalContent: FC<Props> = ({
 
   const isDepositFlow = initialStep === "deposit"
 
+  const { btcLogoId, paxgLogoId } = useMemo(() => {
+    const assets = Array.from(all.values())
+
+    const pickBySymbol = (symbols: string[]) =>
+      assets.find((a) => symbols.includes((a.symbol ?? "").toUpperCase()))?.id
+
+    return {
+      btcLogoId: pickBySymbol(["BTC", "WBTC", "IBTC"]),
+      paxgLogoId: pickBySymbol(["PAXG"]),
+    }
+  }, [all])
+
   return (
     <>
       <Global
@@ -268,6 +396,7 @@ const MarketingModalContent: FC<Props> = ({
                 <ModalHeader
                   title="Ready to stack some sats?"
                   customTitle={<div />}
+                  closable={false}
                   style={{
                     position: "absolute",
                     top: 0,
@@ -281,21 +410,49 @@ const MarketingModalContent: FC<Props> = ({
                     padding: 0,
                   }}
                 />
+                <SCloseButton>
+                  <ModalCloseTrigger asChild>
+                    <ButtonIcon>
+                      <Icon component={Close} size={20} />
+                    </ButtonIcon>
+                  </ModalCloseTrigger>
+                </SCloseButton>
               </SHeaderWrapper>
-              <SModalHero />
-              <SHeroContent>
+              {/* Hero Image - adjust $height to make image taller/shorter */}
+              <SHeroImageSection />
+
+              {/* Hero Text - adjust $overlap to move text up/down, $gap for spacing */}
+              <SHeroTextSection>
                 <Text
-                  fs={32}
-                  fw={600}
+                  fs={28}
+                  fw={500}
+                  color="text.high"
                   style={{
                     fontFamily: "Gazpacho",
-                    lineHeight: 1.4,
+                    lineHeight: "30px",
                     textAlign: "center",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   Ready to stack some sats?
                 </Text>
-              </SHeroContent>
+                <Text
+                  fs={12}
+                  fw={400}
+                  color="text.high"
+                  style={{
+                    fontFamily: "Geist",
+                    lineHeight: 1.3,
+                    textAlign: "center",
+                    width: 483,
+                    maxWidth: "100%",
+                  }}
+                >
+                  Time to get your hands on some real value. Whether you're
+                  stacking BTC or hedging with PAX Gold, we've got you covered.
+                  Let's get you set up in just a few clicks.
+                </Text>
+              </SHeroTextSection>
               <NoBorderWrapper>
                 <ModalBody
                   style={{
@@ -305,103 +462,164 @@ const MarketingModalContent: FC<Props> = ({
                     paddingTop: 0,
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 32,
-                    }}
-                  >
-                    <Text
-                      color="neutral.gray.300"
-                      style={{
-                        textAlign: "center",
-                        lineHeight: 1.5,
-                        fontSize: 14,
-                      }}
-                    >
-                      Time to get your hands on some real value. Whether you're
-                      stacking BTC or hedging with PAX Gold, we've got you
-                      covered. Let's get you set up in just a few clicks.
-                    </Text>
-
+                  <SReviewContent>
                     <SRow>
                       <SCard>
-                        <Icon component={AssetIcon} size={32} />
-                        <Text fw={700}>BTC</Text>
-                        <Text fs={12} color="neutral.gray.300">
-                          Digital gold standard
-                        </Text>
+                        {btcLogoId ? (
+                          <AssetLogo id={btcLogoId} size="large" />
+                        ) : (
+                          <Icon component={AssetIcon} size={30} />
+                        )}
+                        <SCardText>
+                          <Text
+                            fs={14}
+                            fw={500}
+                            color="text.high"
+                            style={{
+                              fontFamily: "Gazpacho",
+                              lineHeight: "15px",
+                              fontSize: 14,
+                              fontWeight: 500,
+                            }}
+                          >
+                            Get BTC
+                          </Text>
+                          <Text
+                            fs={12}
+                            fw={400}
+                            color="text.medium"
+                            style={{
+                              fontFamily: "Geist",
+                              lineHeight: "15px",
+                              fontSize: 12,
+                              fontWeight: 400,
+                              marginTop: 0,
+                            }}
+                          >
+                            Digital gold standard
+                          </Text>
+                        </SCardText>
                       </SCard>
+
                       <SCard>
-                        <Icon component={AssetIcon} size={32} />
-                        <Text fw={700}>PAX Gold</Text>
-                        <Text fs={12} color="neutral.gray.300">
-                          Physical gold backed
-                        </Text>
+                        {paxgLogoId ? (
+                          <AssetLogo id={paxgLogoId} size="large" />
+                        ) : (
+                          <Icon component={AssetIcon} size={30} />
+                        )}
+                        <SCardText>
+                          <Text
+                            fs={14}
+                            fw={500}
+                            color="text.high"
+                            style={{
+                              fontFamily: "Gazpacho",
+                              lineHeight: "15px",
+                              fontSize: 14,
+                              fontWeight: 500,
+                            }}
+                          >
+                            Get PAXG
+                          </Text>
+                          <Text
+                            fs={12}
+                            fw={400}
+                            color="text.medium"
+                            style={{
+                              fontFamily: "Geist",
+                              lineHeight: "15px",
+                              fontSize: 12,
+                              fontWeight: 400,
+                              marginTop: 0,
+                            }}
+                          >
+                            Physical gold backed
+                          </Text>
+                        </SCardText>
                       </SCard>
                     </SRow>
 
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 8,
-                      }}
-                    >
-                      <SListItem>
-                        <Icon component={Check} size={16} color="#45D678" />
-                        <Text fs={12} fw={500}>
-                          Multiple deposit options
+                    <SFeatureRow>
+                      <SFeatureIcon>
+                        <Icon component={Coins} size={24} color="#9CA3AF" />
+                      </SFeatureIcon>
+                      <SFeatureText>
+                        <Text
+                          fs={14}
+                          fw={600}
+                          color="text.high"
+                          style={{ fontFamily: "Geist", lineHeight: "18px" }}
+                        >
+                          Easy deposit from multiple sources
                         </Text>
-                      </SListItem>
-                      <div style={{ marginLeft: 24 }}>
-                        <Text fs={11} color="neutral.gray.400">
-                          Fund from exchanges, on-chain, or with crypto
+                        <Text
+                          fs={12}
+                          fw={400}
+                          color="text.medium"
+                          style={{ fontFamily: "Geist", lineHeight: "15px" }}
+                        >
+                          Fund from exchanges, on-chain, or with crypto.
                         </Text>
-                      </div>
-                      <SListItem>
-                        <Icon component={Check} size={16} color="#45D678" />
-                        <Text fs={12} fw={500}>
-                          Trade instantly
-                        </Text>
-                      </SListItem>
-                      <div style={{ marginLeft: 24 }}>
-                        <Text fs={11} color="neutral.gray.400">
-                          Swap between BTC, PAX Gold and other assets
-                        </Text>
-                      </div>
-                    </div>
+                      </SFeatureText>
+                    </SFeatureRow>
 
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: 12,
-                        marginTop: 12,
-                        width: "100%",
-                      }}
-                    >
+                    <SFeatureDivider />
+
+                    <SFeatureRow>
+                      <SFeatureIcon>
+                        <Icon component={Sparkles} size={24} color="#9CA3AF" />
+                      </SFeatureIcon>
+                      <SFeatureText>
+                        <Text
+                          fs={14}
+                          fw={600}
+                          color="text.high"
+                          style={{ fontFamily: "Geist", lineHeight: "18px" }}
+                        >
+                          Trade instantly after deposit, self custody
+                        </Text>
+                        <Text
+                          fs={12}
+                          fw={400}
+                          color="text.medium"
+                          style={{ fontFamily: "Geist", lineHeight: "15px" }}
+                        >
+                          Swap between BTC, PAX Gold and other assets.
+                        </Text>
+                      </SFeatureText>
+                    </SFeatureRow>
+                  </SReviewContent>
+                  <SModalActions>
+                    <SFullWidthDivider />
+                    <SModalActionsRow>
                       <Button
-                        variant="primary"
+                        variant="tertiary"
                         size="large"
-                        style={{ width: "70%" }}
-                        onClick={() => setStep("connect")}
-                      >
-                        Let's Go &rarr;
-                      </Button>
-                      <Button
-                        variant="muted"
-                        outline
-                        size="large"
-                        style={{ flex: 1 }}
+                        sx={{
+                          borderRadius: theme.themeProps.scales.cornerRadius.m,
+                          height: 48,
+                          flex: "0 0 auto",
+                          minWidth: 140,
+                        }}
                         onClick={() => onOpenChange(false)}
                       >
                         Explore platform
                       </Button>
-                    </div>
-                  </div>
+                      <Button
+                        variant="primary"
+                        size="large"
+                        sx={{
+                          borderRadius: theme.themeProps.scales.cornerRadius.m,
+                          height: 48,
+                          flex: 2,
+                          minWidth: 180,
+                        }}
+                        onClick={() => setStep("connect")}
+                      >
+                        Lets go
+                      </Button>
+                    </SModalActionsRow>
+                  </SModalActions>
                 </ModalBody>
               </NoBorderWrapper>
             </SIntroWrapper>

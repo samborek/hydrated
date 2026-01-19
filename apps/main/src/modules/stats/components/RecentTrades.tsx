@@ -38,7 +38,10 @@ const SMobileView = styled.div`
     display: flex;
     flex-direction: column;
     gap: 0;
-    padding: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
   }
 `
 
@@ -46,7 +49,10 @@ const SMobileItem = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 16px 16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
   border-bottom: 1px solid ${({ theme }) => theme.details.separators};
 
   &:last-child {

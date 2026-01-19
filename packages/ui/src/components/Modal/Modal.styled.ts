@@ -167,8 +167,10 @@ export const SModalBody = styled(Box) <{ noPadding?: boolean }>`
   padding-top: ${({ noPadding }) =>
     noPadding ? 0 : "var(--modal-content-padding)"};
   padding-bottom: 0;
-  padding-left: 0;
-  padding-right: 0;
+  padding-left: ${({ noPadding }) =>
+    noPadding ? 0 : "var(--modal-content-padding)"};
+  padding-right: ${({ noPadding }) =>
+    noPadding ? 0 : "var(--modal-content-padding)"};
 
   flex: 1;
 

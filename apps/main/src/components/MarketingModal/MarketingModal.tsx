@@ -65,8 +65,10 @@ const SReviewContent = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.scales.paddings.l}px;
   width: 100%;
-  padding: ${({ theme }) => theme.containers.paddings.primary}px
-    ${({ theme }) => theme.scales.paddings.xxxl}px;
+  padding-top: ${({ theme }) => theme.containers.paddings.primary}px;
+  padding-bottom: ${({ theme }) => theme.containers.paddings.primary}px;
+  padding-left: 12px;
+  padding-right: 12px;
   overflow: visible;
 `
 
@@ -103,10 +105,10 @@ const SFeatureDivider = styled.div`
 `
 
 const SFullWidthDivider = styled.div`
-  width: 100%;
+  width: calc(100% + 2 * var(--modal-content-padding, 20px));
   height: 1px;
   background: ${({ theme }) => theme.details.separators};
-  margin: 0;
+  margin-inline: calc(-1 * var(--modal-content-padding, 20px));
 `
 
 const SModalActions = styled.div`
@@ -122,8 +124,8 @@ const SModalActionsRow = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.scales.paddings.xl}px;
   width: 100%;
-  padding: ${({ theme }) => theme.containers.paddings.primary}px
-    ${({ theme }) => theme.scales.paddings.xxxl}px;
+  padding-top: ${({ theme }) => theme.containers.paddings.primary}px;
+  padding-bottom: ${({ theme }) => theme.containers.paddings.primary}px;
   box-sizing: border-box;
   justify-content: stretch;
 `
@@ -153,11 +155,11 @@ const SSkipButton = styled.span`
   font-weight: 500;
   text-align: center;
   display: block;
-  margin-top: 16px;
+  margin-top: ${({ theme }) => theme.scales.paddings.l}px;
 `
 
 const STradeContainer = styled.div`
-  padding: 16px;
+  padding: ${({ theme }) => theme.scales.paddings.l}px;
 `
 
 import { CexDeposit } from "../DepositModal/CexDeposit"
@@ -437,7 +439,7 @@ const MarketingModalContent: FC<Props> = ({
                   Ready to stack some sats?
                 </Text>
                 <Text
-                  fs={12}
+                  fs={14}
                   fw={400}
                   color="text.high"
                   style={{
@@ -446,6 +448,7 @@ const MarketingModalContent: FC<Props> = ({
                     textAlign: "center",
                     width: 483,
                     maxWidth: "100%",
+                    fontSize: 14,
                   }}
                 >
                   Time to get your hands on some real value. Whether you're
@@ -635,11 +638,21 @@ const MarketingModalContent: FC<Props> = ({
               />
               <ModalBody>
                 <div
-                  style={{ display: "flex", flexDirection: "column", gap: 12 }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: `${theme.themeProps.scales.paddings.m}px`,
+                  }}
                 >
                   <SOptionCard onClick={() => setStep("cex-deposit")}>
                     <div>
-                      <Text fs={16} fw={600} style={{ marginBottom: 4 }}>
+                      <Text
+                        fs={16}
+                        fw={600}
+                        style={{
+                          marginBottom: `${theme.themeProps.scales.paddings.s}px`,
+                        }}
+                      >
                         Deposit from Centralized Exchange
                       </Text>
                       <Text fs={13} color="neutral.gray.400">
@@ -656,7 +669,13 @@ const MarketingModalContent: FC<Props> = ({
 
                   <SOptionCard onClick={() => setStep("trade")}>
                     <div>
-                      <Text fs={16} fw={600} style={{ marginBottom: 4 }}>
+                      <Text
+                        fs={16}
+                        fw={600}
+                        style={{
+                          marginBottom: `${theme.themeProps.scales.paddings.s}px`,
+                        }}
+                      >
                         On-chain transfer
                       </Text>
                       <Text fs={13} color="neutral.gray.400">
@@ -673,7 +692,13 @@ const MarketingModalContent: FC<Props> = ({
 
                   <SOptionCard onClick={() => setStep("trade")}>
                     <div>
-                      <Text fs={16} fw={600} style={{ marginBottom: 4 }}>
+                      <Text
+                        fs={16}
+                        fw={600}
+                        style={{
+                          marginBottom: `${theme.themeProps.scales.paddings.s}px`,
+                        }}
+                      >
                         Fund with crypto
                       </Text>
                       <Text fs={13} color="neutral.gray.400">
@@ -701,7 +726,11 @@ const MarketingModalContent: FC<Props> = ({
                 title="Exchange and asset to deposit"
                 onBack={() => setStep("deposit")}
               />
-              <div style={{ padding: "0 0px 14px" }}>
+              <div
+                style={{
+                  padding: `0 0 ${theme.themeProps.scales.paddings.l}px`,
+                }}
+              >
                 <CexDeposit onSelect={handleCexSelect} />
               </div>
             </>

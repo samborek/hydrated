@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react"
+import { useEffect, useId, useRef } from "react"
 import styled from "@emotion/styled"
 
 const SContainer = styled.div`

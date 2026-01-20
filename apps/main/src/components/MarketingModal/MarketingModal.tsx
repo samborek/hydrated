@@ -255,13 +255,13 @@ const SCloseButton = styled.div`
 // Hero section configuration - adjust these values to control layout
 const HERO_CONFIG = {
   imageHeight: 387, // Total height of the hero image area (desktop)
-  imageHeightMobile: 280, // Total height on mobile
+  imageHeightMobile: 300, // Total height on mobile (increased to fill more)
   imageFadeStart: 60, // Percentage where fade starts (higher = more visible image) - desktop
   imageFadeEnd: 100, // Percentage where fade ends - desktop
-  imageFadeStartMobile: 40, // Percentage where fade starts on mobile (lower = fade starts earlier, more visible)
-  imageFadeEndMobile: 80, // Percentage where fade ends on mobile (lower = fade ends earlier, more visible)
+  imageFadeStartMobile: 50, // Percentage where fade starts on mobile
+  imageFadeEndMobile: 90, // Percentage where fade ends on mobile
   textOverlap: 60, // How much the text section overlaps into the hero image (negative margin)
-  textOverlapMobile: 40, // Overlap on mobile
+  textOverlapMobile: 50, // Overlap on mobile
   textGap: 8, // Gap between title and subtitle
 }
 

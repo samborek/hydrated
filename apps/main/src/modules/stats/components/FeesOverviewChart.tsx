@@ -1,4 +1,5 @@
 import styled from "@emotion/styled"
+import { css } from "@galacticcouncil/ui/utils"
 
 import { Button, Flex, Text, ToggleGroup, ToggleGroupItem, ValueStats } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
@@ -23,6 +24,10 @@ import { SChartHeader } from "./ChartLayout"
 
 const SChartContainer = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
 `
 
 const SControlsGroup = styled.div`
@@ -86,17 +91,19 @@ const SGroupBySlot = styled.div<{ $hidden?: boolean }>`
 
 
 
-const SLegendContainer = styled.div`
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 20px;
-  margin-bottom: 20px;
+const SLegendContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: ${theme.scales.paddings.xl}px;
+    margin-bottom: 0;
 
-  @media (max-width: 576px) {
-    display: none;
-  }
-`
+    @media (max-width: 576px) {
+      display: none;
+    }
+  `,
+)
 
 
 
@@ -426,7 +433,8 @@ export const FeesOverviewChart: FC = () => {
         </SControlsGroup>
       </SChartHeader>
 
-      <ResponsiveContainer width="100%" height={320}>
+      <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
+        <ResponsiveContainer width="100%" height="100%">
         {viewMode === 'revenue' ? (
           // REVENUE MODE: Stacked Bar Chart with absolute $ values
           <BarChart
@@ -581,7 +589,8 @@ export const FeesOverviewChart: FC = () => {
             ))}
           </AreaChart>
         )}
-      </ResponsiveContainer>
+        </ResponsiveContainer>
+      </div>
 
       {/* Desktop Legend */}
       <SLegendContainer className="no-scrollbar">

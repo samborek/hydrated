@@ -1,5 +1,4 @@
 import { SectionHeader } from "@galacticcouncil/ui/components"
-import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { createFileRoute } from "@tanstack/react-router"
 
@@ -39,32 +38,32 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
   `,
 )
 
-const SFeesOverviewGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 520px;
-  gap: 24px;
-  width: 100%;
-  min-width: 0;
-
-  > * {
+const SFeesOverviewGrid = styled.div(
+  ({ theme }) => css`
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 38vw, 520px);
+    gap: ${theme.scales.paddings.l}px;
+    width: 100%;
     min-width: 0;
-  }
 
-  @media (max-width: 1400px) {
-    grid-template-columns: 1fr;
-  }
-`
+    > * {
+      min-width: 0;
+    }
+
+    @media (max-width: 1000px) {
+      grid-template-columns: 1fr;
+    }
+  `,
+)
 
 function FeesStats() {
-  const { themeProps: theme } = useTheme()
-
   return (
     <SPageContainer>
       {/* Overview Chart - Stacked Bar Chart + Fee Destination Pie */}
       <div>
         <SectionHeader>Fees & Revenue</SectionHeader>
         <SFeesOverviewGrid>
-          <SSection style={{ paddingBottom: theme.scales.paddings.m }}>
+          <SSection>
             <FeesOverviewChart />
           </SSection>
           <SSection>

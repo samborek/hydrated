@@ -25,7 +25,7 @@ const SStickyTabsWrapper = styled.div<SStickyTabsWrapperProps>(
   ({ theme, $headerVisible }) => css`
     position: sticky;
     top: ${$headerVisible ? HEADER_HEIGHT_MOBILE : 0}px;
-    z-index: ${theme.zIndices.modal};
+    z-index: ${theme.zIndices.header - 1};
     background: ${theme.surfaces.themeBasePalette.background};
     padding-top: 8px;
     padding-bottom: 12px;

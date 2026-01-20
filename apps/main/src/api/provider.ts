@@ -49,8 +49,10 @@ export const providerQuery = (rpcUrlList: string[]) => {
   return queryOptions({
     queryKey: ["provider"],
     queryFn: () => getProviderData(rpcUrlList),
-    retry: false,
+    retry: 1,
+    retryDelay: 1000,
     refetchOnWindowFocus: false,
+    staleTime: 30000, // Consider data fresh for 30s to prevent re-fetching on tab switch
     gcTime: 0,
   })
 }

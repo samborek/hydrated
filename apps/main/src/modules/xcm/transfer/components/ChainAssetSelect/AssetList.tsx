@@ -9,7 +9,7 @@ import {
   Text,
   VirtualizedList,
 } from "@galacticcouncil/ui/components"
-import { getToken } from "@galacticcouncil/ui/utils"
+import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
 import { isAddressValidOnChain } from "@galacticcouncil/utils"
 import { AnyChain, Asset, AssetRoute } from "@galacticcouncil/xc-core"
 import { useTranslation } from "react-i18next"
@@ -92,8 +92,8 @@ export const AssetList: React.FC<AssetListProps> = ({
             <Flex
               justify="space-between"
               align="center"
-              px={10}
-              gap={10}
+              px={getTokenRem("scales.paddings.m")}
+              gap={getTokenRem("scales.paddings.m")}
               height="100%"
               onClick={() => setSelectedAsset(asset)}
               sx={{
@@ -108,7 +108,7 @@ export const AssetList: React.FC<AssetListProps> = ({
                 },
               }}
             >
-              <Flex align="start" gap={8}>
+              <Flex align="start" gap={getTokenRem("scales.paddings.base")}>
                 {selectedChain && (
                   <XAssetLogo asset={asset} chain={selectedChain} />
                 )}
@@ -119,7 +119,7 @@ export const AssetList: React.FC<AssetListProps> = ({
                     name={registryAsset?.name}
                   />
                   {hasBridge(route) && (
-                    <Flex align="center" gap={4} mt={2}>
+                    <Flex align="center" gap={getTokenRem("scales.paddings.s")} mt={getTokenRem("scales.paddings.xs")}>
                       {route?.tags?.includes(XcmTag.Wormhole) && (
                         <Chip variant="info" size="small">
                           Wormhole

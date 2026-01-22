@@ -16,7 +16,7 @@ import {
   Text,
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints } from "@galacticcouncil/ui/theme"
-import { getToken } from "@galacticcouncil/ui/utils"
+import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
 import { useAccount, useWeb3ConnectModal } from "@galacticcouncil/web3-connect"
 import { AnyChain, Asset, AssetRoute } from "@galacticcouncil/xc-core"
 import { useMemo, useState } from "react"
@@ -141,9 +141,9 @@ export const ChainAssetSelectContent: React.FC<ChainAssetSelectModalProps> = ({
       : true
 
   return (
-    <Grid columnTemplate={["64px 1fr", "180px 1fr"]}>
+    <Grid columnTemplate={["4rem 1fr", "11.25rem 1fr"]}>
       <Box>
-        <Box p={10} visibility={["hidden", "visible"]}>
+        <Box p={getTokenRem("scales.paddings.m")} visibility={["hidden", "visible"]}>
           <Input
             placeholder={t("xcm:chainAssetSelect.search.chains")}
             iconStart={Search}
@@ -160,7 +160,7 @@ export const ChainAssetSelectContent: React.FC<ChainAssetSelectModalProps> = ({
         />
       </Box>
       <Flex direction="column">
-        <Box p={10}>
+        <Box p={getTokenRem("scales.paddings.m")}>
           <Input
             placeholder={t("xcm:chainAssetSelect.search.assets")}
             iconStart={Search}
@@ -185,7 +185,7 @@ export const ChainAssetSelectContent: React.FC<ChainAssetSelectModalProps> = ({
               />
             ) : (
               <ConnectChainTile
-                p={10}
+                p={getTokenRem("scales.paddings.m")}
                 chain={pendingChain}
                 onConnect={() =>
                   toggle(getWalletModeByChain(pendingChain), {

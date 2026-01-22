@@ -5,6 +5,7 @@ import {
   Summary,
   SummaryRow,
 } from "@galacticcouncil/ui/components"
+import { getMinusTokenRem, getTokenRem } from "@galacticcouncil/ui/utils"
 import { useFormContext } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
@@ -65,8 +66,8 @@ export const XcmSummary = () => {
     <CollapsibleRoot open={isSummaryOpen}>
       <CollapsibleContent>
         <Summary
-          separator={<Separator mx={-20} />}
-          px={20}
+          separator={<Separator mx={getMinusTokenRem("containers.paddings.primary")} />}
+          px={getTokenRem("containers.paddings.primary")}
           withLeadingSeparator
         >
           <SummaryRow

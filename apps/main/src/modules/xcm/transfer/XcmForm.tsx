@@ -6,7 +6,7 @@ import {
   Stack,
   Text,
 } from "@galacticcouncil/ui/components"
-import { getToken } from "@galacticcouncil/ui/utils"
+import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
 import { isAddressValidOnChain } from "@galacticcouncil/utils"
 import { useAccount, useWeb3ConnectModal } from "@galacticcouncil/web3-connect"
 import { useCallback } from "react"
@@ -124,19 +124,19 @@ export const XcmForm = () => {
         (values) => transfer && submit.mutate([values, transfer]),
       )}
     >
-      <Stack gap={4} maxWidth={500} mx="auto" pt={20}>
+      <Stack gap={getTokenRem("scales.paddings.s")} maxWidth={500} mx="auto" pt={getTokenRem("containers.paddings.primary")}>
         <Paper>
-          <Box p={20}>
+          <Box p={getTokenRem("containers.paddings.primary")}>
             <Text fs="h7" fw={500} align="center" font="primary">
               {t("form.title")}
             </Text>
           </Box>
           <Separator />
-          <Stack p={20} gap={10}>
+          <Stack p={getTokenRem("containers.paddings.primary")} gap={getTokenRem("scales.paddings.m")}>
             <Flex justify="space-between">
-              <Flex gap={10} direction="column">
+              <Flex gap={getTokenRem("scales.paddings.m")} direction="column">
                 <Flex justify="space-between">
-                  <Flex gap={4} align="center">
+                  <Flex gap={getTokenRem("scales.paddings.s")} align="center">
                     <Text fs="p5" color={getToken("text.medium")}>
                       {t("form.from")}
                     </Text>
@@ -185,11 +185,11 @@ export const XcmForm = () => {
         <ChainSwitch onClick={handleChainSwitch} />
 
         <Paper>
-          <Stack p={20} gap={10}>
+          <Stack p={getTokenRem("containers.paddings.primary")} gap={getTokenRem("scales.paddings.m")}>
             <Flex justify="space-between">
-              <Flex gap={10} direction="column">
+              <Flex gap={getTokenRem("scales.paddings.m")} direction="column">
                 <Flex justify="space-between">
-                  <Flex gap={4} align="center">
+                  <Flex gap={getTokenRem("scales.paddings.s")} align="center">
                     <Text fs="p5" color={getToken("text.medium")}>
                       {t("form.to")}
                     </Text>
@@ -227,7 +227,7 @@ export const XcmForm = () => {
           </Stack>
           <XcmSummary />
           <Separator />
-          <Stack p={20}>
+          <Stack p={getTokenRem("containers.paddings.primary")}>
             <SubmitButton
               status={status}
               disabled={isLoading || submit.isPending || !formState.isValid}

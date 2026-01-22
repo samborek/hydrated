@@ -104,9 +104,42 @@ const scrollbar = (theme: Theme) => css`
 const globalStyles = (theme: Theme) => css`
   ${normalize}
   ${scrollbar(theme)}
+
+  /* Responsive UI scaling using CSS custom property + rem */
+  /* All rem values scale proportionally with --ui-scale */
+  :root {
+    --ui-scale: 1;
+  }
+
+  /* 1440p screens */
+  @media (min-width: 2400px) {
+    :root {
+      --ui-scale: 1.33;
+    }
+  }
+
+  /* 4K screens */
+  @media (min-width: 3600px) {
+    :root {
+      --ui-scale: 2;
+    }
+  }
+
+  /* 5K+ screens */
+  @media (min-width: 5000px) {
+    :root {
+      --ui-scale: 2.5;
+    }
+  }
+
+  html {
+    /* Base font-size scales with --ui-scale, affects all rem values */
+    font-size: calc(16px * var(--ui-scale));
+  }
+
   body {
     font-family: ${theme.fontFamilies1.secondary};
-    font-size: 14px;
+    font-size: 0.875rem; /* 14px at base, scales with root */
     font-weight: 400;
 
     background-color: ${theme.surfaces.themeBasePalette.background};

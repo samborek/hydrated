@@ -1,10 +1,10 @@
 import { FormError, NumberInput } from "@galacticcouncil/ui/components"
-import { css, styled } from "@galacticcouncil/ui/utils"
+import { css, styled, toRem } from "@galacticcouncil/ui/utils"
 
 export const SNumberInput = styled(NumberInput)(({ theme }) => [
   css`
     text-align: right;
-    font-size: 16px;
+    font-size: ${theme.paragraphSize.p2};
 
     padding-inline: 0;
 
@@ -12,12 +12,14 @@ export const SNumberInput = styled(NumberInput)(({ theme }) => [
   `,
 ])
 
-export const SFormError = styled(FormError)`
-  text-align: right;
-  margin-left: auto;
-  position: absolute;
-  bottom: -10px;
-  right: 0;
-  white-space: nowrap;
-  pointer-events: none;
-`
+export const SFormError = styled(FormError)(
+  ({ theme }) => css`
+    text-align: right;
+    margin-left: auto;
+    position: absolute;
+    bottom: -${toRem(theme.scales.paddings.m)};
+    right: 0;
+    white-space: nowrap;
+    pointer-events: none;
+  `,
+)

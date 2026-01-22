@@ -4,7 +4,7 @@ import {
   Text,
   VirtualizedList,
 } from "@galacticcouncil/ui/components"
-import { getToken } from "@galacticcouncil/ui/utils"
+import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
 import { AnyChain } from "@galacticcouncil/xc-core"
 
 import { ChainLogo } from "@/components/ChainLogo"
@@ -33,27 +33,27 @@ export const ChainList: React.FC<ChainListProps> = ({
         ({ chain }) => chain.key === selectedChain?.key,
       )}
       sx={{
-        px: 10,
+        px: getTokenRem("scales.paddings.m"),
         minHeight: CHAIN_ITEM_HEIGHT * MAX_VISIBLE_CHAIN_ITEMS,
       }}
       renderItem={({ chain }) => {
         const isActive = chain.key === selectedChain?.key
 
         return (
-          <Box pb={4}>
+          <Box pb={getTokenRem("scales.paddings.s")}>
             <Button
               variant={isActive ? "muted" : "transparent"}
               sx={{
                 width: [42, "100%"],
                 justifyContent: "flex-start",
-                px: 10,
+                px: getTokenRem("scales.paddings.m"),
                 borderWidth: 1,
                 borderStyle: "solid",
                 borderColor: isActive
                   ? getToken("buttons.secondary.accent.outline")
                   : "transparent",
               }}
-              gap={4}
+              gap={getTokenRem("scales.paddings.s")}
               onClick={() => setSelectedChain(chain)}
             >
               <ChainLogo chain={chain} size="small" />

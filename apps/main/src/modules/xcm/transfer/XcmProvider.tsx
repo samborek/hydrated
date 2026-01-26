@@ -56,7 +56,7 @@ export const XcmProvider: React.FC<XcmProviderProps> = ({ children }) => {
 
   const sourceChainAssetPairs = useMemo<ChainAssetPair[]>(() => {
     return XCM_CHAINS.map((chain) => {
-      const chainAssets = [...chain.assetsData.values()].map(
+      const chainAssets = Array.from(chain.assetsData.values()).map(
         (chainAssetData) => chainAssetData.asset,
       )
       const destinations = chainAssets.map((asset) =>

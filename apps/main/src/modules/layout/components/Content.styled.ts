@@ -4,7 +4,7 @@ import { Box } from "@galacticcouncil/ui/components"
 import { mq } from "@galacticcouncil/ui/theme"
 
 export const SContent = styled(Box)(
-  ({ theme }) => css`
+  () => css`
     --layout-gutter: 0.5rem;
     --layout-bottom-safe-area: 0.625rem;
 

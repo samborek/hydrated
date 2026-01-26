@@ -6,7 +6,7 @@ import {
   NumberInput,
   Text,
 } from "@galacticcouncil/ui/components"
-import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
+import { getToken } from "@galacticcouncil/ui/utils"
 import { preventDefault } from "@galacticcouncil/utils"
 import { FC } from "react"
 import { Controller, FormProvider } from "react-hook-form"

@@ -7,9 +7,9 @@ export const STradeOptionSkeleton = styled.div(
     display: grid;
 
     border: 1px solid ${theme.buttons.outlineDark.onOutline};
-    border-radius: ${getTokenRem("scales.cornerRadius.m")(theme)};
-    padding: ${getTokenRem("scales.paddings.l")(theme)}
-      ${getTokenRem("scales.paddings.m")(theme)};
+    border-radius: ${getTokenRem("scales.cornerRadius.m")(theme as any)};
+    padding: ${getTokenRem("scales.paddings.l")(theme as any)}
+      ${getTokenRem("scales.paddings.m")(theme as any)};
   `,
 )
 
@@ -18,13 +18,13 @@ export const STradeOptionContainer = styled.button<{ active: boolean }>(
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: ${getTokenRem("scales.paddings.base")(theme)};
+    gap: ${getTokenRem("scales.paddings.base")(theme as any)};
 
     border: 1px solid ${theme.buttons.outlineDark.onOutline};
-    border-radius: ${getTokenRem("scales.cornerRadius.m")(theme)};
+    border-radius: ${getTokenRem("scales.cornerRadius.m")(theme as any)};
 
-    padding: ${getTokenRem("scales.paddings.l")(theme)}
-      ${getTokenRem("scales.paddings.m")(theme)};
+    padding: ${getTokenRem("scales.paddings.l")(theme as any)}
+      ${getTokenRem("scales.paddings.m")(theme as any)};
 
     cursor: pointer;
 

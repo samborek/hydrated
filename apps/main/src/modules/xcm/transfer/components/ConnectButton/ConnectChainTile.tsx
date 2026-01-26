@@ -5,7 +5,7 @@ import {
   PaperProps,
   Text,
 } from "@galacticcouncil/ui/components"
-import { getToken } from "@galacticcouncil/ui/utils"
+import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
 import { AnyChain } from "@galacticcouncil/xc-core"
 import { useTranslation } from "react-i18next"
 
@@ -28,12 +28,12 @@ export const ConnectChainTile: React.FC<ConnectChainTileProps> = ({
         justify="space-between"
         align="center"
         direction="row"
-        gap={10}
+        gap={getTokenRem("scales.paddings.m")}
         color={getToken("text.medium")}
       >
         {chain ? (
           <>
-            <Flex gap={10} align="center">
+            <Flex gap={getTokenRem("scales.paddings.m")} align="center">
               <ChainLogo chain={chain} size="large" />
               <Text fs="p3" fw={500}>
                 {t("chainNotConnected", {

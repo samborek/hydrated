@@ -2,7 +2,7 @@ import type { StoryObj } from "@storybook/react";
 import { Paper } from "./Paper";
 type Story = StoryObj<typeof Paper>;
 declare const _default: {
-    component: import("react").FC<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+    component: import("react").FC<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "px" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "width" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "py">> & {
         asChild?: boolean;
         as?: React.ElementType;
         css?: import("@emotion/serialize").Interpolation<unknown>;

@@ -4,7 +4,7 @@ import {
   Skeleton,
   Text,
 } from "@galacticcouncil/ui/components"
-import { getToken } from "@galacticcouncil/ui/utils"
+import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
 import { AssetAmount } from "@galacticcouncil/xc-core"
 import { useController, useFormContext } from "react-hook-form"
 import { useTranslation } from "react-i18next"
@@ -43,12 +43,12 @@ export const AmountFormField: React.FC<AmountFormFieldProps> = ({
   })
 
   return (
-    <Flex className={className} flex={1} gap={10} direction="column">
+    <Flex className={className} flex={1} gap={getTokenRem("scales.paddings.m")} direction="column">
       <Flex justify="flex-end">
-        <Flex align="center" gap={4}>
+        <Flex align="center" gap={getTokenRem("scales.paddings.s")}>
           {isLoading ? (
             <Text fs="p6">
-              <Skeleton width={80} />
+              <Skeleton width="5rem" />
             </Text>
           ) : (
             <>
@@ -80,7 +80,7 @@ export const AmountFormField: React.FC<AmountFormFieldProps> = ({
         </Flex>
       </Flex>
       {isLoading ? (
-        <Skeleton width={100} height="100%" sx={{ ml: "auto" }} />
+        <Skeleton width="6.25rem" height="100%" sx={{ ml: "auto" }} />
       ) : (
         <NumberFormField
           fieldName={fieldName}

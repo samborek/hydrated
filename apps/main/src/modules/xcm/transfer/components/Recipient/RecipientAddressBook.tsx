@@ -6,7 +6,7 @@ import {
   Stack,
   Text,
 } from "@galacticcouncil/ui/components"
-import { getToken } from "@galacticcouncil/ui/utils"
+import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
 import { shortenAccountAddress } from "@galacticcouncil/utils"
 import { Address } from "@galacticcouncil/web3-connect/src/components/address-book/AddressBook.store"
 import { FC } from "react"
@@ -21,16 +21,16 @@ export const RecipientAddressBook: FC<RecipientAddressBookProps> = ({
   onSelectAddress,
 }) => (
   <Box mx="var(--modal-content-inset)">
-    <ScrollArea height={200}>
+    <ScrollArea height="12.5rem">
       <Stack separated>
         {addresses.map((address) => (
           <Flex
             key={address.publicKey}
             align="center"
-            gap={10}
+            gap={getTokenRem("scales.paddings.m")}
             justify="space-between"
             onClick={() => onSelectAddress(address.address)}
-            py={12}
+            py={getTokenRem("scales.paddings.m")}
             px="var(--modal-content-padding)"
             sx={{
               cursor: "pointer",
@@ -39,7 +39,7 @@ export const RecipientAddressBook: FC<RecipientAddressBookProps> = ({
               },
             }}
           >
-            <Flex align="center" gap={10}>
+            <Flex align="center" gap={getTokenRem("scales.paddings.m")}>
               <AccountAvatar
                 address={address.address}
                 sx={{ flexShrink: 0 }}

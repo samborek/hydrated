@@ -44,7 +44,7 @@ export const ChainList: React.FC<ChainListProps> = ({
             <Button
               variant={isActive ? "muted" : "transparent"}
               sx={{
-                width: [42, "100%"],
+                width: ["2.625rem", "100%"],
                 justifyContent: "flex-start",
                 px: getTokenRem("scales.paddings.m"),
                 borderWidth: 1,

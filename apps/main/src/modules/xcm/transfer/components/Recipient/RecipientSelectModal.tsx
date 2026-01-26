@@ -7,7 +7,7 @@ import {
   Stack,
   Text,
 } from "@galacticcouncil/ui/components"
-import { getToken } from "@galacticcouncil/ui/utils"
+import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
 import { Account, useWallet } from "@galacticcouncil/web3-connect"
 import { useState } from "react"
 import { useFormContext } from "react-hook-form"
@@ -58,7 +58,7 @@ export const RecipientSelectModal: React.FC<RecipientSelectModalProps> = ({
         <ModalBody sx={{ py: 0 }} scrollable={false}>
           <CollapsibleRoot open={!isUsingCustomAddress}>
             <CollapsibleContent>
-              <Stack gap={10} py={20}>
+              <Stack gap={getTokenRem("scales.paddings.m")} py={getTokenRem("containers.paddings.primary")}>
                 <Text fs="p5" color={getToken("text.medium")}>
                   {t("recipient.modal.destinationWallet")}
                 </Text>
@@ -71,7 +71,7 @@ export const RecipientSelectModal: React.FC<RecipientSelectModalProps> = ({
                   />
                 ) : (
                   <ConnectChainTile
-                    p={20}
+                    p={getTokenRem("containers.paddings.primary")}
                     sx={{ bg: getToken("controls.dim.base") }}
                     chain={destChain}
                     onConnect={() => setIsConnectModalOpen(true)}

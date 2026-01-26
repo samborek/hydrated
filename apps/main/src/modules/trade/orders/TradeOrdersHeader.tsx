@@ -59,11 +59,11 @@ export const TradeOrdersHeader = () => {
     <Grid
       sx={{ overflowX: "auto" }}
       columnTemplate="1fr auto"
-      columnGap={8}
-      px={20}
+      columnGap="0.5rem"
+      px="1.25rem"
     >
       <TabMenu
-        gap={8}
+        gap="0.5rem"
         items={tradeOrderTabs.map<TabItem>((tab) => ({
           to: pathname,
           title: t(`trade.orders.${tab}`),
@@ -81,7 +81,7 @@ export const TradeOrdersHeader = () => {
               size="small"
               item={item}
               variant="muted"
-              sx={{ px: 10 }}
+              sx={{ px: "0.5rem" }}
             />
             {item.search?.tab === ("openOrders" satisfies TradeOrderTab) &&
               openOrdersCount > 0 && (
@@ -99,7 +99,7 @@ export const TradeOrdersHeader = () => {
           </Box>
         )}
       />
-      <Flex gap={12} align="center">
+      <Flex gap="0.75rem" align="center">
         <ToggleRoot>
           <ToggleLabel>
             Show:{" "}

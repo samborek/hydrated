@@ -10,10 +10,10 @@ export const HeaderWeb3ConnectButton: React.FC<
   return (
     <Web3ConnectButton
       {...props}
-      size="large"
+      size="medium"
       variant="secondary"
       allowIncompatibleAccounts={isCrossChainPage}
-      sx={{ height: 40 }}
+      sx={{ height: "2.5rem", px: "1.25rem", fontSize: "0.875rem" }}
     />
   )
 }

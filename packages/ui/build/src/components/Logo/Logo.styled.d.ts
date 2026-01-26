@@ -1,9 +1,9 @@
 import { LogoSize } from "./Logo";
 export declare const LOGO_SIZES: {
-    readonly "extra-small": 12;
-    readonly small: 18;
-    readonly medium: 24;
-    readonly large: 36;
+    readonly "extra-small": 0.75;
+    readonly small: 1.125;
+    readonly medium: 1.5;
+    readonly large: 2.25;
 };
 export declare const SLogo: import("@emotion/styled").StyledComponent<Omit<import("react").ImgHTMLAttributes<HTMLImageElement>, "loading"> & {
     lazy?: boolean;
@@ -13,7 +13,7 @@ export declare const SLogo: import("@emotion/styled").StyledComponent<Omit<impor
 } & {
     size: LogoSize;
 }, {}, {}>;
-export declare const SLogoPlaceholder: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "width" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py">> & {
+export declare const SLogoPlaceholder: import("@emotion/styled").StyledComponent<Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "transform" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "width" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py" | "size">> & {
     asChild?: boolean;
     as?: React.ElementType;
     css?: import("@emotion/serialize").Interpolation<unknown>;

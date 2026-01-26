@@ -1,4 +1,5 @@
 import { Flex, Separator } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
 import { Outlet } from "@tanstack/react-router"
 import { FC } from "react"
@@ -10,11 +11,13 @@ import { TradeChart } from "@/modules/trade/swap/components/TradeChart/TradeChar
 import { SSwapFormContainer } from "./SwapPage.styled"
 
 export const SwapPageMobile: FC = () => {
+  const { themeProps } = useTheme()
+
   return (
-    <Flex direction="column" gap={getTokenPx("containers.paddings.primary")}>
+    <Flex direction="column" gap={getTokenPx("containers.paddings.primary")(themeProps as any)}>
       <SSwapFormContainer>
         <FormHeader />
-        <Separator mx={-20} />
+        <Separator mx={`-${getTokenPx("containers.paddings.primary")(themeProps as any)}`} />
         <Outlet />
       </SSwapFormContainer>
       <TradeChart height={300} />

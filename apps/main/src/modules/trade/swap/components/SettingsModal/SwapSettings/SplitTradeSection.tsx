@@ -37,7 +37,7 @@ export const SplitTradeSection: FC = () => {
                 helpTooltip={t("swap.settings.modal.split.maxRetries.help")}
               />
               <NumberInput
-                sx={{ width: 85 }}
+                sx={{ width: "5.3125rem" }}
                 value={value}
                 allowNegative={false}
                 decimalScale={0}

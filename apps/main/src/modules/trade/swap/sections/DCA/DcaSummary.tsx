@@ -13,7 +13,8 @@ import {
   SummaryRowValue,
   Text,
 } from "@galacticcouncil/ui/components"
-import { getToken, px } from "@galacticcouncil/ui/utils"
+import { useTheme } from "@galacticcouncil/ui/theme"
+import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
 import { FC } from "react"
 import { useFormContext } from "react-hook-form"
 import { Trans, useTranslation } from "react-i18next"
@@ -40,6 +41,7 @@ export const DcaSummary: FC<Props> = ({
   const { t } = useTranslation(["common", "trade"])
   const { watch } = useFormContext<DcaFormValues>()
   const { getAsset } = useAssets()
+  const { themeProps } = useTheme()
 
   const {
     dca: { slippage },
@@ -77,9 +79,18 @@ export const DcaSummary: FC<Props> = ({
     <>
       <SwapSectionSeparator />
       <div>
-        <Flex direction="column" gap={8} py={8}>
+        <Flex
+          direction="column"
+          gap={getTokenRem("scales.paddings.base")(themeProps as any)}
+          py={getTokenRem("scales.paddings.base")(themeProps as any)}
+        >
           <SummaryRowLabel>{t("summary")}</SummaryRowLabel>
-          <Text fw={500} fs="p2" lh={px(21)} color={getToken("text.high")}>
+          <Text
+            fw={500}
+            fs="p2"
+            lh="1.3125rem"
+            color={getToken("text.high")}
+          >
             <Trans
               t={t}
               i18nKey="trade:dca.summary.description"
@@ -97,7 +108,7 @@ export const DcaSummary: FC<Props> = ({
             </Trans>
           </Text>
         </Flex>
-        <SwapSectionSeparator sx={{ mt: 9 }} />
+        <SwapSectionSeparator sx={{ mt: getTokenRem("scales.paddings.base")(themeProps as any) }} />
         <Summary separator={<SwapSectionSeparator />}>
           {endDateValid && (
             <SwapSummaryRow
@@ -130,7 +141,7 @@ export const DcaSummary: FC<Props> = ({
                   }
                 })()}
               >
-                <Flex align="center" gap={6}>
+                <Flex align="center" gap={getTokenRem("scales.paddings.s")(themeProps as any)}>
                   {t("percent", { value: order.tradeImpactPct })}
                   {(() => {
                     switch (priceImpactLevel) {

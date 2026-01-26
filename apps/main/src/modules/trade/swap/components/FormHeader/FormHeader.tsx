@@ -1,4 +1,6 @@
 import { Flex, Modal } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
+import { getTokenPx, getTokenRem } from "@galacticcouncil/ui/utils"
 import { Link, useMatchRoute, useSearch } from "@tanstack/react-router"
 import { Settings } from "lucide-react"
 import { useState } from "react"
@@ -18,6 +20,7 @@ export const swapTabs: ReadonlyArray<TradeSwapTab> = ["market", "dca"] as const
 export const FormHeader = () => {
   const { t } = useTranslation("trade")
   const [openSettings, setOpenSettings] = useState(false)
+  const { themeProps } = useTheme()
 
   const search = useSearch({ from: "/trade/_history/swap" })
   const matchRoute = useMatchRoute()
@@ -27,7 +30,7 @@ export const FormHeader = () => {
 
   return (
     <SFormHeader justify="space-between" align="center">
-      <Flex>
+      <Flex gap={getTokenRem("scales.paddings.s")(themeProps as any)}>
         {swapTabs.map((tab) => (
           <SHeaderTab key={tab} asChild>
             <Link to={`/trade/swap/${tab}`} search={search}>
@@ -40,10 +43,10 @@ export const FormHeader = () => {
       {hasSettings && (
         <>
           <SSettingsIcon
-            m={8}
+            m={getTokenPx("scales.paddings.base")(themeProps as any)}
             as="button"
             aria-label="Settings"
-            size={18}
+            size="1.125rem"
             component={Settings}
             onClick={() => setOpenSettings(true)}
           />

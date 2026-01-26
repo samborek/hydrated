@@ -1,6 +1,7 @@
 import { RUNTIME_DECIMALS } from "@galacticcouncil/common"
 import { Box } from "@galacticcouncil/ui/components"
-import { getTokenPx } from "@galacticcouncil/ui/utils"
+import { useTheme } from "@galacticcouncil/ui/theme"
+import { getTokenRem } from "@galacticcouncil/ui/utils"
 import { useSearch } from "@tanstack/react-router"
 import Big from "big.js"
 import { FC, useEffect, useState } from "react"
@@ -25,6 +26,7 @@ import { scaleHuman } from "@/utils/formatting"
 export const Market: FC = () => {
   const { assetIn, assetOut } = useSearch({ from: "/trade/_history" })
   const { getAsset } = useAssets()
+  const { themeProps } = useTheme()
 
   const submitSwap = useSubmitSwap()
   const submitTwap = useSubmitTwap()
@@ -107,7 +109,9 @@ export const Market: FC = () => {
   return (
     <FormProvider {...form}>
       <form
-        sx={{ pb: isExpanded ? getTokenPx("containers.paddings.primary") : 0 }}
+        sx={{
+          pb: isExpanded ? getTokenRem("containers.paddings.primary")(themeProps as any) : 0,
+        }}
         onSubmit={form.handleSubmit((values) =>
           isSingleTrade
             ? swap && swapTx && submitSwap.mutate([values, swap, swapTx])
@@ -116,7 +120,10 @@ export const Market: FC = () => {
       >
         <MarketFields price={spotPrice} />
         {isExpanded && (
-          <Box pt={8} pb={getTokenPx("scales.paddings.m")}>
+          <Box
+            pt={getTokenRem("scales.paddings.base")(themeProps as any)}
+            pb={getTokenRem("scales.paddings.m")(themeProps as any)}
+          >
             <MarketTradeOptions
               swap={swap}
               twap={twap}

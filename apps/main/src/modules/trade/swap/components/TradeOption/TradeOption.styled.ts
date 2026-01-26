@@ -1,13 +1,15 @@
 import { css } from "@emotion/react"
 import styled from "@emotion/styled"
+import { getTokenRem } from "@galacticcouncil/ui/utils"
 
 export const STradeOptionSkeleton = styled.div(
   ({ theme }) => css`
     display: grid;
 
     border: 1px solid ${theme.buttons.outlineDark.onOutline};
-    border-radius: 8px;
-    padding: 16px 12px;
+    border-radius: ${getTokenRem("scales.cornerRadius.m")(theme)};
+    padding: ${getTokenRem("scales.paddings.l")(theme)}
+      ${getTokenRem("scales.paddings.m")(theme)};
   `,
 )
 
@@ -16,12 +18,13 @@ export const STradeOptionContainer = styled.button<{ active: boolean }>(
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: ${getTokenRem("scales.paddings.base")(theme)};
 
     border: 1px solid ${theme.buttons.outlineDark.onOutline};
-    border-radius: 8px;
+    border-radius: ${getTokenRem("scales.cornerRadius.m")(theme)};
 
-    padding: 16px 12px;
+    padding: ${getTokenRem("scales.paddings.l")(theme)}
+      ${getTokenRem("scales.paddings.m")(theme)};
 
     cursor: pointer;
 

@@ -17,17 +17,17 @@ export const SNavigationMenuItem = styled(NavigationMenuPrimitive.Item) `
   position: relative;
 `;
 export const SNavigationMenuTrigger = styled(NavigationMenuPrimitive.Trigger)(({ theme }) => css `
-    height: 30px;
+    height: 1.875rem;
     width: max-content;
-    padding: ${theme.scales.paddings.base}px ${theme.scales.paddings.m}px;
+    padding: 0.5rem 0.75rem;
 
     display: inline-flex;
     justify-content: center;
     align-items: center;
 
     font-family: ${theme.fontFamilies1.secondary};
-    font-size: ${theme.paragraphSize.p5};
-    line-height: ${theme.lineHeight.s}px;
+    font-size: 0.75rem;
+    line-height: 0.9375rem;
     color: ${theme.text.medium};
     text-decoration: none;
     white-space: nowrap;
@@ -40,10 +40,10 @@ export const SNavigationMenuTrigger = styled(NavigationMenuPrimitive.Trigger)(({
 export const SNavigationMenuContent = styled(NavigationMenuPrimitive.Content)(({ theme }) => css `
     position: absolute;
     top: 100%;
-    left: -12px;
+    left: -0.75rem;
     width: auto;
 
-    padding: ${theme.containers.paddings.quart}px;
+    padding: 0.25rem;
     border: 1px solid ${theme.details.borders};
     border-radius: ${theme.radii.xl}px;
 
@@ -82,9 +82,9 @@ export const SNavigationMenuContent = styled(NavigationMenuPrimitive.Content)(({
 export const SNavigationMenuLink = styled(NavigationMenuPrimitive.Link)(({ theme }) => css `
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.625rem;
 
-    padding: 16px;
+    padding: 1rem;
     white-space: nowrap;
     border-radius: ${theme.radii.lg}px;
     text-decoration: none;

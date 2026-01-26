@@ -13,7 +13,7 @@ export const ChainSwitch: React.FC<ButtonProps> = (props) => {
     <Flex align="center" justify="center" position="relative">
       <Separator sx={{ flexShrink: 0, flex: 1 }} />
       <SButton variant="muted" {...props}>
-        <Icon size={16} component={ArrowDown} />
+        <Icon size="1rem" component={ArrowDown} />
       </SButton>
       <Separator sx={{ flexShrink: 0, flex: 1 }} />
     </Flex>

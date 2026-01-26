@@ -6,12 +6,12 @@ export const SDetailedLink = styled(Box)(
   ({ theme }) => css`
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.625rem;
 
-    width: 320px;
+    width: 20rem;
 
-    padding: 16px;
-    border-radius: ${theme.radii.lg}px;
+    padding: 1rem;
+    border-radius: ${theme.scales.cornerRadius.l}px;
 
     text-decoration: none;
 

@@ -3,9 +3,10 @@ import {
   Box,
   Flex,
   Icon,
-  SummaryRowValue,
+  Text,
 } from "@galacticcouncil/ui/components"
-import { getToken } from "@galacticcouncil/ui/utils"
+import { useTheme } from "@galacticcouncil/ui/theme"
+import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
 import { FC, ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 
@@ -28,6 +29,7 @@ export const CalculatedAmountSummaryRow: FC<Props> = ({
   onIsExpandedChange,
 }) => {
   const { t } = useTranslation(["common", "trade"])
+  const { themeProps } = useTheme()
 
   const {
     swap: {
@@ -40,9 +42,16 @@ export const CalculatedAmountSummaryRow: FC<Props> = ({
     <SwapSummaryRow
       label={label}
       content={
-        <Flex align="center" gap={10}>
+        <Flex align="center" gap={getTokenRem("scales.paddings.s")(themeProps as any)}>
           {typeof amount === "string" ? (
-            <SummaryRowValue>{amount}</SummaryRowValue>
+            <Text
+              fw={500}
+              fs="p2"
+              lh="1.3125rem"
+              color={getToken("text.high")}
+            >
+              {amount}
+            </Text>
           ) : (
             amount
           )}
@@ -58,7 +67,7 @@ export const CalculatedAmountSummaryRow: FC<Props> = ({
         onIsExpandedChange(!isExpanded)
       }}
       tooltip={
-        <Flex direction="column" gap={8}>
+        <Flex direction="column" gap={getTokenRem("scales.paddings.base")(themeProps as any)}>
           <Box>{tooltip}</Box>
           <Box>
             <Flex justify="space-between">

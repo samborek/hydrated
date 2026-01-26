@@ -19,18 +19,18 @@ const disabledStyles = css`
 
 const sizes = createVariants((theme) => ({
   small: css`
-    height: 30px;
-    padding: 0px ${theme.containers.paddings.tertiary}px;
+    height: 1.875rem; /* 30px */
+    padding: 0 ${Number(theme.containers.paddings.tertiary) / 16}rem;
     font-size: ${theme.paragraphSize.p6};
   `,
   medium: css`
-    height: 36px;
-    padding: 0px ${theme.containers.paddings.tertiary}px;
+    height: 2.25rem; /* 36px */
+    padding: 0 ${Number(theme.containers.paddings.tertiary) / 16}rem;
     font-size: ${theme.paragraphSize.p5};
   `,
   large: css`
-    height: 54px;
-    padding: 0px ${theme.containers.paddings.primary}px;
+    height: 3.375rem; /* 54px */
+    padding: 0 ${Number(theme.containers.paddings.primary) / 16}rem;
     font-size: ${theme.paragraphSize.p5};
   `,
 }))
@@ -71,7 +71,7 @@ export const SInputContainer = styled.div<
   variants(variant),
   css`
     display: flex;
-    gap: 4px;
+    gap: 0.25rem; /* 4px */
     align-items: center;
 
     transition: ${theme.transitions.colors};

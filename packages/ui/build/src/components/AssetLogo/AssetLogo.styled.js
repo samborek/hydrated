@@ -5,42 +5,46 @@ import { Logo } from "@/components/Logo";
 import { createVariants } from "@/utils";
 import { Icon } from "../Icon";
 import { Image } from "../Image";
+// Logo diameters in rem for responsive scaling
 export const LOGO_DIAMETER = {
-    "extra-small": 12,
-    small: 18,
-    medium: 24,
-    large: 36,
+    "extra-small": 0.75, // 12px at 16px base
+    small: 1.125, // 18px
+    medium: 1.5, // 24px
+    large: 2.25, // 36px
 };
+// Overlaps in rem
 const LOGO_OVERLAP = {
-    "extra-small": 2,
-    small: 4,
-    medium: 6,
-    large: 8,
+    "extra-small": 0.125, // 2px
+    small: 0.25, // 4px
+    medium: 0.375, // 6px
+    large: 0.5, // 8px
 };
+// Decoration thickness in rem
 const DECOR_THICKNESS = {
-    "extra-small": 1,
-    small: 1.5,
-    medium: 1.5,
-    large: 2,
+    "extra-small": 0.0625, // 1px
+    small: 0.09375, // 1.5px
+    medium: 0.09375, // 1.5px
+    large: 0.125, // 2px
 };
+// Decoration padding in rem
 const DECOR_PADDING = {
-    "extra-small": 1,
-    small: 1.5,
-    medium: 1.5,
-    large: 2,
+    "extra-small": 0.0625, // 1px
+    small: 0.09375, // 1.5px
+    medium: 0.09375, // 1.5px
+    large: 0.125, // 2px
 };
 const getATokenDecorationStyles = (theme, thickness, padding) => {
     const backdropColor = theme.surfaces.themeBasePalette.background;
     return css `
     ${SAssetLogo} {
-      border: ${padding}px solid ${backdropColor};
+      border: ${padding}rem solid ${backdropColor};
       background: ${backdropColor};
     }
 
     &::before {
       content: "";
       position: absolute;
-      inset: -${thickness}px;
+      inset: -${thickness}rem;
       background: linear-gradient(to right, #39a5ff, #0063b5 50%, transparent);
     }
   `;
@@ -52,7 +56,7 @@ const calculateCircleOffset = (percentage, diameter) => {
 };
 const getCirclePosition = (percentage, diameter, thickness, overlap) => {
     const offset = calculateCircleOffset(percentage, diameter - thickness * 2 - overlap * 2);
-    return `calc(${percentage}% - ${offset}px)`;
+    return `calc(${percentage}% - ${offset}rem)`;
 };
 const generateATokenMask = (count, diameter, overlap, thickness) => {
     const maskDiameter = diameter + thickness * 2;
@@ -62,7 +66,7 @@ const generateATokenMask = (count, diameter, overlap, thickness) => {
         return step * (i + 1);
     });
     const masks = positions.map((position) => `radial-gradient(
-      circle ${maskRadius}px at ${getCirclePosition(position, diameter, thickness, overlap)},
+      circle ${maskRadius}rem at ${getCirclePosition(position, diameter, thickness, overlap)},
       black 0%,
       black 98%,
       transparent 100%
@@ -78,9 +82,9 @@ const decorations = (thickness, padding) => createVariants((theme) => ({
 export const SAssetLogo = styled(Logo)();
 export const SAssetChainLogo = styled(Image)(({ size, theme, }) => {
     const backdropColor = theme.surfaces.themeBasePalette.background;
-    const borderSize = ["medium", "large"].includes(size) ? 2 : 1;
+    const borderSize = ["medium", "large"].includes(size) ? 0.125 : 0.0625; // 2px or 1px in rem
     return css `
-    --border-size: ${borderSize}px;
+    --border-size: ${borderSize}rem;
     display: flex;
 
     position: absolute;
@@ -129,14 +133,14 @@ export const SDecorationContainer = styled.div(({ decoration = "none", count, si
     const diameter = LOGO_DIAMETER[size];
     return [
         css `
-      font-size: ${diameter}px;
+      font-size: ${diameter}rem;
       position: relative;
       display: inline-flex;
       width: fit-content;
       flex-shrink: 0;
 
       > :not(:first-of-type) {
-        margin-left: -${overlap}px;
+        margin-left: -${overlap}rem;
       }
     `,
         decorations(thickness, padding)(decoration),

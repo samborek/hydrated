@@ -29,12 +29,12 @@ export const ChainAssetSelectButton: React.FC<ChainAssetSelectButtonProps> = ({
       {...props}
     >
       {currentSelection ? (
-        <Flex align="center" gap={6}>
+        <Flex align="center" gap="0.375rem">
           <ChainLogo chain={currentSelection.chain} />
           <XAssetLogo
             asset={currentSelection.asset}
             chain={currentSelection.chain}
-            sx={{ ml: -10 }}
+            sx={{ ml: "-0.625rem" }}
           />
           <Text fs="p3" fw={600} color={getToken("text.high")}>
             {currentSelection.asset.originSymbol}
@@ -45,7 +45,7 @@ export const ChainAssetSelectButton: React.FC<ChainAssetSelectButtonProps> = ({
           {t("chainAssetSelect.button.selectAssetChain")}
         </Text>
       )}
-      <Icon size={16} component={ChevronDown} sx={{ flexShrink: 0 }} />
+      <Icon size="1rem" component={ChevronDown} sx={{ flexShrink: 0 }} />
     </SButton>
   )
 }

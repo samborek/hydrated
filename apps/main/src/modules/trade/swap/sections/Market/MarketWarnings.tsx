@@ -1,6 +1,8 @@
 import { HealthFactorRiskWarning } from "@galacticcouncil/money-market/components"
 import { TradeOrder } from "@galacticcouncil/sdk-next/build/types/sor"
 import { Alert, Flex, Modal, TextButton } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
+import { getTokenRem } from "@galacticcouncil/ui/utils"
 import { Link } from "@tanstack/react-router"
 import Big from "big.js"
 import { FC, useState } from "react"
@@ -29,6 +31,7 @@ export const MarketWarnings: FC<Props> = ({
 }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const { t } = useTranslation(["common", "trade"])
+  const { themeProps } = useTheme()
 
   const {
     swap: {
@@ -59,7 +62,11 @@ export const MarketWarnings: FC<Props> = ({
   }
 
   return (
-    <Flex direction="column" gap={6} mt={8}>
+    <Flex
+      direction="column"
+      gap={getTokenRem("scales.paddings.base")(themeProps as any)}
+      mt={getTokenRem("scales.paddings.base")(themeProps as any)}
+    >
       {shouldRenderSlippageWarning && (
         <Alert
           variant="warning"

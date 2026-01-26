@@ -9,6 +9,12 @@ import { Join, Paths } from "@/types"
 import darkJSON from "./tokens/dark.json"
 import lightJSON from "./tokens/light.json"
 
+// Convert px string to rem for scalable font sizes
+const pxToRem = (pxValue: string): string => {
+  const px = parseFloat(pxValue)
+  return `${px / 16}rem`
+}
+
 export type ThemeBaseProps = Omit<typeof base, "buttons" | "text">
 export type ThemeProps = ThemeBaseProps & typeof lightJSON
 export type ThemeName = keyof typeof themes
@@ -45,19 +51,21 @@ const base = makeTheme({
   typography: {
     text: {
       size: {
-        p1: { fontSize: lightJSON.paragraphSize.p1 },
-        p2: { fontSize: lightJSON.paragraphSize.p2 },
-        p3: { fontSize: lightJSON.paragraphSize.p3 },
-        p4: { fontSize: lightJSON.paragraphSize.p4 },
-        p5: { fontSize: lightJSON.paragraphSize.p5 },
-        p6: { fontSize: lightJSON.paragraphSize.p6 },
-        h1: { fontSize: lightJSON.headlineSize.h1 },
-        h2: { fontSize: lightJSON.headlineSize.h2 },
-        h3: { fontSize: lightJSON.headlineSize.h3 },
-        h4: { fontSize: lightJSON.headlineSize.h4 },
-        h5: { fontSize: lightJSON.headlineSize.h5 },
-        h6: { fontSize: lightJSON.headlineSize.h6 },
-        h7: { fontSize: lightJSON.headlineSize.h7 },
+        // Paragraph sizes in rem for scaling
+        p1: { fontSize: pxToRem(lightJSON.paragraphSize.p1) }, // 18px -> 1.125rem
+        p2: { fontSize: pxToRem(lightJSON.paragraphSize.p2) }, // 16px -> 1rem
+        p3: { fontSize: pxToRem(lightJSON.paragraphSize.p3) }, // 14px -> 0.875rem
+        p4: { fontSize: pxToRem(lightJSON.paragraphSize.p4) }, // 13px -> 0.8125rem
+        p5: { fontSize: pxToRem(lightJSON.paragraphSize.p5) }, // 12px -> 0.75rem
+        p6: { fontSize: pxToRem(lightJSON.paragraphSize.p6) }, // 11px -> 0.6875rem
+        // Headline sizes in rem for scaling
+        h1: { fontSize: pxToRem(lightJSON.headlineSize.h1) },
+        h2: { fontSize: pxToRem(lightJSON.headlineSize.h2) },
+        h3: { fontSize: pxToRem(lightJSON.headlineSize.h3) },
+        h4: { fontSize: pxToRem(lightJSON.headlineSize.h4) },
+        h5: { fontSize: pxToRem(lightJSON.headlineSize.h5) },
+        h6: { fontSize: pxToRem(lightJSON.headlineSize.h6) },
+        h7: { fontSize: pxToRem(lightJSON.headlineSize.h7) },
       },
     },
   },

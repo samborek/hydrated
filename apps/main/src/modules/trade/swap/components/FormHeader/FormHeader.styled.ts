@@ -1,18 +1,19 @@
 import { css } from "@emotion/react"
 import styled from "@emotion/styled"
 import { Box, Flex, Icon } from "@galacticcouncil/ui/components"
+import { getTokenRem } from "@galacticcouncil/ui/utils"
 
 export const SHeaderTab = styled(Box)<{ readonly disabled?: boolean }>(
   ({ theme, disabled }) => css`
     color: ${theme.text.low};
 
-    padding-block: 10px;
-    padding-inline: 12px;
-    border-radius: 30px;
+    padding-block: ${getTokenRem("scales.paddings.base")(theme as any)};
+    padding-inline: ${getTokenRem("scales.paddings.m")(theme as any)};
+    border-radius: ${getTokenRem("scales.cornerRadius.xxl")(theme as any)};
 
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 18px;
+    font-weight: ${theme.base.medium};
+    font-size: ${getTokenRem("paragraphSize.p3")(theme as any)};
+    line-height: ${getTokenRem("lineHeight.m")(theme as any)};
     text-decoration: none;
 
     cursor: pointer;
@@ -35,7 +36,7 @@ export const SHeaderTab = styled(Box)<{ readonly disabled?: boolean }>(
 
 export const SFormHeader = styled(Flex)(
   ({ theme }) => css`
-    padding: ${theme.containers.paddings.secondary}px 0;
+    padding: ${getTokenRem("containers.paddings.secondary")(theme as any)} 0;
   `,
 )
 

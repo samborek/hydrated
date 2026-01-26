@@ -26,7 +26,7 @@ type Props = FlexProps &
 export const TabMenu: FC<Props> = ({
   items,
   renderItem,
-  gap = 12,
+  gap = "0.75rem",
   size,
   variant,
   activeVariant,

@@ -4,7 +4,9 @@ import {
   ModalBody,
   ModalHeader,
   NumberInput,
+  Text,
 } from "@galacticcouncil/ui/components"
+import { getToken, getTokenRem } from "@galacticcouncil/ui/utils"
 import { preventDefault } from "@galacticcouncil/utils"
 import { FC } from "react"
 import { Controller, FormProvider } from "react-hook-form"
@@ -30,7 +32,7 @@ export const DcaSettingsModal: FC = () => {
         title={t("dca.settings.modal.title")}
         description={t("dca.settings.modal.description")}
       />
-      <ModalBody sx={{ minHeight: ["auto", 400], pt: 0 }}>
+      <ModalBody sx={{ minHeight: ["auto", "25rem"], pt: 0 }}>
         <form onSubmit={preventDefault}>
           <SettingsSection label="">
             <Controller
@@ -49,6 +51,9 @@ export const DcaSettingsModal: FC = () => {
                 />
               )}
             />
+            <Text fs="p4" lh="1.125rem" color={getToken("text.medium")}>
+              {t("dca.settings.modal.description")}
+            </Text>
             <Controller
               control={form.control}
               name="maxRetries"
@@ -63,7 +68,7 @@ export const DcaSettingsModal: FC = () => {
                       helpTooltip={t("dca.settings.modal.maxRetries.help")}
                     />
                     <NumberInput
-                      sx={{ width: 85 }}
+                      sx={{ width: "5.3125rem" }}
                       value={value}
                       allowNegative={false}
                       decimalScale={0}

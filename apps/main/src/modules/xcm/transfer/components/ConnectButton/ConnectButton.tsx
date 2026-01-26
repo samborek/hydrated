@@ -5,6 +5,7 @@ import {
   Icon,
   Logo,
 } from "@galacticcouncil/ui/components"
+import { getTokenRem } from "@galacticcouncil/ui/utils"
 import { shortenAccountAddress } from "@galacticcouncil/utils"
 import { WalletProviderType } from "@galacticcouncil/web3-connect/src/config/providers"
 import { getWallet } from "@galacticcouncil/web3-connect/src/wallets"
@@ -32,7 +33,7 @@ export const ConnectButton: React.FC<ConnectButtonProps> = ({
       sx={!address ? { textTransform: "uppercase" } : undefined}
       {...props}
     >
-      {!address && <Icon size={12} component={WalletIcon} sx={{ ml: 4 }} />}
+      {!address && <Icon size={12} component={WalletIcon} sx={{ ml: getTokenRem("scales.paddings.s") }} />}
       {wallet ? (
         <Logo src={wallet.logo} size="extra-small" />
       ) : address ? (

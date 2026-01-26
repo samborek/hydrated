@@ -1,4 +1,6 @@
 import { Flex } from "@galacticcouncil/ui/components"
+import { useTheme } from "@galacticcouncil/ui/theme"
+import { getTokenRem } from "@galacticcouncil/ui/utils"
 import { useQuery } from "@tanstack/react-query"
 import Big from "big.js"
 import { formatDistanceToNowStrict } from "date-fns"
@@ -36,6 +38,7 @@ export const MarketTradeOptions: FC<Props> = ({
 }) => {
   const { t } = useTranslation("trade")
   const rpc = useRpcProvider()
+  const { themeProps } = useTheme()
 
   const { control, watch, getValues, reset } =
     useFormContext<MarketFormValues>()
@@ -50,7 +53,7 @@ export const MarketTradeOptions: FC<Props> = ({
 
   if (isSwapLoading || !swap) {
     return (
-      <Flex direction="column" gap={8}>
+      <Flex direction="column" gap={getTokenRem("scales.paddings.base")(themeProps as any)}>
         <TradeOptionSkeleton />
         <TradeOptionSkeleton />
       </Flex>
@@ -106,7 +109,12 @@ export const MarketTradeOptions: FC<Props> = ({
       control={control}
       name="isSingleTrade"
       render={({ field }) => (
-        <Flex sx={{ flexDirection: "column", gap: 8 }}>
+        <Flex
+          sx={{
+            flexDirection: "column",
+            gap: getTokenRem("scales.paddings.base")(themeProps as any),
+          }}
+        >
           <TradeOption
             asset={asset}
             value={price}

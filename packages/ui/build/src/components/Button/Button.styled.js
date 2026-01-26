@@ -6,7 +6,7 @@ const defaulStyles = createStyles((theme) => css `
     position: relative;
     display: grid;
     grid-auto-flow: column;
-    column-gap: 4px;
+    column-gap: 0.25rem;
     align-items: center;
     place-content: center;
 
@@ -101,26 +101,32 @@ const outlineVariants = createVariants((theme) => ({
     sliderTabInactive: outlineVariantStyles(theme.text.medium, "none", "transparent", theme.buttons.secondary.low.hover),
     restSubtle: outlineVariantStyles(theme.buttons.secondary.low.onRest, "transparent", "transparent", theme.buttons.outlineDark.hover),
 }));
-const sizes = createVariants((theme) => ({
-    small: css `
-    line-height: 1.2;
-    height: 30px;
-    font-size: ${theme.paragraphSize.p6};
-    padding: ${theme.scales.paddings.base}px ${theme.buttons.paddings.primary}px;
-  `,
-    medium: css `
-    line-height: 1.2;
-    height: 40px;
-    font-size: ${theme.paragraphSize.p5};
-    padding: ${theme.scales.paddings.base}px ${theme.buttons.paddings.primary}px;
-  `,
-    large: css `
-    line-height: 1;
-    height: 50px;
-    font-size: ${theme.paragraphSize.p3};
-    padding: ${theme.buttons.paddings.primary}px ${theme.scales.paddings.xl}px;
-  `,
-}));
+const sizes = createVariants((theme) => {
+    const toRem = (value) => {
+        const num = typeof value === "string" ? parseFloat(value) : value;
+        return `${num / 16}rem`;
+    };
+    return {
+        small: css `
+      line-height: 1.25rem;
+      height: 1.875rem;
+      font-size: ${toRem(theme.paragraphSize.p6)};
+      padding: 0.5rem 1rem;
+    `,
+        medium: css `
+      line-height: 1.25rem;
+      height: 2.5rem;
+      font-size: ${toRem(theme.paragraphSize.p5)};
+      padding: 0.5rem 1rem;
+    `,
+        large: css `
+      line-height: 1.25rem;
+      height: 3.125rem;
+      font-size: ${toRem(theme.paragraphSize.p3)};
+      padding: 0.5rem 1.25rem;
+    `,
+    };
+});
 export const SButton = styled(Box, {
     shouldForwardProp: (prop) => !["variant", "size", "outline"].includes(prop),
 })(defaulStyles, ({ variant = "primary", size = "small", outline = false }) => [
@@ -150,10 +156,10 @@ export const SMicroButton = styled(Box)(({ theme, variant = "low" }) => [
 
       cursor: pointer;
 
-      padding: 0 8px;
+      padding: 0.5rem 0.5rem;
 
       font-family: ${theme.fontFamilies1.secondary};
-      font-size: 10px;
+      font-size: 0.625rem;
       font-weight: 500;
       line-height: 140%;
       text-transform: uppercase;
@@ -174,15 +180,15 @@ export const SMicroButton = styled(Box)(({ theme, variant = "low" }) => [
 export const SButtonIcon = styled(Box)(({ theme }) => css `
     position: relative;
 
-    width: 34px;
-    height: 34px;
+    width: 2.125rem;
+    height: 2.125rem;
 
     display: flex;
     justify-content: center;
     align-items: center;
 
     color: ${theme.icons.onContainer};
-    border-radius: 32px;
+    border-radius: 2rem;
     cursor: pointer;
 
     &:hover {

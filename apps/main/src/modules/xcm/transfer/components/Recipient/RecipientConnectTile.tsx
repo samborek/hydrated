@@ -1,4 +1,5 @@
 import { AccountTile, Box, Button } from "@galacticcouncil/ui/components"
+import { getTokenRem } from "@galacticcouncil/ui/utils"
 import { Account } from "@galacticcouncil/web3-connect"
 import { useTranslation } from "react-i18next"
 
@@ -33,7 +34,7 @@ export const RecipientConnectTile: React.FC<RecipientConnectTileProps> = ({
         size="small"
         sx={{
           position: "absolute",
-          right: 20,
+          right: getTokenRem("containers.paddings.primary"),
           top: "50%",
           transform: "translateY(-50%)",
         }}

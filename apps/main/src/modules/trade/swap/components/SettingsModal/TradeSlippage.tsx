@@ -8,7 +8,7 @@ import {
   SliderTabs,
   SliderTabsOption,
 } from "@galacticcouncil/ui/components/SliderTabs"
-import { getToken, getTokenPx } from "@galacticcouncil/ui/utils"
+import { getToken, getTokenPx, getTokenRem } from "@galacticcouncil/ui/utils"
 import { FC } from "react"
 import { useTranslation } from "react-i18next"
 
@@ -42,14 +42,14 @@ export const TradeSlippage: FC<Props> = ({
   }))
 
   return (
-    <Flex direction="column" gap={getTokenPx("buttons.paddings.quart")}>
+    <Flex direction="column" gap={getTokenRem("buttons.paddings.quart")}>
       <Flex
         justify="space-between"
         align="center"
         py={getTokenPx("scales.paddings.s")}
       >
         <SettingLabel label={t("slippage")} helpTooltip={helpTooltip} />
-        <Flex gap={8} align="center">
+        <Flex gap={getTokenRem("scales.paddings.base")} align="center">
           <SliderTabs
             options={slippageOptions}
             selected={
@@ -59,7 +59,7 @@ export const TradeSlippage: FC<Props> = ({
           />
 
           <NumberInput
-            sx={{ width: 85 }}
+            sx={{ width: "5.3125rem" }}
             value={slippage}
             unit="%"
             placeholder={t("custom")}
@@ -72,7 +72,7 @@ export const TradeSlippage: FC<Props> = ({
       </Flex>
       {error && <FormError sx={{ textAlign: "end" }}>{error}</FormError>}
       {description && (
-        <Text fs={12} lh={1.3} color={getToken("text.medium")}>
+        <Text fs="p4" lh="1.125rem" color={getToken("text.medium")}>
           {description}
         </Text>
       )}

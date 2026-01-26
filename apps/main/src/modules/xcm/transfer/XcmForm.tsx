@@ -124,7 +124,7 @@ export const XcmForm = () => {
         (values) => transfer && submit.mutate([values, transfer]),
       )}
     >
-      <Stack gap={getTokenRem("scales.paddings.s")} maxWidth={500} mx="auto" pt={getTokenRem("containers.paddings.primary")}>
+      <Stack gap={getTokenRem("scales.paddings.s")} maxWidth="31.25rem" mx="auto" pt={getTokenRem("containers.paddings.primary")}>
         <Paper>
           <Box p={getTokenRem("containers.paddings.primary")}>
             <Text fs="h7" fw={500} align="center" font="primary">

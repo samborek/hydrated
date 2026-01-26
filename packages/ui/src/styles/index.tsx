@@ -107,28 +107,43 @@ const globalStyles = (theme: Theme) => css`
 
   /* Responsive UI scaling using CSS custom property + rem */
   /* All rem values scale proportionally with --ui-scale */
+  /* Base: 1280px = 1x, scales up proportionally */
   :root {
-    --ui-scale: 1;
+    --ui-scale: 1.1;
   }
 
-  /* 1440p screens */
-  @media (min-width: 2400px) {
+  /* 1440px+ screens */
+  @media (min-width: 1440px) {
     :root {
-      --ui-scale: 1.33;
+      --ui-scale: 1.1; /* 1440/1280 */
     }
   }
 
-  /* 4K screens */
-  @media (min-width: 3600px) {
+  /* 1680px+ screens */
+  @media (min-width: 1680px) {
     :root {
-      --ui-scale: 2;
+      --ui-scale: 1.1; /* 1680/1280 */
     }
   }
 
-  /* 5K+ screens */
-  @media (min-width: 5000px) {
+  /* 1920px+ screens (1080p) */
+  @media (min-width: 1920px) {
     :root {
-      --ui-scale: 2.5;
+      --ui-scale: 1.2; /* 1920/1280 */
+    }
+  }
+
+  /* 2560px+ screens (1440p) */
+  @media (min-width: 2560px) {
+    :root {
+      --ui-scale: 1.5; /* 2560/1280 */
+    }
+  }
+
+  /* 3840px+ screens (4K) */
+  @media (min-width: 3840px) {
+    :root {
+      --ui-scale: 3; /* 3840/1280 */
     }
   }
 

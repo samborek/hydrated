@@ -144,7 +144,7 @@ export const AssetList: React.FC<AssetListProps> = ({
                 }
               >
                 {isLoading ? (
-                  <Skeleton width={60} />
+                  <Skeleton width="3.75rem" />
                 ) : balance ? (
                   t("currency", {
                     value: scaleHuman(balance.amount, balance.decimals),
@@ -156,7 +156,7 @@ export const AssetList: React.FC<AssetListProps> = ({
                     display="inline-flex"
                     color={getToken("text.low")}
                     component={Minus}
-                    size={16}
+                    size="1rem"
                   />
                 )}
               </Text>

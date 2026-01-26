@@ -42,7 +42,7 @@ export const HeaderToolbar: FC<Props> = ({ onDepositClick }) => {
           onClick={onDepositClick}
           variant="accent"
           outline
-          sx={{ height: 40, px: 20, fontSize: 14, fontWeight: 500 }}
+          sx={{ height: "2.5rem", px: "1.25rem", fontSize: "0.875rem", fontWeight: 500 }}
         >
           Deposit
         </Button>

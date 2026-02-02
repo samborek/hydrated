@@ -1,9 +1,12 @@
 import { useMatches } from "@tanstack/react-router"
 import { useTranslation } from "react-i18next"
 import { BreadcrumbItem } from "@/components/Breadcrumb"
+import { useAssets } from "@/providers/assetsProvider"
+import { getAssetIdFromAddress } from "@galacticcouncil/utils"
 
 export const useBorrowCrumbs = (): BreadcrumbItem[] => {
     const { t } = useTranslation(["common", "borrow"])
+    const { getAssetWithFallback } = useAssets()
 
     const paths = useMatches({
         select: (matches) =>
@@ -14,7 +17,7 @@ export const useBorrowCrumbs = (): BreadcrumbItem[] => {
     })
 
     const crumbs = paths
-        .filter(({ fullPath }) => fullPath.includes("borrow"))
+        .filter(({ fullPath }) => fullPath.includes("borrow") && fullPath !== "/borrow")
         .flatMap(({ fullPath, params }) => {
             if (fullPath === "/borrow/multiply/$strategyId") {
                 let label = "Strategy"
@@ -29,6 +32,26 @@ export const useBorrowCrumbs = (): BreadcrumbItem[] => {
                     {
                         label: getBreadcrumbLabel("/borrow/multiply", t),
                         path: "/borrow/multiply",
+                    },
+                    {
+                        label,
+                        path: fullPath,
+                    },
+                ]
+            } else if (fullPath === "/borrow/markets/$address") {
+                let label = "Asset"
+                if (params && "address" in params) {
+                    const { address } = params as { address: string }
+                    const assetId = getAssetIdFromAddress(address)
+                    const asset = getAssetWithFallback(assetId)
+                    if (asset) {
+                        label = asset.symbol
+                    }
+                }
+                return [
+                    {
+                        label: getBreadcrumbLabel("/borrow/markets", t),
+                        path: "/borrow/markets",
                     },
                     {
                         label,

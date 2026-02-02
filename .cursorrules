@@ -13,12 +13,14 @@ Before creating any new styled components or UI elements:
    - `Button`, `Text`, `Flex`, `Box`, `DataTable`, `Chip`, etc.
    - Use Storybook (`packages/ui`) as the reference for available components and their variants
 
-2. **Check Theme Tokens** - Never hardcode colors or spacing:
-   - Backgrounds: `theme.surfaces.containers.*`
-   - Borders: `theme.details.borders`, `theme.details.separators`
-   - Paddings: `theme.containers.paddings.*`
-   - Text colors: `theme.text.*`
-   - **Spacing/Padding Rule**: Avoid fixed pixel values (e.g., `20px`) for padding and margins. Always use theme tokens (e.g., `theme.scales.paddings.primary`) or `getTokenPx()` to ensure consistency and responsiveness.
+2. **Check Theme Tokens (The Token Approach)** - Never hardcode values:
+   - **Colors**: Use `getToken("text.*")`, `theme.surfaces.containers.*`, `theme.details.borders`, etc.
+   - **Spacing/Padding**: Use `getTokenPx("scales.paddings.*")` or `getTokenPx("containers.paddings.*")`. Prefer `scales.paddings.primary` (20px) or `scales.paddings.l` (16px) for consistency.
+   - **Typography**: 
+     - For `Text` components, use token keys for the `fs` prop (e.g., `fs="p3"` for 14px, `fs="h5"` for 24px) instead of absolute numbers.
+     - Tokens range from `p1`-`p6` (paragraphs) and `h1`-`h7` (headlines).
+   - **Radii**: Use `theme.scales.cornerRadius.*` (e.g., `xl` for 16px).
+   - **Best Practice**: In `style` or `sx` props, if a theme function is needed, ensure it's applied correctly (e.g., `mb={getTokenPx("scales.paddings.m")}`). For raw HTML `style` attributes, use the theme value directly (e.g., `marginTop: theme.scales.paddings.base + 'px'`).
 
 3. **Check Similar Pages** - Look at similar pages for established patterns (e.g. Liquidity, Wallet):
    - Check if an element (like an asset list item with icon and name) already exists in other modules.
@@ -37,6 +39,10 @@ Before creating any new styled components or UI elements:
    - Chart headers: use `SChartHeader` from `apps/main/src/modules/stats/components/ChartLayout.tsx`
    - Section titles: use `SectionHeader` from `@galacticcouncil/ui/components`
    - Table headers: use `TableHead` / `TableHeader` from `@galacticcouncil/ui/components` (avoid custom header rows)
+
+7. **Component Reusability First** - Ensure standard components are used whenever possible (e.g., `AssetLabel`, `AssetLogo`). 
+   - If creating a NEW component is truly necessary, you MUST explicitly ask the user for permission.
+   - Maintain a centralized list (e.g., `NEW_COMPONENTS.md` in the workspace root) detailing every new component created, its purpose, and its location.
 
 ## Design Fidelity & Implementation
 - When implementing, precisely compare the styling, parameters, and focus on details when comparing.

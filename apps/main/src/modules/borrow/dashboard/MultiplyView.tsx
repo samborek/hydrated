@@ -9,7 +9,7 @@ import {
   Text,
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
-import { css, styled } from "@galacticcouncil/ui/utils"
+import { css, styled, getTokenPx } from "@galacticcouncil/ui/utils"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
 import { GHO_ASSET_ID, isGho } from "@galacticcouncil/money-market/utils"
@@ -31,15 +31,15 @@ const SSection = styled.section(
   ({ theme }) => css`
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
-    border-radius: 16px;
+    border-radius: ${theme.scales.cornerRadius.xl}px;
     padding: 0px;
-    margin-bottom: 20px;
+    margin-bottom: ${theme.scales.paddings.xl}px;
     overflow: hidden;
 
     /* Adjust table row padding here */
     & table tbody td {
-      padding-top: 10px;
-      padding-bottom: 10px;
+      padding-top: ${theme.scales.paddings.m}px;
+      padding-bottom: ${theme.scales.paddings.m}px;
     }
   `,
 )
@@ -48,11 +48,11 @@ const SLoopCard = styled.div(
   ({ theme }) => css`
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
-    border-radius: 16px;
-    padding: 20px;
+    border-radius: ${theme.scales.cornerRadius.xl}px;
+    padding: ${theme.scales.paddings.xl}px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: ${theme.scales.paddings.m}px;
     cursor: pointer;
     transition: all 0.2s;
     text-decoration: none;
@@ -70,10 +70,10 @@ const SBadge = styled.div(
   ({ theme }) => css`
     background: ${theme.colors.azureBlue[500]};
     color: ${theme.colors.azureBlue[900]};
-    font-size: 11px;
+    font-size: ${theme.paragraphSize.p6};
     font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: ${theme.scales.paddings.s}px ${theme.scales.paddings.base}px;
+    border-radius: ${theme.scales.cornerRadius.base}px;
     text-transform: uppercase;
     width: fit-content;
   `,
@@ -193,17 +193,17 @@ export const MultiplyView: FC = () => {
         const isPrime = s.collateralAsset.symbol === "PRIME"
 
         return (
-          <Flex align="center" gap={10}>
+          <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
             {isPrime ? (
               <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
             ) : (
               <AssetLogo id={s.collateralAsset.logoId} size="medium" />
             )}
             <Flex direction="column">
-              <Text fs={14} fw={500}>
+              <Text fs="p3" fw={500}>
                 {s.collateralAsset.symbol}
               </Text>
-              <Text fs={12} color={theme.text.low}>
+              <Text fs="p5" color={theme.text.low}>
                 APY: {supplyApy.toFixed(2)}%
               </Text>
             </Flex>
@@ -221,13 +221,13 @@ export const MultiplyView: FC = () => {
         const s = row.original
         const borrowApy = Number(s.debtAsset.variableBorrowRate) || 0
         return (
-          <Flex align="center" gap={10}>
+          <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
             <AssetLogo id={s.debtAsset.logoId} size="medium" />
             <Flex direction="column">
-              <Text fs={14} fw={500}>
+              <Text fs="p3" fw={500}>
                 {s.debtAsset.symbol}
               </Text>
-              <Text fs={12} color={theme.text.low}>
+              <Text fs="p5" color={theme.text.low}>
                 APY: {borrowApy.toFixed(2)}%
               </Text>
             </Flex>
@@ -277,20 +277,23 @@ export const MultiplyView: FC = () => {
       ),
       meta: {
         sx: {
-          paddingRight: "20px",
+          paddingRight: getTokenPx("containers.paddings.primary"),
         },
       },
     }),
   ]
 
   return (
-    <Flex direction="column" gap={24}>
+    <Flex direction="column" gap={getTokenPx("scales.paddings.xxl")}>
       {/* Featured Loops */}
       <div>
-        <Text fs={18} fw={600} mb={16} font="primary">
+        <Text fs="p1" fw={600} mb={getTokenPx("scales.paddings.l")} font="primary">
           Featured Loops
         </Text>
-        <Grid columns={gte("xl") ? 4 : gte("sm") ? 2 : 1} gap={16}>
+        <Grid
+          columns={gte("xl") ? 4 : gte("sm") ? 2 : 1}
+          gap={getTokenPx("scales.paddings.l")}
+        >
           {strategies.slice(0, 4).map((s) => (
             <Link
               key={"feat-" + s.id}
@@ -306,28 +309,36 @@ export const MultiplyView: FC = () => {
                     ) : (
                       <AssetLogo id={s.collateralAsset.logoId} size="large" />
                     )}
-                    <div style={{ marginLeft: -12 }}>
+                    <div
+                      style={{
+                        marginLeft: `-${theme.scales.paddings.m}px`,
+                      }}
+                    >
                       <AssetLogo id={s.debtAsset.logoId} size="large" />
                     </div>
                   </Flex>
                   <SBadge>Up to {s.leverage}x</SBadge>
                 </Flex>
-                <div style={{ marginTop: 8 }}>
-                  <Text fs={18} fw={600}>
+                <div style={{ marginTop: getTokenPx("scales.paddings.base") }}>
+                  <Text fs="p1" fw={600}>
                     {s.collateralAsset.symbol} Loop
                   </Text>
-                  <Text fs={13} color={theme.text.low}>
+                  <Text fs="p4" color={theme.text.low}>
                     Borrow {s.debtAsset.symbol} to leverage{" "}
                     {s.collateralAsset.symbol}
                   </Text>
                 </div>
-                <Flex justify="space-between" align="flex-end" mt={12}>
+                <Flex
+                  justify="space-between"
+                  align="flex-end"
+                  mt={getTokenPx("scales.paddings.m")}
+                >
                   <div>
-                    <Text fs={11} color={theme.text.low} mb={2}>
+                    <Text fs="p6" color={theme.text.low} mb={getTokenPx("scales.paddings.xs")}>
                       Net APY
                     </Text>
                     <Text
-                      fs={20}
+                      fs="h6"
                       fw={700}
                       color={theme.details.values.positive}
                       style={{ fontFamily: "Gazpacho" }}
@@ -344,7 +355,7 @@ export const MultiplyView: FC = () => {
 
       {/* Strategies List */}
       <Box>
-        <Text fs={18} fw={600} mb={16} font="primary">
+        <Text fs="p1" fw={600} mb={getTokenPx("scales.paddings.l")} font="primary">
           All pairs
         </Text>
         <SSection>

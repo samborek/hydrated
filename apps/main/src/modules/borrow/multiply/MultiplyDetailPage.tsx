@@ -5,19 +5,16 @@ import {
 import {
   Box,
   Grid,
-  Icon,
   Paper,
-  Stack,
-  Text,
 } from "@galacticcouncil/ui/components"
-import { Link } from "@tanstack/react-router"
-import { ArrowLeft } from "lucide-react"
 import { FC, useMemo } from "react"
+import { getTokenPx } from "@galacticcouncil/ui/utils"
 
 import { useAssets } from "@/providers/assetsProvider"
 
 import { MultiplyActions } from "./components/MultiplyActions"
 import { MultiplyStrategyOverview } from "./components/MultiplyStrategyOverview"
+import { MultiplyStrategyHeader } from "./components/MultiplyStrategyHeader"
 
 export type MultiplyDetailPageProps = {
   strategyId: string
@@ -91,43 +88,30 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({
   }, [collateralSymbol, debtSymbol, supplyAssets, borrowAssets, tokens])
 
   return (
-    <Stack gap={30}>
-      {/* HMR Force Update */}
-      <Link
-        to="/borrow/multiply"
-        style={{
-          textDecoration: "none",
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          color: "white",
-        }}
+    <Box id="multiply-strategy-detail-page">
+      <MultiplyStrategyHeader
+        collateralAsset={assets.collateral}
+        debtAsset={assets.debt}
+      />
+      <Grid
+        columnTemplate={["1fr", null, `1fr 380px`]}
+        gap={getTokenPx("containers.paddings.primary")}
+        alignItems="start"
       >
-        <Icon component={ArrowLeft} size={20} />
-        <Text>Back to Multiply</Text>
-      </Link>
+        {/* Left Panel - Overview */}
+        <MultiplyStrategyOverview
+          collateralAsset={assets.collateral}
+          debtAsset={assets.debt}
+        />
 
-      <Box>
-        <Grid
-          columnTemplate={["1fr", null, "1fr 380px"]}
-          gap={20}
-          alignItems="start"
-        >
-          {/* Left Panel - Overview */}
-          <MultiplyStrategyOverview
+        {/* Right Panel - Actions */}
+        <Paper p={getTokenPx("containers.paddings.primary")} sx={{ mt: 0 }}>
+          <MultiplyActions
             collateralAsset={assets.collateral}
             debtAsset={assets.debt}
           />
-
-          {/* Right Panel - Actions */}
-          <Paper p={20}>
-            <MultiplyActions
-              collateralAsset={assets.collateral}
-              debtAsset={assets.debt}
-            />
-          </Paper>
-        </Grid>
-      </Box>
-    </Stack>
+        </Paper>
+      </Grid>
+    </Box>
   )
 }

@@ -9,10 +9,12 @@ import {
   Separator,
   Stack,
   Text,
+  ValueStats,
 } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { Zap } from "lucide-react"
 import { FC } from "react"
+import { getTokenPx } from "@galacticcouncil/ui/utils"
 
 import { AssetLogo } from "@/components/AssetLogo"
 import { NetApyChart } from "./NetApyChart"
@@ -43,40 +45,43 @@ const OverviewCard = ({
   const { themeProps: theme } = useTheme()
   return (
     <Paper
-      p={16}
+      p={getTokenPx("scales.paddings.l")}
       sx={{
         background: theme.surfaces.containers.high.primary,
         border: `1px solid ${theme.details.borders}`,
         minHeight: 100,
       }}
     >
-      <Stack justify="space-between" sx={{ height: "100%" }}>
-        <Text fs={12} color={theme.text.medium}>
-          {title}
-        </Text>
-        <Flex align="center" gap={8}>
-          <Text fs={24} fw={600}>
-            {value}
-          </Text>
-          {icon && (
-            <Box sx={{ color: theme.colors.azureBlue[400] }}>{icon}</Box>
-          )}
-        </Flex>
-        {subValue && subValue}
-      </Stack>
+      <ValueStats
+        label={title}
+        value={value}
+        size="large"
+        wrap
+        customValue={
+          icon ? (
+            <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
+              <Text fs="h5" fw={600}>
+                {value}
+              </Text>
+              <Box sx={{ color: theme.colors.azureBlue[400] }}>{icon}</Box>
+            </Flex>
+          ) : undefined
+        }
+        customBottomLabel={subValue}
+        style={{ height: "100%", justifyContent: "space-between" }}
+      />
     </Paper>
   )
 }
 
 const DetailRow = ({ label, value }: { label: string; value: any }) => {
-  const { themeProps: theme } = useTheme()
   return (
-    <Flex justify="space-between" align="center" py={12}>
-      <Text fs={14} color={theme.text.medium}>
-        {label}
-      </Text>
-      <Box>{value}</Box>
-    </Flex>
+    <ValueStats
+      label={label}
+      customValue={value}
+      size="medium"
+      py={getTokenPx("scales.paddings.m")}
+    />
   )
 }
 
@@ -89,37 +94,19 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
   if (!collateralAsset || !debtAsset) return null
 
   return (
-    <Stack gap={24}>
-      {/* Header / Strategy Info */}
-      <Flex justify="space-between" align="center">
-        <Box>
-          <Text fs={24} fw={600} font="primary" mb={4}>
-            {collateralAsset.symbol} / {debtAsset.symbol} Loop
-          </Text>
-          <Text fs={14} color={theme.text.medium}>
-            Supply {collateralAsset.symbol} and borrow {debtAsset.symbol} to
-            amplify yield.
-          </Text>
-        </Box>
-        <Box sx={{ textAlign: "right" }}>
-          <Text fs={12} color={theme.text.low} mb={2}>
-            Total Value Locked
-          </Text>
-          <Text fs={18} fw={600}>
-            $2.4M
-          </Text>
-        </Box>
-      </Flex>
-
+    <Stack id="multiply-strategy-overview" gap={getTokenPx("scales.paddings.xl")}>
       {/* Performance Chart */}
-      <Paper p={24} sx={{ background: theme.surfaces.containers.high.primary }}>
-        <Flex justify="space-between" mb={20}>
-          <Text fs={16} fw={600}>
+      <Paper
+        p={getTokenPx("scales.paddings.xl")}
+        sx={{ background: theme.surfaces.containers.high.primary }}
+      >
+        <Flex justify="space-between" mb={getTokenPx("scales.paddings.xl")}>
+          <Text fs="p2" fw={600}>
             Strategy Performance
           </Text>
-          <Flex gap={8}>
+          <Flex gap={getTokenPx("scales.paddings.base")}>
             <Text
-              fs={24}
+              fs="h5"
               fw={700}
               color={theme.details.values.positive}
               style={{ fontFamily: "Gazpacho" }}
@@ -127,9 +114,12 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
               +24.50%
             </Text>
             <Text
-              fs={13}
+              fs="p4"
               color={theme.text.medium}
-              style={{ alignSelf: "flex-end", paddingBottom: 6 }}
+              style={{
+                alignSelf: "flex-end",
+                paddingBottom: `${theme.scales.paddings.s}px`,
+              }}
             >
               Past 30d
             </Text>
@@ -140,12 +130,16 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
       </Paper>
 
       {/* Looping Overview */}
-      <Paper p={24}>
-        <Text fs={18} fw={600} mb={20}>
+      <Paper p={getTokenPx("scales.paddings.xl")}>
+        <Text fs="p1" fw={600} mb={getTokenPx("scales.paddings.xl")}>
           Looping Overview
         </Text>
 
-        <Grid columns={[1, 3]} gap={16} mb={30}>
+        <Grid
+          columns={[1, 3]}
+          gap={getTokenPx("scales.paddings.l")}
+          mb={getTokenPx("scales.paddings.xxxl")}
+        >
           <OverviewCard
             title="Liquidity Available"
             value={formatUSD(debtAsset.availableLiquidityUSD || 0)}
@@ -158,14 +152,14 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
           />
         </Grid>
 
-        <Separator mb={10} />
+        <Separator mb={getTokenPx("scales.paddings.base")} />
 
-        <Grid columns={[1, 2]} gap={20}>
+        <Grid columns={[1, 2]} gap={getTokenPx("containers.paddings.primary")}>
           <Box>
             <DetailRow
               label="Collateral Asset"
               value={
-                <Flex align="center" gap={8}>
+                <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
                   <AssetLogo id={collateralAsset.id} size="large" />
                   <Text fw={600}>{collateralAsset.symbol}</Text>
                 </Flex>
@@ -174,7 +168,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
             <DetailRow
               label="Debt Asset"
               value={
-                <Flex align="center" gap={8}>
+                <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
                   <AssetLogo id={debtAsset.id} size="large" />
                   <Text fw={600}>{debtAsset.symbol}</Text>
                 </Flex>

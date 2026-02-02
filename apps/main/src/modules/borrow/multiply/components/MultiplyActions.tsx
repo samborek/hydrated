@@ -7,11 +7,13 @@ import {
   Slider,
   Stack,
   Text,
+  ValueStats,
 } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState } from "react"
 
 import { AssetLogo } from "@/components/AssetLogo"
+import { getTokenPx } from "@galacticcouncil/ui/utils"
 
 export type MultiplyActionsProps = {
   collateralAsset: any
@@ -31,17 +33,17 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
   const debtAmount = (buyingPower - Number(collateralAmount || 0)) * 0.5 // Mock exchange rate
 
   return (
-    <Stack gap={20}>
+    <Stack gap={getTokenPx("containers.paddings.primary")}>
       {/* Header */}
       <Flex justify="space-between" align="center">
-        <Text fs={18} fw={600}>
+        <Text fs="p1" fw={600}>
           Multiply Actions
         </Text>
       </Flex>
 
       {/* Inputs */}
       <Box>
-        <Text fs={13} color={theme.text.medium} mb={8}>
+        <Text fs="p4" color={theme.text.medium} mb={getTokenPx("scales.paddings.base")}>
           Deposit Collateral
         </Text>
         <AssetInput
@@ -51,7 +53,7 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
           selectedAssetIcon={
             collateralAsset?.id ? <AssetLogo id={collateralAsset.id} /> : null
           }
-          onAsssetBtnClick={() => {}}
+          onAsssetBtnClick={() => { }}
           maxBalance="12.50"
           label="Deposit"
         />
@@ -59,15 +61,15 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
 
       {/* Leverage Slider */}
       <Box>
-        <Flex justify="space-between" mb={12}>
-          <Text fs={13} color={theme.text.medium}>
+        <Flex justify="space-between" mb={getTokenPx("scales.paddings.m")}>
+          <Text fs="p4" color={theme.text.medium}>
             Adjust Leverage
           </Text>
-          <Text fs={13} fw={600} color={theme.colors.azureBlue[400]}>
+          <Text fs="p4" fw={600} color={theme.colors.azureBlue[400]}>
             {leverage.toFixed(2)}x
           </Text>
         </Flex>
-        <Box px={10}>
+        <Box px={getTokenPx("scales.paddings.m")}>
           <Slider
             min={1.1}
             max={5}
@@ -76,11 +78,11 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
             onChange={setLeverage}
           />
         </Box>
-        <Flex justify="space-between" mt={8}>
-          <Text fs={11} color={theme.text.low}>
+        <Flex justify="space-between" mt={getTokenPx("scales.paddings.base")}>
+          <Text fs="p6" color={theme.text.low}>
             1.1x
           </Text>
-          <Text fs={11} color={theme.text.low}>
+          <Text fs="p6" color={theme.text.low}>
             5x
           </Text>
         </Flex>
@@ -89,39 +91,27 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
       <Separator />
 
       {/* Simulation Stats */}
-      <Stack gap={12}>
-        <Flex justify="space-between">
-          <Text fs={13} color={theme.text.medium}>
-            Buying Power
-          </Text>
-          <Text fs={13} fw={600}>
-            {buyingPower.toFixed(2)} {collateralAsset?.symbol}
-          </Text>
-        </Flex>
-        <Flex justify="space-between">
-          <Text fs={13} color={theme.text.medium}>
-            Debt Generated
-          </Text>
-          <Text fs={13} fw={600}>
-            {debtAmount.toFixed(2)} {debtAsset?.symbol}
-          </Text>
-        </Flex>
-        <Flex justify="space-between">
-          <Text fs={13} color={theme.text.medium}>
-            Net APY
-          </Text>
-          <Text fs={13} fw={600} color={theme.details.values.positive}>
-            +14.2%
-          </Text>
-        </Flex>
-        <Flex justify="space-between">
-          <Text fs={13} color={theme.text.medium}>
-            Liquidation Price
-          </Text>
-          <Text fs={13} fw={600}>
-            $4.20
-          </Text>
-        </Flex>
+      <Stack gap={getTokenPx("scales.paddings.m")}>
+        <ValueStats
+          label="Buying Power"
+          value={`${buyingPower.toFixed(2)} ${collateralAsset?.symbol}`}
+          size="medium"
+        />
+        <ValueStats
+          label="Debt Generated"
+          value={`${debtAmount.toFixed(2)} ${debtAsset?.symbol}`}
+          size="medium"
+        />
+        <ValueStats
+          label="Net APY"
+          customValue={
+            <Text fs="p4" fw={600} color={theme.details.values.positive}>
+              +14.2%
+            </Text>
+          }
+          size="medium"
+        />
+        <ValueStats label="Liquidation Price" value="$4.20" size="medium" />
       </Stack>
 
       {/* Action Button */}

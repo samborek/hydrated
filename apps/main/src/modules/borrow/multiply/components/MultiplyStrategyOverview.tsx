@@ -80,7 +80,7 @@ const DetailRow = ({ label, value }: { label: string; value: any }) => {
       label={label}
       customValue={value}
       size="medium"
-      py={getTokenPx("scales.paddings.m")}
+      sx={{ py: getTokenPx("scales.paddings.m") }}
     />
   )
 }

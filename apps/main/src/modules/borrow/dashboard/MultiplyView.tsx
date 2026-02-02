@@ -319,7 +319,7 @@ export const MultiplyView: FC = () => {
                   </Flex>
                   <SBadge>Up to {s.leverage}x</SBadge>
                 </Flex>
-                <div style={{ marginTop: getTokenPx("scales.paddings.base") }}>
+                <div style={{ marginTop: `${theme.scales.paddings.base}px` }}>
                   <Text fs="p1" fw={600}>
                     {s.collateralAsset.symbol} Loop
                   </Text>

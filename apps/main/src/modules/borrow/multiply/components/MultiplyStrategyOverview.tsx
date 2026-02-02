@@ -1,5 +1,4 @@
 import {
-  AssetCapsProvider,
   ComputedReserveData,
 } from "@galacticcouncil/money-market/hooks"
 import {
@@ -14,29 +13,13 @@ import {
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { Zap } from "lucide-react"
 import { FC } from "react"
-import {
-  Area,
-  AreaChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts"
 
 import { AssetLogo } from "@/components/AssetLogo"
-import { ReserveConfiguration } from "@/modules/borrow/reserve/ReserveConfiguration"
+import { NetApyChart } from "./NetApyChart"
 
 export type MultiplyStrategyOverviewProps = {
   collateralAsset: ComputedReserveData
   debtAsset: ComputedReserveData
-}
-
-// Mock data for chart
-const generateChartData = () => {
-  return Array.from({ length: 30 }, (_, i) => ({
-    day: i,
-    value: 100 + Math.random() * 20 + i * 2,
-  }))
 }
 
 const formatUSD = (val: string | number) => {
@@ -102,7 +85,6 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
   debtAsset,
 }) => {
   const { themeProps: theme } = useTheme()
-  const data = generateChartData()
 
   if (!collateralAsset || !debtAsset) return null
 
@@ -142,7 +124,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
               color={theme.details.values.positive}
               style={{ fontFamily: "Gazpacho" }}
             >
-              +24.5%
+              +24.50%
             </Text>
             <Text
               fs={13}
@@ -154,45 +136,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
           </Flex>
         </Flex>
 
-        <div style={{ height: 300, width: "100%" }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
-              <defs>
-                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor={theme.colors.azureBlue[500]}
-                    stopOpacity={0.3}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor={theme.colors.azureBlue[500]}
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="day" hide />
-              <YAxis hide domain={["auto", "auto"]} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: theme.surfaces.containers.high.hover,
-                  borderColor: theme.details.borders,
-                  borderRadius: 8,
-                }}
-                itemStyle={{ color: theme.text.high }}
-                labelStyle={{ display: "none" }}
-              />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke={theme.colors.azureBlue[500]}
-                fillOpacity={1}
-                fill="url(#colorValue)"
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+        <NetApyChart />
       </Paper>
 
       {/* Looping Overview */}
@@ -247,7 +191,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
               value={
                 <Text fw={600}>
                   {(Number(collateralAsset.baseLTVasCollateral) / 100).toFixed(
-                    1,
+                    2,
                   )}
                   %
                 </Text>
@@ -259,7 +203,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
                 <Text fw={600}>
                   {(
                     Number(collateralAsset.reserveLiquidationThreshold) / 100
-                  ).toFixed(1)}
+                  ).toFixed(2)}
                   %
                 </Text>
               }
@@ -267,41 +211,6 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
           </Box>
         </Grid>
       </Paper>
-
-      {/* Reserve Configurations */}
-      <Stack gap={20}>
-        {/* Collateral Asset Config (Supply Details) */}
-        <Paper p={24}>
-          <Stack gap={20}>
-            <Flex align="center" gap={12}>
-              <AssetLogo id={collateralAsset.id} size="large" />
-              <Text fs={18} fw={600}>
-                Reserve Status & Configuration ({collateralAsset.symbol})
-              </Text>
-            </Flex>
-            <Separator />
-            <AssetCapsProvider asset={collateralAsset}>
-              <ReserveConfiguration reserve={collateralAsset} />
-            </AssetCapsProvider>
-          </Stack>
-        </Paper>
-
-        {/* Debt Asset Config (Borrow Details) */}
-        <Paper p={24}>
-          <Stack gap={20}>
-            <Flex align="center" gap={12}>
-              <AssetLogo id={debtAsset.id} size="large" />
-              <Text fs={18} fw={600}>
-                Reserve Status & Configuration ({debtAsset.symbol})
-              </Text>
-            </Flex>
-            <Separator />
-            <AssetCapsProvider asset={debtAsset}>
-              <ReserveConfiguration reserve={debtAsset} />
-            </AssetCapsProvider>
-          </Stack>
-        </Paper>
-      </Stack>
     </Stack>
   )
 }

@@ -15,7 +15,7 @@ export const useBorrowCrumbs = (): BreadcrumbItem[] => {
 
     const crumbs = paths
         .filter(({ fullPath }) => fullPath.includes("borrow"))
-        .map(({ fullPath, params }) => {
+        .flatMap(({ fullPath, params }) => {
             if (fullPath === "/borrow/multiply/$strategyId") {
                 let label = "Strategy"
                 if (params && "strategyId" in params) {
@@ -25,15 +25,23 @@ export const useBorrowCrumbs = (): BreadcrumbItem[] => {
                         label = `${collateral} / ${debt}`
                     }
                 }
-                return {
-                    label,
-                    path: fullPath,
-                }
+                return [
+                    {
+                        label: getBreadcrumbLabel("/borrow/multiply", t),
+                        path: "/borrow/multiply",
+                    },
+                    {
+                        label,
+                        path: fullPath,
+                    },
+                ]
             } else {
-                return {
-                    label: getBreadcrumbLabel(fullPath, t),
-                    path: fullPath,
-                }
+                return [
+                    {
+                        label: getBreadcrumbLabel(fullPath, t),
+                        path: fullPath,
+                    },
+                ]
             }
         })
 

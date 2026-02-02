@@ -73,7 +73,7 @@ export const TabMenuItem: FC<Props> = ({
               fontWeight: 700,
               background: "#3B82F6",
               color: "white",
-              padding: "0.325rem 0.375rem",
+              padding: "0.125rem 0.375rem",
               borderRadius: "0.25rem",
               textTransform: "uppercase",
               lineHeight: 1,

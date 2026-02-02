@@ -157,15 +157,15 @@ export const MultiplyView: FC = () => {
         debt = {
           symbol: s.debt,
           underlyingAsset: "0x0000000000000000000000000000000000000001",
-          variableBorrowRate: 0.05,
+          variableBorrowAPY: 0.05,
           id: token?.id || "mock-id-d-" + idx,
           ...token,
         }
       }
 
       const supplyApy = Number(collateral.supplyAPY) || 0
-      const borrowApy = Number(debt.variableBorrowRate) || 0
-      const netApy = supplyApy + (supplyApy - borrowApy) * (s.leverage - 1)
+      const borrowApy = Number(debt.variableBorrowAPY) || 0
+      const netApy = (supplyApy + (supplyApy - borrowApy) * (s.leverage - 1)) * 100
 
       return {
         id: `${s.collateral}-${s.debt}-${idx}`,

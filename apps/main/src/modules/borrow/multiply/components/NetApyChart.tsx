@@ -202,7 +202,7 @@ export const NetApyChart: FC = () => {
                             orientation="right"
                         />
                         <Tooltip
-                            content={({ active, payload, label }) => {
+                            content={({ active, payload }) => {
                                 if (active && payload && payload.length) {
                                     const sortedPayload = [...payload].sort(
                                         (a, b) => (b.value as number) - (a.value as number),

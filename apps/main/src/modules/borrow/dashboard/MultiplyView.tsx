@@ -106,6 +106,7 @@ export const MultiplyView: FC = () => {
   const strategies = useMemo(() => {
     const assets = marketAssets?.length ? marketAssets : []
 
+
     const getLogoId = (reserve: any) => {
       const assetId = isGho(reserve)
         ? GHO_ASSET_ID
@@ -125,7 +126,7 @@ export const MultiplyView: FC = () => {
       if (collateralBase) {
         collateral = {
           ...collateralBase,
-          logoId: getLogoId(collateralBase),
+          id: getLogoId(collateralBase),
         }
       } else {
         const token = tokens.find((t) => t.symbol === s.collateral)
@@ -133,7 +134,7 @@ export const MultiplyView: FC = () => {
           symbol: s.collateral,
           underlyingAsset: "0x0000000000000000000000000000000000000000",
           supplyAPY: 0.12,
-          logoId: token?.id || "mock-id-c-" + idx,
+          id: token?.id || "mock-id-c-" + idx,
           ...token,
         }
       }
@@ -144,7 +145,7 @@ export const MultiplyView: FC = () => {
       if (debtBase) {
         debt = {
           ...debtBase,
-          logoId: getLogoId(debtBase),
+          id: getLogoId(debtBase),
         }
       } else {
         const token =
@@ -157,9 +158,7 @@ export const MultiplyView: FC = () => {
           symbol: s.debt,
           underlyingAsset: "0x0000000000000000000000000000000000000001",
           variableBorrowRate: 0.05,
-          logoId:
-            token?.id ||
-            (s.debt === "HUSD" ? HOLLAR_ASSET_ID : "mock-id-d-" + idx),
+          id: token?.id || "mock-id-d-" + idx,
           ...token,
         }
       }
@@ -197,7 +196,7 @@ export const MultiplyView: FC = () => {
             {isPrime ? (
               <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
             ) : (
-              <AssetLogo id={s.collateralAsset.logoId} size="medium" />
+              <AssetLogo id={s.collateralAsset.id} size="medium" />
             )}
             <Flex direction="column">
               <Text fs="p3" fw={500}>
@@ -222,7 +221,7 @@ export const MultiplyView: FC = () => {
         const borrowApy = Number(s.debtAsset.variableBorrowRate) || 0
         return (
           <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
-            <AssetLogo id={s.debtAsset.logoId} size="medium" />
+            <AssetLogo id={s.debtAsset.id} size="medium" />
             <Flex direction="column">
               <Text fs="p3" fw={500}>
                 {s.debtAsset.symbol}
@@ -251,7 +250,7 @@ export const MultiplyView: FC = () => {
       meta: {
         sx: { width: "20%" },
       },
-      cell: ({ getValue }) => <Text>{getValue()}x</Text>,
+      cell: ({ getValue }) => <Text>{getValue().toFixed(2)}x</Text>,
     }),
     columnHelper.display({
       id: "actions",
@@ -307,17 +306,17 @@ export const MultiplyView: FC = () => {
                     {s.collateralAsset.symbol === "PRIME" ? (
                       <BaseAssetLogo src={primeLogo} size="large" alt="PRIME" />
                     ) : (
-                      <AssetLogo id={s.collateralAsset.logoId} size="large" />
+                      <AssetLogo id={s.collateralAsset.id} size="large" />
                     )}
                     <div
                       style={{
                         marginLeft: `-${theme.scales.paddings.m}px`,
                       }}
                     >
-                      <AssetLogo id={s.debtAsset.logoId} size="large" />
+                      <AssetLogo id={s.debtAsset.id} size="large" />
                     </div>
                   </Flex>
-                  <SBadge>Up to {s.leverage}x</SBadge>
+                  <SBadge>Up to {s.leverage.toFixed(1)}x</SBadge>
                 </Flex>
                 <div style={{ marginTop: `${theme.scales.paddings.base}px` }}>
                   <Text fs="p1" fw={600}>

@@ -106,7 +106,7 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
           label="Net APY"
           customValue={
             <Text fs="p4" fw={600} color={theme.details.values.positive}>
-              +14.2%
+              +14.20%
             </Text>
           }
           size="medium"

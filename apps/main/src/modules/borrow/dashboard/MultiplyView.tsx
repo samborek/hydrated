@@ -15,7 +15,7 @@ import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
-import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
+import { getAssetIdFromAddress, HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { FC, useMemo } from "react"
 
 import primeLogo from "@/assets/tokens/prime.png"
@@ -107,7 +107,10 @@ export const MultiplyView: FC = () => {
     return STRATEGIES.map((s, idx) => {
       let collateral = sAssets.find((a) => a.symbol === s.collateral) as any
 
-      if (!collateral) {
+      if (collateral) {
+        collateral.id =
+          collateral.id || getAssetIdFromAddress(collateral.underlyingAsset)
+      } else {
         const token = tokens.find((t) => t.symbol === s.collateral)
         collateral = {
           symbol: s.collateral,
@@ -120,7 +123,9 @@ export const MultiplyView: FC = () => {
 
       let debt = bAssets.find((a) => a.symbol === s.debt) as any
 
-      if (!debt) {
+      if (debt) {
+        debt.id = debt.id || getAssetIdFromAddress(debt.underlyingAsset)
+      } else {
         const token =
           tokens.find((t) => t.symbol === s.debt) ||
           (s.debt === "HUSD"

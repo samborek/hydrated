@@ -17,6 +17,8 @@ import { FC } from "react"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
 
 import { AssetLogo } from "@/components/AssetLogo"
+import { getReserveAssetId } from "@/modules/borrow/utils/assets"
+
 import { NetApyChart } from "./NetApyChart"
 
 export type MultiplyStrategyOverviewProps = {
@@ -36,11 +38,13 @@ const OverviewCard = ({
   value,
   subValue,
   icon,
+  isHeadline,
 }: {
   title: string
   value: string
   subValue?: any
   icon?: any
+  isHeadline?: boolean
 }) => {
   const { themeProps: theme } = useTheme()
   return (
@@ -60,7 +64,12 @@ const OverviewCard = ({
         customValue={
           icon ? (
             <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
-              <Text fs="h5" fw={600}>
+              <Text
+                fs="h5"
+                fw={isHeadline ? 700 : 600}
+                color={isHeadline ? theme.details.values.positive : undefined}
+                style={isHeadline ? { fontFamily: "Gazpacho" } : undefined}
+              >
                 {value}
               </Text>
               <Box sx={{ color: theme.colors.azureBlue[400] }}>{icon}</Box>
@@ -149,6 +158,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
             title="Max Net APY"
             value="23.03%"
             icon={<Zap size={16} fill="currentColor" />}
+            isHeadline
           />
         </Grid>
 
@@ -160,7 +170,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
               label="Collateral Asset"
               value={
                 <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
-                  <AssetLogo id={collateralAsset.id} size="large" />
+                  <AssetLogo id={getReserveAssetId(collateralAsset)} size="large" />
                   <Text fw={600}>{collateralAsset.symbol}</Text>
                 </Flex>
               }
@@ -169,7 +179,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
               label="Debt Asset"
               value={
                 <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
-                  <AssetLogo id={debtAsset.id} size="large" />
+                  <AssetLogo id={getReserveAssetId(debtAsset)} size="large" />
                   <Text fw={600}>{debtAsset.symbol}</Text>
                 </Flex>
               }

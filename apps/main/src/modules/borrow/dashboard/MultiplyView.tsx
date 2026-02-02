@@ -12,20 +12,13 @@ import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled, getTokenPx } from "@galacticcouncil/ui/utils"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
-import { GHO_ASSET_ID, isGho } from "@galacticcouncil/money-market/utils"
-import {
-  GDOT_ASSET_ID,
-  GDOT_ERC20_ID,
-  getAssetIdFromAddress,
-  GETH_ASSET_ID,
-  GETH_ERC20_ID,
-  HOLLAR_ASSET_ID,
-} from "@galacticcouncil/utils"
+import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { FC, useMemo } from "react"
 
 import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
 import { useAssets } from "@/providers/assetsProvider"
+import { getReserveAssetId } from "@/modules/borrow/utils/assets"
 
 import { MyPositionsTable } from "../multiply/components/MyPositionsTable"
 import { useMultiplySimulationStore } from "../multiply/states/useMultiplySimulationStore"
@@ -110,18 +103,6 @@ export const MultiplyView: FC = () => {
     const assets = marketAssets?.length ? marketAssets : []
 
 
-    const getLogoId = (reserve: any) => {
-      const assetId = isGho(reserve)
-        ? GHO_ASSET_ID
-        : getAssetIdFromAddress(reserve.underlyingAsset)
-
-      const OVERRIDE_MAP: Record<string, string> = {
-        [GDOT_ASSET_ID]: GDOT_ERC20_ID,
-        [GETH_ASSET_ID]: GETH_ERC20_ID,
-      }
-      return OVERRIDE_MAP[assetId] ?? assetId
-    }
-
     return STRATEGIES.map((s, idx) => {
       const collateralBase = assets.find((a) => a.symbol === s.collateral) as any
       let collateral: any
@@ -129,7 +110,7 @@ export const MultiplyView: FC = () => {
       if (collateralBase) {
         collateral = {
           ...collateralBase,
-          id: getLogoId(collateralBase),
+          id: getReserveAssetId(collateralBase),
         }
       } else {
         const token = tokens.find((t) => t.symbol === s.collateral)
@@ -148,7 +129,7 @@ export const MultiplyView: FC = () => {
       if (debtBase) {
         debt = {
           ...debtBase,
-          id: getLogoId(debtBase),
+          id: getReserveAssetId(debtBase),
         }
       } else {
         const token =

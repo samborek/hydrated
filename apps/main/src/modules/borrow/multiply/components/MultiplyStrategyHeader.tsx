@@ -4,6 +4,7 @@ import { getToken, getTokenPx } from "@galacticcouncil/ui/utils"
 import { FC } from "react"
 
 import { AssetLogo } from "@/components/AssetLogo"
+import { getReserveAssetId } from "@/modules/borrow/utils/assets"
 
 export type MultiplyStrategyHeaderProps = {
     collateralAsset: ComputedReserveData
@@ -24,7 +25,13 @@ export const MultiplyStrategyHeader: FC<MultiplyStrategyHeaderProps> = ({
             }}
         >
             <Flex gap={getTokenPx("scales.paddings.m")} align="center" wrap>
-                <AssetLogo id={[collateralAsset.id, debtAsset.id]} size="large" />
+                <AssetLogo
+                    id={[
+                        getReserveAssetId(collateralAsset),
+                        getReserveAssetId(debtAsset),
+                    ]}
+                    size="large"
+                />
 
                 <Flex direction="column">
                     <Text font="primary" fw={700} fs="h5" lh="130%">

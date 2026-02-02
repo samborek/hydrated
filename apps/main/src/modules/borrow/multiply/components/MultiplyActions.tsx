@@ -1,3 +1,4 @@
+import { ComputedReserveData } from "@galacticcouncil/money-market/hooks"
 import {
   AssetInput,
   Box,
@@ -15,12 +16,13 @@ import { getTokenPx } from "@galacticcouncil/ui/utils"
 import { toast } from "sonner"
 
 import { AssetLogo } from "@/components/AssetLogo"
+import { getReserveAssetId } from "@/modules/borrow/utils/assets"
 
 import { useMultiplySimulationStore } from "../states/useMultiplySimulationStore"
 
 export type MultiplyActionsProps = {
-  collateralAsset: any
-  debtAsset: any
+  collateralAsset: ComputedReserveData
+  debtAsset: ComputedReserveData
 }
 
 export const MultiplyActions: FC<MultiplyActionsProps> = ({
@@ -49,11 +51,11 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
 
     addPosition({
       collateralAsset: {
-        id: collateralAsset.id,
+        id: getReserveAssetId(collateralAsset),
         symbol: collateralAsset.symbol,
       },
       debtAsset: {
-        id: debtAsset.id,
+        id: getReserveAssetId(debtAsset),
         symbol: debtAsset.symbol,
       },
       leverage,
@@ -84,7 +86,9 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
           onChange={setCollateralAmount}
           symbol={collateralAsset?.symbol}
           selectedAssetIcon={
-            collateralAsset?.id ? <AssetLogo id={collateralAsset.id} /> : null
+            collateralAsset?.id ? (
+              <AssetLogo id={getReserveAssetId(collateralAsset)} />
+            ) : null
           }
           onAsssetBtnClick={() => { }}
           maxBalance="12.50"

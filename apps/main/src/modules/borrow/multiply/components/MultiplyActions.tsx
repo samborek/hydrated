@@ -9,11 +9,14 @@ import {
   Text,
   ValueStats,
 } from "@galacticcouncil/ui/components"
-import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useState } from "react"
+import { useTheme } from "@galacticcouncil/ui/theme"
+import { getTokenPx } from "@galacticcouncil/ui/utils"
+import { toast } from "sonner"
 
 import { AssetLogo } from "@/components/AssetLogo"
-import { getTokenPx } from "@galacticcouncil/ui/utils"
+
+import { useMultiplySimulationStore } from "../states/useMultiplySimulationStore"
 
 export type MultiplyActionsProps = {
   collateralAsset: any
@@ -28,9 +31,39 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
   const [leverage, setLeverage] = useState(1.1)
   const [collateralAmount, setCollateralAmount] = useState("")
 
+  const { addPosition } = useMultiplySimulationStore()
+
   // Mock calculations
   const buyingPower = Number(collateralAmount || 0) * leverage
   const debtAmount = (buyingPower - Number(collateralAmount || 0)) * 0.5 // Mock exchange rate
+
+  const supplyApy = Number(collateralAsset?.supplyAPY) || 0.12
+  const borrowApy = Number(debtAsset?.variableBorrowAPY) || 0.05
+  const netApy = (supplyApy + (supplyApy - borrowApy) * (leverage - 1)) * 100
+
+  const handleOpenPosition = () => {
+    if (!collateralAmount || Number(collateralAmount) <= 0) {
+      toast.error("Please enter a collateral amount")
+      return
+    }
+
+    addPosition({
+      collateralAsset: {
+        id: collateralAsset.id,
+        symbol: collateralAsset.symbol,
+      },
+      debtAsset: {
+        id: debtAsset.id,
+        symbol: debtAsset.symbol,
+      },
+      leverage,
+      collateralAmount,
+      debtAmount: debtAmount.toString(),
+      netApy,
+    })
+
+    toast.success("Position simulated successfully!")
+  }
 
   return (
     <Stack gap={getTokenPx("containers.paddings.primary")}>
@@ -106,7 +139,7 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
           label="Net APY"
           customValue={
             <Text fs="p4" fw={600} color={theme.details.values.positive}>
-              +14.20%
+              +{netApy.toFixed(2)}%
             </Text>
           }
           size="medium"
@@ -115,7 +148,7 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
       </Stack>
 
       {/* Action Button */}
-      <Button size="large" sx={{ width: "100%" }}>
+      <Button size="large" sx={{ width: "100%" }} onClick={handleOpenPosition}>
         Open Position
       </Button>
     </Stack>

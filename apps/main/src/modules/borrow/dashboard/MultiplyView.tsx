@@ -27,6 +27,9 @@ import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
 import { useAssets } from "@/providers/assetsProvider"
 
+import { MyPositionsTable } from "../multiply/components/MyPositionsTable"
+import { useMultiplySimulationStore } from "../multiply/states/useMultiplySimulationStore"
+
 const SSection = styled.section(
   ({ theme }) => css`
     background: ${theme.surfaces.containers.high.primary};
@@ -282,8 +285,22 @@ export const MultiplyView: FC = () => {
     }),
   ]
 
+  const { positions } = useMultiplySimulationStore()
+
   return (
     <Flex direction="column" gap={getTokenPx("scales.paddings.xxl")}>
+      {/* My Positions */}
+      {positions.length > 0 && (
+        <Box>
+          <Text fs="p1" fw={600} mb={getTokenPx("scales.paddings.l")} font="primary">
+            Your positions
+          </Text>
+          <SSection>
+            <MyPositionsTable />
+          </SSection>
+        </Box>
+      )}
+
       {/* Featured Loops */}
       <div>
         <Text fs="p1" fw={600} mb={getTokenPx("scales.paddings.l")} font="primary">

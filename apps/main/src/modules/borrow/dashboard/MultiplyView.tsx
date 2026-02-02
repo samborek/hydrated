@@ -119,10 +119,14 @@ export const MultiplyView: FC = () => {
     }
 
     return STRATEGIES.map((s, idx) => {
-      let collateral = assets.find((a) => a.symbol === s.collateral) as any
+      const collateralBase = assets.find((a) => a.symbol === s.collateral) as any
+      let collateral: any
 
-      if (collateral) {
-        collateral.logoId = getLogoId(collateral)
+      if (collateralBase) {
+        collateral = {
+          ...collateralBase,
+          logoId: getLogoId(collateralBase),
+        }
       } else {
         const token = tokens.find((t) => t.symbol === s.collateral)
         collateral = {
@@ -134,10 +138,14 @@ export const MultiplyView: FC = () => {
         }
       }
 
-      let debt = assets.find((a) => a.symbol === s.debt) as any
+      const debtBase = assets.find((a) => a.symbol === s.debt) as any
+      let debt: any
 
-      if (debt) {
-        debt.logoId = getLogoId(debt)
+      if (debtBase) {
+        debt = {
+          ...debtBase,
+          logoId: getLogoId(debtBase),
+        }
       } else {
         const token =
           tokens.find((t) => t.symbol === s.debt) ||

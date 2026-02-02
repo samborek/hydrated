@@ -28,5 +28,7 @@ yarn-error.log*
 .idea
 .turbo
 *.gen.*
+routeTree.auto.ts
+generated-routes.ts
 *storybook.log
 .cursor

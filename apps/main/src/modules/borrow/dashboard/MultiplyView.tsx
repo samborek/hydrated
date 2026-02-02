@@ -3,6 +3,7 @@ import {
   useSupplyAssetsData,
 } from "@galacticcouncil/money-market/hooks"
 import {
+  AssetLogo as BaseAssetLogo,
   Box,
   Button,
   DataTable,
@@ -12,10 +13,12 @@ import {
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
-import { useNavigate } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
+import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { FC, useMemo } from "react"
 
+import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
 import { useAssets } from "@/providers/assetsProvider"
 
@@ -36,7 +39,7 @@ const SSection = styled.section(
   `,
 )
 
-const SLoopCard = styled.div(
+const SLoopCard = styled(Link)(
   ({ theme }) => css`
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
@@ -47,9 +50,13 @@ const SLoopCard = styled.div(
     gap: 12px;
     cursor: pointer;
     transition: all 0.2s;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
 
     &:hover {
       background: ${theme.surfaces.containers.high.hover};
+      border-color: ${theme.colors.azureBlue[400]};
     }
   `,
 )
@@ -72,7 +79,7 @@ const STRATEGIES = [
   { collateral: "DOT", debt: "USDC", leverage: 3 },
   { collateral: "WETH", debt: "USDC", leverage: 2.5 },
   { collateral: "WBTC", debt: "USDC", leverage: 2.5 },
-  { collateral: "DOT", debt: "USDT", leverage: 3 },
+  { collateral: "PRIME", debt: "HUSD", leverage: 3.5 },
 ]
 
 type StrategyRow = {
@@ -114,12 +121,19 @@ export const MultiplyView: FC = () => {
       let debt = bAssets.find((a) => a.symbol === s.debt) as any
 
       if (!debt) {
-        const token = tokens.find((t) => t.symbol === s.debt)
+        const token =
+          tokens.find((t) => t.symbol === s.debt) ||
+          (s.debt === "HUSD"
+            ? tokens.find((t) => t.id === HOLLAR_ASSET_ID)
+            : undefined)
+
         debt = {
           symbol: s.debt,
           underlyingAsset: "0x0000000000000000000000000000000000000001",
           variableBorrowRate: 0.05, // Mock 5%
-          id: token?.id || "mock-id-d-" + idx,
+          id:
+            token?.id ||
+            (s.debt === "HUSD" ? HOLLAR_ASSET_ID : "mock-id-d-" + idx),
           ...token,
         }
       }
@@ -151,9 +165,15 @@ export const MultiplyView: FC = () => {
       cell: ({ row }) => {
         const s = row.original
         const supplyApy = Number(s.collateralAsset.supplyAPY) || 0
+        const isPrime = s.collateralAsset.symbol === "PRIME"
+
         return (
           <Flex align="center" gap={10}>
-            <AssetLogo id={s.collateralAsset.id} size="medium" />
+            {isPrime ? (
+              <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
+            ) : (
+              <AssetLogo id={s.collateralAsset.id} size="medium" />
+            )}
             <Flex direction="column">
               <Text fs={14} fw={500}>
                 {s.collateralAsset.symbol}
@@ -245,20 +265,21 @@ export const MultiplyView: FC = () => {
         <Text fs={18} fw={600} mb={16} font="primary">
           Featured Loops
         </Text>
-        <Grid columns={gte("md") ? 3 : 1} gap={16}>
-          {strategies.slice(0, 3).map((s) => (
+        <Grid columns={gte("xl") ? 4 : gte("sm") ? 2 : 1} gap={16}>
+          {strategies.slice(0, 4).map((s) => (
             <SLoopCard
               key={"feat-" + s.id}
-              onClick={() =>
-                navigate({
-                  to: "/borrow/multiply/$strategyId",
-                  params: { strategyId: s.id },
-                })
-              }
+              to="/borrow/multiply/$strategyId"
+              params={{ strategyId: s.id }}
+              style={{ textDecoration: "none" }}
             >
               <Flex justify="space-between" align="center">
                 <Flex>
-                  <AssetLogo id={s.collateralAsset.id} size="large" />
+                  {s.collateralAsset.symbol === "PRIME" ? (
+                    <BaseAssetLogo src={primeLogo} size="large" alt="PRIME" />
+                  ) : (
+                    <AssetLogo id={s.collateralAsset.id} size="large" />
+                  )}
                   <div style={{ marginLeft: -12 }}>
                     <AssetLogo id={s.debtAsset.id} size="large" />
                   </div>

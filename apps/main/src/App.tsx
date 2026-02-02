@@ -14,7 +14,7 @@ import { RpcProvider } from "@/providers/rpcProvider"
 import { UiProvider } from "@/providers/uiProvider"
 
 import { Page404 } from "./components/Page404"
-import { routeTree } from "./routeTree.gen"
+import { routeTree } from "./generated-routes"
 
 const queryClient = new QueryClient()
 export interface RouterContext {

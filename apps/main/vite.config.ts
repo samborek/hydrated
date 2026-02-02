@@ -67,6 +67,7 @@ export default defineConfig({
   plugins: [
     TanStackRouterVite({
       autoCodeSplitting: true,
+      generatedRouteTree: "./src/generated-routes.ts",
     }),
     react({
       jsxImportSource: "@galacticcouncil/ui/jsx",

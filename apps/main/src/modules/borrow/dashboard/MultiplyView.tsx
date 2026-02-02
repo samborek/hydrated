@@ -1,7 +1,4 @@
-import {
-  useBorrowAssetsData,
-  useSupplyAssetsData,
-} from "@galacticcouncil/money-market/hooks"
+import { useMarketAssetsData } from "@galacticcouncil/money-market/hooks"
 import {
   AssetLogo as BaseAssetLogo,
   Box,
@@ -15,7 +12,15 @@ import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
-import { getAssetIdFromAddress, HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
+import { GHO_ASSET_ID, isGho } from "@galacticcouncil/money-market/utils"
+import {
+  GDOT_ASSET_ID,
+  GDOT_ERC20_ID,
+  getAssetIdFromAddress,
+  GETH_ASSET_ID,
+  GETH_ERC20_ID,
+  HOLLAR_ASSET_ID,
+} from "@galacticcouncil/utils"
 import { FC, useMemo } from "react"
 
 import primeLogo from "@/assets/tokens/prime.png"
@@ -96,35 +101,43 @@ export const MultiplyView: FC = () => {
   const { tokens } = useAssets()
   const navigate = useNavigate()
 
-  const { data: supplyAssets } = useSupplyAssetsData({ showAll: true })
-  const { data: borrowAssets } = useBorrowAssetsData()
+  const { data: marketAssets } = useMarketAssetsData()
 
   const strategies = useMemo(() => {
-    // Fallback or empty arrays
-    const sAssets = supplyAssets?.length ? supplyAssets : []
-    const bAssets = borrowAssets?.length ? borrowAssets : []
+    const assets = marketAssets?.length ? marketAssets : []
+
+    const getLogoId = (reserve: any) => {
+      const assetId = isGho(reserve)
+        ? GHO_ASSET_ID
+        : getAssetIdFromAddress(reserve.underlyingAsset)
+
+      const OVERRIDE_MAP: Record<string, string> = {
+        [GDOT_ASSET_ID]: GDOT_ERC20_ID,
+        [GETH_ASSET_ID]: GETH_ERC20_ID,
+      }
+      return OVERRIDE_MAP[assetId] ?? assetId
+    }
 
     return STRATEGIES.map((s, idx) => {
-      let collateral = sAssets.find((a) => a.symbol === s.collateral) as any
+      let collateral = assets.find((a) => a.symbol === s.collateral) as any
 
       if (collateral) {
-        collateral.id =
-          collateral.id || getAssetIdFromAddress(collateral.underlyingAsset)
+        collateral.logoId = getLogoId(collateral)
       } else {
         const token = tokens.find((t) => t.symbol === s.collateral)
         collateral = {
           symbol: s.collateral,
           underlyingAsset: "0x0000000000000000000000000000000000000000",
-          supplyAPY: 0.12, // Mock 12%
-          id: token?.id || "mock-id-c-" + idx,
+          supplyAPY: 0.12,
+          logoId: token?.id || "mock-id-c-" + idx,
           ...token,
         }
       }
 
-      let debt = bAssets.find((a) => a.symbol === s.debt) as any
+      let debt = assets.find((a) => a.symbol === s.debt) as any
 
       if (debt) {
-        debt.id = debt.id || getAssetIdFromAddress(debt.underlyingAsset)
+        debt.logoId = getLogoId(debt)
       } else {
         const token =
           tokens.find((t) => t.symbol === s.debt) ||
@@ -135,15 +148,14 @@ export const MultiplyView: FC = () => {
         debt = {
           symbol: s.debt,
           underlyingAsset: "0x0000000000000000000000000000000000000001",
-          variableBorrowRate: 0.05, // Mock 5%
-          id:
+          variableBorrowRate: 0.05,
+          logoId:
             token?.id ||
             (s.debt === "HUSD" ? HOLLAR_ASSET_ID : "mock-id-d-" + idx),
           ...token,
         }
       }
 
-      // Mock APY calc: SupplyAPY + (SupplyAPY - BorrowAPY) * (Lev - 1)
       const supplyApy = Number(collateral.supplyAPY) || 0
       const borrowApy = Number(debt.variableBorrowRate) || 0
       const netApy = supplyApy + (supplyApy - borrowApy) * (s.leverage - 1)
@@ -156,7 +168,7 @@ export const MultiplyView: FC = () => {
         netApy,
       }
     }).filter(Boolean) as StrategyRow[]
-  }, [supplyAssets, borrowAssets, tokens])
+  }, [marketAssets, tokens])
 
   const columnHelper = createColumnHelper<StrategyRow>()
 
@@ -177,7 +189,7 @@ export const MultiplyView: FC = () => {
             {isPrime ? (
               <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
             ) : (
-              <AssetLogo id={s.collateralAsset.id} size="medium" />
+              <AssetLogo id={s.collateralAsset.logoId} size="medium" />
             )}
             <Flex direction="column">
               <Text fs={14} fw={500}>
@@ -202,7 +214,7 @@ export const MultiplyView: FC = () => {
         const borrowApy = Number(s.debtAsset.variableBorrowRate) || 0
         return (
           <Flex align="center" gap={10}>
-            <AssetLogo id={s.debtAsset.id} size="medium" />
+            <AssetLogo id={s.debtAsset.logoId} size="medium" />
             <Flex direction="column">
               <Text fs={14} fw={500}>
                 {s.debtAsset.symbol}
@@ -284,10 +296,10 @@ export const MultiplyView: FC = () => {
                     {s.collateralAsset.symbol === "PRIME" ? (
                       <BaseAssetLogo src={primeLogo} size="large" alt="PRIME" />
                     ) : (
-                      <AssetLogo id={s.collateralAsset.id} size="large" />
+                      <AssetLogo id={s.collateralAsset.logoId} size="large" />
                     )}
                     <div style={{ marginLeft: -12 }}>
-                      <AssetLogo id={s.debtAsset.id} size="large" />
+                      <AssetLogo id={s.debtAsset.logoId} size="large" />
                     </div>
                   </Flex>
                   <SBadge>Up to {s.leverage}x</SBadge>

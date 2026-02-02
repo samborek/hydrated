@@ -7,7 +7,7 @@ import { useState } from "react"
 import { useTranslation } from "react-i18next"
 
 import { SettingsModal } from "@/modules/trade/swap/components/SettingsModal/SettingsModal"
-import { FileRouteTypes } from "@/routeTree.gen"
+import { FileRouteTypes } from "@/generated-routes"
 
 import { SFormHeader, SHeaderTab, SSettingsIcon } from "./FormHeader.styled"
 

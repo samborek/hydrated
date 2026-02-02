@@ -14,7 +14,7 @@ import {
 } from "@galacticcouncil/ui/assets/icons"
 import { TFunction } from "i18next"
 
-import { FileRouteTypes } from "@/routeTree.gen"
+import { FileRouteTypes } from "@/generated-routes"
 import { getDeployPreviewId } from "@/utils/deploy"
 
 type Route = FileRouteTypes["to"]

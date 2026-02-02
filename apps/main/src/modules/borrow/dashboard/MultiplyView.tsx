@@ -39,7 +39,7 @@ const SSection = styled.section(
   `,
 )
 
-const SLoopCard = styled(Link)(
+const SLoopCard = styled.div(
   ({ theme }) => css`
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
@@ -267,50 +267,52 @@ export const MultiplyView: FC = () => {
         </Text>
         <Grid columns={gte("xl") ? 4 : gte("sm") ? 2 : 1} gap={16}>
           {strategies.slice(0, 4).map((s) => (
-            <SLoopCard
+            <Link
               key={"feat-" + s.id}
-              to="/borrow/multiply/$strategyId"
-              params={{ strategyId: s.id }}
+              to={"/borrow/multiply/$strategyId" as any}
+              params={{ strategyId: s.id } as any}
               style={{ textDecoration: "none" }}
             >
-              <Flex justify="space-between" align="center">
-                <Flex>
-                  {s.collateralAsset.symbol === "PRIME" ? (
-                    <BaseAssetLogo src={primeLogo} size="large" alt="PRIME" />
-                  ) : (
-                    <AssetLogo id={s.collateralAsset.id} size="large" />
-                  )}
-                  <div style={{ marginLeft: -12 }}>
-                    <AssetLogo id={s.debtAsset.id} size="large" />
-                  </div>
+              <SLoopCard>
+                <Flex justify="space-between" align="center">
+                  <Flex>
+                    {s.collateralAsset.symbol === "PRIME" ? (
+                      <BaseAssetLogo src={primeLogo} size="large" alt="PRIME" />
+                    ) : (
+                      <AssetLogo id={s.collateralAsset.id} size="large" />
+                    )}
+                    <div style={{ marginLeft: -12 }}>
+                      <AssetLogo id={s.debtAsset.id} size="large" />
+                    </div>
+                  </Flex>
+                  <SBadge>Up to {s.leverage}x</SBadge>
                 </Flex>
-                <SBadge>Up to {s.leverage}x</SBadge>
-              </Flex>
-              <div style={{ marginTop: 8 }}>
-                <Text fs={18} fw={600}>
-                  {s.collateralAsset.symbol} Loop
-                </Text>
-                <Text fs={13} color={theme.text.low}>
-                  Borrow {s.debtAsset.symbol} to leverage{" "}
-                  {s.collateralAsset.symbol}
-                </Text>
-              </div>
-              <Flex justify="space-between" align="flex-end" mt={12}>
-                <div>
-                  <Text fs={11} color={theme.text.low} mb={2}>
-                    Net APY
+                <div style={{ marginTop: 8 }}>
+                  <Text fs={18} fw={600}>
+                    {s.collateralAsset.symbol} Loop
                   </Text>
-                  <Text
-                    fs={20}
-                    fw={700}
-                    color={theme.details.values.positive}
-                    style={{ fontFamily: "Gazpacho" }}
-                  >
-                    {s.netApy.toFixed(2)}%
+                  <Text fs={13} color={theme.text.low}>
+                    Borrow {s.debtAsset.symbol} to leverage{" "}
+                    {s.collateralAsset.symbol}
                   </Text>
                 </div>
-              </Flex>
-            </SLoopCard>
+                <Flex justify="space-between" align="flex-end" mt={12}>
+                  <div>
+                    <Text fs={11} color={theme.text.low} mb={2}>
+                      Net APY
+                    </Text>
+                    <Text
+                      fs={20}
+                      fw={700}
+                      color={theme.details.values.positive}
+                      style={{ fontFamily: "Gazpacho" }}
+                    >
+                      {s.netApy.toFixed(2)}%
+                    </Text>
+                  </div>
+                </Flex>
+              </SLoopCard>
+            </Link>
           ))}
         </Grid>
       </div>
@@ -326,8 +328,8 @@ export const MultiplyView: FC = () => {
             columns={columns}
             onRowClick={(row) =>
               navigate({
-                to: "/borrow/multiply/$strategyId",
-                params: { strategyId: row.id },
+                to: "/borrow/multiply/$strategyId" as any,
+                params: { strategyId: row.id } as any,
               })
             }
           />

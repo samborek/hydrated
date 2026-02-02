@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next"
 import { AssetType } from "@/api/assets"
 import { BreadcrumbItem } from "@/components/Breadcrumb"
 import { useAssets } from "@/providers/assetsProvider"
-import { FileRouteTypes } from "@/routeTree.gen"
+import { FileRouteTypes } from "@/generated-routes"
 
 export const useLiquidityCrumbs = (): BreadcrumbItem[] => {
   const { t } = useTranslation(["common", "liquidity"])

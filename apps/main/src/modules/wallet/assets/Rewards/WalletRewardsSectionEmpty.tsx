@@ -4,7 +4,7 @@ import { getToken, px } from "@galacticcouncil/ui/utils"
 import { Link } from "@tanstack/react-router"
 import { FC, ReactNode } from "react"
 
-import { FileRouteTypes } from "@/routeTree.gen"
+import { FileRouteTypes } from "@/generated-routes"
 
 type Props = {
   readonly link: FileRouteTypes["to"]

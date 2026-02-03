@@ -57,7 +57,6 @@ const SLoopCard = styled.div(
 
     &:hover {
       background: ${theme.surfaces.containers.high.hover};
-      border-color: ${theme.colors.azureBlue[400]};
     }
   `,
 )

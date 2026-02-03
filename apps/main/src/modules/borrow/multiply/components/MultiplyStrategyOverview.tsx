@@ -20,10 +20,12 @@ import { AssetLogo } from "@/components/AssetLogo"
 import { getReserveAssetId } from "@/modules/borrow/utils/assets"
 
 import { NetApyChart } from "./NetApyChart"
+import { SimulationTab } from "./SimulationTab"
 
 export type MultiplyStrategyOverviewProps = {
   collateralAsset: ComputedReserveData
   debtAsset: ComputedReserveData
+  tab?: string
 }
 
 const formatUSD = (val: string | number) => {
@@ -140,16 +142,23 @@ const StrategyInfo = () => {
 export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
   collateralAsset,
   debtAsset,
+  tab = "info",
 }) => {
   const { themeProps: theme } = useTheme()
 
   if (!collateralAsset || !debtAsset) return null
 
+  if (tab === "simulation") {
+    return (
+      <SimulationTab
+        collateralSymbol={collateralAsset.symbol}
+        debtSymbol={debtAsset.symbol}
+      />
+    )
+  }
+
   return (
     <Stack id="multiply-strategy-overview" gap={getTokenPx("scales.paddings.xl")}>
-      {/* Strategy Info */}
-      <StrategyInfo />
-
       {/* Looping Overview */}
       <Paper p={getTokenPx("scales.paddings.xl")}>
         <Text fs="p1" fw={600} mb={getTokenPx("scales.paddings.xl")}>
@@ -261,6 +270,9 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
 
         <NetApyChart />
       </Paper>
+
+      {/* Strategy Info */}
+      <StrategyInfo />
     </Stack>
   )
 }

@@ -5,6 +5,7 @@ import {
   Flex,
   TradingViewChart,
 } from "@galacticcouncil/ui/components"
+import { useBreakpoints } from "@galacticcouncil/ui/theme"
 import { BaselineChartData } from "@galacticcouncil/ui/components/TradingViewChart/utils"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -43,6 +44,7 @@ export const PoolChart = ({
   setInterval: (interval: PoolChartTimeFrameType | "all") => void
   isEmptyData?: boolean
 }) => {
+  const { isMobile } = useBreakpoints()
   const { t } = useTranslation()
   const stableCoinId = useDisplayAssetStore(prop("stableCoinId"))
   const [crosshair, setCrosshair] = useState<BaselineChartData | null>(null)
@@ -96,6 +98,7 @@ export const PoolChart = ({
           height={height}
           data={prices}
           hidePriceIndicator
+          preventTouchDrag={isMobile}
           onCrosshairMove={setCrosshair}
         />
       </ChartState>

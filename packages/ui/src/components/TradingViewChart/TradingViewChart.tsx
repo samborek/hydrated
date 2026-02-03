@@ -24,18 +24,19 @@ import { useTheme } from "@/theme"
 
 type ChartTypeProps =
   | {
-      type: Extract<SeriesType, "Candlestick">
-      onCrosshairMove?: (data: OhlcData | null) => void
-    }
+    type: Extract<SeriesType, "Candlestick">
+    onCrosshairMove?: (data: OhlcData | null) => void
+  }
   | {
-      type?: Extract<SeriesType, "Baseline">
-      onCrosshairMove?: (data: BaselineChartData | null) => void
-    }
+    type?: Extract<SeriesType, "Baseline">
+    onCrosshairMove?: (data: BaselineChartData | null) => void
+  }
 
 export type TradingViewChartProps = ChartTypeProps & {
   data: Array<OhlcData>
   height?: number
   hidePriceIndicator?: boolean
+  preventTouchDrag?: boolean
 }
 
 export const TradingViewChart: React.FC<TradingViewChartProps> = ({
@@ -43,6 +44,7 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = ({
   type = "Baseline",
   height = 400,
   hidePriceIndicator,
+  preventTouchDrag,
   onCrosshairMove,
 }) => {
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
@@ -71,6 +73,19 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = ({
       grid,
       timeScale,
       crosshair: crosshair(themeProps),
+      handleScroll: preventTouchDrag
+        ? {
+          horzTouchDrag: true,
+          vertTouchDrag: false,
+        }
+        : undefined,
+      handleScale: preventTouchDrag
+        ? {
+          axisPressedMouseMove: true,
+          mouseWheel: true,
+          pinch: true,
+        }
+        : undefined,
     })
 
     const [series, volumeSeries] = renderSeries(
@@ -110,10 +125,10 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = ({
     return () => {
       chart.remove()
     }
-  }, [data, height, themeProps, type, hidePriceIndicator])
+  }, [data, height, themeProps, type, hidePriceIndicator, preventTouchDrag])
 
   return (
-    <Box sx={{ position: "relative" }}>
+    <Box sx={{ position: "relative", touchAction: preventTouchDrag ? "pan-y pinch-zoom" : undefined }}>
       <div ref={chartContainerRef} />
       <Crosshair ref={crosshairRef} {...crosshairData} />
       {!hidePriceIndicator && <PriceIndicator ref={priceIndicatorRef} />}

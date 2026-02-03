@@ -6,6 +6,7 @@ import {
   Paper,
   TradingViewChart,
 } from "@galacticcouncil/ui/components"
+import { useBreakpoints } from "@galacticcouncil/ui/theme"
 import { BaselineChartData } from "@galacticcouncil/ui/components/TradingViewChart/utils"
 import { useSearch } from "@tanstack/react-router"
 import React, { useState } from "react"
@@ -38,6 +39,7 @@ type TradeChartProps = {
 }
 
 export const TradeChart: React.FC<TradeChartProps> = ({ height }) => {
+  const { isMobile } = useBreakpoints()
   const { t } = useTranslation()
 
   const { assetIn, assetOut } = useSearch({ from: "/trade/_history" })
@@ -70,9 +72,9 @@ export const TradeChart: React.FC<TradeChartProps> = ({ height }) => {
   const chartValue =
     !isEmpty && !isError
       ? t("currency", {
-          value,
-          symbol: getAssetWithFallback(assetIn).symbol,
-        })
+        value,
+        symbol: getAssetWithFallback(assetIn).symbol,
+      })
       : ""
 
   const chartDisplayValue =
@@ -111,6 +113,7 @@ export const TradeChart: React.FC<TradeChartProps> = ({ height }) => {
           height={height}
           data={prices}
           hidePriceIndicator
+          preventTouchDrag={isMobile}
           onCrosshairMove={setCrosshair}
         />
       </ChartState>

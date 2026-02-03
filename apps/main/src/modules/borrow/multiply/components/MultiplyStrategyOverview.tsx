@@ -94,6 +94,49 @@ const DetailRow = ({ label, value }: { label: string; value: any }) => {
   )
 }
 
+const StrategyInfo = () => {
+  const { themeProps: theme } = useTheme()
+  return (
+    <Paper p={getTokenPx("scales.paddings.xl")}>
+      <Text fs="p1" fw={600} mb={getTokenPx("scales.paddings.xl")}>
+        Strategy Info
+      </Text>
+      <Stack gap={getTokenPx("scales.paddings.l")}>
+        <Text fs="p3" color={theme.text.medium} lh="150%">
+          Hydration Multiply is a leveraged yield product that increases your
+          exposure to asset yields while retaining 100% collateral exposure.
+          This enables users to earn higher yields than by simply holding the
+          asset.
+        </Text>
+        <Box>
+          <Text fs="p3" fw={600} mb={getTokenPx("scales.paddings.s")}>
+            How It Works
+          </Text>
+          <Text fs="p3" color={theme.text.medium} lh="150%">
+            In a single click, Multiply creates a leveraged position by using
+            your assets as collateral to borrow debt. As you increase your
+            leverage, you increase your exposure to both the supply APY and the
+            borrow APY. If the supply APY is higher than the borrow APY, the
+            position will outperform simply holding the asset (expressed as Net
+            APY).
+          </Text>
+        </Box>
+        <Box>
+          <Text fs="p3" fw={600} mb={getTokenPx("scales.paddings.s")}>
+            Risk
+          </Text>
+          <Text fs="p3" color={theme.text.medium} lh="150%">
+            Leverage carries risks, including potential liquidation if
+            collateral value drops. Interest rates are variable and market
+            conditions can change quickly. Always monitor your health factor and
+            understand the risks before using leveraged products.
+          </Text>
+        </Box>
+      </Stack>
+    </Paper>
+  )
+}
+
 export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
   collateralAsset,
   debtAsset,
@@ -104,39 +147,8 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
 
   return (
     <Stack id="multiply-strategy-overview" gap={getTokenPx("scales.paddings.xl")}>
-      {/* Performance Chart */}
-      <Paper
-        p={getTokenPx("scales.paddings.xl")}
-        sx={{ background: theme.surfaces.containers.high.primary }}
-      >
-        <Flex justify="space-between" mb={getTokenPx("scales.paddings.xl")}>
-          <Text fs="p2" fw={600}>
-            Strategy Performance
-          </Text>
-          <Flex gap={getTokenPx("scales.paddings.base")}>
-            <Text
-              fs="h5"
-              fw={700}
-              color={theme.details.values.positive}
-              style={{ fontFamily: "Gazpacho" }}
-            >
-              +24.50%
-            </Text>
-            <Text
-              fs="p4"
-              color={theme.text.medium}
-              style={{
-                alignSelf: "flex-end",
-                paddingBottom: `${theme.scales.paddings.s}px`,
-              }}
-            >
-              Past 30d
-            </Text>
-          </Flex>
-        </Flex>
-
-        <NetApyChart />
-      </Paper>
+      {/* Strategy Info */}
+      <StrategyInfo />
 
       {/* Looping Overview */}
       <Paper p={getTokenPx("scales.paddings.xl")}>
@@ -214,6 +226,40 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
             />
           </Box>
         </Grid>
+      </Paper>
+
+      {/* Performance Chart */}
+      <Paper
+        p={getTokenPx("scales.paddings.xl")}
+        sx={{ background: theme.surfaces.containers.high.primary }}
+      >
+        <Flex justify="space-between" mb={getTokenPx("scales.paddings.xl")}>
+          <Text fs="p2" fw={600}>
+            Strategy Performance
+          </Text>
+          <Flex gap={getTokenPx("scales.paddings.base")}>
+            <Text
+              fs="h5"
+              fw={700}
+              color={theme.details.values.positive}
+              style={{ fontFamily: "Gazpacho" }}
+            >
+              +24.50%
+            </Text>
+            <Text
+              fs="p4"
+              color={theme.text.medium}
+              style={{
+                alignSelf: "flex-end",
+                paddingBottom: `${theme.scales.paddings.s}px`,
+              }}
+            >
+              Past 30d
+            </Text>
+          </Flex>
+        </Flex>
+
+        <NetApyChart />
       </Paper>
     </Stack>
   )

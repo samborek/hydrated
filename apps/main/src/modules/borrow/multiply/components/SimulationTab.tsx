@@ -4,12 +4,14 @@ import {
     Flex,
     Grid,
     Paper,
+    Select,
     Stack,
     Text,
 } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, getTokenPx } from "@galacticcouncil/ui/utils"
 import { FC, useMemo } from "react"
+
 import {
     Area,
     AreaChart,
@@ -25,23 +27,6 @@ const SChartWrapper = styled.div`
   width: 100%;
   height: 320px;
 `
-
-const SInputTile = styled(Flex)(
-    ({ theme }) => css`
-    background: ${theme.surfaces.containers.high.primary};
-    border: 1px solid ${theme.details.borders};
-    border-radius: ${theme.scales.cornerRadius.base}px;
-    padding: 12px 16px;
-    cursor: pointer;
-    justify-content: space-between;
-    align-items: center;
-    flex: 1;
-
-    &:hover {
-      background: ${theme.surfaces.containers.high.hover};
-    }
-  `,
-)
 
 const SSummaryCard = styled(Paper)(
     ({ theme }) => css`
@@ -96,42 +81,37 @@ export const SimulationTab: FC<{ collateralSymbol: string; debtSymbol: string }>
                     leveraged position over a specific time range.
                 </Text>
 
-                <Stack gap={getTokenPx("scales.paddings.base")}>
-                    <Flex gap={getTokenPx("scales.paddings.base")}>
-                        <SInputTile>
-                            <Stack gap={2}>
-                                <Text fs="p6" color={theme.text.low}>Pair</Text>
-                                <Flex align="center" gap={8}>
-                                    <Text fs="p3" fw={600}>{collateralSymbol}/{debtSymbol}</Text>
-                                </Flex>
-                            </Stack>
-                            <ChevronDown size={16} />
-                        </SInputTile>
-                        <SInputTile>
-                            <Stack gap={2}>
-                                <Text fs="p6" color={theme.text.low}>Leverage</Text>
-                                <Text fs="p3" fw={600}>4.75x</Text>
-                            </Stack>
-                            <ChevronDown size={16} />
-                        </SInputTile>
-                    </Flex>
-                    <Flex gap={getTokenPx("scales.paddings.base")}>
-                        <SInputTile>
-                            <Stack gap={2}>
-                                <Text fs="p6" color={theme.text.low}>Start Date</Text>
-                                <Text fs="p3" fw={600}>Jan 4, 2026</Text>
-                            </Stack>
-                            <ChevronDown size={16} />
-                        </SInputTile>
-                        <SInputTile>
-                            <Stack gap={2}>
-                                <Text fs="p6" color={theme.text.low}>End Date</Text>
-                                <Text fs="p3" fw={600}>Feb 3, 2026</Text>
-                            </Stack>
-                            <ChevronDown size={16} />
-                        </SInputTile>
-                    </Flex>
-                </Stack>
+                <Grid columns={[1, 2]} gap={getTokenPx("scales.paddings.base")}>
+                    <Select
+                        label="Pair"
+                        value={`${collateralSymbol}/${debtSymbol}`}
+                        onValueChange={() => { }}
+                        items={[{ key: `${collateralSymbol}/${debtSymbol}`, label: `${collateralSymbol}/${debtSymbol}` }]}
+                    />
+                    <Select
+                        label="Leverage"
+                        value="4.75"
+                        onValueChange={() => { }}
+                        items={[
+                            { key: "1", label: "1.00x" },
+                            { key: "3", label: "3.00x" },
+                            { key: "4.75", label: "4.75x" },
+                            { key: "10", label: "10.00x" },
+                        ]}
+                    />
+                    <Select
+                        label="Start Date"
+                        value="2026-01-04"
+                        onValueChange={() => { }}
+                        items={[{ key: "2026-01-04", label: "Jan 4, 2026" }]}
+                    />
+                    <Select
+                        label="End Date"
+                        value="2026-02-03"
+                        onValueChange={() => { }}
+                        items={[{ key: "2026-02-03", label: "Feb 3, 2026" }]}
+                    />
+                </Grid>
             </Paper>
 
             {/* Summary Stats */}

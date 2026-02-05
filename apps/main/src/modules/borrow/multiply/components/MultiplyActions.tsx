@@ -10,9 +10,9 @@ import {
   Text,
   ValueStats,
 } from "@galacticcouncil/ui/components"
-import { FC, useState } from "react"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
+import { FC, useState } from "react"
 import { toast } from "sonner"
 
 import { AssetLogo } from "@/components/AssetLogo"
@@ -62,6 +62,9 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
       collateralAmount,
       debtAmount: debtAmount.toString(),
       netApy,
+      strategy: "bull",
+      entryPrice: "0",
+      liquidationPrice: "4.20",
     })
 
     toast.success("Position simulated successfully!")
@@ -78,7 +81,11 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
 
       {/* Inputs */}
       <Box>
-        <Text fs="p4" color={theme.text.medium} mb={getTokenPx("scales.paddings.base")}>
+        <Text
+          fs="p4"
+          color={theme.text.medium}
+          mb={getTokenPx("scales.paddings.base")}
+        >
           Deposit Collateral
         </Text>
         <AssetInput

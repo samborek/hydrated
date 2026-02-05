@@ -10,16 +10,16 @@ import {
   Text,
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
-import { css, styled, getTokenPx } from "@galacticcouncil/ui/utils"
+import { css, getTokenPx, styled } from "@galacticcouncil/ui/utils"
+import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
-import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { FC, useMemo } from "react"
 
 import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
-import { useAssets } from "@/providers/assetsProvider"
 import { getReserveAssetId } from "@/modules/borrow/utils/assets"
+import { useAssets } from "@/providers/assetsProvider"
 
 import { MyPositionsTable } from "../multiply/components/MyPositionsTable"
 import { useMultiplySimulationStore } from "../multiply/states/useMultiplySimulationStore"
@@ -64,19 +64,6 @@ const SLoopCard = styled.div(
   `,
 )
 
-const SBadge = styled.div(
-  ({ theme }) => css`
-    background: ${theme.colors.azureBlue[500]};
-    color: ${theme.colors.azureBlue[900]};
-    font-size: ${theme.paragraphSize.p6};
-    font-weight: 600;
-    padding: ${theme.scales.paddings.s}px ${theme.scales.paddings.base}px;
-    border-radius: ${theme.scales.cornerRadius.base}px;
-    text-transform: uppercase;
-    width: fit-content;
-  `,
-)
-
 // Mock Strategies Config
 const STRATEGIES = [
   { collateral: "PRIME", debt: "CASH", leverage: 8.3 },
@@ -107,9 +94,10 @@ export const MultiplyView: FC = () => {
   const strategies = useMemo(() => {
     const assets = marketAssets?.length ? marketAssets : []
 
-
     return STRATEGIES.map((s, idx) => {
-      const collateralBase = assets.find((a) => a.symbol === s.collateral) as any
+      const collateralBase = assets.find(
+        (a) => a.symbol === s.collateral,
+      ) as any
       let collateral: any
 
       if (collateralBase) {
@@ -154,7 +142,8 @@ export const MultiplyView: FC = () => {
 
       const supplyApy = Number(collateral.supplyAPY) || 0
       const borrowApy = Number(debt.variableBorrowAPY) || 0
-      const netApy = (supplyApy + (supplyApy - borrowApy) * (s.leverage - 1)) * 100
+      const netApy =
+        (supplyApy + (supplyApy - borrowApy) * (s.leverage - 1)) * 100
 
       return {
         id: `${s.collateral}-${s.debt}-${idx}`,
@@ -194,7 +183,9 @@ export const MultiplyView: FC = () => {
                 {s.collateralAsset.symbol}
               </Text>
               <Text fs="p5" color={theme.text.low}>
-                {s.collateralAsset.symbol === "PRIME" ? "Prime Market" : "Global Market"}
+                {s.collateralAsset.symbol === "PRIME"
+                  ? "Prime Market"
+                  : "Global Market"}
               </Text>
             </Flex>
           </Flex>
@@ -244,7 +235,10 @@ export const MultiplyView: FC = () => {
       },
       cell: ({ getValue }) => (
         <Text
-          sx={{ borderBottom: `1px dashed ${theme.text.low}`, width: "fit-content" }}
+          sx={{
+            borderBottom: `1px dashed ${theme.text.low}`,
+            width: "fit-content",
+          }}
         >
           ${(getValue() / 1000).toFixed(2)}k
         </Text>
@@ -255,7 +249,9 @@ export const MultiplyView: FC = () => {
       meta: {
         sx: { width: "12%" },
       },
-      cell: ({ getValue }) => <Text>${(getValue() / 1000000).toFixed(2)}M</Text>,
+      cell: ({ getValue }) => (
+        <Text>${(getValue() / 1000000).toFixed(2)}M</Text>
+      ),
     }),
     columnHelper.accessor("strategyName", {
       header: "Strategy",
@@ -308,7 +304,12 @@ export const MultiplyView: FC = () => {
       {/* My Positions */}
       {positions.length > 0 && (
         <Box>
-          <Text fs="p1" fw={600} mb={getTokenPx("scales.paddings.l")} font="primary">
+          <Text
+            fs="p1"
+            fw={600}
+            mb={getTokenPx("scales.paddings.l")}
+            font="primary"
+          >
             Your positions
           </Text>
           <SSection>
@@ -319,7 +320,12 @@ export const MultiplyView: FC = () => {
 
       {/* Featured Loops */}
       <div>
-        <Text fs="p1" fw={600} mb={getTokenPx("scales.paddings.l")} font="primary">
+        <Text
+          fs="p1"
+          fw={600}
+          mb={getTokenPx("scales.paddings.l")}
+          font="primary"
+        >
           Featured Loops
         </Text>
         <Grid
@@ -390,7 +396,12 @@ export const MultiplyView: FC = () => {
 
       {/* Strategies List */}
       <Box>
-        <Text fs="p1" fw={600} mb={getTokenPx("scales.paddings.l")} font="primary">
+        <Text
+          fs="p1"
+          fw={600}
+          mb={getTokenPx("scales.paddings.l")}
+          font="primary"
+        >
           All pairs
         </Text>
         <SSection>

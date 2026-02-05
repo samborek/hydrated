@@ -2,7 +2,6 @@ import { ComputedReserveData } from "@galacticcouncil/money-market/hooks"
 import {
   Box,
   Flex,
-  Grid,
   Paper,
   Separator,
   Stack,

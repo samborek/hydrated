@@ -89,6 +89,9 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                                     : theme.buttons.primary.low.onButton,
                             borderRadius: "32px",
                             height: "40px",
+                            "&:hover": {
+                                bg: theme.accents.success.primary,
+                            },
                         }}
                         onClick={() => setStrategy("bull")}
                     >
@@ -114,6 +117,9 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                                     : theme.buttons.primary.low.onButton,
                             borderRadius: "32px",
                             height: "40px",
+                            "&:hover": {
+                                bg: theme.accents.danger.secondary,
+                            },
                         }}
                         onClick={() => setStrategy("bear")}
                     >

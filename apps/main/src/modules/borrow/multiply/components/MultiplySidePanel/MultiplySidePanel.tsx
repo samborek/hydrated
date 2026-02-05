@@ -89,7 +89,7 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                                     : theme.buttons.primary.low.onButton,
                             borderRadius: "32px",
                             height: "40px",
-                            "&:hover": {
+                            "&:hover:not(:disabled):not([aria-disabled='true'])": {
                                 bg: theme.accents.success.primary,
                             },
                         }}
@@ -109,15 +109,15 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                             flex: 1,
                             bg:
                                 strategy === "bear"
-                                    ? theme.buttons.primary.high.rest
+                                    ? theme.accents.danger.emphasis
                                     : theme.buttons.primary.low.rest,
                             color:
                                 strategy === "bear"
-                                    ? theme.buttons.primary.high.onButton
+                                    ? theme.accents.danger.onPrimary
                                     : theme.buttons.primary.low.onButton,
                             borderRadius: "32px",
                             height: "40px",
-                            "&:hover": {
+                            "&:hover:not(:disabled):not([aria-disabled='true'])": {
                                 bg: theme.accents.danger.secondary,
                             },
                         }}

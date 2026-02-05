@@ -11,6 +11,7 @@ export type TradingViewChartProps = ChartTypeProps & {
     data: Array<OhlcData>;
     height?: number;
     hidePriceIndicator?: boolean;
+    preventTouchDrag?: boolean;
 };
 export declare const TradingViewChart: React.FC<TradingViewChartProps>;
 export {};

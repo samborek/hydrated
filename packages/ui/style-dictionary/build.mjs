@@ -11,13 +11,31 @@ const __dirname = dirname(__filename)
 
 register(StyleDictionary)
 
-const fetchTokens = async () => {
+const fetchRemoteTokens = async () => {
   const res = await fetch(
     "https://raw.githubusercontent.com/galacticcouncil/hydration-styles/refs/heads/tertiary/tokens.json",
   )
   const tokens = await res.text()
 
   return JSON.parse(tokens.replace(/lch/g, "srgb"))
+}
+
+const fetchLocalTokens = async () => {
+  const tokensPath = path.resolve(__dirname, "../../tokens/tokens.json")
+  const tokens = await fs.readFile(tokensPath, "utf-8")
+  return JSON.parse(tokens.replace(/lch/g, "srgb"))
+}
+
+const USE_LOCAL = true
+
+const fetchTokens = async () => {
+  if (USE_LOCAL) {
+    console.log("Using local tokens from packages/tokens/tokens.json")
+    return fetchLocalTokens()
+  } else {
+    console.log("Using remote tokens from GitHub")
+    return fetchRemoteTokens()
+  }
 }
 
 const saveFile = async (path, content) => {

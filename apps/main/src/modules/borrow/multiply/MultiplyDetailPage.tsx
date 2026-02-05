@@ -2,21 +2,15 @@ import {
   useBorrowAssetsData,
   useSupplyAssetsData,
 } from "@galacticcouncil/money-market/hooks"
-import {
-  Box,
-  Grid,
-  Paper,
-} from "@galacticcouncil/ui/components"
-import { useSearch } from "@tanstack/react-router"
-import { FC, useMemo } from "react"
+import { Box, Grid } from "@galacticcouncil/ui/components"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
+import { FC, useMemo } from "react"
 
 import { useAssets } from "@/providers/assetsProvider"
 
-import { MultiplyActions } from "./components/MultiplyActions"
-import { MultiplyStrategyOverview } from "./components/MultiplyStrategyOverview"
+import { MultiplySidePanel } from "./components/MultiplySidePanel/MultiplySidePanel"
 import { MultiplyStrategyHeader } from "./components/MultiplyStrategyHeader"
-import { MultiplyStrategyTabs } from "./components/MultiplyStrategyTabs"
+import { MultiplyStrategyOverview } from "./components/MultiplyStrategyOverview"
 
 export type MultiplyDetailPageProps = {
   strategyId: string
@@ -29,10 +23,12 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({
   const { data: supplyAssets } = useSupplyAssetsData({ showAll: true })
   const { data: borrowAssets } = useBorrowAssetsData()
 
+  /*
   const search = useSearch({
     from: "/borrow/multiply/$strategyId",
   })
   const tab = (search as any).tab as string | undefined
+  */
 
   // Parse strategyId (format: CollateralSymbol-DebtSymbol-Index)
   const [collateralSymbol, debtSymbol] = strategyId?.split("-") || [
@@ -95,18 +91,14 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({
   }, [collateralSymbol, debtSymbol, supplyAssets, borrowAssets, tokens])
 
   return (
-    <Box id="multiply-strategy-detail-page">
+    <Box id="looping-strategy-detail-page">
       <MultiplyStrategyHeader
         collateralAsset={assets.collateral}
         debtAsset={assets.debt}
       />
 
-      <Box mt={getTokenPx("scales.paddings.xl")} mb={getTokenPx("scales.paddings.l")}>
-        <MultiplyStrategyTabs strategyId={strategyId} />
-      </Box>
-
       <Grid
-        columnTemplate={["1fr", null, `1fr 380px`]}
+        columnTemplate={["1fr", null, `1fr 450px`]}
         gap={getTokenPx("containers.paddings.primary")}
         alignItems="start"
       >
@@ -114,16 +106,13 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({
         <MultiplyStrategyOverview
           collateralAsset={assets.collateral}
           debtAsset={assets.debt}
-          tab={tab}
         />
 
         {/* Right Panel - Actions */}
-        <Paper p={getTokenPx("containers.paddings.primary")} sx={{ mt: 0 }}>
-          <MultiplyActions
-            collateralAsset={assets.collateral}
-            debtAsset={assets.debt}
-          />
-        </Paper>
+        <MultiplySidePanel
+          collateralAsset={assets.collateral}
+          debtAsset={assets.debt}
+        />
       </Grid>
     </Box>
   )

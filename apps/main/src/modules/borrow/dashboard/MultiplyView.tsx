@@ -3,6 +3,7 @@ import {
   AssetLogo as BaseAssetLogo,
   Box,
   Button,
+  Chip,
   DataTable,
   Flex,
   Grid,
@@ -46,9 +47,11 @@ const SLoopCard = styled.div(
     border: 1px solid ${theme.details.borders};
     border-radius: ${theme.scales.cornerRadius.xl}px;
     padding: ${theme.scales.paddings.xl}px;
+    gap: ${theme.scales.paddings.l}px;
     display: flex;
     flex-direction: column;
-    gap: ${theme.scales.paddings.m}px;
+    justify-content: space-between;
+    min-height: 186px;
     cursor: pointer;
     transition: all 0.2s;
     text-decoration: none;
@@ -76,10 +79,10 @@ const SBadge = styled.div(
 
 // Mock Strategies Config
 const STRATEGIES = [
+  { collateral: "PRIME", debt: "CASH", leverage: 8.3 },
   { collateral: "DOT", debt: "USDC", leverage: 3 },
   { collateral: "WETH", debt: "USDC", leverage: 2.5 },
   { collateral: "WBTC", debt: "USDC", leverage: 2.5 },
-  { collateral: "PRIME", debt: "HUSD", leverage: 3.5 },
 ]
 
 type StrategyRow = {
@@ -88,6 +91,9 @@ type StrategyRow = {
   debtAsset: any
   leverage: number
   netApy: number // Mocked calculation
+  liqAvailable: number
+  supplied: number
+  strategyName: string
 }
 
 export const MultiplyView: FC = () => {
@@ -156,6 +162,9 @@ export const MultiplyView: FC = () => {
         debtAsset: debt,
         leverage: s.leverage,
         netApy,
+        liqAvailable: Math.random() * 1000000,
+        supplied: Math.random() * 100000000,
+        strategyName: `${collateral.symbol} Loop`,
       }
     }).filter(Boolean) as StrategyRow[]
   }, [marketAssets, tokens])
@@ -165,13 +174,12 @@ export const MultiplyView: FC = () => {
   const columns = [
     columnHelper.accessor("collateralAsset", {
       id: "supply",
-      header: "Asset to Supply",
+      header: "Supply",
       meta: {
-        sx: { width: "20%" },
+        sx: { width: "15%" },
       },
       cell: ({ row }) => {
         const s = row.original
-        const supplyApy = Number(s.collateralAsset.supplyAPY) || 0
         const isPrime = s.collateralAsset.symbol === "PRIME"
 
         return (
@@ -186,7 +194,7 @@ export const MultiplyView: FC = () => {
                 {s.collateralAsset.symbol}
               </Text>
               <Text fs="p5" color={theme.text.low}>
-                APY: {supplyApy.toFixed(2)}%
+                {s.collateralAsset.symbol === "PRIME" ? "Prime Market" : "Global Market"}
               </Text>
             </Flex>
           </Flex>
@@ -197,30 +205,24 @@ export const MultiplyView: FC = () => {
       id: "borrow",
       header: "Borrow Token",
       meta: {
-        sx: { width: "20%" },
+        sx: { width: "12%" },
       },
       cell: ({ row }) => {
         const s = row.original
-        const borrowApy = Number(s.debtAsset.variableBorrowRate) || 0
         return (
           <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
             <AssetLogo id={s.debtAsset.id} size="medium" />
-            <Flex direction="column">
-              <Text fs="p3" fw={500}>
-                {s.debtAsset.symbol}
-              </Text>
-              <Text fs="p5" color={theme.text.low}>
-                APY: {borrowApy.toFixed(2)}%
-              </Text>
-            </Flex>
+            <Text fs="p3" fw={500}>
+              {s.debtAsset.symbol}
+            </Text>
           </Flex>
         )
       },
     }),
     columnHelper.accessor("netApy", {
-      header: "Net APY",
+      header: "Max Net APY",
       meta: {
-        sx: { width: "20%" },
+        sx: { width: "12%" },
       },
       cell: ({ getValue }) => (
         <Text color={theme.details.values.positive} fw={600}>
@@ -231,9 +233,43 @@ export const MultiplyView: FC = () => {
     columnHelper.accessor("leverage", {
       header: "Max Leverage",
       meta: {
-        sx: { width: "20%" },
+        sx: { width: "12%" },
       },
       cell: ({ getValue }) => <Text>{getValue().toFixed(2)}x</Text>,
+    }),
+    columnHelper.accessor("liqAvailable", {
+      header: "Liq Available",
+      meta: {
+        sx: { width: "12%" },
+      },
+      cell: ({ getValue }) => (
+        <Text
+          sx={{ borderBottom: `1px dashed ${theme.text.low}`, width: "fit-content" }}
+        >
+          ${(getValue() / 1000).toFixed(2)}k
+        </Text>
+      ),
+    }),
+    columnHelper.accessor("supplied", {
+      header: "Supplied",
+      meta: {
+        sx: { width: "12%" },
+      },
+      cell: ({ getValue }) => <Text>${(getValue() / 1000000).toFixed(2)}M</Text>,
+    }),
+    columnHelper.accessor("strategyName", {
+      header: "Strategy",
+      meta: {
+        sx: { width: "15%" },
+      },
+      cell: ({ getValue }) => (
+        <Chip variant="tertiary">
+          <Flex align="center" gap={4}>
+            <AssetLogo id="prime" size="extra-small" />
+            {getValue()}
+          </Flex>
+        </Chip>
+      ),
     }),
     columnHelper.display({
       id: "actions",
@@ -253,7 +289,7 @@ export const MultiplyView: FC = () => {
               })
             }}
           >
-            Multiply
+            Deposit
           </Button>
         </div>
       ),
@@ -298,6 +334,7 @@ export const MultiplyView: FC = () => {
               style={{ textDecoration: "none" }}
             >
               <SLoopCard>
+                {/* Top: Icons + Badge */}
                 <Flex justify="space-between" align="center">
                   <Flex>
                     {s.collateralAsset.symbol === "PRIME" ? (
@@ -313,35 +350,37 @@ export const MultiplyView: FC = () => {
                       <AssetLogo id={s.debtAsset.id} size="large" />
                     </div>
                   </Flex>
-                  <SBadge>Up to {s.leverage.toFixed(1)}x</SBadge>
+                  <Chip variant="green" size="small" rounded>
+                    <Text fs="p6" fw={600}>
+                      UP TO {s.leverage.toFixed(0)}X
+                    </Text>
+                  </Chip>
                 </Flex>
-                <div style={{ marginTop: `${theme.scales.paddings.base}px` }}>
-                  <Text fs="p1" fw={600}>
-                    {s.collateralAsset.symbol} Loop
+
+                {/* Middle: Title + Description (vertically centered) */}
+                <Flex direction="column" justify="center" style={{ flex: 1 }}>
+                  <Text fs="p3" fw={600}>
+                    {s.strategyName}
                   </Text>
-                  <Text fs="p4" color={theme.text.low}>
+                  <Text fs="p5" fw={400} color={theme.text.medium} lh="140%">
                     Borrow {s.debtAsset.symbol} to leverage{" "}
                     {s.collateralAsset.symbol}
                   </Text>
-                </div>
-                <Flex
-                  justify="space-between"
-                  align="flex-end"
-                  mt={getTokenPx("scales.paddings.m")}
-                >
-                  <div>
-                    <Text fs="p6" color={theme.text.low} mb={getTokenPx("scales.paddings.xs")}>
-                      Net APY
-                    </Text>
-                    <Text
-                      fs="h6"
-                      fw={700}
-                      color={theme.details.values.positive}
-                      style={{ fontFamily: "Gazpacho" }}
-                    >
-                      {s.netApy.toFixed(2)}%
-                    </Text>
-                  </div>
+                </Flex>
+
+                {/* Bottom: Net APY */}
+                <Flex direction="column" gap={getTokenPx("scales.paddings.xs")}>
+                  <Text fs="p6" fw={400} color={theme.text.medium} lh="80%">
+                    Net APY
+                  </Text>
+                  <Text
+                    fs="h7"
+                    fw={500}
+                    color={theme.details.values.positive}
+                    font="primary"
+                  >
+                    {s.netApy.toFixed(2)}%
+                  </Text>
                 </Flex>
               </SLoopCard>
             </Link>

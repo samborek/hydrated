@@ -72,7 +72,7 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
       {/* Header */}
       <Flex justify="space-between" align="center">
         <Text fs="p1" fw={600}>
-          Multiply Actions
+          Looping Actions
         </Text>
       </Flex>
 
@@ -153,7 +153,7 @@ export const MultiplyActions: FC<MultiplyActionsProps> = ({
 
       {/* Action Button */}
       <Button size="large" sx={{ width: "100%" }} onClick={handleOpenPosition}>
-        Open Position
+        Open Loop Position
       </Button>
     </Stack>
   )

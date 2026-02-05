@@ -35,7 +35,7 @@ export const MultiplyStrategyHeader: FC<MultiplyStrategyHeaderProps> = ({
 
                 <Flex direction="column">
                     <Text font="primary" fw={700} fs="h5" lh="130%">
-                        {collateralAsset.symbol} / {debtAsset.symbol} Loop
+                        {collateralAsset.symbol} Loop
                     </Text>
 
                     <Text fs="p3" color={getToken("text.medium")}>

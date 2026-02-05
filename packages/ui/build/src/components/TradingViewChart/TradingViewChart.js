@@ -8,7 +8,7 @@ import { PriceIndicator } from "@/components/TradingViewChart/components/PriceIn
 import { crosshair, grid, layout, leftPriceScale, rightPriceScale, timeScale, } from "@/components/TradingViewChart/config";
 import { renderSeries, subscribeCrosshairMove, } from "@/components/TradingViewChart/utils";
 import { useTheme } from "@/theme";
-export const TradingViewChart = ({ data, type = "Baseline", height = 400, hidePriceIndicator, onCrosshairMove, }) => {
+export const TradingViewChart = ({ data, type = "Baseline", height = 400, hidePriceIndicator, preventTouchDrag, onCrosshairMove, }) => {
     const chartContainerRef = useRef(null);
     const crosshairRef = useRef(null);
     const priceIndicatorRef = useRef(null);
@@ -30,6 +30,19 @@ export const TradingViewChart = ({ data, type = "Baseline", height = 400, hidePr
             grid,
             timeScale,
             crosshair: crosshair(themeProps),
+            handleScroll: preventTouchDrag
+                ? {
+                    horzTouchDrag: true,
+                    vertTouchDrag: false,
+                }
+                : undefined,
+            handleScale: preventTouchDrag
+                ? {
+                    axisPressedMouseMove: true,
+                    mouseWheel: true,
+                    pinch: true,
+                }
+                : undefined,
         });
         const [series, volumeSeries] = renderSeries(chart, type, data, {
             upColor: themeProps.details.values.positive,
@@ -50,6 +63,6 @@ export const TradingViewChart = ({ data, type = "Baseline", height = 400, hidePr
         return () => {
             chart.remove();
         };
-    }, [data, height, themeProps, type, hidePriceIndicator]);
-    return (_jsxs(Box, { sx: { position: "relative" }, children: [_jsx("div", { ref: chartContainerRef }), _jsx(Crosshair, { ref: crosshairRef, ...crosshairData }), !hidePriceIndicator && _jsx(PriceIndicator, { ref: priceIndicatorRef })] }));
+    }, [data, height, themeProps, type, hidePriceIndicator, preventTouchDrag]);
+    return (_jsxs(Box, { sx: { position: "relative", touchAction: preventTouchDrag ? "pan-y pinch-zoom" : undefined }, children: [_jsx("div", { ref: chartContainerRef }), _jsx(Crosshair, { ref: crosshairRef, ...crosshairData }), !hidePriceIndicator && _jsx(PriceIndicator, { ref: priceIndicatorRef })] }));
 };

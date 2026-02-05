@@ -8,7 +8,7 @@ export const SContent = styled(Box)(
     --layout-gutter: 0.5rem;
     --layout-bottom-safe-area: 0.625rem;
 
-    max-width: 81.25rem;
+    max-width: 90rem;
 
     ${mq("lg")} {
       --layout-gutter: 1.875rem;

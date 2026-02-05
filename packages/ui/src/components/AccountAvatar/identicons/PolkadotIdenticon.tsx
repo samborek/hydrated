@@ -23,7 +23,7 @@ export const PolkadotIdenticon: React.FC<PolkadotIdenticonProps> = ({
   }, [address, size])
 
   return (
-    <Flex {...props}>
+    <Flex align="center" justify="center" {...props}>
       <svg
         width={size}
         height={size}
@@ -33,6 +33,7 @@ export const PolkadotIdenticon: React.FC<PolkadotIdenticonProps> = ({
           bg: getToken("surfaces.themeBasePalette.surfaceHigh"),
           borderRadius: "full",
           p: 2,
+          flexShrink: 0,
         }}
       >
         {circles.map(({ cx, cy, fill, r }, key) => (

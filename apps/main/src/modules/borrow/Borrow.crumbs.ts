@@ -25,7 +25,7 @@ export const useBorrowCrumbs = (): BreadcrumbItem[] => {
                     const { strategyId } = params as { strategyId: string }
                     const [collateral, debt] = strategyId.split("-")
                     if (collateral && debt) {
-                        label = `${collateral} / ${debt}`
+                        label = `${collateral} Loop`
                     }
                 }
                 return [
@@ -78,7 +78,7 @@ const getBreadcrumbLabel = (path: string, t: any): string => {
         case "/borrow/dashboard":
             return t("borrow:navigation.borrowDashboard.title")
         case "/borrow/multiply":
-            return "Multiply"
+            return "Looping"
         case "/borrow/markets":
             return t("borrow:navigation.borrowMarkets.title")
         case "/borrow/history":

@@ -663,6 +663,68 @@
   "shadows": {
     "base": "rgb(1.1765% 3.1373% 8.6275% / 0.3)"
   },
+  "charts": {
+    "colors": {
+      "fees": {
+        "networkFees": "rgb(18.412% 10.216% 23.627%)",
+        "tradingFees": "#043875",
+        "liquidityFees": "#74c742",
+        "supplyBorrowFees": "#e3ae00",
+        "hollarFees": "#98afff",
+        "breakdown": {
+          "trading": {
+            "omnipoolAssetFee": "#53a4f3",
+            "omnipoolProtocolFee": "#53a4f3",
+            "stablepools": "#e3ae00",
+            "xykTradeFee": "#74c742"
+          },
+          "liquidity": {
+            "omnipoolWithdrawFee": "#aaeefc",
+            "isolatedPoolTradeFee": "#98afff"
+          },
+          "supplyBorrow": {
+            "liquidationPenalty": "#ff2c23",
+            "pepl": "#e3ae00",
+            "assetReserve": "#74c742"
+          }
+        },
+        "summary": {
+          "swap": "#53a4f3",
+          "liquidations": "#ff2c23",
+          "tips": "#e3ae00",
+          "txFees": "#98afff",
+          "hollar": "#b3cf92"
+        },
+        "destinations": {
+          "treasury": "#e53e76",
+          "lps": "#bfff98",
+          "burned": "#ff2c23",
+          "stakers": "#98afff",
+          "users": "rgb(18.412% 10.216% 23.627%)",
+          "protocol": "#043875",
+          "referrersAndStakers": "#e3ae00"
+        }
+      },
+      "tvl": {
+        "omnipool": "#639cd6",
+        "stablePools": "#45ac1f",
+        "xykPools": "rgb(69.961% 55.529% 76.235%)",
+        "moneyMarket": "rgb(9.7647% 19.294% 28.588%)"
+      }
+    }
+  },
+  "chart": {
+    "1": "#2c89e9",
+    "2": "rgb(91.843% 39.451% 57.02%)",
+    "3": "#45ac1f",
+    "4": "rgb(80% 31.059% 0.94118%)",
+    "5": "#e3ae00",
+    "6": "rgb(69.961% 55.529% 76.235%)",
+    "7": "rgb(80% 13.804% 10.98%)",
+    "8": "rgb(31.294% 24.392% 35.686%)",
+    "9": "#74baff",
+    "10": "#98afff"
+  },
   "containers": {
     "cornerRadius": {
       "containersPrimary": "16",

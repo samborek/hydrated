@@ -1,6 +1,7 @@
 import { CaretDown, Wallet } from "@galacticcouncil/ui/assets/icons"
 import {
   AccountAvatar,
+  Box,
   Button,
   ButtonProps,
   Flex,
@@ -52,12 +53,14 @@ export const Web3ConnectButton: FC<
         variant="tertiary"
         sx={{ px: 10, gap: 8 }}
       >
-        <AccountAvatar
-          size={24}
-          address={account.displayAddress}
-          theme={getAccountAvatarTheme(account)}
-        />
-        <Flex direction="column">
+        <Box sx={{ flexShrink: 0 }}>
+          <AccountAvatar
+            size={24}
+            address={account.displayAddress}
+            theme={getAccountAvatarTheme(account)}
+          />
+        </Box>
+        <Flex direction="column" align="start">
           <Text fs="p3" lh={1.2} truncate={140}>
             {account.name}
           </Text>

@@ -72,7 +72,15 @@ export default defineConfig({
     react({
       jsxImportSource: "@galacticcouncil/ui/jsx",
       babel: {
-        plugins: ["@emotion/babel-plugin"],
+        plugins: [
+          [
+            "@emotion/babel-plugin",
+            {
+              autoLabel: "dev-only",
+              labelFormat: "[local]",
+            },
+          ],
+        ],
       },
     }),
     wasm(),

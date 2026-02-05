@@ -1,14 +1,7 @@
 import { ComputedReserveData } from "@galacticcouncil/money-market/hooks"
-import {
-    Box,
-    Flex,
-    Separator,
-    Stack,
-    Text,
-} from "@galacticcouncil/ui/components"
+import { Flex, Separator, Stack, Text } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
-import { ChevronDown } from "lucide-react"
 import { FC } from "react"
 
 import { AssetLogo } from "@/components/AssetLogo"
@@ -21,59 +14,21 @@ export type MultiplySidePanelSummaryProps = {
     netApy: number
     buyingPower: number
     debtAmount: number
-}
-
-const SummaryItem = ({
-    label,
-    value,
-    subValue,
-    isWarning,
-}: {
-    label: string
-    value: any
-    subValue?: string
-    isWarning?: boolean
-}) => {
-    const { themeProps: theme } = useTheme()
-    return (
-        <Flex
-            justify="space-between"
-            align="center"
-            py={getTokenPx("containers.paddings.quint")}
-        >
-            <Text fs="p5" color={theme.text.medium}>
-                {label}
-            </Text>
-            <Box sx={{ textAlign: "right" }}>
-                {typeof value === "string" ? (
-                    <Text
-                        fs="p5"
-                        fw={isWarning ? 600 : 500}
-                        color={isWarning ? theme.accents.alertAlt.primary : theme.text.high}
-                    >
-                        {value}
-                    </Text>
-                ) : (
-                    value
-                )}
-                {subValue && (
-                    <Text fs="p6" color={theme.text.medium}>
-                        {subValue}
-                    </Text>
-                )}
-            </Box>
-        </Flex>
-    )
+    collateralPrice?: number
+    healthFactor?: number
+    liquidationPrice?: number
 }
 
 const SimpleSummaryRow = ({
     label,
     value,
-    showChevron = false,
+    valueColor,
+    icon,
 }: {
     label: string
-    value: any
-    showChevron?: boolean
+    value: string
+    valueColor?: string
+    icon?: React.ReactNode
 }) => {
     const { themeProps: theme } = useTheme()
     return (
@@ -86,10 +41,10 @@ const SimpleSummaryRow = ({
                 {label}
             </Text>
             <Flex align="center" gap={getTokenPx("scales.paddings.xs")}>
-                <Text fs="p5" fw={500} color={theme.text.high}>
+                <Text fs="p5" fw={500} color={valueColor || theme.text.high}>
                     {value}
                 </Text>
-                {showChevron && <ChevronDown size={14} color={theme.text.medium} />}
+                {icon}
             </Flex>
         </Flex>
     )
@@ -97,23 +52,49 @@ const SimpleSummaryRow = ({
 
 export const MultiplySidePanelSummary: FC<MultiplySidePanelSummaryProps> = ({
     collateralAsset,
+    debtAsset,
+    leverage,
+    netApy,
+    buyingPower,
+    debtAmount,
+    collateralPrice = 1000,
+    healthFactor = 1.88,
+    liquidationPrice,
 }) => {
     const { themeProps: theme } = useTheme()
+
+    // Calculate derived values
+    const totalFees = buyingPower > 0 ? (buyingPower * 0.001).toFixed(2) : "0.00"
+    const minReceived = buyingPower > 0 ? buyingPower.toFixed(2) : "0.00"
+    const yieldPercent = netApy > 0 ? netApy.toFixed(2) : "0.00"
+
+    // Calculate liquidation price (simplified - typically based on LTV threshold)
+    const liqPrice = liquidationPrice || collateralPrice * 0.8
+    const liqPriceChange = ((liqPrice / collateralPrice - 1) * 100).toFixed(2)
+
+    // Calculate projected health factor after position
+    const projectedHF =
+        buyingPower > 0
+            ? Math.max(1.0, healthFactor - (leverage - 1) * 0.1).toFixed(2)
+            : healthFactor.toFixed(2)
+
+    const hfColor =
+        Number(projectedHF) < 1.2
+            ? theme.accents.danger.emphasis
+            : Number(projectedHF) < 1.5
+                ? theme.accents.alertAlt.primary
+                : theme.accents.success.emphasis
 
     return (
         <Stack gap={0} mt={getTokenPx("scales.paddings.m")}>
             <Separator mb={getTokenPx("scales.paddings.s")} />
 
-            <SimpleSummaryRow
-                label="Total fees"
-                value="$5.63"
-                showChevron={false} // Hidden for now as requested
-            />
+            <SimpleSummaryRow label="Total fees" value={`$${totalFees}`} />
             <Separator />
 
             <SimpleSummaryRow
                 label="Minimal received"
-                value={`4500.45 ${collateralAsset?.symbol || "PRIME"}`}
+                value={`${minReceived} ${collateralAsset?.symbol || "PRIME"}`}
             />
             <Separator />
 
@@ -128,7 +109,7 @@ export const MultiplySidePanelSummary: FC<MultiplySidePanelSummaryProps> = ({
                 </Text>
                 <Flex align="center" gap={getTokenPx("scales.paddings.xs")}>
                     <Text fs="p5" fw={500} color={theme.accents.success.emphasis}>
-                        Up to 16.55%
+                        Up to {yieldPercent}%
                     </Text>
                     {collateralAsset && (
                         <AssetLogo id={getReserveAssetId(collateralAsset)} size="small" />
@@ -139,20 +120,34 @@ export const MultiplySidePanelSummary: FC<MultiplySidePanelSummaryProps> = ({
 
             <SimpleSummaryRow
                 label="Price"
-                value={`1 ${collateralAsset?.symbol || "DOT"} = $1 000`}
+                value={`1 ${collateralAsset?.symbol || "DOT"} = $${collateralPrice.toLocaleString()}`}
             />
             <Separator />
 
-            <SimpleSummaryRow label="Liquidation price" value="0.0566 (-15.45%)" />
+            <SimpleSummaryRow
+                label="Liquidation price"
+                value={`$${liqPrice.toFixed(2)} (${liqPriceChange}%)`}
+            />
             <Separator />
 
             {/* Health Factor */}
-            <SummaryItem
-                label="Health factor"
-                value="1.88 → 1.58"
-                subValue="Liquidation at <1.0"
-                isWarning
-            />
+            <Flex
+                justify="space-between"
+                align="center"
+                py={getTokenPx("containers.paddings.quint")}
+            >
+                <Text fs="p5" color={theme.text.medium}>
+                    Health factor
+                </Text>
+                <Stack gap={0} align="flex-end">
+                    <Text fs="p5" fw={600} color={hfColor}>
+                        {healthFactor.toFixed(2)} → {projectedHF}
+                    </Text>
+                    <Text fs="p6" color={theme.text.medium}>
+                        Liquidation at &lt;1.0
+                    </Text>
+                </Stack>
+            </Flex>
         </Stack>
     )
 }

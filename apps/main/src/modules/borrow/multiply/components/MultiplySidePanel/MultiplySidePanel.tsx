@@ -1,11 +1,17 @@
-import { ComputedReserveData } from "@galacticcouncil/money-market/hooks"
+import {
+    ComputedReserveData,
+    useWalletData,
+} from "@galacticcouncil/money-market/hooks"
 import { Box, Button, Flex, Stack, Text } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
 import { ArrowDown, ArrowUp } from "lucide-react"
-import { FC, useState } from "react"
+import { FC, useMemo, useState } from "react"
 import { toast } from "sonner"
 
+import { getReserveAssetId } from "@/modules/borrow/utils/assets"
+
+import { useMultiplySimulationStore } from "../../states/useMultiplySimulationStore"
 import {
     SMultiplyFormContainer,
     SMultiplySectionSeparator,
@@ -28,19 +34,98 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
     const [collateralAmount, setCollateralAmount] = useState("")
     const [strategy, setStrategy] = useState<"bull" | "bear">("bull")
 
-    // Mock calculations
-    const buyingPower = Number(collateralAmount || 0) * leverage
-    const debtAmount = (buyingPower - Number(collateralAmount || 0)) * 0.5
-    const supplyApy = Number(collateralAsset?.supplyAPY) || 0.12
-    const borrowApy = Number(debtAsset?.variableBorrowAPY) || 0.05
-    const netApy = (supplyApy + (supplyApy - borrowApy) * (leverage - 1)) * 100
+    // Get wallet balance for the collateral asset
+    const { balance, maxAmountToSupply } = useWalletData(collateralAsset)
+
+    // Get position store for adding positions
+    const { addPosition } = useMultiplySimulationStore()
+
+    // Calculate all trading values
+    const calculations = useMemo(() => {
+        const collateralValue = Number(collateralAmount || 0)
+        const buyingPower = collateralValue * leverage
+
+        // Get asset prices (fallback to mock values)
+        const collateralPrice = Number(collateralAsset?.priceInUSD) || 1000
+        const debtPrice = Number(debtAsset?.priceInUSD) || 1
+
+        // Calculate debt amount (what we borrow)
+        const borrowedValueUsd = (buyingPower - collateralValue) * collateralPrice
+        const debtAmount = borrowedValueUsd / debtPrice
+
+        // Calculate USD values
+        const collateralUsd = collateralValue * collateralPrice
+        const buyingPowerUsd = buyingPower * collateralPrice
+
+        // APY calculations
+        const supplyApy = Number(collateralAsset?.supplyAPY) || 0.12
+        const borrowApy = Number(debtAsset?.variableBorrowAPY) || 0.05
+        const netApy = (supplyApy + (supplyApy - borrowApy) * (leverage - 1)) * 100
+
+        // Profit estimation (for display - simplified)
+        const estimatedProfitUsd = (buyingPowerUsd * (netApy / 100)) / 12 // Monthly estimate
+
+        // Fees (0.1% of buying power)
+        const totalFees = buyingPowerUsd * 0.001
+
+        return {
+            collateralValue,
+            buyingPower,
+            buyingPowerUsd,
+            debtAmount,
+            debtAmountUsd: borrowedValueUsd,
+            collateralUsd,
+            collateralPrice,
+            supplyApy,
+            borrowApy,
+            netApy,
+            estimatedProfitUsd,
+            totalFees,
+        }
+    }, [collateralAmount, leverage, collateralAsset, debtAsset])
 
     const handleOpenPosition = () => {
-        if (!collateralAmount) {
-            // allow empty for simulation view only
+        if (!collateralAmount || Number(collateralAmount) <= 0) {
+            toast.error("Please enter a collateral amount")
+            return
         }
-        toast.success("Position opening...")
+
+        // Add position to the simulation store
+        addPosition({
+            collateralAsset: {
+                id: getReserveAssetId(collateralAsset),
+                symbol: collateralAsset?.symbol || "PRIME",
+            },
+            debtAsset: {
+                id: getReserveAssetId(debtAsset),
+                symbol: debtAsset?.symbol || "USDC",
+            },
+            leverage,
+            collateralAmount,
+            debtAmount: calculations.debtAmount.toFixed(2),
+            netApy: calculations.netApy,
+        })
+
+        toast.success(
+            `Position opened: ${calculations.buyingPower.toFixed(2)} ${collateralAsset?.symbol} @ ${leverage}x`,
+            {
+                description: `Net APY: ${calculations.netApy.toFixed(2)}%`,
+            },
+        )
+
+        // Reset form
+        setCollateralAmount("")
     }
+
+    // Determine colors based on strategy
+    const strategyColor =
+        strategy === "bull"
+            ? theme.accents.success.emphasis
+            : theme.accents.danger.emphasis
+    const strategyBgColor =
+        strategy === "bull" ? "rgba(116,199,66,0.1)" : "rgba(255,44,35,0.1)"
+    const strategyBorderColor =
+        strategy === "bull" ? "rgba(116,199,66,0.3)" : "rgba(255,44,35,0.3)"
 
     return (
         <SMultiplyFormContainer>
@@ -59,6 +144,8 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                     value={collateralAmount}
                     onChange={setCollateralAmount}
                     asset={collateralAsset}
+                    balance={balance?.amount}
+                    maxBalance={maxAmountToSupply}
                 />
 
                 <SMultiplySectionSeparator />
@@ -133,11 +220,11 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                     </Button>
                 </Flex>
 
-                {/* Trade Info Box */}
+                {/* Trade Info Box - Dynamic */}
                 <Box
                     sx={{
-                        bg: "rgba(116,199,66,0.1)",
-                        border: `1px solid rgba(116,199,66,0.3)`,
+                        bg: strategyBgColor,
+                        border: `1px solid ${strategyBorderColor}`,
                         borderRadius: "8px",
                         p: "12px 16px",
                     }}
@@ -145,7 +232,7 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                     <Flex justify="space-between" align="start">
                         <Stack gap={0}>
                             <Text fs="p3" fw={500} color={theme.text.high} align="left">
-                                Long
+                                {strategy === "bull" ? "Long" : "Short"}
                             </Text>
                             <Text fs="p5" color={theme.text.medium} fw={400}>
                                 {leverage}x Leverage
@@ -153,30 +240,39 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                         </Stack>
                         <Stack gap={2} align="flex-end">
                             <Text fs="p2" fw={600} color={theme.text.high}>
-                                {buyingPower > 0 ? buyingPower.toFixed(2) : "4500.45"}{" "}
+                                {calculations.buyingPower > 0
+                                    ? calculations.buyingPower.toFixed(2)
+                                    : "0.00"}{" "}
                                 {collateralAsset?.symbol || "PRIME"}
                             </Text>
                             <Flex gap={2} align="center">
                                 <Text fs="p6" color={theme.text.high}>
-                                    ≈ {debtAmount > 0 ? debtAmount.toFixed(2) : "855.24"} USD
+                                    ≈ $
+                                    {calculations.buyingPowerUsd > 0
+                                        ? calculations.buyingPowerUsd.toLocaleString(undefined, {
+                                            maximumFractionDigits: 2,
+                                        })
+                                        : "0.00"}
                                 </Text>
-                                <Text fs="p6" fw={600} color={theme.accents.success.emphasis}>
-                                    {" "}
-                                    (+$200.45)
-                                </Text>
+                                {calculations.estimatedProfitUsd > 0 && (
+                                    <Text fs="p6" fw={600} color={strategyColor}>
+                                        (+${calculations.estimatedProfitUsd.toFixed(2)}/mo)
+                                    </Text>
+                                )}
                             </Flex>
                         </Stack>
                     </Flex>
                 </Box>
 
-                {/* Summary */}
+                {/* Summary - Now with dynamic values */}
                 <MultiplySidePanelSummary
                     collateralAsset={collateralAsset}
                     debtAsset={debtAsset}
                     leverage={leverage}
-                    netApy={netApy}
-                    buyingPower={buyingPower}
-                    debtAmount={debtAmount}
+                    netApy={calculations.netApy}
+                    buyingPower={calculations.buyingPower}
+                    debtAmount={calculations.debtAmount}
+                    collateralPrice={calculations.collateralPrice}
                 />
 
                 <SMultiplySectionSeparator />
@@ -185,14 +281,21 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                 <Button
                     size="large"
                     onClick={handleOpenPosition}
+                    disabled={!collateralAmount || Number(collateralAmount) <= 0}
                     sx={{
                         width: "100%",
                         bg: theme.buttons.primary.high.rest,
                         color: theme.buttons.primary.high.onButton,
                         borderRadius: "32px",
+                        "&:disabled": {
+                            opacity: 0.5,
+                            cursor: "not-allowed",
+                        },
                     }}
                 >
-                    Open position
+                    {collateralAmount && Number(collateralAmount) > 0
+                        ? `Open ${leverage}x Position`
+                        : "Enter amount to continue"}
                 </Button>
             </Stack>
         </SMultiplyFormContainer>

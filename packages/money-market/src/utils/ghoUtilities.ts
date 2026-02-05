@@ -3,7 +3,7 @@ import Big from "big.js"
 
 import { ComputedReserveData } from "@/hooks/commonTypes"
 
-export const GHO_SYMBOL = "HOLLAR"
+export const GHO_SYMBOL = "HUSD"
 export const GHO_ASSET_ID = "222"
 
 /**

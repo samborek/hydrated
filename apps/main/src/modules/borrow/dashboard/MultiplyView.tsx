@@ -66,7 +66,7 @@ const SLoopCard = styled.div(
 
 // Mock Strategies Config
 const STRATEGIES = [
-  { collateral: "PRIME", debt: "CASH", leverage: 8.3 },
+  { collateral: "PRIME", debt: "HUSD", leverage: 8.3 },
   { collateral: "DOT", debt: "USDC", leverage: 3 },
   { collateral: "WETH", debt: "USDC", leverage: 2.5 },
   { collateral: "WBTC", debt: "USDC", leverage: 2.5 },
@@ -204,7 +204,7 @@ export const MultiplyView: FC = () => {
           <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
             <AssetLogo id={s.debtAsset.id} size="medium" />
             <Text fs="p3" fw={500}>
-              {s.debtAsset.symbol}
+              {s.debtAsset.symbol === "CASH" ? "HUSD" : s.debtAsset.symbol}
             </Text>
           </Flex>
         )
@@ -353,7 +353,12 @@ export const MultiplyView: FC = () => {
                         marginLeft: `-${theme.scales.paddings.m}px`,
                       }}
                     >
-                      <AssetLogo id={s.debtAsset.id} size="large" />
+                      {s.debtAsset.symbol === "HUSD" ||
+                        s.debtAsset.symbol === "CASH" ? (
+                        <AssetLogo id={HOLLAR_ASSET_ID} size="large" />
+                      ) : (
+                        <AssetLogo id={s.debtAsset.id} size="large" />
+                      )}
                     </div>
                   </Flex>
                   <Chip variant="green" size="small" rounded>
@@ -369,8 +374,11 @@ export const MultiplyView: FC = () => {
                     {s.strategyName}
                   </Text>
                   <Text fs="p5" fw={400} color={theme.text.medium} lh="140%">
-                    Borrow {s.debtAsset.symbol} to leverage{" "}
-                    {s.collateralAsset.symbol}
+                    Borrow{" "}
+                    {s.debtAsset.symbol === "CASH"
+                      ? "HUSD"
+                      : s.debtAsset.symbol}{" "}
+                    to leverage {s.collateralAsset.symbol}
                   </Text>
                 </Flex>
 

@@ -1,5 +1,7 @@
 import { ComputedReserveData } from "@galacticcouncil/money-market/hooks"
 import {
+  AssetInput,
+  AssetLogo as BaseAssetLogo,
   Box,
   Flex,
   Paper,
@@ -9,9 +11,11 @@ import {
 } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
+import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { Zap } from "lucide-react"
 import { FC } from "react"
 
+import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
 import { getReserveAssetId } from "@/modules/borrow/utils/assets"
 import { StatsHeader } from "@/modules/stats/components/StatsHeader"
@@ -145,10 +149,14 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
                   <Text fw={600} fs="p3">
                     {collateralAsset.symbol}
                   </Text>
-                  <AssetLogo
-                    id={getReserveAssetId(collateralAsset)}
-                    size="medium"
-                  />
+                  {collateralAsset.symbol === "PRIME" ? (
+                    <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
+                  ) : (
+                    <AssetLogo
+                      id={getReserveAssetId(collateralAsset)}
+                      size="medium"
+                    />
+                  )}
                 </Flex>
               }
             />
@@ -161,9 +169,17 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
                   gap={getTokenPx("containers.paddings.quart")}
                 >
                   <Text fw={600} fs="p3">
-                    {debtAsset.symbol}
+                    {debtAsset.symbol === "CASH" ? "HUSD" : debtAsset.symbol}
                   </Text>
-                  <AssetLogo id={getReserveAssetId(debtAsset)} size="medium" />
+                  {debtAsset.symbol === "HUSD" ||
+                    debtAsset.symbol === "CASH" ? (
+                    <AssetLogo id={HOLLAR_ASSET_ID} size="medium" />
+                  ) : (
+                    <AssetLogo
+                      id={getReserveAssetId(debtAsset)}
+                      size="medium"
+                    />
+                  )}
                 </Flex>
               }
             />

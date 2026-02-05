@@ -65,13 +65,14 @@ export const TalismanIdenticon: FC<TalismanIdenticonProps> = ({
   }, [address])
 
   return (
-    <Flex {...props}>
+    <Flex align="center" justify="center" sx={{ flexShrink: 0 }} {...props}>
       <svg
         width={size}
         height={size}
         viewBox="0 0 64 64"
         version="1.1"
         xmlns="http://www.w3.org/2000/svg"
+        style={{ flexShrink: 0 }}
       >
         <defs>
           <linearGradient id={`${id}-bg`}>

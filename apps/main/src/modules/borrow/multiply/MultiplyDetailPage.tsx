@@ -2,15 +2,15 @@ import {
   useBorrowAssetsData,
   useSupplyAssetsData,
 } from "@galacticcouncil/money-market/hooks"
-import { Box, Grid } from "@galacticcouncil/ui/components"
+import { Box, Grid, Stack } from "@galacticcouncil/ui/components"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
 import { FC, useMemo } from "react"
 
+import { MultiplyPositionsTile } from "@/modules/borrow/multiply/components/MultiplyPositionsTile"
+import { MultiplySidePanel } from "@/modules/borrow/multiply/components/MultiplySidePanel/MultiplySidePanel"
+import { MultiplyStrategyHeader } from "@/modules/borrow/multiply/components/MultiplyStrategyHeader"
+import { MultiplyStrategyOverview } from "@/modules/borrow/multiply/components/MultiplyStrategyOverview"
 import { useAssets } from "@/providers/assetsProvider"
-
-import { MultiplySidePanel } from "./components/MultiplySidePanel/MultiplySidePanel"
-import { MultiplyStrategyHeader } from "./components/MultiplyStrategyHeader"
-import { MultiplyStrategyOverview } from "./components/MultiplyStrategyOverview"
 
 export type MultiplyDetailPageProps = {
   strategyId: string
@@ -102,11 +102,14 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({
         gap={getTokenPx("containers.paddings.primary")}
         alignItems="start"
       >
-        {/* Left Panel - Overview */}
-        <MultiplyStrategyOverview
-          collateralAsset={assets.collateral}
-          debtAsset={assets.debt}
-        />
+        {/* Left Panel - Positions + Overview */}
+        <Stack gap={getTokenPx("containers.paddings.primary")}>
+          <MultiplyPositionsTile />
+          <MultiplyStrategyOverview
+            collateralAsset={assets.collateral}
+            debtAsset={assets.debt}
+          />
+        </Stack>
 
         {/* Right Panel - Actions */}
         <MultiplySidePanel

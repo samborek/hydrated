@@ -53,7 +53,18 @@ export const Web3ConnectButton: FC<
         variant="tertiary"
         sx={{ px: 10, gap: 8 }}
       >
-        <Box sx={{ flexShrink: 0 }}>
+        <Box
+          sx={{
+            flexShrink: 0,
+            width: 24,
+            height: 24,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "hidden",
+            borderRadius: "full",
+          }}
+        >
           <AccountAvatar
             size={24}
             address={account.displayAddress}

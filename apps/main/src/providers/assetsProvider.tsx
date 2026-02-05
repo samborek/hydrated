@@ -253,7 +253,7 @@ export const AssetsProvider = ({ children }: { children: ReactNode }) => {
 
   const getAsset = useCallback((id: AssetId) => all.get(id.toString()), [all])
   const getAssetWithFallback = useCallback(
-    (id: AssetId) => getAsset(id.toString()) ?? fallbackAsset,
+    (id: AssetId) => (id ? getAsset(id.toString()) : undefined) ?? fallbackAsset,
     [getAsset],
   )
   const getAssets = useCallback(

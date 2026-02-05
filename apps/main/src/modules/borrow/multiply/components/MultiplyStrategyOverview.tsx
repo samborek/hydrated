@@ -209,11 +209,11 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
         </Flex>
       </Paper>
 
-      {/* Performance Chart */}
-      <NetApyChart />
-
       {/* Strategy Info */}
       <StrategyInfo />
+
+      {/* Performance Chart */}
+      <NetApyChart />
     </Stack>
   )
 }

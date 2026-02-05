@@ -143,7 +143,7 @@ export const NetApyChart: FC = () => {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
-            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+            margin={{ top: 10, right: 0, left: -20, bottom: 0 }}
           >
             <defs>
               {series.map((s) => (
@@ -179,6 +179,7 @@ export const NetApyChart: FC = () => {
               tick={{ fill: theme.text.medium, fontSize: 11 }}
               tickFormatter={(val) => `${val}%`}
               orientation="right"
+              width={50}
             />
             <Tooltip
               cursor={{ stroke: theme.details.separators, strokeWidth: 1 }}

@@ -81,7 +81,7 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                             flex: 1,
                             bg:
                                 strategy === "bull"
-                                    ? theme.accents.success.primary
+                                    ? theme.accents.success.emphasis
                                     : theme.buttons.primary.low.rest,
                             color:
                                 strategy === "bull"
@@ -109,11 +109,11 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                             flex: 1,
                             bg:
                                 strategy === "bear"
-                                    ? theme.accents.danger.secondary
+                                    ? theme.buttons.primary.high.rest
                                     : theme.buttons.primary.low.rest,
                             color:
                                 strategy === "bear"
-                                    ? theme.accents.danger.onPrimary
+                                    ? theme.buttons.primary.high.onButton
                                     : theme.buttons.primary.low.onButton,
                             borderRadius: "32px",
                             height: "40px",

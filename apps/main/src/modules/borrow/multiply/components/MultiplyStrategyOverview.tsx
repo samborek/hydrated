@@ -1,6 +1,5 @@
 import { ComputedReserveData } from "@galacticcouncil/money-market/hooks"
 import {
-  AssetInput,
   AssetLogo as BaseAssetLogo,
   Box,
   Flex,
@@ -34,7 +33,13 @@ const formatUSD = (val: string | number) => {
   }).format(Number(val))
 }
 
-const AssetRow = ({ label, value }: { label: string; value: any }) => {
+const AssetRow = ({
+  label,
+  value,
+}: {
+  label: string
+  value: React.ReactNode
+}) => {
   return (
     <Flex
       justify="space-between"

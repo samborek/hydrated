@@ -21,7 +21,7 @@ import { AssetLogo } from "@/components/AssetLogo"
 import { getReserveAssetId } from "@/modules/borrow/utils/assets"
 import { useAssets } from "@/providers/assetsProvider"
 
-import { MyPositionsTable } from "../multiply/components/MyPositionsTable"
+import { MyPositionsPills } from "../multiply/components/MyPositionsPills"
 import { useMultiplySimulationStore } from "../multiply/states/useMultiplySimulationStore"
 
 const SSection = styled.section(
@@ -301,22 +301,8 @@ export const MultiplyView: FC = () => {
 
   return (
     <Flex direction="column" gap={getTokenPx("scales.paddings.xxl")}>
-      {/* My Positions */}
-      {positions.length > 0 && (
-        <Box>
-          <Text
-            fs="p1"
-            fw={600}
-            mb={getTokenPx("scales.paddings.l")}
-            font="primary"
-          >
-            Your positions
-          </Text>
-          <SSection>
-            <MyPositionsTable />
-          </SSection>
-        </Box>
-      )}
+      {/* My Positions - Compact Pills */}
+      {positions.length > 0 && <MyPositionsPills />}
 
       {/* Featured Loops */}
       <div>

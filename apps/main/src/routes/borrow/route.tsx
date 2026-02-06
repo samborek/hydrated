@@ -4,6 +4,7 @@ import { getPageMeta } from "@/config/navigation"
 import { BorrowContextProvider } from "@/modules/borrow/BorrowContextProvider"
 import { SubpageLayout } from "@/modules/layout/SubpageLayout"
 import { useBorrowCrumbs } from "@/modules/borrow/Borrow.crumbs"
+import { PositionsIndicator } from "@/modules/borrow/multiply/components/PositionsIndicator"
 
 const Page = () => {
   const crumbs = useBorrowCrumbs()
@@ -32,6 +33,7 @@ const Page = () => {
       <SubpageLayout
         crumbs={!isListPage ? crumbs : undefined}
         subpageMenuHidden={!isListPage}
+        actions={<PositionsIndicator />}
       />
     </BorrowContextProvider>
   )
@@ -47,3 +49,4 @@ export const Route = createFileRoute("/borrow")({
     meta: getPageMeta("borrow", i18n.t),
   }),
 })
+

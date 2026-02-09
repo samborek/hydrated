@@ -7,18 +7,24 @@ import {
   DataTable,
   Flex,
   Grid,
+  Separator,
   Text,
+  ToggleGroup,
+  ToggleGroupItem,
+  Tooltip,
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
 import { css, getTokenPx, styled } from "@galacticcouncil/ui/utils"
 import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
-import { FC, useMemo } from "react"
+import { LayoutGrid, List, Percent, AlertTriangle } from "lucide-react"
+import { FC, useMemo, useState } from "react"
 
 import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
 import { getReserveAssetId } from "@/modules/borrow/utils/assets"
+import { MultiplyPositionsTile } from "@/modules/borrow/multiply/components/MultiplyPositionsTile"
 import { useAssets } from "@/providers/assetsProvider"
 
 const SSection = styled.section(
@@ -61,6 +67,26 @@ const SLoopCard = styled.div(
   `,
 )
 
+// Rich Strategy Card for Grid View
+const SGridCard = styled.div(
+  ({ theme }) => css`
+    background: ${theme.surfaces.containers.high.primary};
+    border: 1px solid ${theme.details.borders};
+    border-radius: ${theme.scales.cornerRadius.xl}px;
+    padding: ${theme.scales.paddings.xl}px;
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.scales.paddings.l}px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+
+    &:hover {
+      background: ${theme.surfaces.containers.high.hover};
+    }
+  `,
+)
+
 // Mock Strategies Config
 const STRATEGIES = [
   { collateral: "PRIME", debt: "HUSD", leverage: 8.3 },
@@ -85,6 +111,7 @@ export const MultiplyView: FC = () => {
   const { gte } = useBreakpoints()
   const { tokens } = useAssets()
   const navigate = useNavigate()
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list")
 
   const { data: marketAssets } = useMarketAssetsData()
 
@@ -297,6 +324,9 @@ export const MultiplyView: FC = () => {
 
   return (
     <Flex direction="column" gap={getTokenPx("scales.paddings.xxl")}>
+      {/* Active Positions */}
+      <MultiplyPositionsTile />
+
       {/* Featured Loops */}
       <div>
         <Text
@@ -383,26 +413,214 @@ export const MultiplyView: FC = () => {
 
       {/* Strategies List */}
       <Box>
-        <Text
-          fs="p1"
-          fw={600}
+        <Flex
+          justify="space-between"
+          align="center"
           mb={getTokenPx("scales.paddings.l")}
-          font="primary"
         >
-          All pairs
-        </Text>
-        <SSection>
-          <DataTable
-            data={strategies}
-            columns={columns}
-            onRowClick={(row) =>
-              navigate({
-                to: "/borrow/multiply/$strategyId" as any,
-                params: { strategyId: row.id } as any,
-              })
-            }
-          />
-        </SSection>
+          <Text fs="p1" fw={600} font="primary">
+            All pairs
+          </Text>
+          <ToggleGroup
+            type="single"
+            size="small"
+            value={viewMode}
+            onValueChange={(value: "list" | "grid") => value && setViewMode(value)}
+          >
+            <ToggleGroupItem value="list">
+              <Tooltip text="List view" side="top" sideOffset={6} asChild>
+                <List size={16} />
+              </Tooltip>
+            </ToggleGroupItem>
+            <ToggleGroupItem value="grid">
+              <Tooltip text="Grid view" side="top" sideOffset={6} asChild>
+                <LayoutGrid size={16} />
+              </Tooltip>
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </Flex>
+
+        {viewMode === "list" ? (
+          <SSection>
+            <DataTable
+              data={strategies}
+              columns={columns}
+              onRowClick={(row) =>
+                navigate({
+                  to: "/borrow/multiply/$strategyId" as any,
+                  params: { strategyId: row.id } as any,
+                })
+              }
+            />
+          </SSection>
+        ) : (
+          <Grid
+            columns={gte("md") ? 2 : 1}
+            gap={getTokenPx("scales.paddings.l")}
+          >
+            {strategies.map((s) => (
+              <Link
+                key={"grid-" + s.id}
+                to={"/borrow/multiply/$strategyId" as any}
+                params={{ strategyId: s.id } as any}
+                style={{ textDecoration: "none" }}
+              >
+                <SGridCard>
+                  {/* Header: Icon + Name + APY */}
+                  <Flex justify="space-between" align="start">
+                    <Flex gap={getTokenPx("scales.paddings.m")} align="center">
+                      {/* Strategy Icon */}
+                      <Box
+                        sx={{
+                          width: 56,
+                          height: 56,
+                          borderRadius: 12,
+                          background: theme.surfaces.containers.high.hover,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {s.collateralAsset.symbol === "PRIME" ? (
+                          <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
+                        ) : (
+                          <AssetLogo id={s.collateralAsset.id} size="medium" />
+                        )}
+                      </Box>
+                      <Flex direction="column" gap={2}>
+                        <Flex align="center" gap={getTokenPx("scales.paddings.s")}>
+                          <Text fs="p2" fw={600}>
+                            {s.strategyName}
+                          </Text>
+                          <Chip variant="tertiary" size="small">
+                            <Text fs="p6" fw={500}>
+                              max lev: {s.leverage.toFixed(1)}X
+                            </Text>
+                          </Chip>
+                        </Flex>
+                        <Text fs="p5" color={theme.text.medium}>
+                          Borrow{" "}
+                          {s.debtAsset.symbol === "CASH"
+                            ? "HUSD"
+                            : s.debtAsset.symbol}{" "}
+                          to leverage {s.collateralAsset.symbol}
+                        </Text>
+                      </Flex>
+                    </Flex>
+
+                    {/* APY Section */}
+                    <Flex direction="column" align="flex-end" gap={2}>
+                      <Text fs="p6" color={theme.text.medium}>
+                        APY up to
+                      </Text>
+                      <Text
+                        fs="h6"
+                        fw={600}
+                        color={theme.details.values.positive}
+                        font="primary"
+                      >
+                        {s.netApy.toFixed(2)}%
+                      </Text>
+                      <Chip variant="green" size="small" rounded>
+                        <Text fs="p6">+ rewards</Text>
+                      </Chip>
+                    </Flex>
+                  </Flex>
+
+                  <Separator />
+
+                  {/* Strategy Description */}
+                  <Box>
+                    <Text fs="p6" fw={600} mb={4} color={theme.text.high}>
+                      STRATEGY
+                    </Text>
+                    <Text fs="p4" color={theme.text.medium} lh="150%">
+                      Borrow{" "}
+                      {s.debtAsset.symbol === "CASH"
+                        ? "HUSD"
+                        : s.debtAsset.symbol}{" "}
+                      and provide liquidity, using a wide range, to volatile{" "}
+                      {s.collateralAsset.symbol}/stablecoins pools
+                    </Text>
+                  </Box>
+
+                  {/* Pools Section */}
+                  <Box>
+                    <Text fs="p6" fw={600} mb={8} color={theme.text.high}>
+                      POOLS
+                    </Text>
+                    <Flex gap={getTokenPx("scales.paddings.m")} wrap>
+                      {[1, 2, 3, 4].map((poolIdx) => (
+                        <Flex key={poolIdx} align="center">
+                          {s.collateralAsset.symbol === "PRIME" ? (
+                            <BaseAssetLogo
+                              src={primeLogo}
+                              size="extra-small"
+                              alt="PRIME"
+                            />
+                          ) : (
+                            <AssetLogo
+                              id={s.collateralAsset.id}
+                              size="extra-small"
+                            />
+                          )}
+                          <Box sx={{ marginLeft: -4 }}>
+                            <AssetLogo id={s.debtAsset.id} size="extra-small" />
+                          </Box>
+                          <Box sx={{ marginLeft: -4 }}>
+                            <AssetLogo
+                              id={HOLLAR_ASSET_ID}
+                              size="extra-small"
+                            />
+                          </Box>
+                        </Flex>
+                      ))}
+                    </Flex>
+                  </Box>
+
+                  {/* Risks Section */}
+                  <Box>
+                    <Text fs="p6" fw={600} mb={8} color={theme.text.high}>
+                      RISKS
+                    </Text>
+                    <Flex gap={getTokenPx("scales.paddings.s")}>
+                      <Chip variant="tertiary" size="small">
+                        <Flex align="center" gap={4}>
+                          <Percent size={12} />
+                          <Text fs="p6">Interest Rate</Text>
+                        </Flex>
+                      </Chip>
+                      <Chip variant="tertiary" size="small">
+                        <Flex align="center" gap={4}>
+                          <AlertTriangle size={12} />
+                          <Text fs="p6">Liquidation</Text>
+                        </Flex>
+                      </Chip>
+                    </Flex>
+                  </Box>
+
+                  {/* Action Buttons */}
+                  <Flex gap={getTokenPx("scales.paddings.m")} justify="center">
+                    <Button
+                      size="small"
+                      variant="primary"
+                      onClick={(e: any) => {
+                        e.stopPropagation()
+                        navigate({
+                          to: "/borrow/multiply/$strategyId",
+                          params: { strategyId: s.id },
+                        })
+                      }}
+                      sx={{ flex: 1 }}
+                    >
+                      Open strategy
+                    </Button>
+                  </Flex>
+                </SGridCard>
+              </Link>
+            ))}
+          </Grid>
+        )}
       </Box>
     </Flex>
   )

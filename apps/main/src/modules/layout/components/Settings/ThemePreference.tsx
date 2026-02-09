@@ -52,7 +52,7 @@ export const ThemePreference: FC = () => {
           type="single"
           size="small"
           value={themePreference}
-          onValueChange={(value) => setThemePreference(value)}
+          onValueChange={(value: ThemePreferenceType) => setThemePreference(value)}
         >
           {themeOptions.map((theme) => (
             <ToggleGroupItem key={theme} value={theme}>

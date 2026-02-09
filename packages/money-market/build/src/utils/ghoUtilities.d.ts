@@ -1,6 +1,6 @@
 import { FormattedGhoReserveData } from "@aave/math-utils";
 import { ComputedReserveData } from "@/hooks/commonTypes";
-export declare const GHO_SYMBOL = "HOLLAR";
+export declare const GHO_SYMBOL = "HUSD";
 export declare const GHO_ASSET_ID = "222";
 /**
  * Determines if GHO is available for borrowing (minting) on the provided network, also based off the token symbol being borrowed

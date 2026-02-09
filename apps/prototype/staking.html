@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hydration Prototype — Staking</title>
+    <link rel="stylesheet" href="assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/layout.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+  </head>
+  <body class="theme-light">
+    <div class="app" data-active="staking">
+      <aside class="sidebar"></aside>
+      <header class="topbar"></header>
+      <main class="content">
+        <section class="section">
+          <h1 class="page-title">Staking</h1>
+          <p class="page-subtitle">Track positions and rewards.</p>
+        </section>
+
+        <section class="section grid two">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Active Stakes</h3>
+                <div class="card-subtitle">2 positions</div>
+              </div>
+              <button class="btn primary small">Stake More</button>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Staked</th>
+                  <th>APR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>HDX</td>
+                  <td>12,400</td>
+                  <td>14.2%</td>
+                </tr>
+                <tr>
+                  <td>DOT</td>
+                  <td>680</td>
+                  <td>9.8%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Rewards</h3>
+                <div class="card-subtitle">Next payout in 6h</div>
+              </div>
+              <span class="pill">Auto-compound</span>
+            </div>
+            <div class="kpi-row">
+              <div class="kpi">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value">$420</div>
+              </div>
+              <div class="kpi">
+                <div class="stat-label">Claimed</div>
+                <div class="stat-value">$2,140</div>
+              </div>
+            </div>
+            <div class="progress" style="margin-top: 14px;"><span style="width: 72%"></span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Validator Performance</h3>
+                <div class="card-subtitle">Mock performance metrics</div>
+              </div>
+              <button class="btn ghost small">View All</button>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Validator</th>
+                  <th>Uptime</th>
+                  <th>Fee</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Atlas-01</td>
+                  <td>99.4%</td>
+                  <td>4%</td>
+                  <td>Active</td>
+                </tr>
+                <tr>
+                  <td>Nova-07</td>
+                  <td>97.9%</td>
+                  <td>5%</td>
+                  <td>Active</td>
+                </tr>
+                <tr>
+                  <td>Zenith-02</td>
+                  <td>96.3%</td>
+                  <td>6%</td>
+                  <td>Watch</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="scripts/app.js"></script>
+  </body>
+</html>

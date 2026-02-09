@@ -1,21 +1,19 @@
-import { ChevronDown } from "@galacticcouncil/ui/assets/icons"
 import {
   AssetLogo as BaseAssetLogo,
+  Box,
   Button,
   CollapsibleContent,
   CollapsibleRoot,
   CollapsibleTrigger,
   Flex,
-  Icon,
   Paper,
   Stack,
   Text,
-  ValueStats,
 } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getToken, getTokenPx } from "@galacticcouncil/ui/utils"
 import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
-import { ArrowDown, ArrowUp } from "lucide-react"
+import { ChevronDown, CircleStop } from "lucide-react"
 import { FC, useState } from "react"
 
 import primeLogo from "@/assets/tokens/prime.png"
@@ -36,11 +34,6 @@ export const MultiplyPositionsTile: FC = () => {
   )
 
   const selectedPosition = positions.find((p) => p.id === selectedPositionId)
-
-  // Calculate total value (mock - in production would use real prices)
-  const totalValue = positions
-    .reduce((sum, pos) => sum + Number(pos.collateralAmount) * 0.12, 0)
-    .toFixed(2)
 
   if (positions.length === 0) return null
 
@@ -69,19 +62,18 @@ export const MultiplyPositionsTile: FC = () => {
                 font="primary"
                 color={getToken("text.high")}
               >
-                Your Positions
+                My positions
               </Text>
 
-              <Flex align="center" gap={getTokenPx("scales.paddings.s")}>
-                <Text fs="p5" fw={500} color={getToken("text.low")}>
-                  {expanded ? "Show Less" : "Show More"}
+              <Flex align="center" gap={getTokenPx("scales.paddings.xs")}>
+                <Text fs="p5" fw={500} color={getToken("text.medium")}>
+                  {expanded ? "Hide positions" : "Show positions"}
                 </Text>
-                <Icon
-                  component={ChevronDown}
+                <ChevronDown
                   size={18}
-                  color={getToken("text.low")}
-                  sx={{
-                    transition: getToken("transitions.transform"),
+                  style={{
+                    color: theme.text.medium,
+                    transition: theme.transitions.transform,
                     transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
                   }}
                 />
@@ -89,39 +81,42 @@ export const MultiplyPositionsTile: FC = () => {
             </Flex>
           </CollapsibleTrigger>
 
-          {/* Stats Row */}
-          <Flex
-            justify="space-between"
-            align="center"
-            sx={{
-              px: getTokenPx("containers.paddings.primary"),
-              py: getTokenPx("containers.paddings.secondary"),
-              borderBottom: expanded ? "1px solid" : "none",
-              borderColor: getToken("details.separators"),
-            }}
-          >
-            <ValueStats
-              label="Total Value"
-              customValue={
-                <Text
-                  font="primary"
-                  fs="h7"
-                  lh={1}
-                  fw={700}
-                  color={getToken("text.high")}
-                >
-                  ${totalValue}
-                </Text>
-              }
-              size="medium"
-            />
-            <Text fs="p4" color={theme.text.medium}>
-              {positions.length} position{positions.length > 1 ? "s" : ""}
-            </Text>
-          </Flex>
-
-          {/* Position List */}
+          {/* Table Headers */}
           <CollapsibleContent>
+            <Flex
+              align="center"
+              justify="space-between"
+              sx={{
+                px: getTokenPx("containers.paddings.primary"),
+                py: theme.scales.paddings.s,
+                borderBottom: "1px solid",
+                borderColor: getToken("details.separators"),
+                bg: theme.surfaces.containers.high.primary,
+              }}
+            >
+              <Text fs="p6" fw={500} color={theme.text.medium} sx={{ width: 170 }}>
+                Position
+              </Text>
+              <Text fs="p6" fw={500} color={theme.text.medium} sx={{ width: 130 }}>
+                Value
+              </Text>
+              <Text fs="p6" fw={500} color={theme.text.medium} sx={{ width: 130 }}>
+                Amount
+              </Text>
+              <Text fs="p6" fw={500} color={theme.text.medium} sx={{ width: 80 }}>
+                PNL (%)
+              </Text>
+              <Text
+                fs="p6"
+                fw={500}
+                color={theme.text.medium}
+                sx={{ width: 114, textAlign: "right" }}
+              >
+                Actions
+              </Text>
+            </Flex>
+
+            {/* Position List */}
             <Stack gap={0}>
               {positions.map((position) => (
                 <PositionRow
@@ -156,13 +151,12 @@ const PositionRow: FC<{
   onManage: () => void
 }> = ({ position, onManage }) => {
   const { themeProps: theme } = useTheme()
-  const isBull = position.strategy === "bull"
 
-  // Mock P&L calculation (would be real in production)
-  const mockPnl = isBull ? "+$12.50" : "-$5.20"
-  const pnlColor = isBull
-    ? theme.accents.success.emphasis
-    : theme.accents.danger.emphasis
+  // Mock data for the new columns
+  const mockValue = "$" + (Number(position.collateralAmount) * 0.12).toFixed(2)
+  const mockPnl = "+$52.24"
+  const mockPnlPercent = "(5.45%)"
+  const pnlColor = theme.accents.success.emphasis
 
   return (
     <Flex
@@ -174,15 +168,14 @@ const PositionRow: FC<{
         borderBottom: "1px solid",
         borderColor: getToken("details.separators"),
         "&:last-child": { borderBottom: "none" },
-        "&:hover": { bg: theme.surfaces.containers.mid.primary },
       }}
     >
-      {/* Asset Pair + Strategy */}
-      <Flex align="center" gap={3}>
+      {/* 1. Position */}
+      <Flex align="center" gap={3} sx={{ width: 170 }}>
         <Flex
           sx={{
             position: "relative",
-            width: 40,
+            minWidth: 40,
             height: 24,
           }}
         >
@@ -214,51 +207,52 @@ const PositionRow: FC<{
             />
           )}
         </Flex>
-        <Flex direction="column" gap={1}>
-          <Flex align="center" gap={2}>
-            <Text fs="p3" fw={500}>
-              {position.collateralAsset?.symbol ?? "--"} /{" "}
-              {position.debtAsset?.symbol === "CASH"
-                ? "HUSD"
-                : (position.debtAsset?.symbol ?? "--")}
-            </Text>
-            <Flex
-              align="center"
-              justify="center"
-              sx={{
-                width: 16,
-                height: 16,
-                borderRadius: "full",
-                bg: isBull
-                  ? theme.accents.success.emphasis
-                  : theme.accents.danger.emphasis,
-              }}
-            >
-              {isBull ? (
-                <ArrowUp size={10} strokeWidth={3} color="white" />
-              ) : (
-                <ArrowDown size={10} strokeWidth={3} color="white" />
-              )}
-            </Flex>
-          </Flex>
-          <Text fs="p5" color={theme.text.medium}>
+        <Flex direction="column">
+          <Text fs="p3" fw={500}>
+            {position.collateralAsset?.symbol ?? "--"}/
+            {position.debtAsset?.symbol === "CASH"
+              ? "HUSD"
+              : (position.debtAsset?.symbol ?? "--")}
+          </Text>
+          <Text fs="p6" color={theme.text.medium}>
             {position.leverage.toFixed(1)}x Leverage
           </Text>
         </Flex>
       </Flex>
 
-      {/* P&L + Manage */}
-      <Flex align="center" gap={4}>
-        <Flex direction="column" align="flex-end">
-          <Text fs="p4" fw={500} color={pnlColor}>
-            {mockPnl}
-          </Text>
-          <Text fs="p5" color={theme.text.medium}>
-            P&L
-          </Text>
-        </Flex>
-        <Button size="small" variant="secondary" onClick={onManage}>
-          Manage
+      {/* 2. Value */}
+      <Box sx={{ width: 130 }}>
+        <Text fs="p5" fw={600} color={theme.text.high}>
+          {mockValue}
+        </Text>
+      </Box>
+
+      {/* 3. Amount */}
+      <Box sx={{ width: 130 }}>
+        <Text fs="p5" fw={600} color={theme.text.high}>
+          {Number(position.collateralAmount).toFixed(0)}{" "}
+          {position.collateralAsset?.symbol}
+        </Text>
+      </Box>
+
+      {/* 4. PNL (%) */}
+      <Flex direction="column" sx={{ width: 80 }}>
+        <Text fs="p5" fw={600} color={pnlColor}>
+          {mockPnl}
+        </Text>
+        <Text fs="p6" color={theme.text.medium}>
+          {mockPnlPercent}
+        </Text>
+      </Flex>
+
+      <Flex align="center" justify="flex-end" gap={3} sx={{ width: 114 }}>
+        <Button
+          size="small"
+          variant="tertiary"
+          onClick={onManage}
+        >
+          <CircleStop size={14} />
+          Close
         </Button>
       </Flex>
     </Flex>

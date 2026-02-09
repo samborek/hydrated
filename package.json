@@ -9,6 +9,7 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "dev:production": "turbo dev:production",
+    "proto": "python3 -m http.server 5174 -d apps/prototype",
     "preview": "turbo preview",
     "preview:tunnel": "yarn build && yarn preview & cloudflared tunnel --url http://localhost:4173",
     "dev:tunnel": "yarn dev & cloudflared tunnel --url http://localhost:5173",

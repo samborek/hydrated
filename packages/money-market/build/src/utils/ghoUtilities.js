@@ -1,5 +1,5 @@
 import Big from "big.js";
-export const GHO_SYMBOL = "HOLLAR";
+export const GHO_SYMBOL = "HUSD";
 export const GHO_ASSET_ID = "222";
 /**
  * Determines if GHO is available for borrowing (minting) on the provided network, also based off the token symbol being borrowed

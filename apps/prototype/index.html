@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hydration Prototype — Overview</title>
+    <link rel="stylesheet" href="assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/layout.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+  </head>
+  <body class="theme-light">
+    <div class="app" data-active="overview">
+      <aside class="sidebar"></aside>
+      <header class="topbar"></header>
+      <main class="content">
+        <section class="section">
+          <h1 class="page-title">Hydration Prototype</h1>
+          <p class="page-subtitle">Static HTML/CSS layout mapped to the current product IA. Use this for fast iteration before wiring up the React app.</p>
+          <div class="banner">
+            <div>
+              <strong>New: Stats hub is live</strong>
+              <span>Jump into the latest analytics and treasury insights.</span>
+            </div>
+            <a class="btn primary" href="stats.html">Open Stats</a>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2 class="section-title">Quick Snapshot</h2>
+            <span class="section-note">Last 24h • Mock data</span>
+          </div>
+          <div class="grid four">
+            <div class="card stat">
+              <span class="stat-label">Total Value Locked</span>
+              <span class="stat-value">$742.5M</span>
+              <span class="stat-change positive">+3.2% vs yesterday</span>
+            </div>
+            <div class="card stat">
+              <span class="stat-label">Volume</span>
+              <span class="stat-value">$58.2M</span>
+              <span class="stat-change positive">+9.8%</span>
+            </div>
+            <div class="card stat">
+              <span class="stat-label">Fees</span>
+              <span class="stat-value">$412K</span>
+              <span class="stat-change positive">+5.1%</span>
+            </div>
+            <div class="card stat">
+              <span class="stat-label">Active Wallets</span>
+              <span class="stat-value">32,410</span>
+              <span class="stat-change negative">-1.4%</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="grid two">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Hot Pools</h3>
+                  <div class="card-subtitle">Top liquidity growth</div>
+                </div>
+                <button class="btn ghost small">View All</button>
+              </div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Pool</th>
+                    <th>TVL</th>
+                    <th>APR</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>HDX / USDC</td>
+                    <td>$122M</td>
+                    <td>18.4%</td>
+                  </tr>
+                  <tr>
+                    <td>DOT / USDT</td>
+                    <td>$88M</td>
+                    <td>12.9%</td>
+                  </tr>
+                  <tr>
+                    <td>BTC / HDX</td>
+                    <td>$64M</td>
+                    <td>10.2%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Next Actions</h3>
+                  <div class="card-subtitle">Priority tasks for the week</div>
+                </div>
+                <span class="pill">Prototype</span>
+              </div>
+              <div class="kpi-row">
+                <div class="kpi">
+                  <div class="stat-label">Refactor swap layout</div>
+                  <div class="stat-value">60%</div>
+                  <div class="progress"><span style="width: 60%"></span></div>
+                </div>
+                <div class="kpi">
+                  <div class="stat-label">Liquidity CTA tests</div>
+                  <div class="stat-value">3 variants</div>
+                  <div class="progress"><span style="width: 35%"></span></div>
+                </div>
+              </div>
+              <div class="banner" style="margin-top: 16px;">
+                <div>
+                  <strong>Storybook components ready</strong>
+                  <span>Run the UI library for component exploration.</span>
+                </div>
+                <a class="btn ghost" href="http://localhost:6006">Open</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="scripts/app.js"></script>
+  </body>
+</html>

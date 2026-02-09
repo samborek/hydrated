@@ -6,7 +6,7 @@ import { AreaChart, Box, Text } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getToken } from "@galacticcouncil/ui/utils"
 import { bigShift } from "@galacticcouncil/utils"
-import Big from "big.js"
+import { Big } from "big.js"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 

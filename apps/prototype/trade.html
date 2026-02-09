@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hydration Prototype — Trade</title>
+    <link rel="stylesheet" href="assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/layout.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+  </head>
+  <body class="theme-light">
+    <div class="app" data-active="trade">
+      <aside class="sidebar"></aside>
+      <header class="topbar"></header>
+      <main class="content">
+        <section class="section">
+          <h1 class="page-title">Trade</h1>
+          <p class="page-subtitle">Swap assets with a simplified prototype layout.</p>
+        </section>
+
+        <section class="section grid two">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Swap</h3>
+                <div class="card-subtitle">Best route · Mock quotes</div>
+              </div>
+              <span class="pill">Route: Omnipool</span>
+            </div>
+            <div class="input-group">
+              <label>From</label>
+              <div class="input-row">
+                <input type="text" value="1250" />
+                <button class="btn ghost small">USDC</button>
+              </div>
+            </div>
+            <div class="input-group" style="margin-top: 12px;">
+              <label>To</label>
+              <div class="input-row">
+                <input type="text" value="824.3" />
+                <button class="btn ghost small">HDX</button>
+              </div>
+            </div>
+            <div style="margin-top: 16px; display: flex; justify-content: space-between;">
+              <span class="section-note">Slippage: 0.5%</span>
+              <span class="section-note">Fee: $3.12</span>
+            </div>
+            <button class="btn primary" style="margin-top: 18px; width: 100%;">Preview Swap</button>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Market Pulse</h3>
+                <div class="card-subtitle">Live pair metrics</div>
+              </div>
+              <div class="chip-group">
+                <span class="chip active">24h</span>
+                <span class="chip">7d</span>
+                <span class="chip">30d</span>
+              </div>
+            </div>
+            <div class="sparkline"></div>
+            <div class="kpi-row" style="margin-top: 14px;">
+              <div class="kpi">
+                <div class="stat-label">Price Impact</div>
+                <div class="stat-value">0.18%</div>
+              </div>
+              <div class="kpi">
+                <div class="stat-label">Liquidity Depth</div>
+                <div class="stat-value">$42M</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Recent Swaps</h3>
+                <div class="card-subtitle">Last 10 minutes</div>
+              </div>
+              <button class="btn ghost small">View Explorer</button>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Trader</th>
+                  <th>Pair</th>
+                  <th>Amount</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>0xA9…71C</td>
+                  <td>DOT → HDX</td>
+                  <td>$24.2K</td>
+                  <td>2m ago</td>
+                </tr>
+                <tr>
+                  <td>0x32…5BF</td>
+                  <td>USDT → BTC</td>
+                  <td>$18.4K</td>
+                  <td>6m ago</td>
+                </tr>
+                <tr>
+                  <td>0xEF…90A</td>
+                  <td>HDX → USDC</td>
+                  <td>$12.9K</td>
+                  <td>9m ago</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="scripts/app.js"></script>
+  </body>
+</html>

@@ -13,4 +13,6 @@
     "./packages/money-market",
     "./packages/indexer"
   ],
+  "tfa.cache.autoClean": true,
+  "tfa.cache.warningSize": 1500,
 }

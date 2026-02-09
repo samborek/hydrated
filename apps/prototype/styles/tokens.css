@@ -1,0 +1,48 @@
+:root,
+.theme-light {
+  --color-bg: #efedea;
+  --color-surface: #ffffff;
+  --color-surface-muted: rgba(190, 183, 178, 0.2);
+  --color-card: #ffffff;
+  --color-text: #232226;
+  --color-text-muted: rgb(48.235% 48% 48.941%);
+  --color-border: rgb(93.647% 92.941% 92.471%);
+  --color-accent: #e53e76;
+  --color-accent-strong: #e53e76;
+  --color-positive: #45ac1f;
+  --color-negative: rgb(100% 33.804% 30.98%);
+  --color-chart: #6fc272;
+  --color-shadow: rgba(0, 0, 0, 0.08);
+  --shadow-1: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 14px 37px 0 rgba(0, 0, 0, 0.03);
+  --shadow-2: 0 8px 15px 0 rgba(0, 0, 0, 0.09);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --font-primary: "Gazpacho", serif;
+  --font-secondary: "Geist", system-ui, -apple-system, sans-serif;
+  --font-mono: "GeistMono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.theme-dark {
+  --color-bg: #030816;
+  --color-surface: #0d1525;
+  --color-surface-muted: rgba(86, 91, 95, 0.12);
+  --color-card: #0d1525;
+  --color-text: rgb(100% 100% 100%);
+  --color-text-muted: rgb(52.549% 54.118% 57.255%);
+  --color-border: rgb(14.588% 17.412% 23.059%);
+  --color-accent: #e53e76;
+  --color-accent-strong: #e53e76;
+  --color-positive: #74c742;
+  --color-negative: rgb(100% 33.804% 30.98%);
+  --color-chart: #6fc272;
+  --color-shadow: rgba(2, 8, 22, 0.7);
+  --shadow-1: 0 12px 30px rgba(2, 8, 22, 0.35);
+  --shadow-2: 0 20px 60px rgba(2, 8, 22, 0.5);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --font-primary: "Gazpacho", serif;
+  --font-secondary: "Geist", system-ui, -apple-system, sans-serif;
+  --font-mono: "GeistMono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}

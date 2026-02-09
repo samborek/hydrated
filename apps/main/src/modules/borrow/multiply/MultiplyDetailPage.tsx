@@ -2,11 +2,12 @@ import {
   useBorrowAssetsData,
   useSupplyAssetsData,
 } from "@galacticcouncil/money-market/hooks"
-import { Box, Grid, Stack } from "@galacticcouncil/ui/components"
+import { Box, Button, Flex, Grid, Paper, Stack } from "@galacticcouncil/ui/components"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
-import { FC, useMemo } from "react"
+import { FC, useMemo, useState } from "react"
 
 import { MultiplyPositionsTile } from "@/modules/borrow/multiply/components/MultiplyPositionsTile"
+import { MultiplyReserveInfo } from "@/modules/borrow/multiply/components/MultiplyReserveInfo"
 import { MultiplySidePanel } from "@/modules/borrow/multiply/components/MultiplySidePanel/MultiplySidePanel"
 import { MultiplyStrategyHeader } from "@/modules/borrow/multiply/components/MultiplyStrategyHeader"
 import { MultiplyStrategyOverview } from "@/modules/borrow/multiply/components/MultiplyStrategyOverview"
@@ -50,17 +51,29 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({
         totalLiquidity: "0",
         totalDebt: "0",
         supplyCap: "0",
+        supplyCapUSD: "0",
         borrowCap: "0",
+        borrowCapUSD: "0",
         debtCeiling: "0",
         availableLiquidityUSD: 0,
         baseLTVasCollateral: "0",
         reserveLiquidationThreshold: "0",
         totalLiquidityUSD: "0",
+        totalDebtUSD: "0",
         isolationModeTotalDebt: "0",
         isolationModeTotalDebtUSD: "0",
         eModeCategoryId: 0,
         borrowingEnabled: false,
         isIsolated: false,
+        baseStableBorrowRate: "0",
+        baseVariableBorrowRate: "0",
+        optimalUsageRatio: "0",
+        stableRateSlope1: "0",
+        stableRateSlope2: "0",
+        borrowUsageRatio: "0",
+        variableRateSlope1: "0",
+        variableRateSlope2: "0",
+        stableBorrowRateEnabled: false,
       }
     }
 
@@ -73,22 +86,36 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({
         totalLiquidity: "0",
         totalDebt: "0",
         supplyCap: "0",
+        supplyCapUSD: "0",
         borrowCap: "0",
+        borrowCapUSD: "0",
         debtCeiling: "0",
         availableLiquidityUSD: 0,
         baseLTVasCollateral: "0",
         reserveLiquidationThreshold: "0",
         totalLiquidityUSD: "0",
+        totalDebtUSD: "0",
         isolationModeTotalDebt: "0",
         isolationModeTotalDebtUSD: "0",
         eModeCategoryId: 0,
         borrowingEnabled: false,
         isIsolated: false,
+        baseStableBorrowRate: "0",
+        baseVariableBorrowRate: "0",
+        optimalUsageRatio: "0",
+        stableRateSlope1: "0",
+        stableRateSlope2: "0",
+        borrowUsageRatio: "0",
+        variableRateSlope1: "0",
+        variableRateSlope2: "0",
+        stableBorrowRateEnabled: false,
       }
     }
 
     return { collateral, debt }
   }, [collateralSymbol, debtSymbol, supplyAssets, borrowAssets, tokens])
+
+  const [activeTab, setActiveTab] = useState<"details" | "info">("details")
 
   return (
     <Box id="looping-strategy-detail-page">
@@ -102,13 +129,43 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({
         gap={getTokenPx("containers.paddings.primary")}
         alignItems="start"
       >
-        {/* Left Panel - Positions + Overview */}
+        {/* Left Panel - Tabs + Positions + Content */}
         <Stack gap={getTokenPx("containers.paddings.primary")}>
-          <MultiplyPositionsTile />
-          <MultiplyStrategyOverview
-            collateralAsset={assets.collateral}
-            debtAsset={assets.debt}
-          />
+          <Flex gap={12}>
+            <Button
+              variant={activeTab === "details" ? "secondary" : "transparent"}
+              size="medium"
+              onClick={() => setActiveTab("details")}
+            >
+              Loop details
+            </Button>
+            <Button
+              variant={activeTab === "info" ? "secondary" : "transparent"}
+              size="medium"
+              onClick={() => setActiveTab("info")}
+            >
+              Borrow/supply data
+            </Button>
+          </Flex>
+
+          {activeTab === "details" ? (
+            <>
+              <Box>
+                <MultiplyPositionsTile />
+              </Box>
+              <MultiplyStrategyOverview
+                collateralAsset={assets.collateral}
+                debtAsset={assets.debt}
+              />
+            </>
+          ) : (
+            <Paper p={getTokenPx("containers.paddings.primary")}>
+              <MultiplyReserveInfo
+                collateralAsset={assets.collateral}
+                debtAsset={assets.debt}
+              />
+            </Paper>
+          )}
         </Stack>
 
         {/* Right Panel - Actions */}

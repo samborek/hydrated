@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hydration Prototype — Liquidity</title>
+    <link rel="stylesheet" href="assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/layout.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+  </head>
+  <body class="theme-light">
+    <div class="app" data-active="liquidity">
+      <aside class="sidebar"></aside>
+      <header class="topbar"></header>
+      <main class="content">
+        <section class="section">
+          <h1 class="page-title">Liquidity</h1>
+          <p class="page-subtitle">Manage pools and track earnings.</p>
+        </section>
+
+        <section class="section grid two">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Your Positions</h3>
+                <div class="card-subtitle">3 active pools</div>
+              </div>
+              <button class="btn primary small">Add Liquidity</button>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Pool</th>
+                  <th>Liquidity</th>
+                  <th>APR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>HDX / USDC</td>
+                  <td>$42.1K</td>
+                  <td>18.4%</td>
+                </tr>
+                <tr>
+                  <td>DOT / USDT</td>
+                  <td>$18.2K</td>
+                  <td>12.9%</td>
+                </tr>
+                <tr>
+                  <td>BTC / HDX</td>
+                  <td>$9.8K</td>
+                  <td>10.2%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Pool Insights</h3>
+                <div class="card-subtitle">Fee share & utilization</div>
+              </div>
+            </div>
+            <div class="sparkline"></div>
+            <div class="kpi-row" style="margin-top: 16px;">
+              <div class="kpi">
+                <div class="stat-label">Fee Income</div>
+                <div class="stat-value">$1,420</div>
+              </div>
+              <div class="kpi">
+                <div class="stat-label">Utilization</div>
+                <div class="stat-value">68%</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Top Pools</h3>
+                <div class="card-subtitle">Highest liquidity this week</div>
+              </div>
+              <div class="chip-group">
+                <span class="chip active">Omnipool</span>
+                <span class="chip">Stable</span>
+                <span class="chip">Isolated</span>
+              </div>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Pool</th>
+                  <th>TVL</th>
+                  <th>Volume</th>
+                  <th>APR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>HDX / USDC</td>
+                  <td>$122M</td>
+                  <td>$9.2M</td>
+                  <td>18.4%</td>
+                </tr>
+                <tr>
+                  <td>DOT / USDT</td>
+                  <td>$88M</td>
+                  <td>$6.8M</td>
+                  <td>12.9%</td>
+                </tr>
+                <tr>
+                  <td>BTC / HDX</td>
+                  <td>$64M</td>
+                  <td>$4.1M</td>
+                  <td>10.2%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="scripts/app.js"></script>
+  </body>
+</html>

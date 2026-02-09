@@ -11,7 +11,7 @@ import {
   ValueStats,
 } from "@galacticcouncil/ui/components"
 import { getAssetIdFromAddress } from "@galacticcouncil/utils"
-import Big from "big.js"
+import { Big } from "big.js"
 import { useTranslation } from "react-i18next"
 
 import { BorrowApyChart } from "@/modules/borrow/reserve/components/BorrowApyChart"

@@ -1,6 +1,6 @@
 import { css, SerializedStyles, Theme as EmotionTheme } from "@emotion/react";
 import { SxProp } from "@theme-ui/core";
-import { Theme as ThemeUI, ThemeUICSSObject } from "@theme-ui/css";
+import { Theme as ThemeUI } from "@theme-ui/css";
 import { ThemeToken } from "@/theme";
 export declare const REM_BASE = 16;
 export declare const px: (n: number | string) => string;
@@ -12,7 +12,7 @@ export type Branded<T> = true & {
 };
 export type MinusPx = Branded<"MinusPx">;
 export declare const minusPx: MinusPx;
-export declare const getToken: (token: ThemeToken | ThemeToken[]) => (theme: ThemeUI) => ThemeUICSSObject;
+export declare const getToken: (token: ThemeToken | ThemeToken[]) => (theme: ThemeUI) => any;
 export declare const getTokenPx: (token: ThemeToken | ThemeToken[], minus?: MinusPx) => (theme: ThemeUI) => string | string[];
 export declare const getMinusTokenPx: (token: ThemeToken | ThemeToken[]) => (theme: ThemeUI) => string | string[];
 export declare const getTokenRem: (token: ThemeToken | ThemeToken[], minus?: MinusPx) => (theme: ThemeUI) => string | string[];

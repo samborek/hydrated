@@ -46,7 +46,7 @@ export const RpcSelectModal: React.FC<RpcSelectModalProps> = (props) => {
             <ToggleGroup
               type="single"
               value={view}
-              onValueChange={(value) => value && setView(value)}
+              onValueChange={(value: "rpc" | "squid") => value && setView(value)}
             >
               <ToggleGroupItem value="rpc">
                 {t("rpc.change.modal.view.rpc")}

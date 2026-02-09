@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hydration Prototype — Wallet</title>
+    <link rel="stylesheet" href="assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/layout.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+  </head>
+  <body class="theme-light">
+    <div class="app" data-active="wallet">
+      <aside class="sidebar"></aside>
+      <header class="topbar"></header>
+      <main class="content">
+        <section class="section">
+          <h1 class="page-title">Wallet</h1>
+          <p class="page-subtitle">Portfolio overview and recent activity.</p>
+        </section>
+
+        <section class="section grid two">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Balances</h3>
+                <div class="card-subtitle">Across connected accounts</div>
+              </div>
+              <button class="btn ghost small">Manage</button>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Balance</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>HDX</td>
+                  <td>42,200</td>
+                  <td>$18,420</td>
+                </tr>
+                <tr>
+                  <td>DOT</td>
+                  <td>1,240</td>
+                  <td>$9,180</td>
+                </tr>
+                <tr>
+                  <td>USDC</td>
+                  <td>12,500</td>
+                  <td>$12,500</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Portfolio Health</h3>
+                <div class="card-subtitle">Risk overview</div>
+              </div>
+              <span class="pill">Healthy</span>
+            </div>
+            <div class="kpi-row">
+              <div class="kpi">
+                <div class="stat-label">Net Worth</div>
+                <div class="stat-value">$40,100</div>
+              </div>
+              <div class="kpi">
+                <div class="stat-label">Borrow Utilization</div>
+                <div class="stat-value">32%</div>
+              </div>
+            </div>
+            <div class="sparkline" style="margin-top: 16px;"></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Recent Activity</h3>
+                <div class="card-subtitle">Latest transactions</div>
+              </div>
+              <button class="btn ghost small">View All</button>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Asset</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Swap</td>
+                  <td>USDC → HDX</td>
+                  <td>$2,400</td>
+                  <td>Completed</td>
+                </tr>
+                <tr>
+                  <td>Stake</td>
+                  <td>HDX</td>
+                  <td>5,000</td>
+                  <td>Completed</td>
+                </tr>
+                <tr>
+                  <td>Withdraw</td>
+                  <td>DOT</td>
+                  <td>120</td>
+                  <td>Pending</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="scripts/app.js"></script>
+  </body>
+</html>

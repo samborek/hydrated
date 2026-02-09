@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hydration Prototype — Borrow</title>
+    <link rel="stylesheet" href="assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/layout.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+  </head>
+  <body class="theme-light">
+    <div class="app" data-active="borrow">
+      <aside class="sidebar"></aside>
+      <header class="topbar"></header>
+      <main class="content">
+        <section class="section">
+          <h1 class="page-title">Borrow</h1>
+          <p class="page-subtitle">Manage collateral and borrowing positions.</p>
+        </section>
+
+        <section class="section grid two">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Your Loans</h3>
+                <div class="card-subtitle">2 active positions</div>
+              </div>
+              <button class="btn primary small">Borrow More</button>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Borrowed</th>
+                  <th>Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>USDC</td>
+                  <td>$8,400</td>
+                  <td>6.4%</td>
+                </tr>
+                <tr>
+                  <td>DOT</td>
+                  <td>240</td>
+                  <td>7.1%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Collateral Health</h3>
+                <div class="card-subtitle">Borrow utilization</div>
+              </div>
+              <span class="pill">Safe</span>
+            </div>
+            <div class="kpi-row">
+              <div class="kpi">
+                <div class="stat-label">Health Factor</div>
+                <div class="stat-value">2.4</div>
+              </div>
+              <div class="kpi">
+                <div class="stat-label">Utilization</div>
+                <div class="stat-value">38%</div>
+              </div>
+            </div>
+            <div class="progress" style="margin-top: 14px;"><span style="width: 38%"></span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Available Markets</h3>
+                <div class="card-subtitle">Borrow opportunities</div>
+              </div>
+              <div class="chip-group">
+                <span class="chip active">All</span>
+                <span class="chip">Stable</span>
+                <span class="chip">Liquid Staking</span>
+              </div>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Available</th>
+                  <th>APR</th>
+                  <th>Collateral</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>USDC</td>
+                  <td>$24.1M</td>
+                  <td>6.4%</td>
+                  <td>Yes</td>
+                </tr>
+                <tr>
+                  <td>DOT</td>
+                  <td>$12.7M</td>
+                  <td>7.1%</td>
+                  <td>Yes</td>
+                </tr>
+                <tr>
+                  <td>BTC</td>
+                  <td>$8.3M</td>
+                  <td>8.9%</td>
+                  <td>No</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="scripts/app.js"></script>
+  </body>
+</html>

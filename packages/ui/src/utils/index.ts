@@ -26,8 +26,8 @@ export const minusPx = true as MinusPx
 
 export const getToken =
   (token: ThemeToken | ThemeToken[]) =>
-  (theme: ThemeUI): ThemeUICSSObject =>
-    Array.isArray(token) ? token.map((t) => get(theme, t)) : get(theme, token)
+    (theme: ThemeUI): any =>
+      Array.isArray(token) ? token.map((t) => get(theme, t)) : get(theme, token)
 
 // Returns token value in pixels (use for borders, shadows, fixed sizes)
 export const getTokenPx =

@@ -33,7 +33,7 @@ const Page = () => {
       <SubpageLayout
         crumbs={!isListPage ? crumbs : undefined}
         subpageMenuHidden={!isListPage}
-        actions={<PositionsIndicator />}
+        actions={isListPage ? <PositionsIndicator /> : undefined}
       />
     </BorrowContextProvider>
   )

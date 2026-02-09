@@ -18,7 +18,7 @@ import {
 import { ThemeProps, useTheme } from "@galacticcouncil/ui/theme"
 import { getToken } from "@galacticcouncil/ui/utils"
 import { getAssetIdFromAddress } from "@galacticcouncil/utils"
-import Big from "big.js"
+import { Big } from "big.js"
 import { useTranslation } from "react-i18next"
 
 import { CapProgressCircle } from "@/modules/borrow/reserve/components/CapProgressCircle"

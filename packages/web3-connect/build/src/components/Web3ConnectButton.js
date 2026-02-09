@@ -15,7 +15,16 @@ export const Web3ConnectButton = ({ ref, allowIncompatibleAccounts = false, ...p
     }
     if (account) {
         const shortDisplayAddr = shortenAccountAddress(account.displayAddress);
-        return (_jsxs(SConnectedButton, { ref: ref, onClick: () => toggle(), ...props, variant: "tertiary", sx: { px: 10, gap: 8 }, children: [_jsx(Box, { sx: { flexShrink: 0 }, children: _jsx(AccountAvatar, { size: 24, address: account.displayAddress, theme: getAccountAvatarTheme(account) }) }), _jsxs(Flex, { direction: "column", align: "start", children: [_jsx(Text, { fs: "p3", lh: 1.2, truncate: 140, children: account.name }), !stringEquals(account.name, shortDisplayAddr) && (_jsx(Text, { fs: "p6", color: getToken("text.medium"), children: shortDisplayAddr }))] }), _jsx(Icon, { size: 8, component: CaretDown })] }));
+        return (_jsxs(SConnectedButton, { ref: ref, onClick: () => toggle(), ...props, variant: "tertiary", sx: { px: 10, gap: 8 }, children: [_jsx(Box, { sx: {
+                        flexShrink: 0,
+                        width: 24,
+                        height: 24,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        overflow: "hidden",
+                        borderRadius: "full",
+                    }, children: _jsx(AccountAvatar, { size: 24, address: account.displayAddress, theme: getAccountAvatarTheme(account) }) }), _jsxs(Flex, { direction: "column", align: "start", children: [_jsx(Text, { fs: "p3", lh: 1.2, truncate: 140, children: account.name }), !stringEquals(account.name, shortDisplayAddr) && (_jsx(Text, { fs: "p6", color: getToken("text.medium"), children: shortDisplayAddr }))] }), _jsx(Icon, { size: 8, component: CaretDown })] }));
     }
     return (_jsxs(Button, { ref: ref, onClick: () => toggle(), ...props, children: [_jsx(Icon, { size: 16, component: Wallet, mr: 4 }), _jsx(Text, { fs: "p3", children: "Connect Wallet" })] }));
 };

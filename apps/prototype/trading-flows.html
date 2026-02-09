@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hydration — Trading Flows</title>
+    <link rel="stylesheet" href="assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/trading-flows.css" />
+  </head>
+  <body class="theme-dark">
+    <div class="trading-flows">
+      <header class="topbar">
+        <div class="topbar-left">
+          <span class="logo">Hydration</span>
+          <nav class="nav-links">
+            <a href="#">Trade</a>
+            <a href="#">Liquidity</a>
+            <a href="#">Borrow</a>
+            <a href="#">Stats</a>
+            <a href="#">Staking</a>
+            <a href="#">Wallet</a>
+            <a href="#">Memepad</a>
+            <a href="#">Transfer</a>
+          </nav>
+        </div>
+        <div class="topbar-right">
+          <button type="button" class="icon-btn" aria-label="Notifications">🔔</button>
+          <button type="button" class="icon-btn" aria-label="Settings">⚙</button>
+          <button type="button" class="icon-btn" aria-label="Messages">✉</button>
+          <button type="button" class="btn-deposit">Deposit</button>
+          <div class="account-row">
+            <span class="account-name">MyAccountN...</span>
+            <span class="account-address">1QGnj...fna39S</span>
+            <span aria-hidden="true">▾</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="main-content">
+        <section class="chart-panel">
+          <div class="chart-tabs">
+            <button type="button" class="tab active">Swap</button>
+            <button type="button" class="tab">Trade OTC</button>
+            <button type="button" class="tab">DCA Yield</button>
+            <button type="button" class="tab">Bonds</button>
+          </div>
+          <div class="chart-header">
+            <div class="asset-info">
+              <span class="symbol">Hydration · HDX</span>
+              <span class="price">0.000345 USDT/HDX ▾</span>
+              <span class="price">~$3 183.123</span>
+            </div>
+            <div class="timeframes">
+              <button type="button" class="tf">ALL</button>
+              <button type="button" class="tf">1H</button>
+              <button type="button" class="tf active">1D</button>
+              <button type="button" class="tf">1W</button>
+              <button type="button" class="tf">1M</button>
+            </div>
+          </div>
+          <div class="chart-area">
+            <div class="chart-placeholder">
+              <!-- Chart would render here -->
+            </div>
+          </div>
+          <div class="volume-bars">
+            <span class="volume-bar" style="height: 40%"></span>
+            <span class="volume-bar" style="height: 65%"></span>
+            <span class="volume-bar" style="height: 30%"></span>
+            <span class="volume-bar" style="height: 80%"></span>
+            <span class="volume-bar" style="height: 55%"></span>
+            <span class="volume-bar" style="height: 70%"></span>
+            <span class="volume-bar" style="height: 45%"></span>
+            <span class="volume-bar" style="height: 90%"></span>
+            <span class="volume-bar" style="height: 60%"></span>
+            <span class="volume-bar" style="height: 75%"></span>
+            <span class="volume-bar" style="height: 50%"></span>
+            <span class="volume-bar" style="height: 85%"></span>
+          </div>
+        </section>
+
+        <aside class="form-panel">
+          <div class="form-tabs">
+            <button type="button" class="tab active">Market</button>
+            <button type="button" class="tab">DCA</button>
+            <button type="button" class="icon-btn" aria-label="Settings">⚙</button>
+          </div>
+          <div class="form-body">
+            <div class="trade-block">
+              <label>Sell</label>
+              <div class="balance">Balance: 24 436 <button type="button" class="max">MAX</button></div>
+              <div class="trade-row">
+                <input type="text" value="2 855.00" aria-label="Sell amount" />
+                <button type="button" class="asset-btn">HDX ▾</button>
+              </div>
+              <div class="trade-row usd-value">$2 855</div>
+            </div>
+
+            <div class="swap-arrow" aria-hidden="true">↓</div>
+
+            <p class="price-line">Price: 1 HDX = 3 661.923 KUSD</p>
+
+            <div class="trade-block">
+              <label>Buy</label>
+              <div class="balance">Balance: 24 436 <button type="button" class="max">MAX</button></div>
+              <div class="trade-row">
+                <input type="text" value="2 855.00" aria-label="Buy amount" />
+                <button type="button" class="asset-btn">$ DOT ▾</button>
+              </div>
+              <div class="trade-row usd-value">$2 855</div>
+            </div>
+
+            <div class="trade-type-row">
+              <button type="button" class="trade-type">
+                Single trade<br />
+                <span class="sub">= 2 855.246 · Minimum received = 855.24 USD</span>
+              </button>
+              <button type="button" class="trade-type active">
+                Split trade<br />
+                <span class="sub">= 2 855.246 · Executed within 30 min = 855.24 USD <span class="positive">(+$200.45)</span></span>
+              </button>
+            </div>
+
+            <button type="button" class="btn-swap">Swap</button>
+          </div>
+          <div class="form-footer">
+            <div class="row">
+              <span>Health factor</span>
+              <span><span class="health-positive">1.88</span> → <span class="health-negative">1.58</span> ▾</span>
+            </div>
+            <div class="row">
+              <span>Total fees:</span>
+              <span>$5.63 ▾</span>
+            </div>
+            <div class="assethub-row">
+              <span>Assethub asset data: <span class="warn">⚠</span> 2 Issues</span>
+              <span>▾</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <section class="activity-panel">
+        <div class="activity-tabs">
+          <button type="button" class="tab active">My recent activity</button>
+          <button type="button" class="tab">Open orders <span class="badge">4</span></button>
+          <button type="button" class="tab">Order history</button>
+          <button type="button" class="tab">Market transactions</button>
+          <div class="all-pairs">
+            <span>All pairs</span>
+            <button type="button" class="toggle" aria-label="Toggle all pairs"></button>
+          </div>
+        </div>
+        <div class="activity-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Filled from / Filled to</th>
+                <th>Type</th>
+                <th>Status / Progress</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>212 425 HDX → 212 425 4-Pool<br /><span class="price">1 HDX = 0.03434</span></td>
+                <td>DCA</td>
+                <td><span class="status-active">Active 8%</span> 🗑</td>
+                <td>→</td>
+              </tr>
+              <tr>
+                <td>150 000 HDX → 150 000 4-Pool<br /><span class="price">1 HDX = 0.03312</span></td>
+                <td>Market</td>
+                <td><span class="status-filled">Filled</span></td>
+                <td>→</td>
+              </tr>
+              <tr>
+                <td>80 000 USDT → HDX<br /><span class="price">Limit 0.03200</span></td>
+                <td>Limit order</td>
+                <td><span class="status-canceled">Canceled</span></td>
+                <td>→</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

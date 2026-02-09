@@ -4,7 +4,7 @@ import {
 } from "@galacticcouncil/money-market/hooks"
 import { Box, Button, Flex, Grid, Paper, Stack } from "@galacticcouncil/ui/components"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
-import { FC, useMemo, useState } from "react"
+import { FC, useEffect, useMemo, useState } from "react"
 
 import { MultiplyPositionsTile } from "@/modules/borrow/multiply/components/MultiplyPositionsTile"
 import { MultiplyReserveInfo } from "@/modules/borrow/multiply/components/MultiplyReserveInfo"
@@ -23,6 +23,10 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({
   const { tokens } = useAssets()
   const { data: supplyAssets } = useSupplyAssetsData({ showAll: true })
   const { data: borrowAssets } = useBorrowAssetsData()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   /*
   const search = useSearch({

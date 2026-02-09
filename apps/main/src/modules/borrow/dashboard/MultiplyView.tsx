@@ -1,4 +1,4 @@
-import { useMarketAssetsData } from "@galacticcouncil/money-market/hooks"
+import { useAggregatedMarketStats, useMarketAssetsData } from "@galacticcouncil/money-market/hooks"
 import {
   AssetLogo as BaseAssetLogo,
   Box,
@@ -7,11 +7,16 @@ import {
   DataTable,
   Flex,
   Grid,
+  Modal,
+  ModalBody,
+  ModalHeader,
   Separator,
+  Stack,
   Text,
   ToggleGroup,
   ToggleGroupItem,
   Tooltip,
+  ValueStats,
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
 import { css, getTokenPx, styled } from "@galacticcouncil/ui/utils"
@@ -20,11 +25,14 @@ import { Link, useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
 import { LayoutGrid, List, Percent, AlertTriangle } from "lucide-react"
 import { FC, useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
-import { getReserveAssetId } from "@/modules/borrow/utils/assets"
+import { MultiplyOpenPositionModalContent } from "@/modules/borrow/multiply/components/MultiplyOpenPositionModalContent"
 import { MultiplyPositionsTile } from "@/modules/borrow/multiply/components/MultiplyPositionsTile"
+import { PositionsIndicator } from "@/modules/borrow/multiply/components/PositionsIndicator"
+import { getReserveAssetId } from "@/modules/borrow/utils/assets"
 import { useAssets } from "@/providers/assetsProvider"
 
 const SSection = styled.section(
@@ -107,6 +115,7 @@ type StrategyRow = {
 }
 
 export const MultiplyView: FC = () => {
+  const { t } = useTranslation(["common", "borrow"])
   const { themeProps: theme } = useTheme()
   const { gte } = useBreakpoints()
   const { tokens } = useAssets()
@@ -175,8 +184,8 @@ export const MultiplyView: FC = () => {
         debtAsset: debt,
         leverage: s.leverage,
         netApy,
-        liqAvailable: Math.random() * 1000000,
-        supplied: Math.random() * 100000000,
+        liqAvailable: 1000000 + idx * 10000,
+        supplied: 2400000 + idx * 100000,
         strategyName: `${collateral.symbol} Loop`,
       }
     }).filter(Boolean) as StrategyRow[]
@@ -277,55 +286,83 @@ export const MultiplyView: FC = () => {
         <Text>${(getValue() / 1000000).toFixed(2)}M</Text>
       ),
     }),
-    columnHelper.accessor("strategyName", {
-      header: "Strategy",
-      meta: {
-        sx: { width: "15%" },
-      },
-      cell: ({ getValue }) => (
-        <Chip variant="tertiary">
-          <Flex align="center" gap={4}>
-            <AssetLogo id="prime" size="extra-small" />
-            {getValue()}
-          </Flex>
-        </Chip>
-      ),
-    }),
     columnHelper.display({
       id: "actions",
       header: "",
-      cell: ({ row }) => (
-        <div
-          style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}
-        >
-          <Button
-            size="small"
-            variant="secondary"
-            onClick={(e) => {
-              e.stopPropagation()
-              navigate({
-                to: "/borrow/multiply/$strategyId",
-                params: { strategyId: row.original.id },
-              })
-            }}
-          >
-            Deposit
-          </Button>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const s = row.original
+        return (
+          <Flex justify="flex-end" width="100%" gap="0.5rem">
+            <Button
+              size="small"
+              variant="primary"
+              onClick={(e) => {
+                e.stopPropagation()
+                setSelectedStrategy(s)
+              }}
+            >
+              Open position
+            </Button>
+            <Button
+              size="small"
+              variant="tertiary"
+              onClick={(e) => {
+                e.stopPropagation()
+                navigate({
+                  to: "/borrow/multiply/$strategyId" as any,
+                  params: { strategyId: s.id } as any,
+                })
+              }}
+            >
+              Details
+            </Button>
+          </Flex>
+        )
+      },
       meta: {
         sx: {
           paddingRight: getTokenPx("containers.paddings.primary"),
+          width: 220,
         },
       },
     }),
   ]
 
+  const [selectedStrategy, setSelectedStrategy] = useState<StrategyRow | null>(
+    null,
+  )
+
+  const { data: marketStats } = useAggregatedMarketStats()
 
   return (
     <Flex direction="column" gap={getTokenPx("scales.paddings.xxl")}>
+      <Flex align="center" justify="space-between" width="100%">
+        <Stack
+          direction={["column", null, "row"]}
+          justify="flex-start"
+          gap={[10, null, 40, 60]}
+          separated
+        >
+          <ValueStats
+            label="Total deposits"
+            value="$142.50M"
+            size="large"
+            wrap={[false, false, true]}
+          />
+          <ValueStats
+            label="Active borrows"
+            value="$86.20M"
+            size="large"
+            wrap={[false, false, true]}
+          />
+        </Stack>
+        <PositionsIndicator />
+      </Flex>
+
       {/* Active Positions */}
-      <MultiplyPositionsTile />
+      <Box sx={{ mt: getTokenPx("scales.paddings.l")(theme as never) }}>
+        <MultiplyPositionsTile />
+      </Box>
 
       {/* Featured Loops */}
       <div>
@@ -342,71 +379,72 @@ export const MultiplyView: FC = () => {
           gap={getTokenPx("scales.paddings.l")}
         >
           {strategies.slice(0, 4).map((s) => (
-            <Link
+            <SLoopCard
               key={"feat-" + s.id}
-              to={"/borrow/multiply/$strategyId" as any}
-              params={{ strategyId: s.id } as any}
-              style={{ textDecoration: "none" }}
+              onClick={() =>
+                navigate({
+                  to: "/borrow/multiply/$strategyId" as any,
+                  params: { strategyId: s.id } as any,
+                })
+              }
             >
-              <SLoopCard>
-                {/* Top: Icons + Badge */}
-                <Flex justify="space-between" align="center">
-                  <Flex>
-                    {s.collateralAsset.symbol === "PRIME" ? (
-                      <BaseAssetLogo src={primeLogo} size="large" alt="PRIME" />
-                    ) : (
-                      <AssetLogo id={s.collateralAsset.id} size="large" />
-                    )}
-                    <div
-                      style={{
-                        marginLeft: `-${theme.scales.paddings.m}px`,
-                      }}
-                    >
-                      {s.debtAsset.symbol === "HUSD" ||
-                        s.debtAsset.symbol === "CASH" ? (
-                        <AssetLogo id={HOLLAR_ASSET_ID} size="large" />
-                      ) : (
-                        <AssetLogo id={s.debtAsset.id} size="large" />
-                      )}
-                    </div>
-                  </Flex>
-                  <Chip variant="green" size="small" rounded>
-                    <Text fs="p6" fw={600}>
-                      UP TO {s.leverage.toFixed(0)}X
-                    </Text>
-                  </Chip>
-                </Flex>
-
-                {/* Middle: Title + Description (vertically centered) */}
-                <Flex direction="column" justify="center" style={{ flex: 1 }}>
-                  <Text fs="p3" fw={600}>
-                    {s.strategyName}
-                  </Text>
-                  <Text fs="p5" fw={400} color={theme.text.medium} lh="140%">
-                    Borrow{" "}
-                    {s.debtAsset.symbol === "CASH"
-                      ? "HUSD"
-                      : s.debtAsset.symbol}{" "}
-                    to leverage {s.collateralAsset.symbol}
-                  </Text>
-                </Flex>
-
-                {/* Bottom: Net APY */}
-                <Flex direction="column" gap={getTokenPx("scales.paddings.xs")}>
-                  <Text fs="p6" fw={400} color={theme.text.medium} lh="80%">
-                    Net APY
-                  </Text>
-                  <Text
-                    fs="h7"
-                    fw={500}
-                    color={theme.details.values.positive}
-                    font="primary"
+              {/* Top: Icons + Badge */}
+              <Flex justify="space-between" align="center">
+                <Flex>
+                  {s.collateralAsset.symbol === "PRIME" ? (
+                    <BaseAssetLogo src={primeLogo} size="large" alt="PRIME" />
+                  ) : (
+                    <AssetLogo id={s.collateralAsset.id} size="large" />
+                  )}
+                  <div
+                    style={{
+                      marginLeft: `-${theme.scales.paddings.m}px`,
+                    }}
                   >
-                    {s.netApy.toFixed(2)}%
-                  </Text>
+                    {s.debtAsset.symbol === "HUSD" ||
+                      s.debtAsset.symbol === "CASH" ? (
+                      <AssetLogo id={HOLLAR_ASSET_ID} size="large" />
+                    ) : (
+                      <AssetLogo id={s.debtAsset.id} size="large" />
+                    )}
+                  </div>
                 </Flex>
-              </SLoopCard>
-            </Link>
+                <Chip variant="green" size="small" rounded>
+                  <Text fs="p6" fw={600}>
+                    UP TO {s.leverage.toFixed(0)}X
+                  </Text>
+                </Chip>
+              </Flex>
+
+              {/* Middle: Title + Description (vertically centered) */}
+              <Flex direction="column" justify="center" style={{ flex: 1 }}>
+                <Text fs="p3" fw={600}>
+                  {s.strategyName}
+                </Text>
+                <Text fs="p5" fw={400} color={theme.text.medium} lh="140%">
+                  Borrow{" "}
+                  {s.debtAsset.symbol === "CASH"
+                    ? "HUSD"
+                    : s.debtAsset.symbol}{" "}
+                  to leverage {s.collateralAsset.symbol}
+                </Text>
+              </Flex>
+
+              {/* Bottom: Net APY */}
+              <Flex direction="column" gap={getTokenPx("scales.paddings.xs")}>
+                <Text fs="p6" fw={400} color={theme.text.medium} lh="80%">
+                  Net APY
+                </Text>
+                <Text
+                  fs="h7"
+                  fw={500}
+                  color={theme.details.values.positive}
+                  font="primary"
+                >
+                  {s.netApy.toFixed(2)}%
+                </Text>
+              </Flex>
+            </SLoopCard>
           ))}
         </Grid>
       </div>
@@ -459,169 +497,178 @@ export const MultiplyView: FC = () => {
             gap={getTokenPx("scales.paddings.l")}
           >
             {strategies.map((s) => (
-              <Link
-                key={"grid-" + s.id}
-                to={"/borrow/multiply/$strategyId" as any}
-                params={{ strategyId: s.id } as any}
-                style={{ textDecoration: "none" }}
-              >
-                <SGridCard>
-                  {/* Header: Icon + Name + APY */}
-                  <Flex justify="space-between" align="start">
-                    <Flex gap={getTokenPx("scales.paddings.m")} align="center">
-                      {/* Strategy Icon */}
-                      <Box
-                        sx={{
-                          width: 56,
-                          height: 56,
-                          borderRadius: 12,
-                          background: theme.surfaces.containers.high.hover,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {s.collateralAsset.symbol === "PRIME" ? (
-                          <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
-                        ) : (
-                          <AssetLogo id={s.collateralAsset.id} size="medium" />
-                        )}
-                      </Box>
-                      <Flex direction="column" gap={2}>
-                        <Flex align="center" gap={getTokenPx("scales.paddings.s")}>
-                          <Text fs="p2" fw={600}>
-                            {s.strategyName}
-                          </Text>
-                          <Chip variant="tertiary" size="small">
-                            <Text fs="p6" fw={500}>
-                              max lev: {s.leverage.toFixed(1)}X
-                            </Text>
-                          </Chip>
-                        </Flex>
-                        <Text fs="p5" color={theme.text.medium}>
-                          Borrow{" "}
-                          {s.debtAsset.symbol === "CASH"
-                            ? "HUSD"
-                            : s.debtAsset.symbol}{" "}
-                          to leverage {s.collateralAsset.symbol}
-                        </Text>
-                      </Flex>
-                    </Flex>
-
-                    {/* APY Section */}
-                    <Flex direction="column" align="flex-end" gap={2}>
-                      <Text fs="p6" color={theme.text.medium}>
-                        APY up to
-                      </Text>
-                      <Text
-                        fs="h6"
-                        fw={600}
-                        color={theme.details.values.positive}
-                        font="primary"
-                      >
-                        {s.netApy.toFixed(2)}%
-                      </Text>
-                      <Chip variant="green" size="small" rounded>
-                        <Text fs="p6">+ rewards</Text>
-                      </Chip>
-                    </Flex>
-                  </Flex>
-
-                  <Separator />
-
-                  {/* Strategy Description */}
-                  <Box>
-                    <Text fs="p6" fw={600} mb={4} color={theme.text.high}>
-                      STRATEGY
-                    </Text>
-                    <Text fs="p4" color={theme.text.medium} lh="150%">
-                      Borrow{" "}
-                      {s.debtAsset.symbol === "CASH"
-                        ? "HUSD"
-                        : s.debtAsset.symbol}{" "}
-                      and provide liquidity, using a wide range, to volatile{" "}
-                      {s.collateralAsset.symbol}/stablecoins pools
-                    </Text>
-                  </Box>
-
-                  {/* Pools Section */}
-                  <Box>
-                    <Text fs="p6" fw={600} mb={8} color={theme.text.high}>
-                      POOLS
-                    </Text>
-                    <Flex gap={getTokenPx("scales.paddings.m")} wrap>
-                      {[1, 2, 3, 4].map((poolIdx) => (
-                        <Flex key={poolIdx} align="center">
-                          {s.collateralAsset.symbol === "PRIME" ? (
-                            <BaseAssetLogo
-                              src={primeLogo}
-                              size="extra-small"
-                              alt="PRIME"
-                            />
-                          ) : (
-                            <AssetLogo
-                              id={s.collateralAsset.id}
-                              size="extra-small"
-                            />
-                          )}
-                          <Box sx={{ marginLeft: -4 }}>
-                            <AssetLogo id={s.debtAsset.id} size="extra-small" />
-                          </Box>
-                          <Box sx={{ marginLeft: -4 }}>
-                            <AssetLogo
-                              id={HOLLAR_ASSET_ID}
-                              size="extra-small"
-                            />
-                          </Box>
-                        </Flex>
-                      ))}
-                    </Flex>
-                  </Box>
-
-                  {/* Risks Section */}
-                  <Box>
-                    <Text fs="p6" fw={600} mb={8} color={theme.text.high}>
-                      RISKS
-                    </Text>
-                    <Flex gap={getTokenPx("scales.paddings.s")}>
-                      <Chip variant="tertiary" size="small">
-                        <Flex align="center" gap={4}>
-                          <Percent size={12} />
-                          <Text fs="p6">Interest Rate</Text>
-                        </Flex>
-                      </Chip>
-                      <Chip variant="tertiary" size="small">
-                        <Flex align="center" gap={4}>
-                          <AlertTriangle size={12} />
-                          <Text fs="p6">Liquidation</Text>
-                        </Flex>
-                      </Chip>
-                    </Flex>
-                  </Box>
-
-                  {/* Action Buttons */}
-                  <Flex gap={getTokenPx("scales.paddings.m")} justify="center">
-                    <Button
-                      size="small"
-                      variant="primary"
-                      onClick={(e: any) => {
-                        e.stopPropagation()
-                        navigate({
-                          to: "/borrow/multiply/$strategyId",
-                          params: { strategyId: s.id },
-                        })
+              <SGridCard key={"grid-" + s.id} onClick={() => setSelectedStrategy(s)}>
+                {/* Header: Icon + Name + APY */}
+                <Flex justify="space-between" align="start">
+                  <Flex gap={getTokenPx("scales.paddings.m")} align="center">
+                    {/* Strategy Icon */}
+                    <Box
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 12,
+                        background: theme.surfaces.containers.high.hover,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
-                      sx={{ flex: 1 }}
                     >
-                      Open strategy
-                    </Button>
+                      {s.collateralAsset.symbol === "PRIME" ? (
+                        <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
+                      ) : (
+                        <AssetLogo id={s.collateralAsset.id} size="medium" />
+                      )}
+                    </Box>
+                    <Flex direction="column" gap={2}>
+                      <Flex align="center" gap={getTokenPx("scales.paddings.s")}>
+                        <Text fs="p2" fw={600}>
+                          {s.strategyName}
+                        </Text>
+                        <Chip variant="tertiary" size="small">
+                          <Text fs="p6" fw={500}>
+                            max lev: {s.leverage.toFixed(1)}X
+                          </Text>
+                        </Chip>
+                      </Flex>
+                      <Text fs="p5" color={theme.text.medium}>
+                        Borrow{" "}
+                        {s.debtAsset.symbol === "CASH"
+                          ? "HUSD"
+                          : s.debtAsset.symbol}{" "}
+                        to leverage {s.collateralAsset.symbol}
+                      </Text>
+                    </Flex>
                   </Flex>
-                </SGridCard>
-              </Link>
+
+                  {/* APY Section */}
+                  <Flex direction="column" align="flex-end" gap={2}>
+                    <Text fs="p6" color={theme.text.medium}>
+                      APY up to
+                    </Text>
+                    <Text
+                      fs="h6"
+                      fw={600}
+                      color={theme.details.values.positive}
+                      font="primary"
+                    >
+                      {s.netApy.toFixed(2)}%
+                    </Text>
+                    <Chip variant="green" size="small" rounded>
+                      <Text fs="p6">+ rewards</Text>
+                    </Chip>
+                  </Flex>
+                </Flex>
+
+                <Separator />
+
+                {/* Strategy Description */}
+                <Box>
+                  <Text fs="p6" fw={600} mb={4} color={theme.text.high}>
+                    STRATEGY
+                  </Text>
+                  <Text fs="p4" color={theme.text.medium} lh="150%">
+                    Borrow{" "}
+                    {s.debtAsset.symbol === "CASH"
+                      ? "HUSD"
+                      : s.debtAsset.symbol}{" "}
+                    and provide liquidity, using a wide range, to volatile{" "}
+                    {s.collateralAsset.symbol}/stablecoins pools
+                  </Text>
+                </Box>
+
+                {/* Pools Section */}
+                <Box>
+                  <Text fs="p6" fw={600} mb={8} color={theme.text.high}>
+                    POOLS
+                  </Text>
+                  <Flex gap={getTokenPx("scales.paddings.m")} wrap>
+                    {[1, 2, 3, 4].map((poolIdx) => (
+                      <Flex key={poolIdx} align="center">
+                        {s.collateralAsset.symbol === "PRIME" ? (
+                          <BaseAssetLogo
+                            src={primeLogo}
+                            size="extra-small"
+                            alt="PRIME"
+                          />
+                        ) : (
+                          <AssetLogo
+                            id={s.collateralAsset.id}
+                            size="extra-small"
+                          />
+                        )}
+                        <Box sx={{ marginLeft: -4 }}>
+                          <AssetLogo id={s.debtAsset.id} size="extra-small" />
+                        </Box>
+                        <Box sx={{ marginLeft: -4 }}>
+                          <AssetLogo
+                            id={HOLLAR_ASSET_ID}
+                            size="extra-small"
+                          />
+                        </Box>
+                      </Flex>
+                    ))}
+                  </Flex>
+                </Box>
+
+                {/* Risks Section */}
+                <Box>
+                  <Text fs="p6" fw={600} mb={8} color={theme.text.high}>
+                    RISKS
+                  </Text>
+                  <Flex gap={getTokenPx("scales.paddings.s")}>
+                    <Chip variant="tertiary" size="small">
+                      <Flex align="center" gap={4}>
+                        <Percent size={12} />
+                        <Text fs="p6">Interest Rate</Text>
+                      </Flex>
+                    </Chip>
+                    <Chip variant="tertiary" size="small">
+                      <Flex align="center" gap={4}>
+                        <AlertTriangle size={12} />
+                        <Text fs="p6">Liquidation</Text>
+                      </Flex>
+                    </Chip>
+                  </Flex>
+                </Box>
+
+                {/* Action Buttons */}
+                <Flex gap={getTokenPx("scales.paddings.m")} justify="center">
+                  <Button
+                    size="small"
+                    variant="primary"
+                    onClick={(e: any) => {
+                      e.stopPropagation()
+                      setSelectedStrategy(s)
+                    }}
+                    sx={{ flex: 1 }}
+                  >
+                    Open strategy
+                  </Button>
+                </Flex>
+              </SGridCard>
             ))}
           </Grid>
         )}
       </Box>
+
+      {selectedStrategy && (
+        <Modal
+          open={!!selectedStrategy}
+          onOpenChange={() => setSelectedStrategy(null)}
+        >
+          <ModalHeader
+            title="Open position"
+            description={`Quickly open ${selectedStrategy.collateralAsset.symbol}/${selectedStrategy.debtAsset.symbol === "CASH" ? "HUSD" : selectedStrategy.debtAsset.symbol} position`}
+          />
+          <ModalBody>
+            <MultiplyOpenPositionModalContent
+              collateralAsset={selectedStrategy.collateralAsset}
+              debtAsset={selectedStrategy.debtAsset}
+              onClose={() => setSelectedStrategy(null)}
+            />
+          </ModalBody>
+        </Modal>
+      )}
     </Flex>
   )
 }

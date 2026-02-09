@@ -75,17 +75,17 @@ export const NAVIGATION: NavigationItem[] = [
     ],
   },
   {
+    key: "multiply",
+    to: LINKS.multiply,
+    icon: Repeat2Icon,
+    badge: "New",
+  },
+  {
     key: "borrow",
     to: LINKS.borrow,
     icon: BanknoteIcon,
     children: [
       { key: "borrowDashboard", to: LINKS.borrowDashboard, icon: ChartPieIcon },
-      {
-        key: "multiply",
-        to: LINKS.multiply,
-        icon: Repeat2Icon,
-        badge: "New",
-      },
       { key: "borrowMarkets", to: LINKS.borrowMarkets, icon: Grid2X2Icon },
       { key: "borrowHistory", to: LINKS.borrowHistory, icon: HistoryIcon },
     ],
@@ -304,6 +304,7 @@ export const getPageMeta = (navKey: NavigationKey, t: TFunction) => {
 export const topNavOrder: ReadonlyArray<NavigationKey> = [
   "trade",
   "borrow",
+  "multiply",
   "liquidity",
   "wallet",
   "crossChain",
@@ -317,6 +318,7 @@ export const bottomNavOrder: ReadonlyArray<NavigationKey> = [
   "trade",
   "liquidity",
   "borrow",
+  "multiply",
   "crossChain",
   // "stats",
   "staking",

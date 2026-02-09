@@ -1,6 +1,5 @@
 import { ThemeUICSSProperties } from "@theme-ui/css";
 import { XAxisProps, YAxisProps } from "recharts";
-import { BaseAxisProps } from "recharts/types/util/types";
 export type TChartData = Record<string, unknown>;
 type ExtractDataKeyOfType<TData extends TChartData, TType> = {
     [K in keyof TData]: TData[K] extends TType ? K : never;
@@ -35,10 +34,10 @@ export type ChartSharedProps<TData extends TChartData> = {
     gridVerticalValues?: number[] | string[];
     xAxisHidden?: boolean;
     xAxisProps?: XAxisProps;
-    xAxisLabel?: BaseAxisProps["label"];
+    xAxisLabel?: any;
     yAxisHidden?: boolean;
     yAxisProps?: YAxisProps;
-    yAxisLabel?: BaseAxisProps["label"];
+    yAxisLabel?: any;
     onCrosshairMove?: (data: TData | null) => void;
 } & ChartSizeProps;
 export type ChartContextProps<TData extends TChartData> = {

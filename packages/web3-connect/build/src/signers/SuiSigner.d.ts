@@ -12,5 +12,5 @@ export declare class SuiSigner {
     account: WalletAccount;
     provider: WalletWithRequiredFeatures;
     constructor(account: WalletAccount, provider: WalletWithRequiredFeatures);
-    signAndSend(data: string, options: SuiSignerOptions): Promise<SuiTransactionBlockResponse>;
+    signAndSend(data: string, options: SuiSignerOptions): Promise<any>;
 }

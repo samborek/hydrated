@@ -14,7 +14,7 @@ export declare const useRootStore: import("zustand/traditional").UseBoundStoreWi
             fireImmediately?: boolean;
         } | undefined): () => void;
     };
-}, "setState"> & {
+}, "setState" | "devtools"> & {
     setState(partial: RootStore | Partial<RootStore> | ((state: RootStore) => RootStore | Partial<RootStore>), replace?: false | undefined, action?: (string | {
         [x: string]: unknown;
         [x: number]: unknown;
@@ -27,6 +27,9 @@ export declare const useRootStore: import("zustand/traditional").UseBoundStoreWi
         [x: symbol]: unknown;
         type: string;
     }) | undefined): void;
+    devtools: {
+        cleanup: () => void;
+    };
 }>;
 export declare const usePoolDataSubscription: () => () => Promise<void>;
 export declare const usePoolDataV3Subscription: () => () => Promise<void>;

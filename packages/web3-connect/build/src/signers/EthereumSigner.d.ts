@@ -36,7 +36,7 @@ export declare class EthereumSigner {
         maxPriorityFeePerGas: bigint;
         maxFeePerGas: bigint;
     }>;
-    switchChain: (options: EthereumSignerOptions) => Promise<import("@galacticcouncil/xc-core").AnyEvmChain>;
+    switchChain: (options: EthereumSignerOptions) => Promise<any>;
     signAndSubmitDispatch(call: Omit<TransactionCall, "to">, options: EthereumSignerOptions): Promise<TransactionReceipt | undefined>;
     getPermitNonce: () => Promise<bigint>;
     getPermit: (data: string, options: EthereumSignerOptions) => Promise<PermitResult>;

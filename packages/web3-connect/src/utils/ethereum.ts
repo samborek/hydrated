@@ -11,7 +11,7 @@ type RequestNetworkSwitchOptions = {
 
 export async function requestAccounts(provider: EIP1193Provider) {
   if (!isEip1193Provider(provider)) return
-  await provider.request({
+  await (provider as any).request({
     method: "wallet_requestPermissions",
     params: [{ eth_accounts: {} }],
   })
@@ -26,7 +26,7 @@ export async function requestNetworkSwitch(
   const params = getAddEvmChainParams(options.chain ?? "hydration")
 
   try {
-    await provider
+    await (provider as any)
       .request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: params.chainId }],
@@ -41,15 +41,15 @@ export async function requestNetworkSwitch(
           provider.request({
             method: "wallet_addEthereumChain",
             params: [params],
-          }),
+          }) as any,
           new Promise((resolve) => {
             const id = setInterval(async () => {
-              const chainId = await provider.request({ method: "eth_chainId" })
+              const chainId = await (provider as any).request({ method: "eth_chainId" })
               if (chainId === params.chainId) {
                 resolve(true)
                 clearInterval(id)
               } else {
-                await provider.request({
+                await (provider as any).request({
                   method: "wallet_switchEthereumChain",
                   params: [params],
                 })
@@ -84,11 +84,11 @@ export type AddEvmChainParams = {
 const getAddEvmChainParams = (chainKey: string): AddEvmChainParams => {
   const chain = chainsMap.get(chainKey)
 
-  if (!chain || !isAnyEvmChain(chain)) {
+  if (!chain || !isAnyEvmChain(chain as any)) {
     throw new Error("Chain is not an EVM chain")
   }
 
-  const chainProps = chain.evmClient.chain
+  const chainProps = (chain as any).evmClient.chain
 
   return {
     chainId: "0x" + Number(chainProps.id).toString(16),

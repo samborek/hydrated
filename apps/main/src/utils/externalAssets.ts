@@ -57,7 +57,7 @@ export const getAssetOrigin = (asset: TAssetData): AnyChain | null => {
   return (
     chains.find(
       (chain): chain is AnyParachain =>
-        isAnyParachain(chain) && chain.parachainId === assetParachain,
+        isAnyParachain(chain) && (chain as any).parachainId === assetParachain,
     ) ?? null
   )
 }

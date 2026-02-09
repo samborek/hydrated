@@ -40,7 +40,7 @@ export type NetworkConfig = {
   }
 }
 
-const hydration = (chainsMap.get("hydration") as EvmParachain).evmClient.chain
+const hydration = (chainsMap.get("hydration") as any).evmClient.chain
 
 export type BaseNetworkConfig = Omit<NetworkConfig, "explorerLinkBuilder">
 

@@ -14,7 +14,7 @@ declare const _default: {
         columnWidth?: import("@theme-ui/css").ResponsiveStyleValue<string | number>;
         columnTemplate?: import("@theme-ui/css").ThemeUICSSProperties["gridTemplateColumns"];
         rowTemplate?: import("@theme-ui/css").ThemeUICSSProperties["gridTemplateRows"];
-    } & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "px" | "transform" | "size" | "m" | "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "visibility" | "width" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "py">> & {
+    } & Partial<Pick<import("@theme-ui/css").ThemeUICSSProperties, "borderRadius" | "alignContent" | "alignItems" | "bottom" | "display" | "height" | "left" | "maxHeight" | "maxWidth" | "minWidth" | "position" | "right" | "top" | "transform" | "visibility" | "width" | "borderStyle" | "borderWidth" | "flex" | "gap" | "gridColumn" | "gridRow" | "m" | "mt" | "mr" | "mb" | "ml" | "mx" | "my" | "p" | "pt" | "pr" | "pb" | "pl" | "px" | "py" | "size">> & {
         asChild?: boolean;
         as?: React.ElementType;
         css?: import("@emotion/serialize").Interpolation<unknown>;

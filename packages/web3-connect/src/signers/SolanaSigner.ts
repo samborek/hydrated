@@ -27,7 +27,7 @@ export class SolanaSigner {
   constructor(address: string, provider: SolanaInjectedWindowProvider) {
     this.address = address
     this.provider = provider
-    this.connection = (chainsMap.get("solana") as SolanaChain).connection
+    this.connection = (chainsMap.get("solana") as any).connection
   }
 
   async getTransactionStatus(hash: string) {

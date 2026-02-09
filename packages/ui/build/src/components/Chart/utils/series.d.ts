@@ -1,4 +1,3 @@
-import { BaseAxisProps } from "recharts/types/util/types";
 import { AxisLabelCssProps, ChartConfig, ChartSeriesType, TChartData } from "@/components/Chart/types";
 export declare const pickPrimarySeries: <T extends TChartData>(config: ChartConfig<T>) => {
     key: { [K in keyof T]: T[K] extends number ? K : never; }[keyof T] & string;
@@ -38,7 +37,7 @@ export declare const getDerivedChartProps: <T extends TChartData>(config: ChartC
     } | undefined;
 };
 export declare const getBarSeriesBorderRadius: (index: number, total: number, isStacked?: boolean, isVerticalLayout?: boolean) => [number, number, number, number];
-export declare const getAxisLabelProps: (config: BaseAxisProps["label"], isVerticalLayout: boolean, labelProps?: AxisLabelCssProps) => import("react").ReactElement<unknown, string | import("react").JSXElementConstructor<any>> | {
+export declare const getAxisLabelProps: (config: any, isVerticalLayout: boolean, labelProps?: AxisLabelCssProps) => import("react").ReactElement<unknown, string | import("react").JSXElementConstructor<any>> | {
     position: string;
     angle: number;
     dy: number;
@@ -48,4 +47,13 @@ export declare const getAxisLabelProps: (config: BaseAxisProps["label"], isVerti
     fontWeight?: number;
     fill?: string;
     value: string | number;
+} | {
+    position: string;
+    angle: number;
+    dy: number;
+    dx: number;
+    fontSize: number;
+    lineHeight?: number;
+    fontWeight?: number;
+    fill?: string;
 } | undefined;

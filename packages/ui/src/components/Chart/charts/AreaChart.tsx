@@ -151,7 +151,7 @@ export function AreaChart<TData extends TChartData>({
           tickFormatter={labelFormatter}
           hide={xAxisHidden}
           {...xAxisProps}
-          label={getAxisLabelProps(xAxisLabel, false, xAxisLabelProps)}
+          label={getAxisLabelProps(xAxisLabel, false, xAxisLabelProps) as any}
         />
         <Label />
         <YAxis
@@ -163,12 +163,12 @@ export function AreaChart<TData extends TChartData>({
           tickFormatter={valueFormatter}
           hide={yAxisHidden}
           {...yAxisProps}
-          label={getAxisLabelProps(yAxisLabel, true, yAxisLabelProps)}
+          label={getAxisLabelProps(yAxisLabel, true, yAxisLabelProps) as any}
         />
         {!withoutTooltip && (
           <Tooltip
             content={ChartTooltip}
-            labelFormatter={tooltipFormatter}
+            labelFormatter={tooltipFormatter as any}
             formatter={(value) => {
               if (valueFormatter && isNumber(value)) {
                 return valueFormatter(value)
@@ -227,7 +227,7 @@ export function AreaChart<TData extends TChartData>({
                 stroke={
                   isLineGradientFill ? `url(#${gradientId})` : colors.primary
                 }
-                dot={customDot}
+                dot={customDot as any}
                 activeDot={
                   withoutActiveDot ? false : { fill: colors.primary, r: 5 }
                 }

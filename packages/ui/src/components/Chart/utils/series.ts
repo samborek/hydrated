@@ -1,5 +1,4 @@
 import { isValidElement } from "react"
-import { BaseAxisProps } from "recharts/types/util/types"
 import { first, isArray, isNumber, isObjectType, isString } from "remeda"
 
 import {
@@ -125,7 +124,7 @@ export const getBarSeriesBorderRadius = (
 }
 
 export const getAxisLabelProps = (
-  config: BaseAxisProps["label"],
+  config: any,
   isVerticalLayout: boolean,
   labelProps?: AxisLabelCssProps,
 ) => {

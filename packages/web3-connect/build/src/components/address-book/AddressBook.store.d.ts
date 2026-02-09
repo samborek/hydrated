@@ -23,15 +23,17 @@ export type AddressStore = State & {
     readonly edit: (address: Address) => void;
     readonly remove: (publicKey: string) => void;
 };
-export declare const useAddressStore: import("zustand").UseBoundStore<Omit<import("zustand").StoreApi<AddressStore>, "persist"> & {
+export declare const useAddressStore: import("zustand").UseBoundStore<Omit<import("zustand").StoreApi<AddressStore>, "setState" | "persist"> & {
+    setState(partial: AddressStore | Partial<AddressStore> | ((state: AddressStore) => AddressStore | Partial<AddressStore>), replace?: false | undefined): unknown;
+    setState(state: AddressStore | ((state: AddressStore) => AddressStore), replace: true): unknown;
     persist: {
-        setOptions: (options: Partial<import("zustand/middleware").PersistOptions<AddressStore, unknown>>) => void;
+        setOptions: (options: Partial<import("zustand/middleware").PersistOptions<AddressStore, unknown, unknown>>) => void;
         clearStorage: () => void;
         rehydrate: () => Promise<void> | void;
         hasHydrated: () => boolean;
         onHydrate: (fn: (state: AddressStore) => void) => () => void;
         onFinishHydration: (fn: (state: AddressStore) => void) => () => void;
-        getOptions: () => Partial<import("zustand/middleware").PersistOptions<AddressStore, unknown>>;
+        getOptions: () => Partial<import("zustand/middleware").PersistOptions<AddressStore, unknown, unknown>>;
     };
 }>;
 export {};

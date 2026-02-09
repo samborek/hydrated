@@ -47,7 +47,7 @@ export class SuiSigner {
 
     try {
       const { bytes, signature } = await wallet.signTransaction(params)
-      const { digest: txHash } = await chain.client.executeTransactionBlock({
+      const { digest: txHash } = await (chain as any).client.executeTransactionBlock({
         transactionBlock: bytes,
         signature,
         options: {
@@ -60,7 +60,7 @@ export class SuiSigner {
 
       options.onSubmitted(txHash)
 
-      const block = await chain.client.getTransactionBlock({
+      const block = await (chain as any).client.getTransactionBlock({
         digest: txHash,
         options: {
           showEffects: true,

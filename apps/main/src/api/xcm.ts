@@ -208,11 +208,11 @@ export function formatAddress(address: string, chain: AnyChain): string {
     return EvmAddr.isValid(address) ? address : safeConvertSS58toH160(address)
   }
 
-  if (isAnyParachain(chain) && chain.usesH160Acc) {
+  if (isAnyParachain(chain as any) && (chain as any).usesH160Acc) {
     return EvmAddr.isValid(address) ? address : safeConvertSS58toH160(address)
   }
 
-  if (isAnyParachain(chain) && !chain.usesH160Acc) {
+  if (isAnyParachain(chain as any) && !(chain as any).usesH160Acc) {
     return EvmAddr.isValid(address)
       ? safeConvertH160toSS58(address)
       : safeConvertAddressSS58(address)

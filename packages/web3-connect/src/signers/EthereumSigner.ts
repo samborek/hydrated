@@ -105,15 +105,15 @@ export class EthereumSigner {
     }
   }
 
-  switchChain = async (options: EthereumSignerOptions) => {
+  switchChain = async (options: EthereumSignerOptions): Promise<any> => {
     const chainKey = options.chainKey ?? EVM_DEFAULT_CHAIN_KEY
     const chain = chainsMap.get(chainKey)
 
-    const isEvmChain = !!chain && isAnyEvmChain(chain)
+    const isEvmChain = !!chain && isAnyEvmChain(chain as any)
 
     if (!isEvmChain) throw new Error(`Chain ${chainKey} is not an EVM chain`)
 
-    const { evmClient } = chain
+    const { evmClient } = chain as any
 
     await this.walletClient.switchChain({ id: evmClient.chain.id })
 
@@ -194,7 +194,7 @@ export class EthereumSigner {
       const { message, typedData } = createPermitMessageData()
 
       try {
-        const result = await this.walletClient.request({
+        const result = await (this.walletClient as any).request({
           method: "eth_signTypedData_v4",
           params: [this.address as Address, typedData],
         })
@@ -303,7 +303,7 @@ export class EthereumSigner {
   async signAndSubmit(call: TransactionCall, options: EthereumSignerOptions) {
     const chain = await this.switchChain(options)
 
-    const { evmClient } = chain
+    const { evmClient } = chain as any
 
     if (chain.key === HYDRATION_CHAIN_KEY) {
       return this.signAndSubmitHydration(call, options, evmClient.chain)

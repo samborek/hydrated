@@ -59,15 +59,17 @@ export type WalletProviderStore = WalletProviderState & {
     setError: (error: string) => void;
     disconnect: (provider?: WalletProviderType) => void;
 };
-export declare const useWeb3Connect: import("zustand").UseBoundStore<Omit<import("zustand").StoreApi<WalletProviderStore>, "persist"> & {
+export declare const useWeb3Connect: import("zustand").UseBoundStore<Omit<import("zustand").StoreApi<WalletProviderStore>, "setState" | "persist"> & {
+    setState(partial: WalletProviderStore | Partial<WalletProviderStore> | ((state: WalletProviderStore) => WalletProviderStore | Partial<WalletProviderStore>), replace?: false | undefined): unknown;
+    setState(state: WalletProviderStore | ((state: WalletProviderStore) => WalletProviderStore), replace: true): unknown;
     persist: {
-        setOptions: (options: Partial<import("zustand/middleware").PersistOptions<WalletProviderStore, any>>) => void;
+        setOptions: (options: Partial<import("zustand/middleware").PersistOptions<WalletProviderStore, any, unknown>>) => void;
         clearStorage: () => void;
         rehydrate: () => Promise<void> | void;
         hasHydrated: () => boolean;
         onHydrate: (fn: (state: WalletProviderStore) => void) => () => void;
         onFinishHydration: (fn: (state: WalletProviderStore) => void) => () => void;
-        getOptions: () => Partial<import("zustand/middleware").PersistOptions<WalletProviderStore, any>>;
+        getOptions: () => Partial<import("zustand/middleware").PersistOptions<WalletProviderStore, any, unknown>>;
     };
 }>;
 export {};

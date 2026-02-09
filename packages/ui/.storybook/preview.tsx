@@ -1,7 +1,6 @@
 import React from "react"
 import type { Preview } from "@storybook/react-vite"
 import { withThemeFromJSXProvider } from "@storybook/addon-themes"
-import * as theming from "storybook/theming"
 import { GlobalStyles } from "../src/styles"
 import { css, Global } from "@emotion/react"
 import { ThemeProvider, themes } from "../src/theme"
@@ -35,7 +34,6 @@ const preview: Preview = {
     },
     docs: {
       toc: true,
-      theme: theming.themes.dark
     },
   },
 }

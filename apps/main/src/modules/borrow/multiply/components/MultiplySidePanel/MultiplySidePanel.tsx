@@ -20,16 +20,34 @@ import { MultiplySidePanelSummary } from "./MultiplySidePanelSummary"
 export type MultiplySidePanelProps = {
   collateralAsset: ComputedReserveData
   debtAsset: ComputedReserveData
+  initialCollateralAmount?: string
+  initialLeverage?: number
+  initialStrategy?: "bull" | "bear"
+  onAction?: (data: {
+    collateralAmount: string
+    leverage: number
+    strategy: "bull" | "bear"
+  }) => void
+  actionLabel?: string
+  isEditing?: boolean
 }
 
 export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
   collateralAsset,
   debtAsset,
+  initialCollateralAmount = "",
+  initialLeverage = 2.0,
+  initialStrategy = "bull",
+  onAction,
+  actionLabel,
+  isEditing = false,
 }) => {
   const { themeProps: theme } = useTheme()
-  const [leverage, setLeverage] = useState(2.0)
-  const [collateralAmount, setCollateralAmount] = useState("")
-  const [strategy, setStrategy] = useState<"bull" | "bear">("bull")
+  const [leverage, setLeverage] = useState(initialLeverage)
+  const [collateralAmount, setCollateralAmount] = useState(
+    initialCollateralAmount,
+  )
+  const [strategy, setStrategy] = useState<"bull" | "bear">(initialStrategy)
 
   // Placeholder balance values - wallet integration will be added later
   // Note: useWalletData hook causes big.js errors with incomplete asset data
@@ -86,6 +104,15 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
   const handleOpenPosition = () => {
     if (!collateralAmount || Number(collateralAmount) <= 0) {
       toast.error("Please enter a collateral amount")
+      return
+    }
+
+    if (onAction) {
+      onAction({
+        collateralAmount,
+        leverage,
+        strategy,
+      })
       return
     }
 
@@ -302,9 +329,9 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
             },
           }}
         >
-          {collateralAmount && Number(collateralAmount) > 0
+          {actionLabel || (collateralAmount && Number(collateralAmount) > 0
             ? `Open ${leverage}x Position`
-            : "Enter amount to continue"}
+            : "Enter amount to continue")}
         </Button>
       </Stack>
     </SMultiplyFormContainer>

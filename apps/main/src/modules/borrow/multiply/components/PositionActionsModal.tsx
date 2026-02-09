@@ -12,7 +12,7 @@ import { getTokenPx } from "@galacticcouncil/ui/utils"
 import { FC, useState } from "react"
 import { toast } from "sonner"
 
-import { MultiplySidePanelLeverage } from "@/modules/borrow/multiply/components/MultiplySidePanel/MultiplySidePanelLeverage"
+import { MultiplySidePanel } from "@/modules/borrow/multiply/components/MultiplySidePanel/MultiplySidePanel"
 import { SimulatedPosition } from "@/modules/borrow/multiply/states/useMultiplySimulationStore"
 
 interface PositionActionsModalProps {
@@ -31,20 +31,7 @@ export const PositionActionsModal: FC<PositionActionsModalProps> = ({
   onClosePosition,
 }) => {
   const { themeProps: theme } = useTheme()
-  const [leverage, setLeverage] = useState(position.leverage)
   const [activeTab, setActiveTab] = useState<"adjust" | "close">("adjust")
-
-  const handleUpdate = () => {
-    onUpdate({
-      leverage,
-      // Recalculate debt/buying power based on new leverage (simplified for simulation)
-      netApy: position.netApy * (leverage / position.leverage), // Mock APY change
-    })
-    toast.success("Position updated", {
-      description: `Leverage changed to ${leverage.toFixed(2)}x`,
-    })
-    onClose()
-  }
 
   const handleClosePosition = () => {
     onClosePosition()
@@ -79,33 +66,27 @@ export const PositionActionsModal: FC<PositionActionsModalProps> = ({
           </Flex>
 
           {activeTab === "adjust" ? (
-            <Stack gap={getTokenPx("scales.paddings.m")(theme as never)}>
-              <Text fs="p3" color={theme.text.medium}>
-                Adjust Leverage
-              </Text>
-              <MultiplySidePanelLeverage
-                value={leverage}
-                onChange={setLeverage}
-                min={1.1}
-                max={5}
-              />
-              <Flex justify="space-between" align="center" mt={2}>
-                <Text fs="p4" color={theme.text.medium}>
-                  Current: {position.leverage.toFixed(2)}x
-                </Text>
-                <Text fs="p4" color={theme.accents.success.emphasis}>
-                  New: {leverage.toFixed(2)}x
-                </Text>
-              </Flex>
-              <Button
-                sx={{ width: "100%" }}
-                size="large"
-                onClick={handleUpdate}
-                disabled={leverage === position.leverage}
-              >
-                Update Position
-              </Button>
-            </Stack>
+            <MultiplySidePanel
+              collateralAsset={position.collateralAsset as any}
+              debtAsset={position.debtAsset as any}
+              initialCollateralAmount={position.collateralAmount}
+              initialLeverage={position.leverage}
+              initialStrategy={position.strategy}
+              isEditing
+              actionLabel="Update Position"
+              onAction={(data) => {
+                onUpdate({
+                  collateralAmount: data.collateralAmount,
+                  leverage: data.leverage,
+                  strategy: data.strategy,
+                  netApy: position.netApy * (data.leverage / position.leverage),
+                })
+                toast.success("Position updated", {
+                  description: `Leverage changed to ${data.leverage.toFixed(2)}x`,
+                })
+                onClose()
+              }}
+            />
           ) : (
             <Stack gap={getTokenPx("scales.paddings.m")(theme as never)}>
               <div

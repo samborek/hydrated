@@ -13,6 +13,7 @@ import {
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getToken, getTokenPx } from "@galacticcouncil/ui/utils"
 import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
+import { Link } from "@tanstack/react-router"
 import { ChevronDown, CircleStop } from "lucide-react"
 import { FC, useState } from "react"
 
@@ -172,6 +173,7 @@ const PositionRow: FC<{
     >
       {/* 1. Position */}
       <Flex align="center" gap={3} sx={{ width: 170 }}>
+        {/* Asset Logos */}
         <Flex
           sx={{
             position: "relative",
@@ -245,6 +247,7 @@ const PositionRow: FC<{
         </Text>
       </Flex>
 
+      {/* 5. Actions */}
       <Flex align="center" justify="flex-end" gap={3} sx={{ width: 114 }}>
         <Button
           size="small"

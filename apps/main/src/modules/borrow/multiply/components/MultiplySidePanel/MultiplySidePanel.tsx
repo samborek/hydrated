@@ -40,7 +40,7 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
   initialStrategy = "bull",
   onAction,
   actionLabel,
-  isEditing = false,
+  isEditing: _isEditing = false,
 }) => {
   const { themeProps: theme } = useTheme()
   const [leverage, setLeverage] = useState(initialLeverage)

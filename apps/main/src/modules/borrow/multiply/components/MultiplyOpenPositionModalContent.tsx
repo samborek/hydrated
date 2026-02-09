@@ -14,7 +14,7 @@ import { ArrowDown, ArrowUp, HelpCircle } from "lucide-react"
 import { FC, useMemo, useState } from "react"
 import { toast } from "sonner"
 
-import { AssetLogo } from "@/components/AssetLogo"
+
 import { useMultiplySimulationStore } from "@/modules/borrow/multiply/states/useMultiplySimulationStore"
 import { getReserveAssetId } from "@/modules/borrow/utils/assets"
 import { MultiplySidePanelSummary } from "./MultiplySidePanel/MultiplySidePanelSummary"
@@ -271,17 +271,17 @@ export const MultiplyOpenPositionModalContent: FC<
             <Flex
                 sx={{
                     position: "sticky",
-                    bottom: getTokenPx("containers.paddings.primary")(theme as never) * -1,
-                    left: getTokenPx("containers.paddings.primary")(theme as never) * -1,
-                    right: getTokenPx("containers.paddings.primary")(theme as never) * -1,
+                    bottom: Number(getTokenPx("containers.paddings.primary")(theme as never)) * -1,
+                    left: Number(getTokenPx("containers.paddings.primary")(theme as never)) * -1,
+                    right: Number(getTokenPx("containers.paddings.primary")(theme as never)) * -1,
                     bg: theme.surfaces.themeBasePalette.surfaceHigh,
                     p: getTokenPx("containers.paddings.primary")(theme as never),
                     borderTop: `1px solid ${theme.details.separators}`,
                     zIndex: 10,
                     marginInline:
-                        getTokenPx("containers.paddings.primary")(theme as never) * -1,
+                        Number(getTokenPx("containers.paddings.primary")(theme as never)) * -1,
                     marginBottom:
-                        getTokenPx("containers.paddings.primary")(theme as never) * -1,
+                        Number(getTokenPx("containers.paddings.primary")(theme as never)) * -1,
                 }}
             >
                 <Button

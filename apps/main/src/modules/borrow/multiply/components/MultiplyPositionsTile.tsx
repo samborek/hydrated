@@ -13,7 +13,7 @@ import {
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getToken, getTokenPx } from "@galacticcouncil/ui/utils"
 import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
-import { Link } from "@tanstack/react-router"
+
 import { ChevronDown, CircleStop } from "lucide-react"
 import { FC, useState } from "react"
 

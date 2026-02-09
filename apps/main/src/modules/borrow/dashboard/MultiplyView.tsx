@@ -21,7 +21,7 @@ import {
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
 import { css, getTokenPx, styled } from "@galacticcouncil/ui/utils"
 import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
-import { Link, useNavigate } from "@tanstack/react-router"
+import { useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
 import { LayoutGrid, List, Percent, AlertTriangle } from "lucide-react"
 import { FC, useMemo, useState } from "react"
@@ -115,7 +115,7 @@ type StrategyRow = {
 }
 
 export const MultiplyView: FC = () => {
-  const { t } = useTranslation(["common", "borrow"])
+  const { t: _t } = useTranslation(["common", "borrow"])
   const { themeProps: theme } = useTheme()
   const { gte } = useBreakpoints()
   const { tokens } = useAssets()
@@ -332,7 +332,7 @@ export const MultiplyView: FC = () => {
     null,
   )
 
-  const { data: marketStats } = useAggregatedMarketStats()
+  const { data: _marketStats } = useAggregatedMarketStats()
 
   return (
     <Flex direction="column" gap={getTokenPx("scales.paddings.xxl")}>

@@ -85,7 +85,8 @@ export const RewardsCurve: FC = () => {
               lineHeight: 1.4,
               color: themeProps.text.high,
             },
-            tick({ payload, visibleTicksCount, x, y, style, ...props }) {
+            tick(props: any) {
+              const { payload, visibleTicksCount, x, y, style, ...rest } = props
               const isLastTick = payload.index + 1 === visibleTicksCount
 
               if (isLastTick) {
@@ -97,7 +98,7 @@ export const RewardsCurve: FC = () => {
                     }}
                     x={x}
                     y={y}
-                    {...props}
+                    {...rest}
                   >
                     {t("days")}
                   </text>
@@ -111,7 +112,7 @@ export const RewardsCurve: FC = () => {
               }
 
               return (
-                <text style={style} x={x} y={y} {...props}>
+                <text style={style} x={x} y={y} {...rest}>
                   {payload.value}
                 </text>
               )

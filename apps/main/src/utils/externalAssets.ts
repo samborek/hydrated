@@ -1,7 +1,7 @@
 import { Asset } from "@galacticcouncil/sdk-next"
 import { isAnyParachain } from "@galacticcouncil/utils"
 import { chainsMap } from "@galacticcouncil/xc-cfg"
-import { AnyChain, AnyParachain, Parachain } from "@galacticcouncil/xc-core"
+import { AnyChain } from "@galacticcouncil/xc-core"
 import {
   XcmV3Junction,
   XcmV3Junctions,
@@ -41,8 +41,8 @@ export const ASSETHUB_ID_BLACKLIST = [
   "50000034",
 ]
 
-export const assethub = chainsMap.get("assethub") as Parachain
-export const pendulum = chainsMap.get("pendulum") as Parachain
+export const assethub = chainsMap.get("assethub") as any
+export const pendulum = chainsMap.get("pendulum") as any
 
 const chains = Array.from(chainsMap.values())
 
@@ -55,9 +55,9 @@ export const getAssetOrigin = (asset: TAssetData): AnyChain | null => {
   }
 
   return (
-    chains.find(
-      (chain): chain is AnyParachain =>
-        isAnyParachain(chain) && (chain as any).parachainId === assetParachain,
+    (chains as any[]).find(
+      (chain) =>
+        isAnyParachain(chain as any) && (chain as any).parachainId === assetParachain,
     ) ?? null
   )
 }

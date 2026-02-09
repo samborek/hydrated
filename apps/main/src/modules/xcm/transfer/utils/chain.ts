@@ -45,21 +45,21 @@ export const getXcmFormDefaults = (account: Account | null): XcmFormValues => {
   const provider = account?.provider
 
   const srcChain: AnyChain | null = (() => {
-    if (!provider) return chainsMap.get("assethub") || null
+    if (!provider) return (chainsMap.get("assethub") as any) || null
     switch (true) {
       case SUBSTRATE_H160_PROVIDERS.includes(provider) &&
         isH160Address(rawAddress):
-        return chainsMap.get("mythos") || null
+        return (chainsMap.get("mythos") as any) || null
       case SUBSTRATE_PROVIDERS.includes(provider):
-        return chainsMap.get("assethub") || null
+        return (chainsMap.get("assethub") as any) || null
       case EVM_PROVIDERS.includes(provider):
-        return chainsMap.get("ethereum") || null
+        return (chainsMap.get("ethereum") as any) || null
       case SOLANA_PROVIDERS.includes(provider):
-        return chainsMap.get("solana") || null
+        return (chainsMap.get("solana") as any) || null
       case SUI_PROVIDERS.includes(provider):
-        return chainsMap.get("sui") || null
+        return (chainsMap.get("sui") as any) || null
       default:
-        return chainsMap.get("assethub") || null
+        return (chainsMap.get("assethub") as any) || null
     }
   })()
 
@@ -67,10 +67,10 @@ export const getXcmFormDefaults = (account: Account | null): XcmFormValues => {
     ? Array.from(srcChain.assetsData.values())[0]?.asset || null
     : null
 
-  const destChain = chainsMap.get(HYDRATION_CHAIN_KEY) || null
+  const destChain = (chainsMap.get(HYDRATION_CHAIN_KEY) as any) || null
 
   const destAccount =
-    !!destChain && isAccountValidOnChain(account, destChain) ? account : null
+    !!destChain && isAccountValidOnChain(account, destChain as any) ? account : null
 
   return {
     srcChain,
@@ -89,12 +89,12 @@ export const getWalletModeByChain = (chain: AnyChain) => {
     return WalletMode.SubstrateEVM
   }
 
-  if (isEvmParachain(chain)) {
-    return chain.usesH160Acc ? WalletMode.EVM : WalletMode.Substrate
+  if (isEvmParachain(chain as any)) {
+    return (chain as any).usesH160Acc ? WalletMode.EVM : WalletMode.Substrate
   }
 
-  if (isParachain(chain)) {
-    return chain.usesH160Acc ? WalletMode.SubstrateH160 : WalletMode.Substrate
+  if (isParachain(chain as any)) {
+    return (chain as any).usesH160Acc ? WalletMode.SubstrateH160 : WalletMode.Substrate
   }
 
   if (chain.isEvmChain()) {

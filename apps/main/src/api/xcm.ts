@@ -86,7 +86,7 @@ export const useCrossChainBalanceSubscription = (
     const chain = chainsMap.get(chainKey)
     const queryKey = createCrossChainBalanceQueryKey(chainKey, address)
     const formattedAddress =
-      address && chain ? formatAddress(address, chain) : ""
+      address && chain ? formatAddress(address, chain as any) : ""
 
     if (!wallet || !formattedAddress || !chain) {
       setIsLoading(false)
@@ -104,7 +104,7 @@ export const useCrossChainBalanceSubscription = (
 
         subscription = await wallet.subscribeBalance(
           formattedAddress,
-          chain,
+          chain as any,
           (balances) => {
             const balanceMap = new Map(
               balances.map((balance) => [balance.key, balance]),
@@ -126,7 +126,7 @@ export const useCrossChainBalanceSubscription = (
       }
     }
 
-    subscribeBalance(formattedAddress, chain)
+    subscribeBalance(formattedAddress, chain as any)
 
     return () => {
       subscription?.unsubscribe()

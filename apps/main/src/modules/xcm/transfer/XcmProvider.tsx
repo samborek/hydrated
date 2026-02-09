@@ -4,7 +4,7 @@ import {
 } from "@galacticcouncil/utils"
 import { useAccount } from "@galacticcouncil/web3-connect"
 import { chainsMap } from "@galacticcouncil/xc-cfg"
-import { ConfigBuilder, EvmParachain } from "@galacticcouncil/xc-core"
+import { ConfigBuilder } from "@galacticcouncil/xc-core"
 import { Transfer } from "@galacticcouncil/xc-sdk"
 import { useEffect, useMemo, useState } from "react"
 import { FormProvider } from "react-hook-form"
@@ -55,12 +55,12 @@ export const XcmProvider: React.FC<XcmProviderProps> = ({ children }) => {
   )
 
   const sourceChainAssetPairs = useMemo<ChainAssetPair[]>(() => {
-    return XCM_CHAINS.map((chain) => {
+    return (XCM_CHAINS as any[]).map((chain) => {
       const chainAssets = Array.from(chain.assetsData.values()).map(
-        (chainAssetData) => chainAssetData.asset,
+        (chainAssetData: any) => chainAssetData.asset,
       )
       const destinations = chainAssets.map((asset) =>
-        config.asset(asset).source(chain),
+        config.asset(asset).source(chain as any),
       )
       const assets = zip(chainAssets, destinations)
         .filter(([, destination]) => destination.destinationChains.length > 0)
@@ -131,7 +131,7 @@ export const XcmProvider: React.FC<XcmProviderProps> = ({ children }) => {
   }, [destChainAssetPairs, form, destChain?.key, srcAsset?.key])
 
   const isConnectedAccountValid =
-    !!srcChain && isAccountValidOnChain(account, srcChain)
+    !!srcChain && isAccountValidOnChain(account, srcChain as any)
 
   const srcAddress = isConnectedAccountValid ? account.address : ""
   const srcChainKey = srcChain?.key ?? ""
@@ -177,7 +177,7 @@ export const XcmProvider: React.FC<XcmProviderProps> = ({ children }) => {
         sourceChainAssetPairs,
         destChainAssetPairs,
         transfer,
-        registryChain: chainsMap.get(HYDRATION_CHAIN_KEY) as EvmParachain,
+        registryChain: chainsMap.get(HYDRATION_CHAIN_KEY) as any,
         status: getTransferStatus(form.getValues(), transfer),
       }}
     >

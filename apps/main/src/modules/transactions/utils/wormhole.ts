@@ -31,11 +31,11 @@ export const getWormholeHashByExtrinsicIndex = async (
 
     const moonbeam = chainsMap.get("moonbeam")
 
-    const isMoonbeamEvmParachain = moonbeam && isEvmParachain(moonbeam)
+    const isMoonbeamEvmParachain = moonbeam && isEvmParachain(moonbeam as any)
 
     if (!isMoonbeamEvmParachain || !destBlockNumber || !fromAccountId) return ""
 
-    const moonbeamClient = moonbeam.evmClient.getProvider()
+    const moonbeamClient = (moonbeam as any).evmClient.getProvider()
     const block = await moonbeamClient.getBlock({
       blockNumber: BigInt(destBlockNumber),
       includeTransactions: true,
@@ -45,7 +45,7 @@ export const getWormholeHashByExtrinsicIndex = async (
       return ""
     }
 
-    const wormholeTx = block.transactions.find((tx) =>
+    const wormholeTx = block.transactions.find((tx: any) =>
       stringEquals(tx.from, fromAccountId),
     )
 

@@ -101,7 +101,7 @@ const RpcListItemEdit: React.FC<RpcListItemEditProps> = ({
   }
 
   return (
-    <SRpcListItem as="form" data-edit="true" ref={formRef} onSubmit={onSubmit}>
+    <SRpcListItem as="form" data-edit="true" ref={formRef} onSubmit={onSubmit as any}>
       <Input
         variant="embedded"
         sx={{ px: 0, fontSize: 16, fontWeight: 400 }}

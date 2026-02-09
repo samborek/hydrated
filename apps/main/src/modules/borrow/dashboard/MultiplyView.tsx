@@ -1,4 +1,5 @@
 import { useAggregatedMarketStats, useMarketAssetsData } from "@galacticcouncil/money-market/hooks"
+import { ChevronRight } from "@galacticcouncil/ui/assets/icons"
 import {
   AssetLogo as BaseAssetLogo,
   Box,
@@ -7,6 +8,7 @@ import {
   DataTable,
   Flex,
   Grid,
+  Icon,
   Modal,
   ModalBody,
   ModalHeader,
@@ -19,7 +21,7 @@ import {
   ValueStats,
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
-import { css, getTokenPx, styled } from "@galacticcouncil/ui/utils"
+import { css, getToken, getTokenPx, styled } from "@galacticcouncil/ui/utils"
 import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
@@ -32,6 +34,7 @@ import { AssetLogo } from "@/components/AssetLogo"
 import { MultiplyOpenPositionModalContent } from "@/modules/borrow/multiply/components/MultiplyOpenPositionModalContent"
 import { MultiplyPositionsTile } from "@/modules/borrow/multiply/components/MultiplyPositionsTile"
 import { PositionsIndicator } from "@/modules/borrow/multiply/components/PositionsIndicator"
+import { useMultiplySimulationStore } from "@/modules/borrow/multiply/states/useMultiplySimulationStore"
 import { getReserveAssetId } from "@/modules/borrow/utils/assets"
 import { useAssets } from "@/providers/assetsProvider"
 
@@ -193,52 +196,72 @@ export const MultiplyView: FC = () => {
 
   const columnHelper = createColumnHelper<StrategyRow>()
 
+  const debtSymbol = (s: StrategyRow) =>
+    s.debtAsset.symbol === "CASH" ? "HUSD" : s.debtAsset.symbol
+
   const columns = [
-    columnHelper.accessor("collateralAsset", {
-      id: "supply",
-      header: "Supply",
+    columnHelper.display({
+      id: "pair",
+      header: "Pair",
       meta: {
-        sx: { width: "15%" },
+        sx: { width: ["auto", "22%"] },
       },
       cell: ({ row }) => {
         const s = row.original
         const isPrime = s.collateralAsset.symbol === "PRIME"
+        const showMarketLabel = gte("sm")
+        const pairLabel = `${s.collateralAsset.symbol}/${debtSymbol(s)}`
 
         return (
           <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
-            {isPrime ? (
-              <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
-            ) : (
-              <AssetLogo id={s.collateralAsset.id} size="medium" />
-            )}
-            <Flex direction="column">
-              <Text fs="p3" fw={500}>
-                {s.collateralAsset.symbol}
-              </Text>
-              <Text fs="p5" color={theme.text.low}>
-                {s.collateralAsset.symbol === "PRIME"
-                  ? "Prime Market"
-                  : "Global Market"}
-              </Text>
+            <Flex
+              align="center"
+              sx={{
+                position: "relative",
+                minWidth: 40,
+                height: 28,
+              }}
+            >
+              {isPrime ? (
+                <BaseAssetLogo
+                  src={primeLogo}
+                  size="medium"
+                  alt="PRIME"
+                  sx={{ position: "absolute", left: 0, zIndex: 1 }}
+                />
+              ) : (
+                <AssetLogo
+                  id={s.collateralAsset.id}
+                  size="medium"
+                  sx={{ position: "absolute", left: 0, zIndex: 1 }}
+                />
+              )}
+              <Box
+                sx={{
+                  position: "absolute",
+                  left: 16,
+                  zIndex: 0,
+                }}
+              >
+                {s.debtAsset.symbol === "HUSD" || s.debtAsset.symbol === "CASH" ? (
+                  <AssetLogo id={HOLLAR_ASSET_ID} size="medium" />
+                ) : (
+                  <AssetLogo id={s.debtAsset.id} size="medium" />
+                )}
+              </Box>
             </Flex>
-          </Flex>
-        )
-      },
-    }),
-    columnHelper.accessor("debtAsset", {
-      id: "borrow",
-      header: "Borrow Token",
-      meta: {
-        sx: { width: "12%" },
-      },
-      cell: ({ row }) => {
-        const s = row.original
-        return (
-          <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
-            <AssetLogo id={s.debtAsset.id} size="medium" />
-            <Text fs="p3" fw={500}>
-              {s.debtAsset.symbol === "CASH" ? "HUSD" : s.debtAsset.symbol}
-            </Text>
+            <Flex direction="column" sx={{ minWidth: 0 }}>
+              <Text fs="p3" fw={500}>
+                {pairLabel}
+              </Text>
+              {showMarketLabel && (
+                <Text fs="p5" color={theme.text.low} truncate>
+                  {s.collateralAsset.symbol === "PRIME"
+                    ? "Prime Market"
+                    : "Global Market"}
+                </Text>
+              )}
+            </Flex>
           </Flex>
         )
       },
@@ -246,7 +269,7 @@ export const MultiplyView: FC = () => {
     columnHelper.accessor("netApy", {
       header: "Max Net APY",
       meta: {
-        sx: { width: "12%" },
+        sx: { width: "12%", display: ["none", "table-cell"] },
       },
       cell: ({ getValue }) => (
         <Text color={theme.details.values.positive} fw={600}>
@@ -257,12 +280,12 @@ export const MultiplyView: FC = () => {
     columnHelper.accessor("leverage", {
       header: "Max Leverage",
       meta: {
-        sx: { width: "12%" },
+        sx: { width: "12%", display: ["none", "table-cell"] },
       },
       cell: ({ getValue }) => <Text>{getValue().toFixed(2)}x</Text>,
     }),
     columnHelper.accessor("liqAvailable", {
-      header: "Liq Available",
+      header: "Liquidity",
       meta: {
         sx: { width: "12%" },
       },
@@ -280,7 +303,7 @@ export const MultiplyView: FC = () => {
     columnHelper.accessor("supplied", {
       header: "Supplied",
       meta: {
-        sx: { width: "12%" },
+        sx: { width: "12%", display: ["none", "table-cell"] },
       },
       cell: ({ getValue }) => (
         <Text>${(getValue() / 1000000).toFixed(2)}M</Text>
@@ -291,6 +314,18 @@ export const MultiplyView: FC = () => {
       header: "",
       cell: ({ row }) => {
         const s = row.original
+        const isMobile = !gte("sm")
+        if (isMobile) {
+          return (
+            <Flex justify="flex-end" align="center" width="100%">
+              <Icon
+                component={ChevronRight}
+                size={16}
+                color={getToken("text.low")}
+              />
+            </Flex>
+          )
+        }
         return (
           <Flex justify="flex-end" width="100%" gap="0.5rem">
             <Button
@@ -322,7 +357,7 @@ export const MultiplyView: FC = () => {
       meta: {
         sx: {
           paddingRight: getTokenPx("containers.paddings.primary"),
-          width: 220,
+          width: [40, 220],
         },
       },
     }),
@@ -333,10 +368,21 @@ export const MultiplyView: FC = () => {
   )
 
   const { data: _marketStats } = useAggregatedMarketStats()
+  const { positions } = useMultiplySimulationStore()
+  const hasPositions = positions.length > 0
 
   return (
-    <Flex direction="column" gap={getTokenPx("scales.paddings.xxl")}>
-      <Flex align="center" justify="space-between" width="100%">
+    <Flex
+      direction="column"
+      gap={getTokenPx("scales.paddings.m")}
+      sx={{ minWidth: 0, overflow: "hidden" }}
+    >
+      <Flex
+        align="center"
+        justify="space-between"
+        width="100%"
+        sx={{ minWidth: 0, flexWrap: "wrap" }}
+      >
         <Stack
           direction={["column", null, "row"]}
           justify="flex-start"
@@ -369,6 +415,7 @@ export const MultiplyView: FC = () => {
         <Text
           fs="p1"
           fw={600}
+          mt={hasPositions ? getTokenPx("scales.paddings.l") : 0}
           mb={getTokenPx("scales.paddings.l")}
           font="primary"
         >
@@ -454,6 +501,7 @@ export const MultiplyView: FC = () => {
         <Flex
           justify="space-between"
           align="center"
+          mt={getTokenPx("scales.paddings.l")}
           mb={getTokenPx("scales.paddings.l")}
         >
           <Text fs="p1" fw={600} font="primary">

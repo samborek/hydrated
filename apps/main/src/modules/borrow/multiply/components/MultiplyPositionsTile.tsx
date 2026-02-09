@@ -41,7 +41,7 @@ export const MultiplyPositionsTile: FC = () => {
   return (
     <>
       <CollapsibleRoot open={expanded}>
-        <Paper sx={{ overflow: "hidden" }}>
+        <Paper sx={{ overflow: "hidden", minWidth: 0 }}>
           {/* Header */}
           <CollapsibleTrigger
             onClick={() => setExpanded(!expanded)}
@@ -93,25 +93,58 @@ export const MultiplyPositionsTile: FC = () => {
                 borderBottom: "1px solid",
                 borderColor: getToken("details.separators"),
                 bg: theme.surfaces.containers.high.primary,
+                minWidth: 0,
               }}
             >
-              <Text fs="p6" fw={500} color={theme.text.medium} sx={{ width: 170 }}>
+              <Text
+                fs="p6"
+                fw={500}
+                color={theme.text.medium}
+                sx={{
+                  flex: ["1 1 0", "0 0 auto"],
+                  minWidth: [0, 170],
+                  width: ["auto", 170],
+                }}
+              >
                 Position
               </Text>
-              <Text fs="p6" fw={500} color={theme.text.medium} sx={{ width: 130 }}>
+              <Text
+                fs="p6"
+                fw={500}
+                color={theme.text.medium}
+                sx={{
+                  flex: ["0 1 auto", "0 0 auto"],
+                  minWidth: [0, 130],
+                  width: ["auto", 130],
+                }}
+              >
                 Value
               </Text>
-              <Text fs="p6" fw={500} color={theme.text.medium} sx={{ width: 130 }}>
+              <Text
+                fs="p6"
+                fw={500}
+                color={theme.text.medium}
+                sx={{ width: 130, display: ["none", "block"] }}
+              >
                 Amount
               </Text>
-              <Text fs="p6" fw={500} color={theme.text.medium} sx={{ width: 80 }}>
+              <Text
+                fs="p6"
+                fw={500}
+                color={theme.text.medium}
+                sx={{
+                  flex: ["0 0 auto", "0 0 auto"],
+                  minWidth: [50, 80],
+                  width: ["auto", 80],
+                }}
+              >
                 PNL (%)
               </Text>
               <Text
                 fs="p6"
                 fw={500}
                 color={theme.text.medium}
-                sx={{ width: 114, textAlign: "right" }}
+                sx={{ width: 114, textAlign: "right", display: ["none", "block"] }}
               >
                 Actions
               </Text>
@@ -163,16 +196,36 @@ const PositionRow: FC<{
     <Flex
       align="center"
       justify="space-between"
+      onClick={onManage}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          onManage()
+        }
+      }}
       sx={{
         px: getTokenPx("containers.paddings.primary"),
         py: getTokenPx("containers.paddings.secondary"),
         borderBottom: "1px solid",
         borderColor: getToken("details.separators"),
         "&:last-child": { borderBottom: "none" },
+        cursor: "pointer",
+        "&:hover": { bg: theme.surfaces.containers.high.hover },
+        minWidth: 0,
       }}
     >
       {/* 1. Position */}
-      <Flex align="center" gap={3} sx={{ width: 170 }}>
+      <Flex
+        align="center"
+        gap={3}
+        sx={{
+          flex: ["1 1 0", "0 0 auto"],
+          minWidth: [0, 170],
+          width: ["auto", 170],
+        }}
+      >
         {/* Asset Logos */}
         <Flex
           sx={{
@@ -223,14 +276,20 @@ const PositionRow: FC<{
       </Flex>
 
       {/* 2. Value */}
-      <Box sx={{ width: 130 }}>
+      <Box
+        sx={{
+          flex: ["0 1 auto", "0 0 auto"],
+          minWidth: [0, 130],
+          width: ["auto", 130],
+        }}
+      >
         <Text fs="p5" fw={600} color={theme.text.high}>
           {mockValue}
         </Text>
       </Box>
 
-      {/* 3. Amount */}
-      <Box sx={{ width: 130 }}>
+      {/* 3. Amount - hidden on mobile */}
+      <Box sx={{ width: 130, display: ["none", "block"] }}>
         <Text fs="p5" fw={600} color={theme.text.high}>
           {Number(position.collateralAmount).toFixed(0)}{" "}
           {position.collateralAsset?.symbol}
@@ -238,7 +297,14 @@ const PositionRow: FC<{
       </Box>
 
       {/* 4. PNL (%) */}
-      <Flex direction="column" sx={{ width: 80 }}>
+      <Flex
+        direction="column"
+        sx={{
+          flex: ["0 0 auto", "0 0 auto"],
+          minWidth: [50, 80],
+          width: ["auto", 80],
+        }}
+      >
         <Text fs="p5" fw={600} color={pnlColor}>
           {mockPnl}
         </Text>
@@ -247,12 +313,20 @@ const PositionRow: FC<{
         </Text>
       </Flex>
 
-      {/* 5. Actions */}
-      <Flex align="center" justify="flex-end" gap={3} sx={{ width: 114 }}>
+      {/* 5. Actions - hidden on mobile */}
+      <Flex
+        align="center"
+        justify="flex-end"
+        gap={3}
+        sx={{ width: 114, display: ["none", "flex"] }}
+      >
         <Button
           size="small"
           variant="tertiary"
-          onClick={onManage}
+          onClick={(e) => {
+            e.stopPropagation()
+            onManage()
+          }}
         >
           <CircleStop size={14} />
           Close

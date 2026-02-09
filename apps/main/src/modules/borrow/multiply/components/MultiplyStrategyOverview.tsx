@@ -125,6 +125,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
     <Stack
       id="multiply-strategy-overview"
       gap={getTokenPx("containers.paddings.primary")}
+      sx={{ minWidth: 0 }}
     >
       {/* Looping Overview */}
       <Paper p={getTokenPx("containers.paddings.primary")}>

@@ -1,5 +1,5 @@
 import { ComputedReserveData } from "@galacticcouncil/money-market/hooks";
-import { Flex, Text, ValueStats } from "@galacticcouncil/ui/components";
+import { Box, Flex, Text, ValueStats } from "@galacticcouncil/ui/components";
 import { AssetLogo as BaseAssetLogo } from "@galacticcouncil/ui/components";
 import { getToken, getTokenPx } from "@galacticcouncil/ui/utils";
 import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils";
@@ -22,12 +22,21 @@ export const MultiplyStrategyHeader: FC<MultiplyStrategyHeaderProps> = ({
     <Flex
       id="multiply-strategy-header"
       justify="space-between"
+      align="flex-start"
+      wrap
       sx={{
         pt: getTokenPx(["scales.paddings.base", "containers.paddings.primary"]),
         pb: getTokenPx("scales.paddings.xl"),
+        minWidth: 0,
+        gap: getTokenPx("scales.paddings.m"),
       }}
     >
-      <Flex gap={getTokenPx("scales.paddings.m")} align="center" wrap>
+      <Flex
+        gap={getTokenPx("scales.paddings.m")}
+        align="center"
+        wrap
+        sx={{ minWidth: 0, flex: "1 1 auto" }}
+      >
         {collateralAsset.symbol === "PRIME" ? (
           <Flex style={{ position: "relative" }}>
             <BaseAssetLogo src={primeLogo} size="large" alt="PRIME" />
@@ -67,13 +76,15 @@ export const MultiplyStrategyHeader: FC<MultiplyStrategyHeaderProps> = ({
         </Flex>
       </Flex>
 
-      <ValueStats
-        label="Total Value Locked"
-        value="$2.4M"
-        size="large"
-        wrap
-        style={{ alignItems: "flex-end" }}
-      />
+      <Box sx={{ minWidth: 0, flexShrink: 0 }}>
+        <ValueStats
+          label="Total Value Locked"
+          value="$2.4M"
+          size="large"
+          wrap
+          style={{ alignItems: "flex-end" }}
+        />
+      </Box>
     </Flex>
   );
 };

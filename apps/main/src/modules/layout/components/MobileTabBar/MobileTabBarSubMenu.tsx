@@ -22,9 +22,14 @@ export const MobileTabBarSubmenuItem = ({ item, ...props }: Props) => {
   const { key, icon, to } = item
 
   const { title, description } = translations[key] ?? {}
+  const { activeOptions } = item
 
   return (
-    <MenuSelectionItem as={Link} {...{ to }} {...props}>
+    <MenuSelectionItem
+      as={Link}
+      {...{ to, activeOptions }}
+      {...props}
+    >
       <MenuItemIcon component={icon ?? IconPlaceholder} />
       <MenuItemLabel>{title}</MenuItemLabel>
       {description && <MenuItemDescription>{description}</MenuItemDescription>}

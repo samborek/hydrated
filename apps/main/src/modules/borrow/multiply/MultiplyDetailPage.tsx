@@ -122,36 +122,53 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({
   const [activeTab, setActiveTab] = useState<"details" | "info">("details")
 
   return (
-    <Box id="looping-strategy-detail-page">
+    <Box
+      id="looping-strategy-detail-page"
+      sx={{ minWidth: 0, overflow: "hidden" }}
+    >
       <MultiplyStrategyHeader
         collateralAsset={assets.collateral}
         debtAsset={assets.debt}
       />
 
+      {/* Tabs - always first */}
+      <Flex
+        gap={12}
+        mb={getTokenPx("containers.paddings.primary")}
+        sx={{ minWidth: 0, flexWrap: "wrap" }}
+      >
+        <Button
+          variant={activeTab === "details" ? "secondary" : "transparent"}
+          size="medium"
+          onClick={() => setActiveTab("details")}
+        >
+          Loop details
+        </Button>
+        <Button
+          variant={activeTab === "info" ? "secondary" : "transparent"}
+          size="medium"
+          onClick={() => setActiveTab("info")}
+        >
+          Borrow/supply data
+        </Button>
+      </Flex>
+
       <Grid
         columnTemplate={["1fr", null, `1fr 450px`]}
         gap={getTokenPx("containers.paddings.primary")}
         alignItems="start"
+        sx={{
+          minWidth: 0,
+          /* On mobile: Deposit (SidePanel) first after tabs, then content */
+          "& > *:first-of-type": { order: [1, 1], minWidth: 0 },
+          "& > *:last-of-type": { order: [0, 2], minWidth: 0 },
+        }}
       >
-        {/* Left Panel - Tabs + Positions + Content */}
-        <Stack gap={getTokenPx("containers.paddings.primary")}>
-          <Flex gap={12}>
-            <Button
-              variant={activeTab === "details" ? "secondary" : "transparent"}
-              size="medium"
-              onClick={() => setActiveTab("details")}
-            >
-              Loop details
-            </Button>
-            <Button
-              variant={activeTab === "info" ? "secondary" : "transparent"}
-              size="medium"
-              onClick={() => setActiveTab("info")}
-            >
-              Borrow/supply data
-            </Button>
-          </Flex>
-
+        {/* Left Panel - Positions + Content (second on mobile via order) */}
+        <Stack
+          gap={getTokenPx("containers.paddings.primary")}
+          sx={{ minWidth: 0 }}
+        >
           {activeTab === "details" ? (
             <>
               <Box>
@@ -172,7 +189,7 @@ export const MultiplyDetailPage: FC<MultiplyDetailPageProps> = ({
           )}
         </Stack>
 
-        {/* Right Panel - Actions */}
+        {/* Right Panel - Deposit / Actions (first on mobile via order) */}
         <MultiplySidePanel
           collateralAsset={assets.collateral}
           debtAsset={assets.debt}

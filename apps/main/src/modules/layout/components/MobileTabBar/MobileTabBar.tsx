@@ -9,7 +9,7 @@ import {
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints } from "@galacticcouncil/ui/theme"
 import { preventDefault } from "@galacticcouncil/utils"
-import { Link } from "@tanstack/react-router"
+import { Link, useLocation } from "@tanstack/react-router"
 import { FC, useState } from "react"
 import { useTranslation } from "react-i18next"
 
@@ -42,6 +42,7 @@ export const MobileTabBar: FC = () => {
   const { isMobile } = useBreakpoints()
   const hasMobNavbar = useHasMobNavbar()
   const { scrollDirection, isScrolling } = useScrollDirection()
+  const location = useLocation()
 
   const [drawer, setDrawer] = useState<MobileTabBarDrawer | null>(null)
   const closeDrawer = () => setDrawer(null)
@@ -61,32 +62,48 @@ export const MobileTabBar: FC = () => {
     <SMobileTabBar $hidden={isHidden}>
       {navItems
         .slice(0, itemsShown)
-        .map(({ key, icon, to, children }, index) => (
-          <DropdownMenu key={key} modal={false}>
-            <DropdownMenuTrigger asChild>
-              <STabBarItem
-                as={Link}
-                {...{ to }}
-                tabIndex={index + 1}
-                onClick={
-                  children && children.length > 1 ? preventDefault : undefined
-                }
-              >
-                <STabBarIcon component={icon ?? IconPlaceholder} />
-                <STabBarLabel>{translations[key]?.title}</STabBarLabel>
-              </STabBarItem>
-            </DropdownMenuTrigger>
-            {children && children.length > 1 && (
-              <DropdownMenuContent fullWidth animation="slide-bottom">
-                {children.map((item) => (
-                  <DropdownMenuItem key={item.key} asChild>
-                    <MobileTabBarSubmenuItem item={item} />
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            )}
-          </DropdownMenu>
-        ))}
+        .map(
+          ({ key, icon, to, children, activeOptions, inactiveOn }, index) => {
+            const isInactive = inactiveOn?.some((path) =>
+              location.pathname.startsWith(path),
+            )
+
+            return (
+              <DropdownMenu key={key} modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <STabBarItem
+                    {...({
+                      as: Link,
+                      to: to,
+                      activeOptions: {
+                        ...activeOptions,
+                        exact: isInactive ? true : activeOptions?.exact,
+                      },
+                      "data-status": isInactive ? "inactive" : undefined,
+                      tabIndex: index + 1,
+                      onClick:
+                        children && children.length > 1
+                          ? preventDefault
+                          : undefined,
+                    } as any)}
+                  >
+                    <STabBarIcon component={icon ?? IconPlaceholder} />
+                    <STabBarLabel>{translations[key]?.title}</STabBarLabel>
+                  </STabBarItem>
+                </DropdownMenuTrigger>
+                {children && children.length > 1 && (
+                  <DropdownMenuContent fullWidth animation="slide-bottom">
+                    {children.map((item) => (
+                      <DropdownMenuItem key={item.key} asChild>
+                        <MobileTabBarSubmenuItem item={item} />
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                )}
+              </DropdownMenu>
+            )
+          },
+        )}
       {moreItems.length > 0 && (
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>

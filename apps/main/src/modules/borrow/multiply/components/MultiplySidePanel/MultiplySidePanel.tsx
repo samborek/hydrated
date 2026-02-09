@@ -170,8 +170,8 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
         sx={{
           pt: 0,
           pb: getTokenPx("scales.paddings.xl")(theme as never),
-          maxWidth: 420,
-          minWidth: 350,
+          maxWidth: ["100%", 420],
+          minWidth: [0, 350],
           width: "100%",
         }}
       >

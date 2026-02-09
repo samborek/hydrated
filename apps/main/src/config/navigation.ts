@@ -62,6 +62,12 @@ export type NavigationItem = {
   children?: NavigationItem[]
   search?: Record<string, string | boolean>
   badge?: React.ReactNode
+  activeOptions?: {
+    exact?: boolean
+    includeHash?: boolean
+    includeSearch?: boolean
+  }
+  inactiveOn?: Route[]
 }
 
 export const NAVIGATION: NavigationItem[] = [
@@ -84,6 +90,7 @@ export const NAVIGATION: NavigationItem[] = [
     key: "borrow",
     to: LINKS.borrow,
     icon: BanknoteIcon,
+    inactiveOn: [LINKS.multiply],
     children: [
       { key: "borrowDashboard", to: LINKS.borrowDashboard, icon: ChartPieIcon },
       { key: "borrowMarkets", to: LINKS.borrowMarkets, icon: Grid2X2Icon },

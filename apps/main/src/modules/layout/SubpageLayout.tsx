@@ -27,7 +27,7 @@ const SStickyTabsWrapper = styled.div<SStickyTabsWrapperProps>(
     top: ${$headerVisible ? HEADER_HEIGHT_MOBILE : 0}px;
     z-index: ${theme.zIndices.header - 1};
     background: ${theme.surfaces.themeBasePalette.background};
-    padding-top: 8px;
+    padding-top: 20px;
     padding-bottom: 12px;
     margin-left: calc(-1 * var(--layout-gutter));
     margin-right: calc(-1 * var(--layout-gutter));

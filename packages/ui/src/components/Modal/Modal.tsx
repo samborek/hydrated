@@ -59,6 +59,7 @@ type ModalContentProps = React.ComponentPropsWithoutRef<
   ref?: Ref<React.ElementRef<typeof DialogPrimitive.Content>>
   topContent?: ReactNode
   animationDurationMs?: number
+  contentFit?: "hug" | "fill"
 }
 
 const ModalContent: FC<ModalContentProps> = ({
@@ -67,6 +68,7 @@ const ModalContent: FC<ModalContentProps> = ({
   topContent,
   forceMount,
   animationDurationMs,
+  contentFit,
   ...props
 }) => (
   <ModalPortal forceMount={forceMount}>
@@ -75,7 +77,12 @@ const ModalContent: FC<ModalContentProps> = ({
       onClick={(e) => e.stopPropagation()}
       animationDurationMs={animationDurationMs}
     >
-      <SModalContent ref={ref} {...props} hasTopContent={!!topContent}>
+      <SModalContent
+        ref={ref}
+        {...props}
+        hasTopContent={!!topContent}
+        contentFit={contentFit}
+      >
         {topContent && <SModalTopContent>{topContent}</SModalTopContent>}
         <SModalPaper>{children}</SModalPaper>
       </SModalContent>
@@ -248,6 +255,8 @@ export type ModalProps = React.ComponentProps<typeof ModalRoot> & {
   disableAutoFocus?: boolean
   topContent?: ReactNode
   animationDurationMs?: number
+  /** When "hug", modal paper sizes to content height instead of stretching (desktop only) */
+  contentFit?: "hug" | "fill"
   ref?: Ref<React.ElementRef<typeof DialogPrimitive.Content>>
 }
 
@@ -258,6 +267,7 @@ const Modal = ({
   disableAutoFocus = false,
   topContent,
   animationDurationMs,
+  contentFit,
   ref,
   ...props
 }: ModalProps) => {
@@ -290,6 +300,7 @@ const Modal = ({
           animationDurationMs={animationDurationMs}
           onClick={(e) => e.stopPropagation()}
           topContent={topContent}
+          contentFit={contentFit}
           onInteractOutside={
             disableInteractOutside ? (e) => e.preventDefault() : undefined
           }

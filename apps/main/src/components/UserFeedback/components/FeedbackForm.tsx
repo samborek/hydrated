@@ -1,14 +1,21 @@
 import {
-    Button,
     FormField,
     Input,
     Select,
 } from "@galacticcouncil/ui/components"
-import { FC, useState } from "react"
+import { FC, useCallback, useState } from "react"
 import { useTranslation } from "react-i18next"
 import styled from "@emotion/styled"
-import { css } from "@emotion/react"
+import { css, keyframes } from "@emotion/react"
 import { toast } from "sonner"
+
+const shake = keyframes`
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+`
 
 const STextArea = styled.textarea(
     ({ theme }) => css`
@@ -72,6 +79,94 @@ const SSelectContainer = styled.div`
   }
 `
 
+const SFormLayout = styled.div(
+  () => css`
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    /* With modal contentFit="hug", form sizes to content (no fixed height) */
+  `,
+)
+
+const SFormScrollContent = styled.div(
+  ({ theme }) => css`
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space.xl};
+    padding-bottom: ${theme.space.xl};
+  `,
+)
+
+const SSubmitFooter = styled.footer(
+  ({ theme }) => css`
+    flex-shrink: 0;
+    /* Break out of modal body padding so top border spans 100% of modal width */
+    margin-inline: var(--modal-content-inset, 0);
+    padding: ${theme.space.xl};
+    padding-inline: calc(var(--modal-content-padding, ${theme.space.xl}) + ${theme.space.xl});
+    padding-bottom: env(safe-area-inset-bottom, ${theme.space.xl});
+    border-top: 1px solid ${theme.details?.separators ?? "transparent"};
+    background: ${theme.surfaces?.themeBasePalette?.surfaceHigh ??
+      theme.surfaces?.themeBasePalette?.background ??
+      theme.colors?.background};
+  `,
+)
+
+const SSubmitButton = styled.button(
+  ({ theme }) => css`
+    /* Match primary large button from design system */
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    column-gap: ${theme.space.base};
+    align-items: center;
+    place-content: center;
+    width: 100%;
+    line-height: 1;
+    height: 3.125rem;
+    font-size: ${theme.fontSizes.p3};
+    font-family: ${theme.fontFamilies1.secondary};
+    font-weight: 500;
+    padding: ${theme.buttons.paddings.primary} ${theme.space.xl};
+    border: none;
+    border-radius: ${theme.radii.full};
+    cursor: pointer;
+    transition: ${theme.transitions.colors}, ${theme.transitions.opacity};
+    background-color: ${theme.buttons.primary.high.rest};
+    color: ${theme.buttons.primary.high.onButton};
+
+    &:hover:not(:disabled) {
+      background-color: ${theme.buttons.primary.high.hover};
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      /* Let clicks pass through to wrapper so shake animation can trigger */
+      pointer-events: none;
+    }
+  `,
+)
+
+const SHAKE_DURATION_MS = 280
+
+const SSubmitButtonWrap = styled.div<{ $shake: boolean; $disabled?: boolean }>(
+  ({ $shake, $disabled }) => css`
+    position: relative;
+    ${$disabled && "cursor: not-allowed;"}
+
+    ${$shake &&
+    css`
+      animation: ${shake} ${SHAKE_DURATION_MS}ms ease-in-out;
+    `}
+  `,
+)
+
 type Props = {
     onClose: () => void
 }
@@ -83,6 +178,15 @@ export const FeedbackForm: FC<Props> = ({ onClose }) => {
     const [description, setDescription] = useState("")
     const [file, setFile] = useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+    const [shakeTrigger, setShakeTrigger] = useState(0)
+
+    const hasContent =
+        subject.trim().length > 0 && description.trim().length > 0
+
+    const handleDisabledClick = useCallback((e: React.MouseEvent) => {
+        e.preventDefault()
+        setShakeTrigger((n) => n + 1)
+    }, [])
 
     const categories = [
         { key: "bug", label: t("feedback.categories.bug") },
@@ -120,57 +224,82 @@ export const FeedbackForm: FC<Props> = ({ onClose }) => {
     }
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            style={{ display: "flex", flexDirection: "column", gap: "20px" }}
-        >
-            <FormField label={t("feedback.form.category")}>
-                <SSelectContainer>
-                    <Select
-                        value={category}
-                        items={categories}
-                        onValueChange={setCategory}
+        <SFormLayout>
+            <form
+                onSubmit={handleSubmit}
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flex: 1,
+                    minHeight: 0,
+                }}
+            >
+                <SFormScrollContent>
+                <FormField label={t("feedback.form.category")}>
+                    <SSelectContainer>
+                        <Select
+                            value={category}
+                            items={categories}
+                            onValueChange={setCategory}
+                        />
+                    </SSelectContainer>
+                </FormField>
+
+                <FormField label={t("feedback.form.subject")}>
+                    <Input
+                        placeholder={t("feedback.form.subjectPlaceholder")}
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                        required
                     />
-                </SSelectContainer>
-            </FormField>
+                </FormField>
 
-            <FormField label={t("feedback.form.subject")}>
-                <Input
-                    placeholder={t("feedback.form.subjectPlaceholder")}
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    required
-                />
-            </FormField>
-
-            <FormField label={t("feedback.form.description")}>
-                <STextArea
-                    placeholder={t("feedback.form.descriptionPlaceholder")}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                />
-            </FormField>
-
-            <FormField label={t("feedback.form.file")}>
-                <SFileUploadLabel>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                        {previewUrl && <SImagePreview src={previewUrl} alt="Preview" />}
-                        <span>
-                            {file ? file.name : t("feedback.form.filePlaceholder")}
-                        </span>
-                    </div>
-                    <input
-                        type="file"
-                        style={{ display: "none" }}
-                        onChange={handleFileChange}
+                <FormField label={t("feedback.form.description")}>
+                    <STextArea
+                        placeholder={t("feedback.form.descriptionPlaceholder")}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        required
                     />
-                </SFileUploadLabel>
-            </FormField>
+                </FormField>
 
-            <Button variant="primary" size="large" type="submit">
-                {t("feedback.form.submit")}
-            </Button>
-        </form>
+                <FormField label={t("feedback.form.file")}>
+                    <SFileUploadLabel>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            {previewUrl && (
+                                <SImagePreview src={previewUrl} alt="Preview" />
+                            )}
+                            <span>
+                                {file
+                                    ? file.name
+                                    : t("feedback.form.filePlaceholder")}
+                            </span>
+                        </div>
+                        <input
+                            type="file"
+                            style={{ display: "none" }}
+                            onChange={handleFileChange}
+                        />
+                    </SFileUploadLabel>
+                </FormField>
+            </SFormScrollContent>
+
+            <SSubmitFooter>
+                <SSubmitButtonWrap
+                    $shake={shakeTrigger > 0}
+                    $disabled={!hasContent}
+                    key={shakeTrigger}
+                    onClick={!hasContent ? handleDisabledClick : undefined}
+                >
+                    <SSubmitButton
+                        type="submit"
+                        disabled={!hasContent}
+                    >
+                        {t("feedback.form.submit")}
+                    </SSubmitButton>
+                </SSubmitButtonWrap>
+            </SSubmitFooter>
+            </form>
+        </SFormLayout>
     )
 }

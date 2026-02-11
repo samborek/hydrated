@@ -17,7 +17,8 @@ const shouldForwardProp = (prop: string) =>
   isPropValid(prop) &&
   prop !== "animationDurationMs" &&
   prop !== "hasTopContent" &&
-  prop !== "noPadding"
+  prop !== "noPadding" &&
+  prop !== "contentFit"
 
 export const SModalOverlay = styled(Overlay, {
   shouldForwardProp,
@@ -75,8 +76,9 @@ export const SModalContent = styled(Content, {
   shouldForwardProp,
 })<{
   hasTopContent?: boolean
+  contentFit?: "hug" | "fill"
 }>(
-  ({ theme, hasTopContent }) => css`
+  ({ theme, hasTopContent, contentFit }) => css`
     --modal-content-padding: ${theme.space.xl};
     --modal-content-inset: calc(var(--modal-content-padding) * -1);
     --modal-top-content-height: ${hasTopContent ? theme.sizes["2xl"] : "0px"};
@@ -109,6 +111,10 @@ export const SModalContent = styled(Content, {
 
       max-width: ${theme.sizes["6xl"]};
       height: auto;
+      ${contentFit === "hug" &&
+      css`
+        align-self: start;
+      `}
 
       &[data-state="open"] {
         animation: ${theme.animations.scaleInTop};

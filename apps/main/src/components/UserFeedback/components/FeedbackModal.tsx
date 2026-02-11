@@ -16,9 +16,9 @@ export const FeedbackModal: FC<Props> = ({ open, onOpenChange }) => {
     const { t } = useTranslation()
 
     return (
-        <Modal open={open} onOpenChange={onOpenChange}>
+        <Modal open={open} onOpenChange={onOpenChange} contentFit="hug">
             <ModalHeader title={(t as any)("common:feedback.modal.title")} />
-            <ModalBody>
+            <ModalBody scrollable={false}>
                 <FeedbackForm onClose={() => onOpenChange(false)} />
             </ModalBody>
         </Modal>

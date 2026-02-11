@@ -85,13 +85,13 @@ export const FeedbackForm: FC<Props> = ({ onClose }) => {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
     const categories = [
-        { key: "bug", label: t("common:feedback.categories.bug") as string },
-        { key: "feature", label: t("common:feedback.categories.feature") as string },
+        { key: "bug", label: (t as any)("common:feedback.categories.bug") },
+        { key: "feature", label: (t as any)("common:feedback.categories.feature") },
         {
             key: "question",
-            label: t("common:feedback.categories.question") as string,
+            label: (t as any)("common:feedback.categories.question"),
         },
-        { key: "other", label: t("common:feedback.categories.other") as string },
+        { key: "other", label: (t as any)("common:feedback.categories.other") },
     ]
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,7 +115,7 @@ export const FeedbackForm: FC<Props> = ({ onClose }) => {
             description,
             file,
         })
-        toast.success(t("common:feedback.success"))
+        toast.success((t as any)("common:feedback.success"))
         onClose()
     }
 
@@ -124,7 +124,7 @@ export const FeedbackForm: FC<Props> = ({ onClose }) => {
             onSubmit={handleSubmit}
             style={{ display: "flex", flexDirection: "column", gap: "20px" }}
         >
-            <FormField label={t("common:feedback.form.category")}>
+            <FormField label={(t as any)("common:feedback.form.category")}>
                 <SSelectContainer>
                     <Select
                         value={category}
@@ -134,30 +134,30 @@ export const FeedbackForm: FC<Props> = ({ onClose }) => {
                 </SSelectContainer>
             </FormField>
 
-            <FormField label={t("common:feedback.form.subject")}>
+            <FormField label={(t as any)("common:feedback.form.subject")}>
                 <Input
-                    placeholder={t("common:feedback.form.subjectPlaceholder")}
+                    placeholder={(t as any)("common:feedback.form.subjectPlaceholder")}
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
                     required
                 />
             </FormField>
 
-            <FormField label={t("common:feedback.form.description")}>
+            <FormField label={(t as any)("common:feedback.form.description")}>
                 <STextArea
-                    placeholder={t("common:feedback.form.descriptionPlaceholder")}
+                    placeholder={(t as any)("common:feedback.form.descriptionPlaceholder")}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
                 />
             </FormField>
 
-            <FormField label={t("common:feedback.form.file")}>
+            <FormField label={(t as any)("common:feedback.form.file")}>
                 <SFileUploadLabel>
                     <div style={{ display: "flex", alignItems: "center" }}>
                         {previewUrl && <SImagePreview src={previewUrl} alt="Preview" />}
                         <span>
-                            {file ? file.name : t("common:feedback.form.filePlaceholder")}
+                            {file ? file.name : (t as any)("common:feedback.form.filePlaceholder")}
                         </span>
                     </div>
                     <input
@@ -169,7 +169,7 @@ export const FeedbackForm: FC<Props> = ({ onClose }) => {
             </FormField>
 
             <Button variant="primary" size="large" type="submit">
-                {t("common:feedback.form.submit")}
+                {(t as any)("common:feedback.form.submit")}
             </Button>
         </form>
     )

@@ -17,7 +17,7 @@ export const FeedbackModal: FC<Props> = ({ open, onOpenChange }) => {
 
     return (
         <Modal open={open} onOpenChange={onOpenChange}>
-            <ModalHeader title={t("common:feedback.modal.title")} />
+            <ModalHeader title={t("feedback.modal.title")} />
             <ModalBody>
                 <FeedbackForm onClose={() => onOpenChange(false)} />
             </ModalBody>

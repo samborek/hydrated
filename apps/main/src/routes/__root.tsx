@@ -15,6 +15,7 @@ import { RouterContext } from "@/App"
 import { Loader } from "@/components/Loader/Loader"
 import { ProviderRpcSelect } from "@/components/ProviderRpcSelect/ProviderRpcSelect"
 import { UserFeedback } from "@/components/UserFeedback/UserFeedback"
+import { SStatusBar } from "@/components/StatusBar.styled"
 import { RouteError } from "@/components/RouteError"
 import { MainLayout } from "@/modules/layout/MainLayout"
 import { useHasTopNavbar } from "@/modules/layout/use-has-top-navbar"
@@ -67,8 +68,10 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     return (
       <>
         <Loader />
-        <UserFeedback bottomPinned />
-        <ProviderRpcSelect bottomPinned />
+        <SStatusBar>
+          <UserFeedback />
+          <ProviderRpcSelect />
+        </SStatusBar>
       </>
     )
   },
@@ -120,8 +123,10 @@ function RootComponent() {
       {isApiLoaded && <Subscriptions />}
       {isConnected && <AccountSubscriptions account={account} />}
       {!hasTopNavbar && <MobileTabBar />}
-      <UserFeedback />
-      <ProviderRpcSelect />
+      <SStatusBar>
+        <UserFeedback />
+        <ProviderRpcSelect />
+      </SStatusBar>
       <TransactionManager />
       <Web3Connect />
     </>

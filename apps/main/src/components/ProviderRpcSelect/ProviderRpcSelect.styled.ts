@@ -1,6 +1,5 @@
 import { css } from "@emotion/react"
 import styled from "@emotion/styled"
-import { mq } from "@galacticcouncil/ui/theme"
 
 const bottomPinnedStyle = css`
   position: fixed;
@@ -15,15 +14,6 @@ export const SContainer = styled.div<{ readonly bottomPinned?: boolean }>(
     padding: 8px;
     padding-bottom: 80px;
 
-    ${bottomPinned
-      ? bottomPinnedStyle
-      : css`
-          display: flex;
-          justify-content: end;
-        `}
-
-    ${mq("lg")} {
-      ${bottomPinnedStyle}
-    }
+    ${bottomPinned && bottomPinnedStyle}
   `,
 )

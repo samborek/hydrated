@@ -113,7 +113,7 @@ const SSubmitFooter = styled.footer(
     border-top: 1px solid ${theme.details?.separators ?? "transparent"};
     background: ${theme.surfaces?.themeBasePalette?.surfaceHigh ??
       theme.surfaces?.themeBasePalette?.background ??
-      theme.colors?.background};
+      "inherit"};
   `,
 )
 

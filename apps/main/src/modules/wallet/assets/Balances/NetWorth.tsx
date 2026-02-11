@@ -105,7 +105,7 @@ export const NetWorth: FC<Props> = ({
               series: [
                 {
                   label: t("balances.header.netWorth"),
-                  key: "netWorth" as any,
+                  key: "netWorth" as const,
                 },
               ],
             }}

@@ -14,6 +14,17 @@ export type NetWorthData = {
   readonly time: Date
 }
 
+type NetWorthQueryNode = {
+  buckets?: Array<{ transferableNorm?: string; timestamp?: string }>
+  referenceAssetId?: string
+}
+
+type NetWorthQueryData = {
+  accountTotalBalancesByPeriod?: {
+    nodes: NetWorthQueryNode[]
+  }
+}
+
 export const useNetWorthData = (
   timeFrame: NetWorthTimeFrameType | null,
   currentNetWorth: string,
@@ -49,6 +60,7 @@ export const useNetWorthData = (
     ),
     placeholderData: (prev) => prev,
   })
+  const queryData = data as NetWorthQueryData | undefined
 
   const balances = useMemo(() => {
     if (isLoading || isCurrentLoading) {
@@ -56,8 +68,8 @@ export const useNetWorthData = (
     }
 
     const buckets =
-      data?.accountTotalBalancesByPeriod.nodes.flatMap(
-        (node) => (node as any)?.buckets ?? [],
+      queryData?.accountTotalBalancesByPeriod?.nodes?.flatMap(
+        (node: NetWorthQueryNode) => node?.buckets ?? [],
       ) ?? []
 
     const currentNetWorthNum = Number(currentNetWorth)
@@ -112,11 +124,11 @@ export const useNetWorthData = (
         }),
       )
       .concat()
-  }, [data, isLoading, currentNetWorth, isCurrentLoading])
+  }, [queryData, isLoading, currentNetWorth, isCurrentLoading])
 
   return {
     balances,
-    assetId: data?.accountTotalBalancesByPeriod.nodes[0]?.referenceAssetId,
+    assetId: queryData?.accountTotalBalancesByPeriod?.nodes?.[0]?.referenceAssetId,
     isError,
     isLoading: isLoading || isCurrentLoading,
     isSuccess,

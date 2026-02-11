@@ -7,8 +7,6 @@ import {
   SnowbridgeSdk,
   snowbridgeStatusToEthQuery,
   snowbridgeStatusToPolkadotQuery,
-  TransferStatusToEthQuery,
-  TransferStatusToPolkadotQuery,
 } from "@galacticcouncil/indexer/snowbridge"
 import {
   HexString,
@@ -126,13 +124,13 @@ const getExtrinsicIndex = async (
       hash: txHash as HexString,
     })
 
-    const res = await queryClient.fetchQuery(
+    const res = (await queryClient.fetchQuery(
       extrinsicByBlockAndIndexQuery(
         indexerSdk,
         Number(receipt.blockNumber),
         Number(receipt.transactionIndex),
       ),
-    )
+    )) as { extrinsics?: Array<{ block: { height: number }; indexInBlock: number }> } | undefined
 
     const extrinsic = first(res?.extrinsics ?? [])
     if (!extrinsic) return null
@@ -142,9 +140,9 @@ const getExtrinsicIndex = async (
       index: extrinsic.indexInBlock,
     }
   } else {
-    const res = await queryClient.fetchQuery(
+    const res = (await queryClient.fetchQuery(
       extrinsicByHashQuery(indexerSdk, txHash),
-    )
+    )) as { extrinsics?: Array<{ block: { height: number }; indexInBlock: number }> } | undefined
 
     const extrinsic = first(res?.extrinsics ?? [])
     if (!extrinsic) return null
@@ -234,8 +232,7 @@ const wormhole =
 
 const parseSnowbridgeResult = (
   result:
-    | TransferStatusToPolkadotQuery["transferStatusToPolkadots"][number]
-    | TransferStatusToEthQuery["transferStatusToEthereums"][number]
+    | { status?: number; messageId?: string; timestamp?: string }
     | undefined,
 ): ToastStatus => {
   const status = (() => {
@@ -262,20 +259,24 @@ const snowbridge =
     const hash = toast.meta.txHash
 
     if (toast.meta.ecosystem === CallType.Evm) {
-      const data = await queryClient.fetchQuery(
+      const data = (await queryClient.fetchQuery(
         snowbridgeStatusToPolkadotQuery(snowbridgeSdk, hash),
-      )
+      )) as { transferStatusToPolkadots?: unknown[] } | undefined
 
-      const result = data?.transferStatusToPolkadots?.[0]
+      const result = data?.transferStatusToPolkadots?.[0] as
+        | { status?: number; messageId?: string; timestamp?: string }
+        | undefined
       return parseSnowbridgeResult(result)
     }
 
     if (toast.meta.ecosystem === CallType.Substrate) {
-      const data = await queryClient.fetchQuery(
+      const data = (await queryClient.fetchQuery(
         snowbridgeStatusToEthQuery(snowbridgeSdk, hash),
-      )
+      )) as { transferStatusToEthereums?: unknown[] } | undefined
 
-      const result = data?.transferStatusToEthereums?.[0]
+      const result = data?.transferStatusToEthereums?.[0] as
+        | { status?: number; messageId?: string; timestamp?: string }
+        | undefined
       return parseSnowbridgeResult(result)
     }
 

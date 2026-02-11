@@ -127,6 +127,12 @@ const globalStyles = (theme: Theme) => css`
 
   html {
     font-size: calc(${ROOT_FONT_SIZE}px * var(${UI_SCALE_VAR}));
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   body {

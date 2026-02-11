@@ -5,16 +5,14 @@ import { useTranslation } from "react-i18next"
 import { SContainer } from "./UserFeedback.styled"
 import { FeedbackModal } from "./components/FeedbackModal"
 
-type Props = {
-    readonly bottomPinned?: boolean
-}
+type Props = {}
 
-export const UserFeedback: FC<Props> = ({ bottomPinned }) => {
+export const UserFeedback: FC<Props> = () => {
     const { t } = useTranslation()
     const [modalOpen, setModalOpen] = useState(false)
 
     return (
-        <SContainer bottomPinned={bottomPinned}>
+        <SContainer>
             <Button
                 variant="tertiary"
                 size="small"
@@ -22,7 +20,7 @@ export const UserFeedback: FC<Props> = ({ bottomPinned }) => {
                 onClick={() => setModalOpen(true)}
             >
                 <Icon component={MessageSquare} size="s" />
-                <Text fs="p6" fw={500}>{t("common:feedback.pill")}</Text>
+                <Text fs="p6" fw={500}>{(t as any)("common:feedback.pill")}</Text>
             </Button>
             <FeedbackModal open={modalOpen} onOpenChange={setModalOpen} />
         </SContainer>

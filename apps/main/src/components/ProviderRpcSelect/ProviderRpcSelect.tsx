@@ -16,11 +16,9 @@ import { RpcStatusTooltipContent } from "@/components/ProviderRpcSelect/componen
 import { SContainer } from "@/components/ProviderRpcSelect/ProviderRpcSelect.styled"
 import { useRpcProvider } from "@/providers/rpcProvider"
 
-type Props = {
-  readonly bottomPinned?: boolean
-}
+type Props = {}
 
-export const ProviderRpcSelect: FC<Props> = ({ bottomPinned }) => {
+export const ProviderRpcSelect: FC<Props> = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const provider = useRpcProvider()
   const { isMobile } = useBreakpoints()
@@ -30,7 +28,7 @@ export const ProviderRpcSelect: FC<Props> = ({ bottomPinned }) => {
   const squidUrl = useSquidUrl()
 
   return (
-    <SContainer bottomPinned={bottomPinned}>
+    <SContainer>
       <Tooltip
         text={!isMobile ? <RpcStatusTooltipContent /> : undefined}
         asChild

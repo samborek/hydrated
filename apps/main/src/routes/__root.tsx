@@ -1,8 +1,6 @@
 import { Account, useAccount } from "@galacticcouncil/web3-connect"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { createRootRouteWithContext, HeadContent } from "@tanstack/react-router"
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
 import { FC, lazy } from "react"
 
 import { useAccountPermitNonce, useAccountUniques } from "@/api/account"
@@ -40,6 +38,18 @@ const Web3ConnectModal = lazy(async () => ({
     (m) => m.Web3ConnectModal,
   ),
 }))
+
+const ReactQueryDevtools = lazy(() =>
+  import("@tanstack/react-query-devtools").then((m) => ({
+    default: m.ReactQueryDevtools,
+  })),
+)
+
+const TanStackRouterDevtools = lazy(() =>
+  import("@tanstack/react-router-devtools").then((m) => ({
+    default: m.TanStackRouterDevtools,
+  })),
+)
 
 const Subscriptions = () => {
   const rpcProvider = useRpcProvider()

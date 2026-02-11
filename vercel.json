@@ -1,0 +1,5 @@
+{
+    "buildCommand": "yarn turbo run build --filter=@galacticcouncil/main",
+    "outputDirectory": "apps/main/build",
+    "framework": "vite"
+}

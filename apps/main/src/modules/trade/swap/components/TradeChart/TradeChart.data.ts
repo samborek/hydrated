@@ -1,4 +1,5 @@
 import {
+  TradePricesQuery,
   TimeSeriesBucketTimeRange,
   tradePricesQuery,
 } from "@galacticcouncil/indexer/squid"
@@ -75,7 +76,9 @@ export const useTradeChartData = ({
       return []
     }
 
-    const prices = data.assetPairPricesAndVolumesByPeriod.nodes
+    const tradeData = data as TradePricesQuery
+
+    const prices = tradeData.assetPairPricesAndVolumesByPeriod.nodes
       .flatMap((node) => node?.buckets ?? [])
       .filter((bucket) => isValidBigSource(bucket.priceAvrgNorm))
       .map((bucket) => ({

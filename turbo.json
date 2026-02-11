@@ -11,6 +11,7 @@
       ],
       "outputs": [
         "build/**",
+        "dist/**",
         "src/theme/tokens/*.json"
       ]
     },

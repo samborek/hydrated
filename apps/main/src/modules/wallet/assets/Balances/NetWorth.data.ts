@@ -57,7 +57,7 @@ export const useNetWorthData = (
 
     const buckets =
       data?.accountTotalBalancesByPeriod.nodes.flatMap(
-        (node) => node?.buckets ?? [],
+        (node) => (node as any)?.buckets ?? [],
       ) ?? []
 
     const currentNetWorthNum = Number(currentNetWorth)
@@ -79,7 +79,7 @@ export const useNetWorthData = (
       ]
     }
 
-    const balances = buckets.map<NetWorthData>((bucket) => ({
+    const balances = buckets.map<NetWorthData>((bucket: any) => ({
       netWorth: Number(bucket.transferableNorm) || 0,
       time: new Date(Number(bucket.timestamp)),
     }))
@@ -88,26 +88,26 @@ export const useNetWorthData = (
 
     const withCurrentBalance = currentNetWorthNum
       ? balances.concat([
-          {
-            netWorth: currentNetWorthNum,
-            time: lastBalance
-              ? new Date(lastBalance.time.valueOf() + 1000)
-              : new Date(),
-          },
-        ])
+        {
+          netWorth: currentNetWorthNum,
+          time: lastBalance
+            ? new Date(lastBalance.time.valueOf() + 1000)
+            : new Date(),
+        },
+      ])
       : balances.length === 1 && lastBalance
         ? balances.concat([
-            {
-              netWorth: lastBalance.netWorth,
-              time: new Date(lastBalance.time.valueOf() + 1000),
-            },
-          ])
+          {
+            netWorth: lastBalance.netWorth,
+            time: new Date(lastBalance.time.valueOf() + 1000),
+          },
+        ])
         : balances
 
     return withCurrentBalance
       .sort(
         sortBy({
-          select: (balances) => balances.time,
+          select: (balances: NetWorthData) => balances.time,
           compare: chronologically,
         }),
       )

@@ -96,7 +96,7 @@ export const NetWorth: FC<Props> = ({
             yAxisHidden
             verticalGridHidden
             curveType="linear"
-            onCrosshairMove={setCrosshair}
+            onCrosshairMove={(data) => setCrosshair(data as NetWorthData | null)}
             config={{
               xAxisKey: "time",
               xAxisType: "time",
@@ -105,7 +105,7 @@ export const NetWorth: FC<Props> = ({
               series: [
                 {
                   label: t("balances.header.netWorth"),
-                  key: "netWorth",
+                  key: "netWorth" as any,
                 },
               ],
             }}

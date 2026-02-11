@@ -14,6 +14,7 @@ import { useAccountBalanceSubscription } from "@/api/subscriptions"
 import { RouterContext } from "@/App"
 import { Loader } from "@/components/Loader/Loader"
 import { ProviderRpcSelect } from "@/components/ProviderRpcSelect/ProviderRpcSelect"
+import { UserFeedback } from "@/components/UserFeedback/UserFeedback"
 import { RouteError } from "@/components/RouteError"
 import { MainLayout } from "@/modules/layout/MainLayout"
 import { useHasTopNavbar } from "@/modules/layout/use-has-top-navbar"
@@ -66,6 +67,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     return (
       <>
         <Loader />
+        <UserFeedback bottomPinned />
         <ProviderRpcSelect bottomPinned />
       </>
     )
@@ -118,6 +120,7 @@ function RootComponent() {
       {isApiLoaded && <Subscriptions />}
       {isConnected && <AccountSubscriptions account={account} />}
       {!hasTopNavbar && <MobileTabBar />}
+      <UserFeedback />
       <ProviderRpcSelect />
       <TransactionManager />
       <Web3Connect />

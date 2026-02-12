@@ -25,8 +25,8 @@ export type Branded<T> = true & { [__brand]: T }
 
 export const getToken =
   (token: ThemeToken | ThemeToken[]) =>
-  (theme: ThemeUI): ThemeUICSSObject =>
-    Array.isArray(token) ? token.map((t) => get(theme, t)) : get(theme, token)
+    (theme: ThemeUI): any =>
+      Array.isArray(token) ? token.map((t) => get(theme, t)) : get(theme, token)
 
 export function createStyles<T extends SerializedStyles>(
   callback: (theme: EmotionTheme) => T,

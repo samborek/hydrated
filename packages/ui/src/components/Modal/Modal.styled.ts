@@ -114,6 +114,19 @@ export const SModalContent = styled(Content, {
       ${contentFit === "hug" &&
       css`
         align-self: start;
+        /* Cap height on short viewports; paper fills space so form scroll + footer stays floating */
+        max-height: min(90vh, 85dvh);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+
+        & > *:last-child {
+          flex: 1;
+          min-height: 0;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+        }
       `}
 
       &[data-state="open"] {

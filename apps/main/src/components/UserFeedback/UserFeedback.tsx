@@ -1,15 +1,14 @@
 import { Button, Icon, Text } from "@galacticcouncil/ui/components"
 import { MessageSquare } from "@galacticcouncil/ui/assets/icons"
-import { FC, useState } from "react"
+import { FC } from "react"
 import { useTranslation } from "react-i18next"
+import Userback from "@userback/widget"
 import { SContainer } from "./UserFeedback.styled"
-import { FeedbackModal } from "./components/FeedbackModal"
 
 type Props = {}
 
 export const UserFeedback: FC<Props> = () => {
     const { t } = useTranslation()
-    const [modalOpen, setModalOpen] = useState(false)
 
     return (
         <SContainer>
@@ -17,12 +16,14 @@ export const UserFeedback: FC<Props> = () => {
                 variant="tertiary"
                 size="small"
                 outline
-                onClick={() => setModalOpen(true)}
+                onClick={async () => {
+                    const ub = await Userback("A-afTDRIvoQaVlOLXCoXTYpKixk")
+                    ub.open()
+                }}
             >
                 <Icon component={MessageSquare} size="s" />
                 <Text fs="p6" fw={500}>{(t as any)("common:feedback.pill")}</Text>
             </Button>
-            <FeedbackModal open={modalOpen} onOpenChange={setModalOpen} />
         </SContainer>
     )
 }

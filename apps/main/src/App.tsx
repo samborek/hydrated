@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createRouter, RouterProvider } from "@tanstack/react-router"
 import { I18nextProvider } from "react-i18next"
 import { Toaster } from "sonner"
-import Userback from "@userback/widget"
 
 import { Page404 } from "@/components/Page404"
 import { ProvideRpcResolver } from "@/components/ProviderRpcSelect/ProviderRpcResolver"
@@ -17,8 +16,6 @@ import { RpcProvider } from "@/providers/rpcProvider"
 import { routeTree } from "./routeTree.gen"
 
 const queryClient = new QueryClient()
-
-Userback("A-afTDRIvoQaVlOLXCoXTYpKixk")
 export interface RouterContext {
   queryClient: QueryClient
   i18n: typeof i18n

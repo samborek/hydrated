@@ -233,8 +233,8 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
       {/* Strategy Info */}
       <StrategyInfo />
 
-      {/* Performance Chart */}
-      <NetApyChart />
+      {/* Performance Chart – hidden for now, remove conditional to re-enable */}
+      {false && <NetApyChart />}
     </Stack>
   )
 }

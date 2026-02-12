@@ -26,6 +26,12 @@ export const WalletAssetsSubpageMenu = () => {
           title: t("liquidity"),
           resetScroll: false,
         },
+        {
+          to: "/wallet/assets",
+          search: { category: "looping" },
+          title: t("looping", "Looping"),
+          resetScroll: false,
+        },
       ]}
     />
   )

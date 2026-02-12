@@ -33,6 +33,7 @@ export const MultiplyPositionsTile: FC = () => {
   const [selectedPositionId, setSelectedPositionId] = useState<string | null>(
     null,
   )
+  const [modalMode, setModalMode] = useState<"adjust" | "close">("adjust")
 
   const selectedPosition = positions.find((p) => p.id === selectedPositionId)
 
@@ -156,7 +157,14 @@ export const MultiplyPositionsTile: FC = () => {
                 <PositionRow
                   key={position.id}
                   position={position}
-                  onManage={() => setSelectedPositionId(position.id)}
+                  onManage={() => {
+                    setSelectedPositionId(position.id)
+                    setModalMode("close")
+                  }}
+                  onClose={() => {
+                    setSelectedPositionId(position.id)
+                    setModalMode("close")
+                  }}
                 />
               ))}
             </Stack>
@@ -169,6 +177,8 @@ export const MultiplyPositionsTile: FC = () => {
           isOpen={!!selectedPosition}
           onClose={() => setSelectedPositionId(null)}
           position={selectedPosition}
+          initialTab={modalMode}
+          showTabs={modalMode === "adjust"}
           onUpdate={(updates) => updatePosition(selectedPosition.id, updates)}
           onClosePosition={() => {
             removePosition(selectedPosition.id)
@@ -183,7 +193,8 @@ export const MultiplyPositionsTile: FC = () => {
 const PositionRow: FC<{
   position: SimulatedPosition
   onManage: () => void
-}> = ({ position, onManage }) => {
+  onClose: () => void
+}> = ({ position, onManage, onClose }) => {
   const { themeProps: theme } = useTheme()
 
   // Mock data for the new columns
@@ -325,7 +336,7 @@ const PositionRow: FC<{
           variant="tertiary"
           onClick={(e) => {
             e.stopPropagation()
-            onManage()
+            onClose()
           }}
         >
           <CircleStop size={14} />

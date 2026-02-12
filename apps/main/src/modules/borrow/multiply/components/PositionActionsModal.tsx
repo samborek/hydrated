@@ -1,4 +1,6 @@
 import {
+  AssetLogo as BaseAssetLogo,
+  Box,
   Button,
   Flex,
   Modal,
@@ -9,9 +11,13 @@ import {
 } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
+import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
+import { ArrowDown, ArrowUp } from "lucide-react"
 import { FC, useState } from "react"
 import { toast } from "sonner"
 
+import primeLogo from "@/assets/tokens/prime.png"
+import { AssetLogo } from "@/components/AssetLogo"
 import { MultiplySidePanel } from "@/modules/borrow/multiply/components/MultiplySidePanel/MultiplySidePanel"
 import { SimulatedPosition } from "@/modules/borrow/multiply/states/useMultiplySimulationStore"
 
@@ -21,6 +27,8 @@ interface PositionActionsModalProps {
   position: SimulatedPosition
   onUpdate: (updates: Partial<SimulatedPosition>) => void
   onClosePosition: () => void
+  initialTab?: "adjust" | "close"
+  showTabs?: boolean
 }
 
 export const PositionActionsModal: FC<PositionActionsModalProps> = ({
@@ -29,9 +37,11 @@ export const PositionActionsModal: FC<PositionActionsModalProps> = ({
   position,
   onUpdate,
   onClosePosition,
+  initialTab = "adjust",
+  showTabs = true,
 }) => {
   const { themeProps: theme } = useTheme()
-  const [activeTab, setActiveTab] = useState<"adjust" | "close">("adjust")
+  const [activeTab, setActiveTab] = useState<"adjust" | "close">(initialTab)
 
   const handleClosePosition = () => {
     onClosePosition()
@@ -40,30 +50,41 @@ export const PositionActionsModal: FC<PositionActionsModalProps> = ({
     })
   }
 
+  const isBull = position.strategy === "bull" || !position.strategy
+  const isPrime = position.collateralAsset.symbol === "PRIME"
+  const mockPnl = position.pnl ? Number(position.pnl) : Math.random() * 20 - 5
+  const isPositive = mockPnl >= 0
+
   return (
     <Modal open={isOpen} onOpenChange={onClose}>
       <ModalHeader
-        title={`Manage ${position.collateralAsset.symbol} / ${position.debtAsset.symbol}`}
+        title={
+          activeTab === "close" && !showTabs
+            ? "Close Position"
+            : `Manage ${position.collateralAsset.symbol} / ${position.debtAsset.symbol}`
+        }
       />
       <ModalBody>
         <Stack gap={getTokenPx("scales.paddings.l")(theme as never)}>
           {/* Tabs */}
-          <Flex gap={2}>
-            <Button
-              size="small"
-              variant={activeTab === "adjust" ? "primary" : "secondary"}
-              onClick={() => setActiveTab("adjust")}
-            >
-              Adjust
-            </Button>
-            <Button
-              size="small"
-              variant={activeTab === "close" ? "danger" : "secondary"}
-              onClick={() => setActiveTab("close")}
-            >
-              Close
-            </Button>
-          </Flex>
+          {showTabs && (
+            <Flex gap={2}>
+              <Button
+                size="small"
+                variant={activeTab === "adjust" ? "primary" : "secondary"}
+                onClick={() => setActiveTab("adjust")}
+              >
+                Adjust
+              </Button>
+              <Button
+                size="small"
+                variant={activeTab === "close" ? "danger" : "secondary"}
+                onClick={() => setActiveTab("close")}
+              >
+                Close
+              </Button>
+            </Flex>
+          )}
 
           {activeTab === "adjust" ? (
             <MultiplySidePanel
@@ -88,29 +109,157 @@ export const PositionActionsModal: FC<PositionActionsModalProps> = ({
               }}
             />
           ) : (
-            <Stack gap={getTokenPx("scales.paddings.m")(theme as never)}>
-              <div
-                style={{
-                  padding: "16px",
-                  background: theme.accents.danger.secondary,
-                  borderRadius: "8px",
-                  border: `1px solid ${theme.accents.danger.emphasis}`,
-                }}
+            <Stack gap={getTokenPx("scales.paddings.l")(theme as never)}>
+              {/* Position details matching the list view - NO CONTAINER */}
+              <Flex direction="column" gap={getTokenPx("scales.paddings.l")(theme as never)}>
+                {/* Row 1: Assets & Status */}
+                <Flex justify="space-between" align="center">
+                  <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
+                    <Flex>
+                      {isPrime ? (
+                        <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
+                      ) : (
+                        <AssetLogo id={position.collateralAsset.id} size="medium" />
+                      )}
+                      <div style={{ marginLeft: `-${theme.scales.paddings.m}px` }}>
+                        {position.debtAsset.symbol === "HUSD" ||
+                          position.debtAsset.symbol === "CASH" ? (
+                          <AssetLogo id={HOLLAR_ASSET_ID} size="medium" />
+                        ) : (
+                          <AssetLogo id={position.debtAsset.id} size="medium" />
+                        )}
+                      </div>
+                    </Flex>
+                    <Flex direction="column">
+                      <Flex align="center" gap={1}>
+                        <Text fs="p3" fw={600}>
+                          {position.collateralAsset.symbol} /{" "}
+                          {position.debtAsset.symbol === "CASH"
+                            ? "HUSD"
+                            : position.debtAsset.symbol}
+                        </Text>
+                        <Flex
+                          align="center"
+                          justify="center"
+                          sx={{
+                            width: 16,
+                            height: 16,
+                            borderRadius: "full",
+                            bg: isBull
+                              ? theme.accents.success.emphasis
+                              : theme.accents.danger.emphasis,
+                            color: isBull
+                              ? theme.accents.success.onEmphasis
+                              : theme.accents.danger.onPrimary,
+                          }}
+                        >
+                          {isBull ? (
+                            <ArrowUp size={10} strokeWidth={3} />
+                          ) : (
+                            <ArrowDown size={10} strokeWidth={3} />
+                          )}
+                        </Flex>
+                      </Flex>
+                      <Text fs="p6" color={theme.text.low}>
+                        {position.leverage.toFixed(2)}x Leverage
+                      </Text>
+                    </Flex>
+                  </Flex>
+                  <Flex direction="column" align="flex-end">
+                    <Text
+                      fw={600}
+                      color={
+                        isPositive
+                          ? theme.details.values.positive
+                          : theme.details.values.negative
+                      }
+                    >
+                      {isPositive ? "+" : "-"}${Math.abs(mockPnl).toFixed(2)}
+                    </Text>
+                    <Text fs="p6" color={theme.text.low}>
+                      P&L (Est.)
+                    </Text>
+                  </Flex>
+                </Flex>
+
+                <Box
+                  sx={{
+                    height: "1px",
+                    width: "calc(100% + 2 * var(--modal-content-padding, 20px))",
+                    marginInline: "var(--modal-content-inset, -20px)",
+                    background: theme.details.separators,
+                    my: 0,
+                  }}
+                />
+
+                {/* Row 2: Basic Stats */}
+                <Flex justify="space-between">
+                  <Flex direction="column" gap={1}>
+                    <Text fs="p6" color={theme.text.low}>
+                      Collateral
+                    </Text>
+                    <Text fs="p4" fw={500}>
+                      {Number(position.collateralAmount).toFixed(2)}{" "}
+                      {position.collateralAsset.symbol}
+                    </Text>
+                  </Flex>
+                  <Flex direction="column" gap={1} align="flex-end">
+                    <Text fs="p6" color={theme.text.low}>
+                      Net APY
+                    </Text>
+                    <Text fs="p4" fw={600} color={theme.details.values.positive}>
+                      {position.netApy.toFixed(2)}%
+                    </Text>
+                  </Flex>
+                </Flex>
+
+                <Box
+                  sx={{
+                    height: "1px",
+                    width: "calc(100% + 2 * var(--modal-content-padding, 20px))",
+                    marginInline: "var(--modal-content-inset, -20px)",
+                    background: theme.details.separators,
+                    my: 0,
+                  }}
+                />
+
+                {/* Row 3: Prices */}
+                <Flex justify="space-between">
+                  <Flex direction="column" gap={1}>
+                    <Text fs="p6" color={theme.text.low}>
+                      Entry Price
+                    </Text>
+                    <Text fs="p4" fw={500}>
+                      ${Number(position.entryPrice || 0).toFixed(2)}
+                    </Text>
+                  </Flex>
+                  <Flex direction="column" gap={1} align="flex-end">
+                    <Text fs="p6" color={theme.text.low}>
+                      Liquidation Price
+                    </Text>
+                    <Text fs="p4" fw={500} color={theme.accents.danger.emphasis}>
+                      ${Number(position.liquidationPrice || 0).toFixed(2)}
+                    </Text>
+                  </Flex>
+                </Flex>
+              </Flex>
+
+              <Text
+                fs="p5"
+                color={theme.text.medium}
+                sx={{ textAlign: "center", mt: 4 }}
               >
-                <Text fs="p3" color={theme.accents.danger.onPrimary}>
-                  Are you sure you want to close this position?
-                </Text>
-                <Text fs="p5" color={theme.accents.danger.onPrimary} mt={1}>
-                  This will sell your collateral and repay the debt.
-                </Text>
-              </div>
+                Are you sure you want to close this position? This will sell your
+                collateral and repay the debt.
+              </Text>
+
               <Button
                 sx={{ width: "100%" }}
                 size="large"
                 variant="danger"
                 onClick={handleClosePosition}
               >
-                Confirm Close
+                Close Position
               </Button>
             </Stack>
           )}

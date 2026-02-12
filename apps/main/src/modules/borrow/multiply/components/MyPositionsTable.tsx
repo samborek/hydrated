@@ -20,13 +20,16 @@ import {
   useMultiplySimulationStore,
 } from "@/modules/borrow/multiply/states/useMultiplySimulationStore"
 
-export const MyPositionsTable: FC = () => {
+export const MyPositionsTable: FC<{ searchPhrase?: string }> = ({
+  searchPhrase,
+}) => {
   const { themeProps: theme } = useTheme()
   const { positions, removePosition, updatePosition } =
     useMultiplySimulationStore()
   const [selectedPositionId, setSelectedPositionId] = useState<string | null>(
     null,
   )
+  const [modalMode, setModalMode] = useState<"adjust" | "close">("adjust")
 
   const columnHelper = createColumnHelper<SimulatedPosition>()
 
@@ -159,9 +162,22 @@ export const MyPositionsTable: FC = () => {
             <Button
               size="small"
               variant="secondary"
-              onClick={() => setSelectedPositionId(row.original.id)}
+              onClick={() => {
+                setSelectedPositionId(row.original.id)
+                setModalMode("close")
+              }}
             >
               Manage
+            </Button>
+            <Button
+              size="small"
+              variant="tertiary"
+              onClick={() => {
+                setSelectedPositionId(row.original.id)
+                setModalMode("close")
+              }}
+            >
+              Close
             </Button>
           </Flex>
         ),
@@ -176,8 +192,6 @@ export const MyPositionsTable: FC = () => {
     [theme, columnHelper],
   )
 
-  if (positions.length === 0) return null
-
   const selectedPosition = positions.find((p) => p.id === selectedPositionId)
 
   return (
@@ -185,6 +199,16 @@ export const MyPositionsTable: FC = () => {
       <DataTable
         data={positions}
         columns={columns}
+        globalFilter={searchPhrase}
+        globalFilterFn={(row) => {
+          const p = row.original
+          const search = searchPhrase?.toLowerCase() || ""
+          if (!search) return true
+          return (
+            p.collateralAsset.symbol.toLowerCase().includes(search) ||
+            p.debtAsset.symbol.toLowerCase().includes(search)
+          )
+        }}
         sx={{
           "& table tbody td": {
             paddingTop: theme.scales.paddings.m,
@@ -197,6 +221,8 @@ export const MyPositionsTable: FC = () => {
           isOpen={!!selectedPosition}
           onClose={() => setSelectedPositionId(null)}
           position={selectedPosition}
+          initialTab={modalMode}
+          showTabs={modalMode === "adjust"}
           onUpdate={(updates) => updatePosition(selectedPosition.id, updates)}
           onClosePosition={() => {
             removePosition(selectedPosition.id)

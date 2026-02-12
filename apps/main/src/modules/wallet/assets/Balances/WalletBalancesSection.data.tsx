@@ -4,6 +4,7 @@ import { useMemo } from "react"
 import { AssetType } from "@/api/assets"
 import { useUserBorrowSummary } from "@/api/borrow"
 import { useMyIsolatedPoolsLiquidity } from "@/modules/wallet/assets/MyLiquidity/MyIsolatedPoolsLiquidity.data"
+import { useMultiplySimulationStore } from "@/modules/borrow/multiply/states/useMultiplySimulationStore"
 import {
   Balance,
   isOmnipoolDepositPosition,
@@ -47,7 +48,9 @@ export const useWalletBalancesSectionData = () => {
       AssetType.ERC20,
     ])
 
-  const { liquidityTotal, farmingTotal, assetsTotal } = useMemo(() => {
+  const { positions: loopingPositions } = useMultiplySimulationStore()
+
+  const { liquidityTotal, farmingTotal, assetsTotal, loopingTotal } = useMemo(() => {
     const omnipoolLiquidity = (positions?.all ?? []).reduce(
       (acc, position) => {
         acc.liquidity = acc.liquidity.plus(
@@ -108,8 +111,21 @@ export const useWalletBalancesSectionData = () => {
       isolatedPoolsLiquidityTotals.farming,
     )
 
-    return { omnipoolLiquidity, assetsTotal, liquidityTotal, farmingTotal }
-  }, [balancesWithPrice, isolatedPoolsLiquidity, positions?.all])
+    // TODO: Use real prices for accurate calculation when available. 
+    // Currently using a mocked logic similar to the table for consistent display if needed, 
+    // but here we should try to be as real as possible or stick to the store data if it has it.
+    // The previous analysis showed the table mocks the value: Number(position.collateralAmount) * 0.12
+    // We will use a similar approximation for now to match visual expectations until real price data is hooked up for these specific assets in this context.
+    // Ideally we would look up price by ID.
+    const loopingTotal = loopingPositions.reduce((acc, position) => {
+      // Simplified mock value calculation to match the visual tile for now
+      // In real app, obtain price for position.collateralAsset.id and position.debtAsset.id
+      const val = Big(position.collateralAmount).times(0.12)
+      return acc.plus(val)
+    }, Big(0))
+
+    return { omnipoolLiquidity, assetsTotal, liquidityTotal, farmingTotal, loopingTotal }
+  }, [balancesWithPrice, isolatedPoolsLiquidity, positions?.all, loopingPositions])
 
   return {
     assets: assetsTotal.toString(),
@@ -120,5 +136,6 @@ export const useWalletBalancesSectionData = () => {
     supply: userBorrowSummary?.totalLiquidityUSD ?? "",
     borrow: userBorrowSummary?.totalBorrowsUSD ?? "",
     isBorrowLoading: isLoadingBorrowSummary,
+    looping: loopingTotal.toString(),
   }
 }

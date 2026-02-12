@@ -1,5 +1,4 @@
 import { useAggregatedMarketStats, useMarketAssetsData } from "@galacticcouncil/money-market/hooks"
-import { ChevronRight } from "@galacticcouncil/ui/assets/icons"
 import {
   AssetLogo as BaseAssetLogo,
   Box,
@@ -8,7 +7,6 @@ import {
   DataTable,
   Flex,
   Grid,
-  Icon,
   Modal,
   ModalBody,
   ModalHeader,
@@ -21,11 +19,11 @@ import {
   ValueStats,
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
-import { css, getToken, getTokenPx, styled } from "@galacticcouncil/ui/utils"
+import { css, getTokenPx, styled } from "@galacticcouncil/ui/utils"
 import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
-import { LayoutGrid, List, Percent, AlertTriangle } from "lucide-react"
+import { ChevronRight, LayoutGrid, List, Percent, AlertTriangle } from "lucide-react"
 import { FC, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 
@@ -55,25 +53,31 @@ const SSection = styled.section(
   `,
 )
 
+
+
+
 const SLoopCard = styled.div(
   ({ theme }) => css`
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
-    border-radius: ${theme.scales.cornerRadius.xl}px;
-    padding: ${theme.scales.paddings.xl}px;
-    gap: ${theme.scales.paddings.l}px;
+    border-radius: ${theme.scales.cornerRadius.l}px;
+    padding: ${theme.scales.paddings.l}px;
+    gap: ${theme.scales.paddings.m}px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 186px;
+    min-height: 160px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
     text-decoration: none;
     color: inherit;
     height: 100%;
+    box-shadow: 0 1px 2px ${theme.details.borders}20;
 
     &:hover {
-      background: ${theme.surfaces.containers.high.hover};
+      border-color: ${theme.details.borders};
+      box-shadow: 0 4px 12px ${theme.details.borders}30;
+      transform: translateY(-1px);
     }
   `,
 )
@@ -318,11 +322,7 @@ export const MultiplyView: FC = () => {
         if (isMobile) {
           return (
             <Flex justify="flex-end" align="center" width="100%">
-              <Icon
-                component={ChevronRight}
-                size={16}
-                color={getToken("text.low")}
-              />
+              <ChevronRight size={20} style={{ color: theme.text.medium }} />
             </Flex>
           )
         }

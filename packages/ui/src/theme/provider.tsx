@@ -31,7 +31,7 @@ const ThemeContext = createContext<{
 }>({
   theme: getSystemTheme(),
   themePreference: "system",
-  setThemePreference: () => {},
+  setThemePreference: () => { },
 })
 
 type ThemeProviderProps = {

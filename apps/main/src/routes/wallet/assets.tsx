@@ -8,7 +8,7 @@ import { getPageMeta } from "@/config/navigation"
 import { WalletAssetsPage } from "@/modules/wallet/assets/WalletAssetsPage"
 
 const searchSchema = z.object({
-  category: z.enum(["all", "assets", "liquidity"]).default("all"),
+  category: z.enum(["all", "assets", "liquidity", "looping"]).default("all"),
 })
 
 const WalletAssetsSkeleton = () => {

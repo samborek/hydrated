@@ -87,7 +87,7 @@ export const themes = {
 }
 
 declare module "@emotion/react" {
-  export interface Theme extends ThemeProps {}
+  export interface Theme extends ThemeProps { }
 }
 
 export { ThemeProvider, useTheme } from "./provider"

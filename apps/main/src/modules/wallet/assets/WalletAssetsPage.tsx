@@ -10,6 +10,7 @@ import { HollarBanner } from "@/modules/borrow/hollar/HollarBanner"
 import { WalletBalances } from "@/modules/wallet/assets/Balances/WalletBalances"
 import { MyAssets } from "@/modules/wallet/assets/MyAssets/MyAssets"
 import { MyLiquidity } from "@/modules/wallet/assets/MyLiquidity/MyLiquidity"
+import { MyLooping } from "@/modules/wallet/assets/MyLooping/MyLooping"
 import { WalletRewards } from "@/modules/wallet/assets/Rewards/WalletRewards"
 import { WalletAssetsSubpageMenu } from "@/modules/wallet/assets/WalletAssetsSubpageMenu"
 import { WalletEmptyState } from "@/modules/wallet/WalletEmptyState"
@@ -59,6 +60,9 @@ export const WalletAssetsPage = () => {
           )}
           {(isMobile || category === "all" || category === "liquidity") && (
             <MyLiquidity searchPhrase={searchPhrase} />
+          )}
+          {(isMobile || category === "all" || category === "looping") && (
+            <MyLooping searchPhrase={searchPhrase} />
           )}
         </Flex>
       </Flex>

@@ -14,6 +14,7 @@ export const WalletBalancesSection: FC = () => {
     isLiquidityLoading,
     borrow,
     isBorrowLoading,
+    looping,
   } = useWalletBalancesSectionData()
 
   return (
@@ -38,6 +39,14 @@ export const WalletBalancesSection: FC = () => {
           amount: t("common:currency", { value: farms }),
         })}
         isLoading={isLiquidityLoading}
+      />
+      <Separator />
+      <ValueStats
+        size="small"
+        wrap={[false, false, true]}
+        label={t("balances.header.looping", "Looping")}
+        value={t("common:currency", { value: looping })}
+        isLoading={false}
       />
     </Flex>
   )

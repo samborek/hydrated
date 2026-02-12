@@ -2,7 +2,6 @@ import { Button, Icon, Text } from "@galacticcouncil/ui/components"
 import { MessageSquare } from "@galacticcouncil/ui/assets/icons"
 import { FC } from "react"
 import { useTranslation } from "react-i18next"
-import Userback from "@userback/widget"
 import { SContainer } from "./UserFeedback.styled"
 
 type Props = {}
@@ -16,9 +15,10 @@ export const UserFeedback: FC<Props> = () => {
                 variant="tertiary"
                 size="small"
                 outline
-                onClick={async () => {
-                    const ub = await Userback("A-afTDRIvoQaVlOLXCoXTYpKixk")
-                    ub.open()
+                onClick={() => {
+                    if ((window as any).Userback) {
+                        (window as any).Userback.open()
+                    }
                 }}
             >
                 <Icon component={MessageSquare} size="s" />

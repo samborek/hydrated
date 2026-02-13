@@ -54,20 +54,21 @@ const AssetRow = ({
   )
 }
 
-const StrategyInfo = () => {
+const StrategyInfo = ({ collateralAsset }: { collateralAsset: ComputedReserveData }) => {
   const { themeProps: theme } = useTheme()
+  const isGDOT = collateralAsset?.symbol === "GDOT"
+  const title = isGDOT ? "About GDOT" : "About Prime"
+
   return (
     <Paper p={getTokenPx("containers.paddings.primary")}>
       <Text fs="p1" fw={600} mb={getTokenPx("containers.paddings.primary")}>
-        About Prime
+        {title}
       </Text>
       <Stack gap={getTokenPx("containers.paddings.secondary")}>
         <Text fs="p3" color={theme.text.medium} lh="170%">
-          PRIME Multiply is a simple leveraged yield product that gives you
-          increased exposure to PRIME yields, while retaining 100% PRIME
-          exposure. This can enable users to earn higher PRIME yields than they
-          would by simply holding PRIME. PRIME is a yield-bearing token
-          developed in partnership with Hastra, Figure and Provenance.
+          {isGDOT
+            ? "GDOT Multiply is a leveraged yield product that gives you increased exposure to Polkadot ecosystem yields through liquid staked DOT."
+            : "PRIME Multiply is a simple leveraged yield product that gives you increased exposure to PRIME yields, while retaining 100% PRIME exposure. This can enable users to earn higher PRIME yields than they would by simply holding PRIME."}
         </Text>
         <Box>
           <Text fs="p3" fw={600} mb={getTokenPx("containers.paddings.quart")}>
@@ -231,7 +232,7 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
       </Paper>
 
       {/* Strategy Info */}
-      <StrategyInfo />
+      <StrategyInfo collateralAsset={collateralAsset} />
 
       {/* Performance Chart – hidden for now, remove conditional to re-enable */}
       {false && <NetApyChart />}

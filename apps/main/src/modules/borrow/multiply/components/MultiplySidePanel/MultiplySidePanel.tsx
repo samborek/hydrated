@@ -153,6 +153,9 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
     setCollateralAmount("")
   }
 
+  const isPrimeMarket =
+    collateralAsset?.symbol === "PRIME" || collateralAsset?.symbol === "GDOT"
+
   // Determine colors based on strategy
   const strategyColor =
     strategy === "bull"
@@ -196,65 +199,67 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
 
         <SMultiplySectionSeparator />
 
-        {/* Strategy Toggle */}
-        <Flex gap={getTokenPx("scales.paddings.m")(theme as never)}>
-          <Button
-            variant={strategy === "bull" ? "primary" : "secondary"}
-            sx={{
-              flex: 1,
-              bg:
-                strategy === "bull"
-                  ? theme.accents.success.emphasis
-                  : theme.buttons.primary.low.rest,
-              color:
-                strategy === "bull"
-                  ? theme.accents.success.onEmphasis
-                  : theme.buttons.primary.low.onButton,
-              borderRadius: "32px",
-              height: "40px",
-              "&:hover:not(:disabled):not([aria-disabled='true'])": {
-                bg: theme.accents.success.primary,
-              },
-            }}
-            onClick={() => setStrategy("bull")}
-          >
-            <Flex
-              align="center"
-              gap={getTokenPx("scales.paddings.xs")(theme as never)}
+        {/* Strategy Toggle - Hidden for Prime Market assets */}
+        {!isPrimeMarket && (
+          <Flex gap={getTokenPx("scales.paddings.m")(theme as never)}>
+            <Button
+              variant={strategy === "bull" ? "primary" : "secondary"}
+              sx={{
+                flex: 1,
+                bg:
+                  strategy === "bull"
+                    ? theme.accents.success.emphasis
+                    : theme.buttons.primary.low.rest,
+                color:
+                  strategy === "bull"
+                    ? theme.accents.success.onEmphasis
+                    : theme.buttons.primary.low.onButton,
+                borderRadius: "32px",
+                height: "40px",
+                "&:hover:not(:disabled):not([aria-disabled='true'])": {
+                  bg: theme.accents.success.primary,
+                },
+              }}
+              onClick={() => setStrategy("bull")}
             >
-              <ArrowUp size={14} />
-              Bull (Long)
-            </Flex>
-          </Button>
-          <Button
-            variant={strategy === "bear" ? "primary" : "secondary"}
-            sx={{
-              flex: 1,
-              bg:
-                strategy === "bear"
-                  ? theme.accents.danger.emphasis
-                  : theme.buttons.primary.low.rest,
-              color:
-                strategy === "bear"
-                  ? theme.accents.danger.onPrimary
-                  : theme.buttons.primary.low.onButton,
-              borderRadius: "32px",
-              height: "40px",
-              "&:hover:not(:disabled):not([aria-disabled='true'])": {
-                bg: theme.accents.danger.secondary,
-              },
-            }}
-            onClick={() => setStrategy("bear")}
-          >
-            <Flex
-              align="center"
-              gap={getTokenPx("scales.paddings.xs")(theme as never)}
+              <Flex
+                align="center"
+                gap={getTokenPx("scales.paddings.xs")(theme as never)}
+              >
+                <ArrowUp size={14} />
+                Bull (Long)
+              </Flex>
+            </Button>
+            <Button
+              variant={strategy === "bear" ? "primary" : "secondary"}
+              sx={{
+                flex: 1,
+                bg:
+                  strategy === "bear"
+                    ? theme.accents.danger.emphasis
+                    : theme.buttons.primary.low.rest,
+                color:
+                  strategy === "bear"
+                    ? theme.accents.danger.onPrimary
+                    : theme.buttons.primary.low.onButton,
+                borderRadius: "32px",
+                height: "40px",
+                "&:hover:not(:disabled):not([aria-disabled='true'])": {
+                  bg: theme.accents.danger.secondary,
+                },
+              }}
+              onClick={() => setStrategy("bear")}
             >
-              <ArrowDown size={14} />
-              Bear (Short)
-            </Flex>
-          </Button>
-        </Flex>
+              <Flex
+                align="center"
+                gap={getTokenPx("scales.paddings.xs")(theme as never)}
+              >
+                <ArrowDown size={14} />
+                Bear (Short)
+              </Flex>
+            </Button>
+          </Flex>
+        )}
 
         {/* Trade Info Box - Dynamic */}
         <Box
@@ -268,7 +273,7 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
           <Flex justify="space-between" align="start">
             <Stack gap={0}>
               <Text fs="p3" fw={500} color={theme.text.high} align="left">
-                {strategy === "bull" ? "Long" : "Short"}
+                {!isPrimeMarket ? (strategy === "bull" ? "Long" : "Short") : "Leverage"}
               </Text>
               <Text fs="p5" color={theme.text.medium} fw={400}>
                 {leverage}x Leverage

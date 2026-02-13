@@ -105,7 +105,7 @@ const SGridCard = styled.div(
 // Mock Strategies Config
 const STRATEGIES = [
   { collateral: "PRIME", debt: "HUSD", leverage: 8.3 },
-  { collateral: "DOT", debt: "USDC", leverage: 3 },
+  { collateral: "GDOT", debt: "USDC", leverage: 3 },
   { collateral: "WETH", debt: "USDC", leverage: 2.5 },
   { collateral: "WBTC", debt: "USDC", leverage: 2.5 },
 ]
@@ -260,7 +260,8 @@ export const MultiplyView: FC = () => {
               </Text>
               {showMarketLabel && (
                 <Text fs="p5" color={theme.text.low} truncate>
-                  {s.collateralAsset.symbol === "PRIME"
+                  {s.collateralAsset.symbol === "PRIME" ||
+                    s.collateralAsset.symbol === "GDOT"
                     ? "Prime Market"
                     : "Global Market"}
                 </Text>

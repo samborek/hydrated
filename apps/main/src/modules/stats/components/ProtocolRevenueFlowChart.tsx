@@ -370,7 +370,7 @@ export const ProtocolRevenueFlowChart: FC<Props> = ({
         links: links,
         itemStyle: {
           borderWidth: 0,
-          borderRadius: 4,
+          borderRadius: 0,
         },
         lineStyle: {
           color: "source",

@@ -399,17 +399,6 @@ export const FeesOverviewChart: FC = () => {
           style={{ justifyContent: 'flex-start' }}
         />
         <SControlsGroup>
-          <SDesktopOnly>
-            <ToggleGroup
-              size="small"
-              type="single"
-              value={viewMode}
-              onValueChange={(v: string) => v && setViewMode(v as ViewMode)}
-            >
-              <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
-              <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
-            </ToggleGroup>
-          </SDesktopOnly>
           {viewMode === 'revenue' && (
             <SDesktopOnly>
               <ToggleGroup
@@ -423,6 +412,17 @@ export const FeesOverviewChart: FC = () => {
               </ToggleGroup>
             </SDesktopOnly>
           )}
+          <SDesktopOnly>
+            <ToggleGroup
+              size="small"
+              type="single"
+              value={viewMode}
+              onValueChange={(v: string) => v && setViewMode(v as ViewMode)}
+            >
+              <ToggleGroupItem value="revenue">Revenue</ToggleGroupItem>
+              <ToggleGroupItem value="fees">Fees %</ToggleGroupItem>
+            </ToggleGroup>
+          </SDesktopOnly>
           <SDesktopOnly>
             <TimeRangeToggle
               value={timeRange}

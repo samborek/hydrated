@@ -2,10 +2,10 @@ import { SectionHeader } from "@galacticcouncil/ui/components"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { FeeFlowChart } from "@/modules/stats/components/FeeFlowChart"
 import { FeesOverviewChart } from "@/modules/stats/components/FeesOverviewChart"
 import { HollarFeesChart } from "@/modules/stats/components/HollarFeesChart"
 import { LiquidityFeesChart } from "@/modules/stats/components/LiquidityFeesChart"
+import { ProtocolRevenueFlowChart } from "@/modules/stats/components/ProtocolRevenueFlowChart"
 import { SupplyBorrowFeesChart } from "@/modules/stats/components/SupplyBorrowFeesChart"
 import { TradingFeesChart } from "@/modules/stats/components/TradingFeesChart"
 
@@ -41,14 +41,10 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
 const SFeesOverviewGrid = styled.div(
   ({ theme }) => css`
     display: grid;
-    grid-template-columns: minmax(0, 1fr) clamp(320px, 38vw, 520px);
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 42vw, 620px);
     gap: ${theme.scales.paddings.l}px;
     width: 100%;
     min-width: 0;
-
-    > * {
-      min-width: 0;
-    }
 
     @media (max-width: 1000px) {
       grid-template-columns: 1fr;
@@ -59,7 +55,7 @@ const SFeesOverviewGrid = styled.div(
 function FeesStats() {
   return (
     <SPageContainer>
-      {/* Overview Chart - Stacked Bar Chart + Fee Destination Pie */}
+      {/* Overview Chart - Stacked Bar Chart + Revenue Flow */}
       <div>
         <SectionHeader>Fees & Revenue</SectionHeader>
         <SFeesOverviewGrid>
@@ -67,7 +63,7 @@ function FeesStats() {
             <FeesOverviewChart />
           </SSection>
           <SSection>
-            <FeeFlowChart />
+            <ProtocolRevenueFlowChart title="Where fees go" />
           </SSection>
         </SFeesOverviewGrid>
       </div>
@@ -76,32 +72,32 @@ function FeesStats() {
       <div>
         <SectionHeader>Trading Fees</SectionHeader>
         <SSection>
-        <TradingFeesChart />
-      </SSection>
+          <TradingFeesChart />
+        </SSection>
       </div>
 
       {/* Liquidity Fees Section */}
       <div>
         <SectionHeader>Liquidity / Withdraw Fees</SectionHeader>
         <SSection>
-        <LiquidityFeesChart />
-      </SSection>
+          <LiquidityFeesChart />
+        </SSection>
       </div>
 
       {/* Supply & Borrow Fees Section */}
       <div>
         <SectionHeader>Supply & Borrow Fees</SectionHeader>
         <SSection>
-        <SupplyBorrowFeesChart />
-      </SSection>
+          <SupplyBorrowFeesChart />
+        </SSection>
       </div>
 
       {/* Hollar Fees Section */}
       <div>
         <SectionHeader>Hollar Fees</SectionHeader>
         <SSection>
-        <HollarFeesChart />
-      </SSection>
+          <HollarFeesChart />
+        </SSection>
       </div>
     </SPageContainer>
   )

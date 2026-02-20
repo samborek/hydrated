@@ -120,12 +120,13 @@ const splitLabel = (label: string, isMobile: boolean) => {
     return [left, right]
   }
 
-  if (!isMobile) return [label]
-
+  // Always split "Supply & Borrow" to better utilize left space
   if (label.includes(" & ")) {
     const [left, right] = label.split(" & ")
     return [left, `& ${right}`]
   }
+
+  if (!isMobile) return [label]
 
   const words = label.split(" ").filter(Boolean)
   if (words.length <= 1) return [label]
@@ -382,8 +383,8 @@ export const ProtocolRevenueFlowChart: FC<Props> = ({
         },
         nodeWidth: 14,
         nodeGap: 24,
-        left: isMobile ? 88 : 100,
-        right: 72,
+        left: isMobile ? 56 : 56,
+        right: 48,
         top: 8,
         bottom: 8,
       },

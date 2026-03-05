@@ -12,16 +12,16 @@ export declare const breakpointsMap: {
 };
 type ExtendedBreakpoint = `${ScreenBreakpoint}` | `max-${ScreenBreakpoint}`;
 export declare const mediaQueries: {
+    xs: string;
     sm: string;
     md: string;
     lg: string;
     xl: string;
-    xs: string;
+    "max-xs": string;
     "max-sm": string;
     "max-md": string;
     "max-lg": string;
     "max-xl": string;
-    "max-xs": string;
 };
 export declare const mq: (bp: ExtendedBreakpoint) => string;
 export declare const useBreakpoints: () => {

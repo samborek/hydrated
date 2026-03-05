@@ -48,9 +48,9 @@ export const MainLayout = () => {
       }
     }
     return {
-      modalOpen: true,
+      modalOpen: false,
       bannerVisible: false,
-      dismissed: false,
+      dismissed: true,
       initialStep: "intro" as const,
     }
   }
@@ -120,25 +120,30 @@ export const MainLayout = () => {
     <>
       <Header onDepositClick={handleDepositOpen} />
       <Outlet />
-      <MarketingModal
-        open={marketingState.modalOpen}
-        onOpenChange={handleModalClose}
-        initialStep={marketingState.initialStep}
-      />
-      <DepositModal open={depositOpen} onOpenChange={setDepositOpen} />
-      {marketingState.bannerVisible && (
-        <MarketingBanner
-          onOpen={handleBannerOpen}
-          onClose={handleBannerClose}
-        />
+      {/* Marketing modal/banner/promo hidden — code preserved for future use */}
+      {false && (
+        <>
+          <MarketingModal
+            open={marketingState.modalOpen}
+            onOpenChange={handleModalClose}
+            initialStep={marketingState.initialStep}
+          />
+          {marketingState.bannerVisible && (
+            <MarketingBanner
+              onOpen={handleBannerOpen}
+              onClose={handleBannerClose}
+            />
+          )}
+          {marketingState.dismissed &&
+            !marketingState.bannerVisible &&
+            !marketingState.modalOpen && (
+              <SPromoButton onClick={handlePromoButtonClick}>
+                <Icon component={Gift} size={24} color="#1A1D26" />
+              </SPromoButton>
+            )}
+        </>
       )}
-      {marketingState.dismissed &&
-        !marketingState.bannerVisible &&
-        !marketingState.modalOpen && (
-          <SPromoButton onClick={handlePromoButtonClick}>
-            <Icon component={Gift} size={24} color="#1A1D26" />
-          </SPromoButton>
-        )}
+      <DepositModal open={depositOpen} onOpenChange={setDepositOpen} />
     </>
   )
 }

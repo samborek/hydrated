@@ -20,12 +20,17 @@ import {
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
 import { css, getTokenPx, styled } from "@galacticcouncil/ui/utils"
-import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
+import { GDOT_ERC20_ID, HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
 import { ChevronRight, LayoutGrid, List, Percent, AlertTriangle } from "lucide-react"
 import { FC, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
+
+import bullStrategyIcon from "@/assets/strategies/bull_strategy.svg"
+import bearStrategyIcon from "@/assets/strategies/bear_strategy.svg"
+import directionUpIcon from "@/assets/strategies/direction_up.svg"
+import directionDownIcon from "@/assets/strategies/direction_down.svg"
 
 import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
@@ -60,19 +65,19 @@ const SLoopCard = styled.div(
   ({ theme }) => css`
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
-    border-radius: ${theme.scales.cornerRadius.l}px;
-    padding: ${theme.scales.paddings.l}px;
-    gap: ${theme.scales.paddings.m}px;
+    border-radius: ${theme.scales.cornerRadius.xl}px;
+    padding: ${theme.scales.paddings.l}px ${theme.scales.paddings.xl}px
+      ${theme.scales.paddings.xxl}px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    min-height: 160px;
+    justify-content: flex-end;
+    min-height: 420px;
     cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
     text-decoration: none;
     color: inherit;
     height: 100%;
-    box-shadow: 0 1px 2px ${theme.details.borders}20;
+    overflow: hidden;
 
     &:hover {
       border-color: ${theme.details.borders};
@@ -81,6 +86,68 @@ const SLoopCard = styled.div(
     }
   `,
 )
+
+const SInfoSeparator = styled.div(
+  ({ theme }) => css`
+    width: 1px;
+    align-self: stretch;
+    background: ${theme.details.separators};
+    flex-shrink: 0;
+  `,
+)
+
+type FeaturedStrategyConfig = {
+  id: string
+  strategyName: string
+  description: string
+  type: "rwa-loop" | "bull" | "bear"
+  collateral: string
+  debt: string
+  leverage: number
+}
+
+const FEATURED_STRATEGIES: FeaturedStrategyConfig[] = [
+  {
+    id: "prime-loop",
+    strategyName: "Prime",
+    description:
+      "PRIME Multiply is a simple leveraged yield product that gives you increased exposure to PRIME yields, while retaining 100% PRIME exposure.",
+    type: "rwa-loop",
+    collateral: "PRIME",
+    debt: "HUSD",
+    leverage: 4,
+  },
+  {
+    id: "gdot-loop",
+    strategyName: "GDOT",
+    description:
+      "DOT but on steroids. GDOT tracks the price of DOT while earning yield from multiple sources (staking, borrowing, liquidity fees, borrowing).",
+    type: "rwa-loop",
+    collateral: "GDOT",
+    debt: "USDC",
+    leverage: 4,
+  },
+  {
+    id: "crypto-bull",
+    strategyName: "Crypto Bull",
+    description:
+      "Take a bullish stance on tBTC or ETH using your USDC, USDT, or HUSD. Enhance your leverage to amplify your directional outlook on the market.",
+    type: "bull",
+    collateral: "WETH",
+    debt: "USDC",
+    leverage: 4,
+  },
+  {
+    id: "crypto-bear",
+    strategyName: "Crypto Bear",
+    description:
+      "Take a bearish position on tBTC or ETH with your USDC, USDT, or HUSD. Reduce your leverage to align with your negative outlook on the market.",
+    type: "bear",
+    collateral: "WBTC",
+    debt: "USDC",
+    leverage: 4,
+  },
+]
 
 // Rich Strategy Card for Grid View
 const SGridCard = styled.div(
@@ -411,7 +478,7 @@ export const MultiplyView: FC = () => {
         <MultiplyPositionsTile />
       </Box>
 
-      {/* Featured Loops */}
+      {/* Featured Strategies */}
       <div>
         <Text
           fs="p1"
@@ -426,74 +493,190 @@ export const MultiplyView: FC = () => {
           columns={gte("xl") ? 4 : gte("sm") ? 2 : 1}
           gap={getTokenPx("scales.paddings.l")}
         >
-          {strategies.slice(0, 4).map((s) => (
-            <SLoopCard
-              key={"feat-" + s.id}
-              onClick={() =>
-                navigate({
-                  to: "/borrow/multiply/$strategyId" as any,
-                  params: { strategyId: s.id } as any,
-                })
-              }
-            >
-              {/* Top: Icons + Badge */}
-              <Flex justify="space-between" align="center">
-                <Flex>
-                  {s.collateralAsset.symbol === "PRIME" ? (
-                    <BaseAssetLogo src={primeLogo} size="large" alt="PRIME" />
-                  ) : (
-                    <AssetLogo id={s.collateralAsset.id} size="large" />
-                  )}
-                  <div
-                    style={{
-                      marginLeft: `-${theme.scales.paddings.m}px`,
-                    }}
-                  >
-                    {s.debtAsset.symbol === "HUSD" ||
-                      s.debtAsset.symbol === "CASH" ? (
-                      <AssetLogo id={HOLLAR_ASSET_ID} size="large" />
-                    ) : (
-                      <AssetLogo id={s.debtAsset.id} size="large" />
-                    )}
-                  </div>
-                </Flex>
-                <Chip variant="green" size="small" rounded>
-                  <Text fs="p6" fw={600}>
-                    UP TO {s.leverage.toFixed(0)}X
-                  </Text>
-                </Chip>
-              </Flex>
+          {FEATURED_STRATEGIES.map((fs) => {
+            // Find the matching strategy row for APY data
+            const matchedStrategy = strategies.find(
+              (s) =>
+                s.collateralAsset.symbol === fs.collateral ||
+                s.id.startsWith(fs.collateral),
+            )
+            const netApy = matchedStrategy?.netApy ?? 8.49
+            const liqAvailable = matchedStrategy?.liqAvailable ?? 1400000
 
-              {/* Middle: Title + Description (vertically centered) */}
-              <Flex direction="column" justify="center" style={{ flex: 1 }}>
-                <Text fs="p3" fw={600}>
-                  {s.strategyName}
-                </Text>
-                <Text fs="p5" fw={400} color={theme.text.medium} lh="140%">
-                  Borrow{" "}
-                  {s.debtAsset.symbol === "CASH"
-                    ? "HUSD"
-                    : s.debtAsset.symbol}{" "}
-                  to leverage {s.collateralAsset.symbol}
-                </Text>
-              </Flex>
-
-              {/* Bottom: Net APY */}
-              <Flex direction="column" gap={getTokenPx("scales.paddings.xs")}>
-                <Text fs="p6" fw={400} color={theme.text.medium} lh="80%">
-                  Net APY
-                </Text>
-                <Text
-                  fs="h7"
-                  fw={500}
-                  color={theme.details.values.positive}
-                  font="primary"
+            return (
+              <SLoopCard
+                key={"feat-" + fs.id}
+                onClick={() =>
+                  navigate({
+                    to: "/borrow/multiply/$strategyId" as any,
+                    params: {
+                      strategyId: matchedStrategy?.id ?? fs.id,
+                    } as any,
+                  })
+                }
+              >
+                {/* Content Container */}
+                <Flex
+                  direction="column"
+                  justify="space-between"
+                  style={{ flex: 1, minHeight: 0 }}
                 >
-                  {s.netApy.toFixed(2)}%
-                </Text>
-              </Flex>
-            </SLoopCard>
-          ))}
+                  {/* Top: Icon + Chips */}
+                  <Flex justify="space-between" align="flex-start">
+                    {/* Strategy Icon */}
+                    <Box sx={{ position: "relative" }}>
+                      {fs.type === "rwa-loop" ? (
+                        fs.collateral === "PRIME" ? (
+                          <BaseAssetLogo
+                            src={primeLogo}
+                            alt="PRIME"
+                            sx={{ width: 106, height: 106 }}
+                          />
+                        ) : (
+                          <AssetLogo
+                            id={GDOT_ERC20_ID}
+                            sx={{ width: 106, height: 106 }}
+                          />
+                        )
+                      ) : (
+                        <>
+                          <img
+                            src={
+                              fs.type === "bull"
+                                ? bullStrategyIcon
+                                : bearStrategyIcon
+                            }
+                            alt={fs.strategyName}
+                            style={{ width: 65, height: 65 }}
+                          />
+                          <img
+                            src={
+                              fs.type === "bull"
+                                ? directionUpIcon
+                                : directionDownIcon
+                            }
+                            alt="direction"
+                            style={{
+                              width: 25,
+                              height: 25,
+                              position: "absolute",
+                              left: 52,
+                              top: 4,
+                              transform:
+                                fs.type === "bull"
+                                  ? "rotate(-90deg)"
+                                  : "rotate(90deg) scaleY(-1)",
+                            }}
+                          />
+                        </>
+                      )}
+                    </Box>
+
+                    {/* Chips */}
+                    <Flex
+                      direction="column"
+                      align="flex-end"
+                      gap={getTokenPx("scales.paddings.s")}
+                    >
+                      {fs.type === "rwa-loop" && (
+                        <Chip
+                          variant="info"
+                          size="medium"
+                          rounded
+                          sx={{ textTransform: "uppercase" }}
+                        >
+                          <Text fs="p6" fw={500}>
+                            RWA LOOP
+                          </Text>
+                        </Chip>
+                      )}
+                      <Chip variant="green" size="medium" rounded>
+                        <Text fs="p6" fw={500}>
+                          UP TO {fs.leverage}X
+                        </Text>
+                      </Chip>
+                    </Flex>
+                  </Flex>
+
+                  {/* Bottom Content */}
+                  <Flex
+                    direction="column"
+                    gap={getTokenPx("scales.paddings.xl")}
+                  >
+                    {/* Info Row: Net APY | Liquidity Available */}
+                    <Flex
+                      align="center"
+                      gap={getTokenPx("scales.paddings.l")}
+                    >
+                      <Flex direction="column" gap={4}>
+                        <Text
+                          fs="p6"
+                          fw={400}
+                          color={theme.text.medium}
+                          lh="140%"
+                        >
+                          Net APY
+                        </Text>
+                        <Text
+                          fw={500}
+                          color={theme.details.values.positive}
+                          font="primary"
+                          sx={{ fontSize: 28, lineHeight: "30px" }}
+                        >
+                          {netApy.toFixed(2)}%
+                        </Text>
+                      </Flex>
+
+                      <SInfoSeparator />
+
+                      <Flex direction="column" gap={4}>
+                        <Text
+                          fs="p6"
+                          fw={400}
+                          color={theme.text.medium}
+                          lh="140%"
+                        >
+                          Liquidity Available
+                        </Text>
+                        <Text
+                          fw={500}
+                          font="primary"
+                          sx={{ fontSize: 28, lineHeight: "30px" }}
+                        >
+                          {(liqAvailable / 1000000).toFixed(1)}m
+                        </Text>
+                      </Flex>
+                    </Flex>
+
+                    {/* Horizontal Separator */}
+                    <Separator />
+
+                    {/* Description Container */}
+                    <Flex
+                      direction="column"
+                      gap={getTokenPx("scales.paddings.base")}
+                    >
+                      <Text
+                        fw={500}
+                        font="primary"
+                        sx={{ fontSize: 22, lineHeight: "24px" }}
+                      >
+                        {fs.strategyName}
+                      </Text>
+                      <Text
+                        fs="p4"
+                        fw={400}
+                        color={theme.text.low}
+                        lh="18px"
+                      >
+                        {fs.description}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                </Flex>
+              </SLoopCard>
+            )
+          })}
         </Grid>
       </div>
 

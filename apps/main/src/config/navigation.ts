@@ -33,12 +33,6 @@ export const LINKS = {
   trade: "/trade",
   otc: "/trade/otc",
   stats: "/stats",
-  statsOverview: "/stats/overview",
-  statsTreasury: "/stats/treasury",
-  statsMoneyMarket: "/stats/money-market",
-  statsHollar: "/stats/hollar",
-  statsFees: "/stats/fees",
-  statsAmm: "/stats/amm",
   staking: "/staking",
   // stakingDashboard: "/staking/dashboard",
   // stakingGovernance: "/staking/governance",
@@ -134,14 +128,6 @@ export const NAVIGATION: NavigationItem[] = [
     key: "stats",
     to: LINKS.stats,
     icon: ChartPieIcon,
-    children: [
-      { key: "statsOverview", to: LINKS.statsOverview },
-      { key: "statsTreasury", to: LINKS.statsTreasury },
-      { key: "statsMoneyMarket", to: LINKS.statsMoneyMarket },
-      { key: "statsHollar", to: LINKS.statsHollar },
-      { key: "statsAmm", to: LINKS.statsAmm },
-      { key: "statsFees", to: LINKS.statsFees },
-    ],
   },
   {
     key: "staking",
@@ -211,30 +197,6 @@ export const getMenuTranslations = (t: TFunction) =>
     stats: {
       title: t("navigation.stats.title"),
       description: t("navigation.stats.description"),
-    },
-    statsOverview: {
-      title: t("navigation.statsOverview.title"),
-      description: "",
-    },
-    statsTreasury: {
-      title: t("navigation.statsTreasury.title"),
-      description: "",
-    },
-    statsMoneyMarket: {
-      title: t("navigation.statsMoneyMarket.title"),
-      description: "",
-    },
-    statsHollar: {
-      title: t("navigation.statsHollar.title"),
-      description: "",
-    },
-    statsFees: {
-      title: t("navigation.statsFees.title"),
-      description: "",
-    },
-    statsAmm: {
-      title: t("navigation.statsAmm.title"),
-      description: "",
     },
     staking: {
       title: t("navigation.staking.title"),

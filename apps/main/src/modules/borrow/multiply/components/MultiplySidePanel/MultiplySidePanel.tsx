@@ -2,7 +2,7 @@ import { ComputedReserveData } from "@galacticcouncil/money-market/hooks"
 import { Box, Button, Flex, Stack, Text } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
-import { ArrowDown, ArrowUp } from "lucide-react"
+
 import { FC, useMemo, useState } from "react"
 import { toast } from "sonner"
 
@@ -47,7 +47,7 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
   const [collateralAmount, setCollateralAmount] = useState(
     initialCollateralAmount,
   )
-  const [strategy, setStrategy] = useState<"bull" | "bear">(initialStrategy)
+  const [strategy] = useState<"bull" | "bear">(initialStrategy)
 
   // Placeholder balance values - wallet integration will be added later
   // Note: useWalletData hook causes big.js errors with incomplete asset data
@@ -153,18 +153,7 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
     setCollateralAmount("")
   }
 
-  const isPrimeMarket =
-    collateralAsset?.symbol === "PRIME" || collateralAsset?.symbol === "GDOT"
-
-  // Determine colors based on strategy
-  const strategyColor =
-    strategy === "bull"
-      ? theme.accents.success.emphasis
-      : theme.accents.danger.emphasis
-  const strategyBgColor =
-    strategy === "bull" ? "rgba(116,199,66,0.1)" : "rgba(255,44,35,0.1)"
-  const strategyBorderColor =
-    strategy === "bull" ? "rgba(116,199,66,0.3)" : "rgba(255,44,35,0.3)"
+  // Variables removed
 
   return (
     <SMultiplyFormContainer>
@@ -199,81 +188,21 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
 
         <SMultiplySectionSeparator />
 
-        {/* Strategy Toggle - Hidden for Prime Market assets */}
-        {!isPrimeMarket && (
-          <Flex gap={getTokenPx("scales.paddings.m")(theme as never)}>
-            <Button
-              variant={strategy === "bull" ? "primary" : "secondary"}
-              sx={{
-                flex: 1,
-                bg:
-                  strategy === "bull"
-                    ? theme.accents.success.emphasis
-                    : theme.buttons.primary.low.rest,
-                color:
-                  strategy === "bull"
-                    ? theme.accents.success.onEmphasis
-                    : theme.buttons.primary.low.onButton,
-                borderRadius: "32px",
-                height: "40px",
-                "&:hover:not(:disabled):not([aria-disabled='true'])": {
-                  bg: theme.accents.success.primary,
-                },
-              }}
-              onClick={() => setStrategy("bull")}
-            >
-              <Flex
-                align="center"
-                gap={getTokenPx("scales.paddings.xs")(theme as never)}
-              >
-                <ArrowUp size={14} />
-                Bull (Long)
-              </Flex>
-            </Button>
-            <Button
-              variant={strategy === "bear" ? "primary" : "secondary"}
-              sx={{
-                flex: 1,
-                bg:
-                  strategy === "bear"
-                    ? theme.accents.danger.emphasis
-                    : theme.buttons.primary.low.rest,
-                color:
-                  strategy === "bear"
-                    ? theme.accents.danger.onPrimary
-                    : theme.buttons.primary.low.onButton,
-                borderRadius: "32px",
-                height: "40px",
-                "&:hover:not(:disabled):not([aria-disabled='true'])": {
-                  bg: theme.accents.danger.secondary,
-                },
-              }}
-              onClick={() => setStrategy("bear")}
-            >
-              <Flex
-                align="center"
-                gap={getTokenPx("scales.paddings.xs")(theme as never)}
-              >
-                <ArrowDown size={14} />
-                Bear (Short)
-              </Flex>
-            </Button>
-          </Flex>
-        )}
 
-        {/* Trade Info Box - Dynamic */}
+
         <Box
           sx={{
-            bg: strategyBgColor,
-            border: `1px solid ${strategyBorderColor}`,
-            borderRadius: "8px",
-            p: "12px 16px",
+            bg: theme.buttons.secondary.outline.fill,
+            border: `1px solid ${theme.buttons.secondary.outline.outline}`,
+            borderRadius: getTokenPx("scales.cornerRadius.m")(theme as never),
+            px: getTokenPx("scales.paddings.m")(theme as never),
+            py: getTokenPx("scales.paddings.l")(theme as never),
           }}
         >
           <Flex justify="space-between" align="start">
             <Stack gap={0}>
               <Text fs="p3" fw={500} color={theme.text.high} align="left">
-                {!isPrimeMarket ? (strategy === "bull" ? "Long" : "Short") : "Leverage"}
+                Leverage
               </Text>
               <Text fs="p5" color={theme.text.medium} fw={400}>
                 {leverage}x Leverage
@@ -296,7 +225,7 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
                     : "0.00"}
                 </Text>
                 {calculations.estimatedProfitUsd > 0 && (
-                  <Text fs="p6" fw={600} color={strategyColor}>
+                  <Text fs="p6" fw={600} color={theme.accents.success.emphasis}>
                     (+${calculations.estimatedProfitUsd.toFixed(2)}/mo)
                   </Text>
                 )}

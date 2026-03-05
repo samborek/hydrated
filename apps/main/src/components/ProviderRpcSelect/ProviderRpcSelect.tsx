@@ -7,7 +7,7 @@ import { useActiveProviderProps, useSquidUrl } from "@/api/provider"
 import { RpcSelectModal } from "@/components/ProviderRpcSelect/components/RpcSelectModal"
 import { RpcStatus } from "@/components/ProviderRpcSelect/components/RpcStatus"
 import { SContainer } from "@/components/ProviderRpcSelect/ProviderRpcSelect.styled"
-import { UiSwitcher } from "@/modules/layout/components/UiSwitcher"
+
 import { useRpcProvider } from "@/providers/rpcProvider"
 
 type Props = {
@@ -24,7 +24,7 @@ export const ProviderRpcSelect: FC<Props> = ({ bottomPinned }) => {
 
   return (
     <SContainer bottomPinned={bottomPinned}>
-      <UiSwitcher />
+      {/* <UiSwitcher /> */}
       <Button
         variant="tertiary"
         size="small"

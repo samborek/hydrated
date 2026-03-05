@@ -10,7 +10,7 @@ import {
 } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getTokenPx } from "@galacticcouncil/ui/utils"
-import { ArrowDown, ArrowUp, HelpCircle } from "lucide-react"
+import { HelpCircle } from "lucide-react"
 import { FC, useMemo, useState } from "react"
 import { toast } from "sonner"
 
@@ -32,7 +32,7 @@ export const MultiplyOpenPositionModalContent: FC<
     const { themeProps: theme } = useTheme()
     const [leverage, setLeverage] = useState(2.0)
     const [collateralAmount, setCollateralAmount] = useState("")
-    const [strategy, setStrategy] = useState<"bull" | "bear">("bull")
+    const [strategy] = useState<"bull" | "bear">("bull")
 
     const { addPosition } = useMultiplySimulationStore()
 
@@ -102,14 +102,7 @@ export const MultiplyOpenPositionModalContent: FC<
         onClose()
     }
 
-    const strategyColor =
-        strategy === "bull"
-            ? theme.accents.success.emphasis
-            : theme.accents.danger.emphasis
-    const strategyBgColor =
-        strategy === "bull" ? "rgba(116,199,66,0.1)" : "rgba(255,44,35,0.1)"
-    const strategyBorderColor =
-        strategy === "bull" ? "rgba(116,199,66,0.3)" : "rgba(255,44,35,0.3)"
+    // Variables removed
 
     return (
         <Stack gap={getTokenPx("scales.paddings.l")(theme as never)} sx={{ pt: 0 }}>
@@ -173,65 +166,21 @@ export const MultiplyOpenPositionModalContent: FC<
 
             <Separator />
 
-            {/* Strategy Selector */}
-            <Flex gap={getTokenPx("scales.paddings.m")(theme as never)}>
-                <Button
-                    variant={strategy === "bull" ? "primary" : "secondary"}
-                    sx={{
-                        flex: 1,
-                        bg:
-                            strategy === "bull"
-                                ? theme.accents.success.emphasis
-                                : theme.buttons.primary.low.rest,
-                        color:
-                            strategy === "bull"
-                                ? theme.accents.success.onEmphasis
-                                : theme.buttons.primary.low.onButton,
-                        borderRadius: "32px",
-                        height: "40px",
-                    }}
-                    onClick={() => setStrategy("bull")}
-                >
-                    <Flex align="center" gap={2}>
-                        <ArrowUp size={14} /> Bull (Long)
-                    </Flex>
-                </Button>
-                <Button
-                    variant={strategy === "bear" ? "primary" : "secondary"}
-                    sx={{
-                        flex: 1,
-                        bg:
-                            strategy === "bear"
-                                ? theme.accents.danger.emphasis
-                                : theme.buttons.primary.low.rest,
-                        color:
-                            strategy === "bear"
-                                ? theme.accents.danger.onPrimary
-                                : theme.buttons.primary.low.onButton,
-                        borderRadius: "32px",
-                        height: "40px",
-                    }}
-                    onClick={() => setStrategy("bear")}
-                >
-                    <Flex align="center" gap={2}>
-                        <ArrowDown size={14} /> Bear (Short)
-                    </Flex>
-                </Button>
-            </Flex>
 
-            {/* Info Box */}
+
             <Box
                 sx={{
-                    bg: strategyBgColor,
-                    border: `1px solid ${strategyBorderColor}`,
-                    borderRadius: "8px",
-                    p: "16px",
+                    bg: theme.buttons.secondary.outline.fill,
+                    border: `1px solid ${theme.buttons.secondary.outline.outline}`,
+                    borderRadius: getTokenPx("scales.cornerRadius.m")(theme as never),
+                    px: getTokenPx("scales.paddings.m")(theme as never),
+                    py: getTokenPx("scales.paddings.l")(theme as never),
                 }}
             >
                 <Flex justify="space-between" align="start">
                     <Stack gap={0}>
                         <Text fs="p3" fw={500} color={theme.text.high}>
-                            {strategy === "bull" ? "Long" : "Short"}
+                            Leverage
                         </Text>
                         <Text fs="p5" color={theme.text.medium}>
                             {leverage}x Leverage
@@ -246,7 +195,7 @@ export const MultiplyOpenPositionModalContent: FC<
                                 ≈ ${calculations.buyingPowerUsd.toLocaleString()}
                             </Text>
                             {calculations.estimatedProfitUsd > 0 && (
-                                <Text fs="p6" fw={600} color={strategyColor}>
+                                <Text fs="p6" fw={600} color={theme.accents.success.emphasis}>
                                     (+${calculations.estimatedProfitUsd.toFixed(2)}/mo)
                                 </Text>
                             )}

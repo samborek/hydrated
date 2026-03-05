@@ -100,15 +100,7 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
   `,
 )
 
-const SChartsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${({ theme }) => theme.scales.paddings.l}px;
 
-  @media (max-width: 1200px) {
-    grid-template-columns: 1fr;
-  }
-`
 
 const SFeesOverviewGrid = styled.div(
   ({ theme }) => css`
@@ -261,7 +253,7 @@ function StatsPage() {
       if (!el) return
       const observer = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting) setActiveSection(id)
+          if (entry?.isIntersecting) setActiveSection(id)
         },
         { rootMargin: "-40% 0px -50% 0px", threshold: 0 },
       )

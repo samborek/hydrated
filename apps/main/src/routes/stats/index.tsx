@@ -353,16 +353,16 @@ function StatsPage() {
       <div id="overview">
         <StatsHeader stats={overviewStats} />
 
-        <SSection style={{ marginTop: theme.scales.paddings.l, marginBottom: theme.scales.paddings.l }}>
+        <SSection style={{ marginTop: Number(theme.scales.paddings.l), marginBottom: Number(theme.scales.paddings.l) }}>
           <TVLCompositionChart title="Hydration TVL" value="$183.59M" />
         </SSection>
 
 
-        <SSection>
+        <SSection style={{ marginTop: Number(theme.scales.paddings.l) }}>
           <TVLCompositionChart title="Hydration TVL" value="$183.59M" />
         </SSection>
 
-        <SSection>
+        <SSection style={{ marginTop: Number(theme.scales.paddings.l) }}>
           <VolumeChart title="24h Volume" value="$10.3M" />
         </SSection>
 
@@ -394,11 +394,11 @@ function StatsPage() {
         <SectionHeader pt={theme.scales.paddings.m}>Lending Market</SectionHeader>
         <StatsHeader stats={lendingStats} />
 
-        <SSection style={{ marginTop: theme.scales.paddings.l }}>
+        <SSection style={{ marginTop: Number(theme.scales.paddings.l) }}>
           <SupplyBorrowChart />
         </SSection>
 
-        <SSection style={{ paddingTop: 0, overflow: "hidden", marginTop: theme.scales.paddings.l }}>
+        <SSection style={{ paddingTop: 0, overflow: "hidden", marginTop: Number(theme.scales.paddings.l) }}>
           <MarketsTable />
         </SSection>
       </div>
@@ -408,11 +408,11 @@ function StatsPage() {
         <SectionHeader pt={theme.scales.paddings.m}>Hollar</SectionHeader>
         <StatsHeader stats={hollarStats} />
 
-        <SSection style={{ marginTop: theme.scales.paddings.l }}>
+        <SSection style={{ marginTop: Number(theme.scales.paddings.l) }}>
           <HollarSupplyChart title="Hollar Supply History" value="$8.5M" />
         </SSection>
 
-        <SSection style={{ padding: Number(theme.scales.paddings.xl), marginTop: theme.scales.paddings.l }}>
+        <SSection style={{ padding: Number(theme.scales.paddings.xl), marginTop: Number(theme.scales.paddings.l) }}>
           <span style={{ fontSize: "16px", fontWeight: 500, fontFamily: theme.fontFamilies1.primary, color: theme.text.high, display: "block", marginBottom: "24px" }}>Stablepool Reserves</span>
           <Flex justify="space-between" gap={0}>
             {reserves.map((reserve, index) => (
@@ -445,7 +445,7 @@ function StatsPage() {
           </Flex>
         </SSection>
 
-        <SSection style={{ padding: Number(theme.scales.paddings.xl), marginTop: theme.scales.paddings.l }}>
+        <SSection style={{ padding: Number(theme.scales.paddings.xl), marginTop: Number(theme.scales.paddings.l) }}>
           <span style={{ fontSize: "16px", fontWeight: 500, fontFamily: theme.fontFamilies1.primary, color: theme.text.high, display: "block", marginBottom: "24px" }}>HSM Collateral Caps</span>
           <SCollateralGrid>
             {collaterals.map((col) => (
@@ -478,7 +478,7 @@ function StatsPage() {
         <SectionHeader pt={theme.scales.paddings.m}>Treasury</SectionHeader>
         <StatsHeader stats={treasuryStats} />
 
-        <SSection style={{ marginTop: theme.scales.paddings.l }}>
+        <SSection style={{ marginTop: Number(theme.scales.paddings.l) }}>
           <TreasuryChart title="Treasury Value History" value="$2.85M" />
         </SSection>
       </div>

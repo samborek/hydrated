@@ -172,5 +172,12 @@
   "otc.fillOrder.partiallyFillable.description": "Allow users to fill smaller parts of this offer",
   "otc.cancelOrder.loading": "Cancelling an OTC order for {{ amount }}.",
   "otc.cancelOrder.success": "OTC order cancelled for {{ amount }}.",
-  "otc.cancelOrder.error": "Failed to cancel OTC order for {{ amount }}."
+  "otc.cancelOrder.error": "Failed to cancel OTC order for {{ amount }}.",
+  "trade.orderbook.spread": "Spread",
+  "trade.orderbook.size": "Size",
+  "trade.orderbook.total": "Total",
+  "limit.setPrice": "Set limit price",
+  "limit.cta": "Set limit order",
+  "limit.totalFees": "Total fees:",
+  "limit.presetMarket": "MARKET"
 }

@@ -10,7 +10,7 @@ import {
 import { BaselineChartData } from "@galacticcouncil/ui/components/TradingViewChart/utils"
 import { USDT_ASSET_ID } from "@galacticcouncil/utils"
 import { useSearch } from "@tanstack/react-router"
-import React, { useRef, useState } from "react"
+import React, { ReactNode, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { last } from "remeda"
 
@@ -22,6 +22,7 @@ import {
 } from "@/components/ChartTimeRange/ChartTimeRange"
 import i18n from "@/i18n"
 import { useTradeChartData } from "@/modules/trade/swap/components/TradeChart/TradeChart.data"
+import { useLimitOrderStore } from "@/modules/trade/swap/sections/LimitOrder/useLimitOrderStore"
 import { useAssets } from "@/providers/assetsProvider"
 
 const chartTimeFrameTypes = timeFrameTypes.filter((type) => type !== "minute")
@@ -37,9 +38,10 @@ const intervalOptions = ([...chartTimeFrameTypes, "all"] as const).map<
 
 type TradeChartProps = {
   readonly height: number
+  readonly orderBook?: ReactNode
 }
 
-export const TradeChart: React.FC<TradeChartProps> = ({ height }) => {
+export const TradeChart: React.FC<TradeChartProps> = ({ height, orderBook }) => {
   const { t } = useTranslation()
 
   const { assetIn, assetOut } = useSearch({ from: "/trade/_history" })
@@ -49,6 +51,22 @@ export const TradeChart: React.FC<TradeChartProps> = ({ height }) => {
     "week",
   )
   const [crosshair, setCrosshair] = useState<BaselineChartData | null>(null)
+
+  // Get limit order prices to show on chart
+  const limitOrders = useLimitOrderStore((s) => s.orders)
+  const previewPrice = useLimitOrderStore((s) => s.previewPrice)
+
+  const limitPrices = [
+    // Include submitted orders for this pair
+    ...limitOrders
+      .filter(
+        (order) =>
+          order.sellAssetId === assetIn && order.buyAssetId === assetOut,
+      )
+      .map((order) => order.limitPrice),
+    // Include the preview price if set
+    ...(previewPrice ? [previewPrice] : []),
+  ]
 
   const { prices, isLoading, isSuccess, isError } = useTradeChartData({
     assetInId: assetIn,
@@ -90,8 +108,8 @@ export const TradeChart: React.FC<TradeChartProps> = ({ height }) => {
       </Box>
     ) : undefined
 
-  return (
-    <Paper p="xl">
+  const chartColumn = (
+    <Box sx={{ flex: 1, minWidth: 0 }}>
       <Flex align="center" justify="space-between">
         <ChartValues
           value={chartValue}
@@ -118,9 +136,30 @@ export const TradeChart: React.FC<TradeChartProps> = ({ height }) => {
           height={height}
           data={prices}
           hidePriceIndicator
+          priceLines={limitPrices}
           onCrosshairMove={setCrosshair}
         />
       </ChartState>
+    </Box>
+  )
+
+  return (
+    <Paper p="xl">
+      <Flex gap="xl" sx={{ minHeight: 0, alignItems: "stretch" }}>
+        {chartColumn}
+        {orderBook && (
+          <Box
+            sx={{
+              width: 280,
+              flexShrink: 0,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            {orderBook}
+          </Box>
+        )}
+      </Flex>
     </Paper>
   )
 }

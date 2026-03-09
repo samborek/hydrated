@@ -4,10 +4,10 @@ export const SPriceMarkerLine = styled.div(
   ({ theme }) => css`
     position: absolute;
     left: 0;
-    right: 0;
+    right: 50px;
 
     height: 1px;
-    border-top: 1px dashed ${theme.text.high};
+    border-top: 1px dashed ${theme.details.values.positive};
 
     pointer-events: none;
     z-index: 1;
@@ -23,20 +23,14 @@ export const SPriceMarkerTag = styled.div(
     padding: 4px 8px;
     border-radius: 4px;
     border: none;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     white-space: nowrap;
 
-    background-color: transparent;
-    color: ${theme.text.high};
-    transition: all 0.2s ease;
+    background-color: ${theme.details.values.positive};
+    color: ${theme.text.contrast};
 
-    cursor: pointer;
+    cursor: default;
     z-index: 2;
-
-    :hover {
-      background-color: ${theme.text.high};
-      color: ${theme.text.contrast};
-    }
   `,
 )

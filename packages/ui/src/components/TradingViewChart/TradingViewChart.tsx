@@ -2,6 +2,8 @@ import { hexToRgba } from "@galacticcouncil/utils"
 import {
   createChart,
   IChartApi,
+  IPriceLine,
+  LineStyle,
   LineType,
   SeriesType,
 } from "lightweight-charts"
@@ -30,6 +32,7 @@ import {
   OhlcData,
   renderSeries,
   subscribeCrosshairMove,
+  TradingViewChartSeries,
 } from "@/components/TradingViewChart/utils"
 import { useBreakpoints, useUiScale } from "@/styles/media"
 import { useTheme } from "@/theme"
@@ -53,6 +56,7 @@ export type TradingViewChartProps = ChartTypeProps & {
   data: Array<OhlcData>
   height?: number
   hidePriceIndicator?: boolean
+  priceLines?: Array<number>
 }
 
 export const TradingViewChart: React.FC<TradingViewChartProps> = ({
@@ -61,12 +65,15 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = ({
   type = "Baseline",
   height = 400,
   hidePriceIndicator,
+  priceLines,
   onCrosshairMove,
 }) => {
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
   const crosshairRef = useRef<HTMLDivElement | null>(null)
   const priceIndicatorRef = useRef<HTMLDivElement | null>(null)
   const chartRef = useRef<IChartApi | null>(null)
+  const priceLinesRef = useRef<IPriceLine[]>([])
+  const seriesRef = useRef<TradingViewChartSeries | null>(null)
 
   useImperativeHandle(ref, () => ({
     resetZoom: () => {
@@ -86,6 +93,7 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = ({
   const uiScale = useUiScale()
   const { isMobile } = useBreakpoints()
 
+  // Create chart and series
   useEffect(() => {
     if (!chartContainerRef.current) return
 
@@ -129,6 +137,7 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = ({
     )
 
     chart.timeScale().fitContent()
+    seriesRef.current = series
 
     const previousVisibleRange = chartRef.current?.timeScale().getVisibleRange()
 
@@ -157,8 +166,37 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = ({
 
     return () => {
       chart.remove()
+      seriesRef.current = null
+      priceLinesRef.current = []
     }
   }, [data, height, themeProps, type, hidePriceIndicator, uiScale, isMobile])
+
+  // Handle price lines separately so they update without recreating the chart
+  useEffect(() => {
+    const series = seriesRef.current
+    if (!series) return
+
+    // Remove old price lines
+    priceLinesRef.current.forEach((line) => {
+      series.removePriceLine(line)
+    })
+    priceLinesRef.current = []
+
+    // Add new price lines
+    if (priceLines && priceLines.length > 0) {
+      const newLines = priceLines.map((price) => {
+        return series.createPriceLine({
+          price,
+          color: themeProps.details.values.positive,
+          lineWidth: 1,
+          lineStyle: LineStyle.Dashed,
+          axisLabelVisible: true,
+          title: "Limit",
+        })
+      })
+      priceLinesRef.current = newLines
+    }
+  }, [priceLines, themeProps.details.values.positive])
 
   return (
     <Box

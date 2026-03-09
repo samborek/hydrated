@@ -199,6 +199,7 @@
   "navigation.swap.title": "Swap",
   "navigation.trade.title": "Trade",
   "navigation.swapMarket.title": "Market",
+  "navigation.swapLimit.title": "Limit",
   "navigation.swapDca.title": "DCA",
   "navigation.wallet.title": "Wallet",
   "navigation.walletAssets.title": "Overview",

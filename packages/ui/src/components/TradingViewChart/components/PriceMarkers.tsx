@@ -1,5 +1,5 @@
 import { formatNumber } from "@galacticcouncil/utils"
-import { FC, useEffect, useState } from "react"
+import { FC, useEffect, useRef, useState } from "react"
 
 import { Box } from "@/components"
 import {
@@ -17,14 +17,14 @@ export const PriceMarkers: FC<PriceMarkersProps> = ({
   priceLines,
   seriesApi,
 }) => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [positions, setPositions] = useState<
     ReadonlyArray<{ readonly top: number; readonly price: number }>
   >([])
+  const rafRef = useRef<number | null>(null)
 
   useEffect(() => {
     const updatePositions = () => {
-      const positions = priceLines
+      const newPositions = priceLines
         .map((price) => {
           const priceY = seriesApi.priceToCoordinate(price)
 
@@ -39,31 +39,37 @@ export const PriceMarkers: FC<PriceMarkersProps> = ({
         })
         .filter((position) => !!position)
 
-      setPositions(positions)
+      setPositions(newPositions)
+
+      // Keep updating to handle chart resizes/zooms
+      rafRef.current = requestAnimationFrame(updatePositions)
     }
 
-    const timeout = setTimeout(updatePositions, 100)
+    // Start updating
+    rafRef.current = requestAnimationFrame(updatePositions)
 
     return () => {
-      clearTimeout(timeout)
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current)
+      }
     }
   }, [priceLines, seriesApi])
+
+  if (positions.length === 0) {
+    return null
+  }
 
   return (
     <>
       {positions.map((pos, index) => (
         <Box key={index}>
-          {hoveredIndex === index && (
-            <SPriceMarkerLine
-              sx={{
-                top: pos.top,
-              }}
-            />
-          )}
+          <SPriceMarkerLine
+            sx={{
+              top: pos.top,
+            }}
+          />
           <SPriceMarkerTag
             sx={{ top: pos.top }}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
           >
             {formatNumber(pos.price)}
           </SPriceMarkerTag>

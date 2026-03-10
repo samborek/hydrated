@@ -66,7 +66,7 @@ export const LimitPriceInput: FC<Props> = ({
     // Default: "1 SELL = X BUY" — shows SELL symbol as base
     // Inverted: "1 BUY = X SELL" — shows BUY symbol as base
     const baseSymbol = isInverted ? buySymbol : sellSymbol
-    const quoteSymbol = isInverted ? sellSymbol : buySymbol
+    
 
     const priceSignal: PriceSignal = useMemo(() => {
         // Don't show signal when market preset is selected

@@ -1,6 +1,8 @@
 import {
   extrinsicByBlockAndIndexQuery,
   extrinsicByHashQuery,
+  ExtrinsicByBlockAndIndexQuery,
+  ExtrinsicByHashQuery,
   IndexerSdk,
 } from "@galacticcouncil/indexer/indexer"
 import {
@@ -46,73 +48,73 @@ const evm =
     indexerSdk: IndexerSdk,
     evm: PublicClient,
   ): ToastProcessorFn =>
-  async (toast) => {
-    const hash = toast.meta.txHash
-    const receipt = await evm.getTransactionReceipt({
-      hash: hash as HexString,
-    })
+    async (toast) => {
+      const hash = toast.meta.txHash
+      const receipt = await evm.getTransactionReceipt({
+        hash: hash as HexString,
+      })
 
-    const res = await queryClient.fetchQuery(
-      extrinsicByBlockAndIndexQuery(
-        indexerSdk,
-        Number(receipt.blockNumber),
-        Number(receipt.transactionIndex),
-      ),
-    )
+      const res = (await queryClient.fetchQuery(
+        extrinsicByBlockAndIndexQuery(
+          indexerSdk,
+          Number(receipt.blockNumber),
+          Number(receipt.transactionIndex),
+        ),
+      )) as ExtrinsicByBlockAndIndexQuery
 
-    const extrinsic = first(res?.extrinsics ?? [])
+      const extrinsic = first(res?.extrinsics ?? [])
 
-    if (!extrinsic) {
+      if (!extrinsic) {
+        return {
+          status: "unknown",
+          processed: false,
+          dateUpdated: new Date().toISOString(),
+        }
+      }
+
+      const status = (() => {
+        if (extrinsic.success) return "success"
+        if (extrinsic.error) return "error"
+        return "unknown"
+      })()
+
       return {
-        status: "unknown",
-        processed: false,
-        dateUpdated: new Date().toISOString(),
+        status,
+        processed: true,
+        dateUpdated: extrinsic.block.timestamp,
       }
     }
-
-    const status = (() => {
-      if (extrinsic.success) return "success"
-      if (extrinsic.error) return "error"
-      return "unknown"
-    })()
-
-    return {
-      status,
-      processed: true,
-      dateUpdated: extrinsic.block.timestamp,
-    }
-  }
 
 const substrate =
   (queryClient: QueryClient, indexerSdk: IndexerSdk): ToastProcessorFn =>
-  async (toast) => {
-    const hash = toast.meta.txHash
-    const res = await queryClient.fetchQuery(
-      extrinsicByHashQuery(indexerSdk, hash),
-    )
+    async (toast) => {
+      const hash = toast.meta.txHash
+      const res = await queryClient.fetchQuery(
+        extrinsicByHashQuery(indexerSdk, hash),
+      ) as ExtrinsicByHashQuery
 
-    const extrinsic = first(res?.extrinsics ?? [])
+      const extrinsic = first(res?.extrinsics ?? [])
 
-    if (!extrinsic) {
+      if (!extrinsic) {
+        return {
+          status: "unknown",
+          processed: false,
+          dateUpdated: new Date().toISOString(),
+        }
+      }
+
+      const status = (() => {
+        if (extrinsic.success) return "success"
+        if (extrinsic.error) return "error"
+        return "unknown"
+      })()
+
       return {
-        status: "unknown",
-        processed: false,
-        dateUpdated: new Date().toISOString(),
+        status,
+        processed: true,
+        dateUpdated: extrinsic.block.timestamp,
       }
     }
-
-    const status = (() => {
-      if (extrinsic.success) return "success"
-      if (extrinsic.error) return "error"
-      return "unknown"
-    })()
-
-    return {
-      status,
-      processed: true,
-      dateUpdated: extrinsic.block.timestamp,
-    }
-  }
 
 const getExtrinsicIndex = async (
   queryClient: QueryClient,
@@ -126,13 +128,13 @@ const getExtrinsicIndex = async (
       hash: txHash as HexString,
     })
 
-    const res = await queryClient.fetchQuery(
+    const res = (await queryClient.fetchQuery(
       extrinsicByBlockAndIndexQuery(
         indexerSdk,
         Number(receipt.blockNumber),
         Number(receipt.transactionIndex),
       ),
-    )
+    )) as ExtrinsicByBlockAndIndexQuery
 
     const extrinsic = first(res?.extrinsics ?? [])
     if (!extrinsic) return null
@@ -144,7 +146,7 @@ const getExtrinsicIndex = async (
   } else {
     const res = await queryClient.fetchQuery(
       extrinsicByHashQuery(indexerSdk, txHash),
-    )
+    ) as ExtrinsicByHashQuery
 
     const extrinsic = first(res?.extrinsics ?? [])
     if (!extrinsic) return null
@@ -162,14 +164,60 @@ const wormhole =
     indexerSdk: IndexerSdk,
     evm: PublicClient,
   ): ToastProcessorFn =>
-  async (toast) => {
-    const srcChainKey = toast.meta.srcChainKey
-    const txHash = toast.meta.txHash
-    const ecosystem = toast.meta.ecosystem
+    async (toast) => {
+      const srcChainKey = toast.meta.srcChainKey
+      const txHash = toast.meta.txHash
+      const ecosystem = toast.meta.ecosystem
 
-    // Wormhole transactions submitted from outside of Hydration can be processed directly via wormholescan
-    if (srcChainKey !== HYDRATION_CHAIN_KEY) {
-      const res = await fetch(wormholescan.api("operations", { txHash }))
+      // Wormhole transactions submitted from outside of Hydration can be processed directly via wormholescan
+      if (srcChainKey !== HYDRATION_CHAIN_KEY) {
+        const res = await fetch(wormholescan.api("operations", { txHash }))
+        const data = await res.json()
+
+        const operation = first(data.operations ?? [])
+        const operationStatus = operation?.targetChain?.status
+        const operationVaa = operation?.vaa?.raw
+
+        const isCompleted = !!operationVaa && operationStatus === "completed"
+
+        return {
+          status: isCompleted ? "success" : "unknown",
+          processed: isCompleted,
+          dateUpdated: new Date().toISOString(),
+        }
+      }
+
+      const extrinsicIndex = await getExtrinsicIndex(
+        queryClient,
+        indexerSdk,
+        evm,
+        txHash,
+        ecosystem,
+      )
+
+      if (!extrinsicIndex) {
+        return {
+          status: "unknown",
+          processed: false,
+          dateUpdated: new Date().toISOString(),
+        }
+      }
+
+      const extrinsicIndexString = `${extrinsicIndex.blockNumber}-${extrinsicIndex.index}`
+      const wormholeTxHash =
+        await getWormholeHashByExtrinsicIndex(extrinsicIndexString)
+
+      if (!wormholeTxHash) {
+        return {
+          status: "unknown",
+          processed: false,
+          dateUpdated: new Date().toISOString(),
+        }
+      }
+
+      const res = await fetch(
+        wormholescan.api("operations", { txHash: wormholeTxHash }),
+      )
       const data = await res.json()
 
       const operation = first(data.operations ?? [])
@@ -180,57 +228,11 @@ const wormhole =
 
       return {
         status: isCompleted ? "success" : "unknown",
+        link: wormholeTxHash ? wormholescan.tx(wormholeTxHash) : undefined,
         processed: isCompleted,
         dateUpdated: new Date().toISOString(),
       }
     }
-
-    const extrinsicIndex = await getExtrinsicIndex(
-      queryClient,
-      indexerSdk,
-      evm,
-      txHash,
-      ecosystem,
-    )
-
-    if (!extrinsicIndex) {
-      return {
-        status: "unknown",
-        processed: false,
-        dateUpdated: new Date().toISOString(),
-      }
-    }
-
-    const extrinsicIndexString = `${extrinsicIndex.blockNumber}-${extrinsicIndex.index}`
-    const wormholeTxHash =
-      await getWormholeHashByExtrinsicIndex(extrinsicIndexString)
-
-    if (!wormholeTxHash) {
-      return {
-        status: "unknown",
-        processed: false,
-        dateUpdated: new Date().toISOString(),
-      }
-    }
-
-    const res = await fetch(
-      wormholescan.api("operations", { txHash: wormholeTxHash }),
-    )
-    const data = await res.json()
-
-    const operation = first(data.operations ?? [])
-    const operationStatus = operation?.targetChain?.status
-    const operationVaa = operation?.vaa?.raw
-
-    const isCompleted = !!operationVaa && operationStatus === "completed"
-
-    return {
-      status: isCompleted ? "success" : "unknown",
-      link: wormholeTxHash ? wormholescan.tx(wormholeTxHash) : undefined,
-      processed: isCompleted,
-      dateUpdated: new Date().toISOString(),
-    }
-  }
 
 const parseSnowbridgeResult = (
   result:
@@ -258,33 +260,33 @@ const parseSnowbridgeResult = (
 
 const snowbridge =
   (queryClient: QueryClient, snowbridgeSdk: SnowbridgeSdk): ToastProcessorFn =>
-  async (toast) => {
-    const hash = toast.meta.txHash
+    async (toast) => {
+      const hash = toast.meta.txHash
 
-    if (toast.meta.ecosystem === CallType.Evm) {
-      const data = await queryClient.fetchQuery(
-        snowbridgeStatusToPolkadotQuery(snowbridgeSdk, hash),
-      )
+      if (toast.meta.ecosystem === CallType.Evm) {
+        const data = (await queryClient.fetchQuery(
+          snowbridgeStatusToPolkadotQuery(snowbridgeSdk, hash),
+        )) as TransferStatusToPolkadotQuery
 
-      const result = data?.transferStatusToPolkadots?.[0]
-      return parseSnowbridgeResult(result)
+        const result = data?.transferStatusToPolkadots?.[0]
+        return parseSnowbridgeResult(result)
+      }
+
+      if (toast.meta.ecosystem === CallType.Substrate) {
+        const data = (await queryClient.fetchQuery(
+          snowbridgeStatusToEthQuery(snowbridgeSdk, hash),
+        )) as TransferStatusToEthQuery
+
+        const result = data?.transferStatusToEthereums?.[0]
+        return parseSnowbridgeResult(result)
+      }
+
+      return {
+        status: "unknown",
+        processed: false,
+        dateUpdated: new Date().toISOString(),
+      }
     }
-
-    if (toast.meta.ecosystem === CallType.Substrate) {
-      const data = await queryClient.fetchQuery(
-        snowbridgeStatusToEthQuery(snowbridgeSdk, hash),
-      )
-
-      const result = data?.transferStatusToEthereums?.[0]
-      return parseSnowbridgeResult(result)
-    }
-
-    return {
-      status: "unknown",
-      processed: false,
-      dateUpdated: new Date().toISOString(),
-    }
-  }
 
 export const processors = {
   evm,

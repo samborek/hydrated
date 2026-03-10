@@ -1,4 +1,4 @@
-import { parseIndexerUrlName } from "@galacticcouncil/indexer/squid/lib/parseIndexerUrlName"
+import { parseIndexerUrlName } from "@galacticcouncil/indexer/src/squid/lib/parseIndexerUrlName"
 import { omit } from "remeda"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"

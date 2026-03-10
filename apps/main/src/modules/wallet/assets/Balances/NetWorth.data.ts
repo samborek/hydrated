@@ -1,5 +1,8 @@
 import { accountNetWorthHistoricalDataQuery } from "@galacticcouncil/indexer/squid"
-import { TimeSeriesBucketTimeRange } from "@galacticcouncil/indexer/squid"
+import {
+  AccountTotalBalancesByPeriodQuery,
+  TimeSeriesBucketTimeRange,
+} from "@galacticcouncil/indexer/squid"
 import { TIME_FRAME_MS } from "@galacticcouncil/main/src/components/TimeFrame/TimeFrame.utils"
 import { useAccount } from "@galacticcouncil/web3-connect"
 import { useQuery } from "@tanstack/react-query"
@@ -58,7 +61,8 @@ export const useNetWorthData = (
 
     const buckets =
       data?.accountTotalBalancesByPeriod.nodes.flatMap(
-        (node) => node?.buckets ?? [],
+        (node: AccountTotalBalancesByPeriodQuery["accountTotalBalancesByPeriod"]["nodes"][number]) =>
+          node?.buckets ?? [],
       ) ?? []
 
     const currentNetWorthNum = Number(currentNetWorth)
@@ -82,7 +86,8 @@ export const useNetWorthData = (
 
     const balances = buckets.map<NetWorthData>((bucket) => ({
       netWorth:
-        (Number(bucket.transferableNorm) || 0) + Number(bucket.lockedNorm) || 0,
+        (Number(bucket.transferableNorm) || 0) +
+        (Number(bucket.lockedNorm) || 0) || 0,
       time: new Date(Number(bucket.timestamp)),
     }))
 
@@ -90,26 +95,26 @@ export const useNetWorthData = (
 
     const withCurrentBalance = currentNetWorthNum
       ? balances.concat([
-          {
-            netWorth: currentNetWorthNum,
-            time: lastBalance
-              ? new Date(lastBalance.time.valueOf() + 1000)
-              : new Date(),
-          },
-        ])
+        {
+          netWorth: currentNetWorthNum,
+          time: lastBalance
+            ? new Date(lastBalance.time.valueOf() + 1000)
+            : new Date(),
+        },
+      ])
       : balances.length === 1 && lastBalance
         ? balances.concat([
-            {
-              netWorth: lastBalance.netWorth,
-              time: new Date(lastBalance.time.valueOf() + 1000),
-            },
-          ])
+          {
+            netWorth: lastBalance.netWorth,
+            time: new Date(lastBalance.time.valueOf() + 1000),
+          },
+        ])
         : balances
 
     return withCurrentBalance
       .sort(
         sortBy({
-          select: (balances) => balances.time,
+          select: (balances: NetWorthData) => balances.time,
           compare: chronologically,
         }),
       )

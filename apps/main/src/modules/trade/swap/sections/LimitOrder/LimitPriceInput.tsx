@@ -139,7 +139,7 @@ export const LimitPriceInput: FC<Props> = ({
                         <Icon size="xs" component={ArrowRightLeftIcon} />
                     </SSwapIconButton>
                     <Text fs="p3" fw={600} color="text.high">
-                        1 {baseSymbol} =
+                        {baseSymbol}
                     </Text>
                 </SRateSwitcher>
                 <SPriceInput
@@ -149,9 +149,6 @@ export const LimitPriceInput: FC<Props> = ({
                     value={limitPrice}
                     onChange={(e) => onPriceChange(e.target.value)}
                 />
-                <Text fs="p3" fw={600} color="text.high">
-                    {quoteSymbol}
-                </Text>
             </SLimitPriceRow>
 
             {/* Additional TP / SL toggle - shows opposite of main limit price signal */}

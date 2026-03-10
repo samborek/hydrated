@@ -63,12 +63,15 @@ export const LimitPriceInput: FC<Props> = ({
     const takeProfitEnabled = watch("takeProfitEnabled")
     const takeProfitPrice = watch("takeProfitPrice")
 
-    // When normal: "1 SELL = X BUY" — label shows BUY symbol
-    // When inverted: "1 BUY = X SELL" — label shows SELL symbol
-
-    const toSymbol = isInverted ? sellSymbol : buySymbol
+    // Default: "1 SELL = X BUY" — shows SELL symbol as base
+    // Inverted: "1 BUY = X SELL" — shows BUY symbol as base
+    const baseSymbol = isInverted ? buySymbol : sellSymbol
+    const quoteSymbol = isInverted ? sellSymbol : buySymbol
 
     const priceSignal: PriceSignal = useMemo(() => {
+        // Don't show signal when market preset is selected
+        if (activePreset === "market") return null
+
         const numPrice = Number(limitPrice)
         if (!marketPrice || !numPrice || numPrice === 0) return null
 
@@ -82,7 +85,7 @@ export const LimitPriceInput: FC<Props> = ({
         }
 
         return null
-    }, [limitPrice, marketPrice, isInverted])
+    }, [limitPrice, marketPrice, isInverted, activePreset])
 
     const handleTPSLPriceChange = useCallback(
         (field: "stopLossPrice" | "takeProfitPrice", value: string) => {
@@ -136,7 +139,7 @@ export const LimitPriceInput: FC<Props> = ({
                         <Icon size="xs" component={ArrowRightLeftIcon} />
                     </SSwapIconButton>
                     <Text fs="p3" fw={600} color="text.high">
-                        {toSymbol}
+                        1 {baseSymbol} =
                     </Text>
                 </SRateSwitcher>
                 <SPriceInput
@@ -146,6 +149,9 @@ export const LimitPriceInput: FC<Props> = ({
                     value={limitPrice}
                     onChange={(e) => onPriceChange(e.target.value)}
                 />
+                <Text fs="p3" fw={600} color="text.high">
+                    {quoteSymbol}
+                </Text>
             </SLimitPriceRow>
 
             {/* Additional TP / SL toggle - shows opposite of main limit price signal */}

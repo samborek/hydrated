@@ -1,6 +1,6 @@
 import {
   DcaScheduleStatus,
-  getDcaScheduleStatus,
+  isDcaScheduleStatus,
   userOrdersQuery,
 } from "@galacticcouncil/indexer/squid"
 import { safeConvertSS58toPublicKey } from "@galacticcouncil/utils"
@@ -44,9 +44,9 @@ export const useOrdersData = (
   const address = safeConvertSS58toPublicKey(accountAddress)
 
   const squidClient = useSquidClient()
-  const { data, isLoading } = useQuery(
-    userOrdersQuery(squidClient, address, status, assetIds, page, pageSize),
-  )
+  const { data, isLoading } = useQuery({
+    ...userOrdersQuery(squidClient, address, status, assetIds, page, pageSize),
+  })
 
   const { getAssetWithFallback } = useAssets()
 
@@ -87,7 +87,7 @@ export const useOrdersData = (
             ? scaleHuman(schedule.totalExecutedAmountOut, to.decimals)
             : null
 
-          const status = getDcaScheduleStatus(schedule)
+
 
           return {
             kind: isOpenBudget ? OrderKind.DcaRolling : OrderKind.Dca,
@@ -99,7 +99,9 @@ export const useOrdersData = (
             singleTradeSize,
             to,
             toAmountExecuted,
-            status,
+            status: isDcaScheduleStatus(schedule.status)
+              ? (schedule.status as DcaScheduleStatus)
+              : null,
             blocksPeriod: schedule.period ?? null,
             isOpenBudget,
           }

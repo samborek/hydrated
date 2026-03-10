@@ -2,7 +2,6 @@ import { hexToRgba } from "@galacticcouncil/utils"
 import {
   createChart,
   IChartApi,
-  IPriceLine,
   LineStyle,
   LineType,
   SeriesType,
@@ -43,20 +42,26 @@ export type TradingViewChartRef = {
 
 type ChartTypeProps =
   | {
-      type: Extract<SeriesType, "Candlestick">
-      onCrosshairMove?: (data: OhlcData | null) => void
-    }
+    type: Extract<SeriesType, "Candlestick">
+    onCrosshairMove?: (data: OhlcData | null) => void
+  }
   | {
-      type?: Extract<SeriesType, "Baseline">
-      onCrosshairMove?: (data: BaselineChartData | null) => void
-    }
+    type?: Extract<SeriesType, "Baseline">
+    onCrosshairMove?: (data: BaselineChartData | null) => void
+  }
+
+export type PriceLine = {
+  price: number
+  color: string
+  title: string
+}
 
 export type TradingViewChartProps = ChartTypeProps & {
   ref?: RefObject<TradingViewChartRef | null>
   data: Array<OhlcData>
   height?: number
   hidePriceIndicator?: boolean
-  priceLines?: Array<number>
+  priceLines?: PriceLine[]
 }
 
 export const TradingViewChart: React.FC<TradingViewChartProps> = ({
@@ -72,8 +77,8 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = ({
   const crosshairRef = useRef<HTMLDivElement | null>(null)
   const priceIndicatorRef = useRef<HTMLDivElement | null>(null)
   const chartRef = useRef<IChartApi | null>(null)
-  const priceLinesRef = useRef<IPriceLine[]>([])
-  const seriesRef = useRef<TradingViewChartSeries | null>(null)
+  const seriesRef = useRef<ReturnType<typeof renderSeries>[0] | null>(null)
+  const priceLinesRef = useRef<string>("")
 
   useImperativeHandle(ref, () => ({
     resetZoom: () => {
@@ -108,16 +113,16 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = ({
       crosshair: crosshair(themeProps),
       handleScroll: isMobile
         ? {
-            horzTouchDrag: true,
-            vertTouchDrag: false,
-          }
+          horzTouchDrag: true,
+          vertTouchDrag: false,
+        }
         : undefined,
       handleScale: isMobile
         ? {
-            axisPressedMouseMove: true,
-            mouseWheel: true,
-            pinch: true,
-          }
+          axisPressedMouseMove: true,
+          mouseWheel: true,
+          pinch: true,
+        }
         : undefined,
     })
 
@@ -146,6 +151,7 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = ({
     }
 
     chartRef.current = chart
+    seriesRef.current = series
 
     if (
       crosshairRef.current &&
@@ -167,36 +173,32 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = ({
     return () => {
       chart.remove()
       seriesRef.current = null
-      priceLinesRef.current = []
+      priceLinesRef.current = ""
     }
   }, [data, height, themeProps, type, hidePriceIndicator, uiScale, isMobile])
 
-  // Handle price lines separately so they update without recreating the chart
+  // Separate effect for price lines — avoids recreating the entire chart
   useEffect(() => {
     const series = seriesRef.current
     if (!series) return
 
-    // Remove old price lines
-    priceLinesRef.current.forEach((line) => {
-      series.removePriceLine(line)
-    })
-    priceLinesRef.current = []
+    const serialized = JSON.stringify(priceLines ?? [])
+    if (serialized === priceLinesRef.current) return
+    priceLinesRef.current = serialized
 
-    // Add new price lines
-    if (priceLines && priceLines.length > 0) {
-      const newLines = priceLines.map((price) => {
-        return series.createPriceLine({
-          price,
-          color: themeProps.details.values.positive,
-          lineWidth: 1,
-          lineStyle: LineStyle.Dashed,
-          axisLabelVisible: true,
-          title: "Limit",
-        })
+    // Remove existing price lines first
+    const parsed = JSON.parse(serialized) as PriceLine[]
+    for (const line of parsed) {
+      series.createPriceLine({
+        price: line.price,
+        color: line.color,
+        lineWidth: 1,
+        lineStyle: LineStyle.Dashed,
+        axisLabelVisible: true,
+        title: line.title,
       })
-      priceLinesRef.current = newLines
     }
-  }, [priceLines, themeProps.details.values.positive])
+  }, [priceLines])
 
   return (
     <Box

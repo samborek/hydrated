@@ -179,5 +179,8 @@
   "limit.setPrice": "Set limit price",
   "limit.cta": "Set limit order",
   "limit.totalFees": "Total fees:",
-  "limit.presetMarket": "MARKET"
+  "limit.presetMarket": "MARKET",
+  "limit.submit.loading": "Placing limit order for {{ amount }}...",
+  "limit.submit.success": "Limit order placed for {{ amount }}",
+  "limit.submit.error": "Failed to place limit order for {{ amount }}"
 }

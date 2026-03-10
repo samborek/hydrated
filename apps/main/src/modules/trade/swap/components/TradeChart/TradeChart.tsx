@@ -57,15 +57,25 @@ export const TradeChart: React.FC<TradeChartProps> = ({ height, orderBook }) => 
   const previewPrice = useLimitOrderStore((s) => s.previewPrice)
 
   const limitPrices = [
-    // Include submitted orders for this pair
     ...limitOrders
       .filter(
         (order) =>
           order.sellAssetId === assetIn && order.buyAssetId === assetOut,
       )
-      .map((order) => order.limitPrice),
-    // Include the preview price if set
-    ...(previewPrice ? [previewPrice] : []),
+      .map((order) => ({
+        price: order.limitPrice,
+        color: "#ffffff", // Default color
+        title: "Limit",
+      })),
+    ...(previewPrice
+      ? [
+        {
+          price: previewPrice,
+          color: "#ffffff",
+          title: "Preview",
+        },
+      ]
+      : []),
   ]
 
   const { prices, isLoading, isSuccess, isError } = useTradeChartData({
@@ -91,9 +101,9 @@ export const TradeChart: React.FC<TradeChartProps> = ({ height, orderBook }) => 
   const chartValue =
     !isEmpty && !isError
       ? t("currency", {
-          value,
-          symbol: getAssetWithFallback(assetIn).symbol,
-        })
+        value,
+        symbol: getAssetWithFallback(assetIn).symbol,
+      })
       : ""
 
   const chartDisplayValue =

@@ -100,14 +100,15 @@ export const LimitPriceInput: FC<Props> = ({
                         Limit price
                     </Text>
                     {priceSignal === "takeProfit" && (
-                        <Chip variant="green" size="medium" css={{ textTransform: "uppercase" }}>
+                        <Chip variant="green" size="medium" rounded css={{ textTransform: "uppercase" }}>
                             Take Profit
                         </Chip>
                     )}
                     {priceSignal === "stopLoss" && (
                         <Chip
-                            variant="danger"
+                            variant="dangerDim"
                             size="medium"
+                            rounded
                             css={{
                                 textTransform: "uppercase",
                             }}

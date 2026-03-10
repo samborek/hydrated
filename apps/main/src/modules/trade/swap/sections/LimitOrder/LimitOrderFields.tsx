@@ -64,9 +64,10 @@ export const LimitOrderFields: FC<Props> = ({ marketPrice }) => {
             const sellAmount = getValues("sellAmount")
 
             if (sellAmount && numPrice > 0) {
-                // If inverted, limitPrice = buyPerSell → rate is 1/price for sell→buy
+                // limitPrice represents "1 sellAsset = X buyAsset" when not inverted
+                // When inverted, limitPrice represents "1 buyAsset = X sellAsset", so rate = 1/price
                 const effectiveRate = isInverted ? 1 / numPrice : numPrice
-                const buyAmount = (Number(sellAmount) / effectiveRate).toFixed(6)
+                const buyAmount = (Number(sellAmount) * effectiveRate).toFixed(6)
                 setValue("buyAmount", buyAmount)
             }
         },
@@ -81,13 +82,10 @@ export const LimitOrderFields: FC<Props> = ({ marketPrice }) => {
             const displayPrice = isInverted ? 1 / rawPrice : rawPrice
             setValue("limitPrice", displayPrice.toPrecision(6))
 
-            // Update preview price on chart
-            setPreviewPrice(displayPrice)
-
-            // Recalculate buy amount using the actual rate (always sell/buy)
+            // Recalculate buy amount: buyAmount = sellAmount * price
             const sellAmount = getValues("sellAmount")
             if (sellAmount && rawPrice > 0) {
-                const buyAmount = (Number(sellAmount) / rawPrice).toFixed(6)
+                const buyAmount = (Number(sellAmount) * rawPrice).toFixed(6)
                 setValue("buyAmount", buyAmount)
             }
         },
@@ -99,7 +97,7 @@ export const LimitOrderFields: FC<Props> = ({ marketPrice }) => {
             const displayPrice = Number(getValues("limitPrice"))
             if (displayPrice > 0 && sellAmount) {
                 const effectiveRate = isInverted ? 1 / displayPrice : displayPrice
-                const buyAmount = (Number(sellAmount) / effectiveRate).toFixed(6)
+                const buyAmount = (Number(sellAmount) * effectiveRate).toFixed(6)
                 setValue("buyAmount", buyAmount)
             }
         },

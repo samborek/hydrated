@@ -1,9 +1,7 @@
-import { Account, useAccount } from "@galacticcouncil/web3-connect"
+import { Account, useAccount, Web3ConnectModal } from "@galacticcouncil/web3-connect"
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { createRootRouteWithContext, HeadContent } from "@tanstack/react-router"
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
-import { lazy } from "react"
+import { lazy, Suspense } from "react"
 
 import { useAccountPermitNonce, useAccountUniques } from "@/api/account"
 import { assetsQuery } from "@/api/assets"
@@ -12,7 +10,6 @@ import { useSquidClient } from "@/api/provider"
 import { usePriceSubscriber } from "@/api/spotPrice"
 import { useAccountBalanceSubscription } from "@/api/subscriptions"
 import { RouterContext } from "@/App"
-import { ProviderRpcSelect } from "@/components/ProviderRpcSelect/ProviderRpcSelect"
 import { LayoutSkeleton } from "@/modules/layout/components/LayoutSkeleton"
 import { useHasTopNavbar } from "@/modules/layout/hooks/useHasTopNavbar"
 import { MainLayout } from "@/modules/layout/MainLayout"
@@ -32,11 +29,11 @@ const TransactionManager = lazy(async () => ({
   ),
 }))
 
-const Web3ConnectModal = lazy(async () => ({
-  default: await import("@galacticcouncil/web3-connect").then(
-    (m) => m.Web3ConnectModal,
-  ),
-}))
+const ReactQueryDevtools = lazy(() =>
+  import("@tanstack/react-query-devtools").then((m) => ({
+    default: m.ReactQueryDevtools,
+  })),
+)
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
@@ -68,12 +65,14 @@ function RootComponent() {
         <RpcProvider>
           <MainLayout />
           <Services />
-          <ProviderRpcSelect />
-          {!hasTopNavbar && <MobileTabBar />}
+          <Suspense>{!hasTopNavbar && <MobileTabBar />}</Suspense>
         </RpcProvider>
       </AssetsProvider>
-      {hasTopNavbar && <ReactQueryDevtools buttonPosition="bottom-left" />}
-      {hasTopNavbar && <TanStackRouterDevtools position="bottom-left" />}
+      {hasTopNavbar && (
+        <Suspense>
+          <ReactQueryDevtools buttonPosition="bottom-left" />
+        </Suspense>
+      )}
     </>
   )
 }
@@ -105,8 +104,12 @@ function Services() {
 
   return (
     <>
-      <TransactionManager />
-      <Web3ConnectModal squidSdk={squidSdk} />
+      <Suspense>
+        <TransactionManager />
+      </Suspense>
+      <Suspense>
+        <Web3ConnectModal squidSdk={squidSdk} />
+      </Suspense>
       {isApiLoaded && <ApiSubscriptions />}
       {isConnected && <AccountSubscriptions account={account} />}
     </>

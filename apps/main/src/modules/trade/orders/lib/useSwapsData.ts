@@ -1,6 +1,6 @@
 import {
   DcaScheduleStatus,
-  getDcaScheduleStatus,
+  isDcaScheduleStatus,
   isTradeOperation,
   RoutedTradeSwapFragment,
   SwapFragment,
@@ -86,17 +86,17 @@ export const useSwapsData = (
             : "0"
           const link = swap.event
             ? subscan.blockEvent(
-                HYDRATION_CHAIN_KEY,
-                swap.event.paraBlockHeight,
-                swap.event.indexInBlock,
-              )
+              HYDRATION_CHAIN_KEY,
+              swap.event.paraBlockHeight,
+              swap.event.indexInBlock,
+            )
             : null
           const status = getOrderStatus(swap, getAssetWithFallback)
           const type = isTradeOperation(swap.operationType)
             ? swap.operationType
             : null
           const address = safeConvertPublicKeyToSS58(swap.swapperId ?? "")
-          const date = swap.paraTimestamp ? new Date(swap.paraTimestamp) : null
+          const date = new Date(swap.paraTimestamp ?? 0)
 
           return {
             from,
@@ -136,7 +136,7 @@ export const getOrderStatus = (
 
   const asset = getAsset(schedule.assetInId ?? "")
   const isOpenBudget = schedule.budgetAmountIn === "0"
-  const status = getDcaScheduleStatus(schedule)
+  const status = isDcaScheduleStatus(schedule.status) ? (schedule.status as DcaScheduleStatus) : null
 
   return {
     kind: isOpenBudget ? OrderKind.DcaRolling : OrderKind.Dca,

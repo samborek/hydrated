@@ -219,7 +219,7 @@ export const getMenuTranslations = (t: TFunction) =>
       description: "",
     },
     multiply: {
-      title: "Looping", // Hardcoded for now until i18n file is found/updated
+      title: "Strategies", // Hardcoded for now until i18n file is found/updated
       description: "",
     },
     borrowDashboard: {

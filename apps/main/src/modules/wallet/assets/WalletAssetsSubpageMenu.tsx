@@ -28,8 +28,8 @@ export const WalletAssetsSubpageMenu = () => {
         },
         {
           to: "/wallet/assets",
-          search: { category: "looping" },
-          title: t("looping", "Looping"),
+          search: { category: "strategies" },
+          title: t("strategies", "Strategies"),
           resetScroll: false,
         },
       ]}

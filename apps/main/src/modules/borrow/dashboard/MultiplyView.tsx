@@ -20,7 +20,7 @@ import {
 } from "@galacticcouncil/ui/components"
 import { useBreakpoints, useTheme } from "@galacticcouncil/ui/theme"
 import { css, getTokenPx, styled } from "@galacticcouncil/ui/utils"
-import { GDOT_ERC20_ID, HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
+import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { useNavigate } from "@tanstack/react-router"
 import { createColumnHelper } from "@tanstack/react-table"
 import { ChevronRight, LayoutGrid, List, Percent, AlertTriangle } from "lucide-react"
@@ -31,8 +31,12 @@ import bullStrategyIcon from "@/assets/strategies/bull_strategy.svg"
 import bearStrategyIcon from "@/assets/strategies/bear_strategy.svg"
 import directionUpIcon from "@/assets/strategies/direction_up.svg"
 import directionDownIcon from "@/assets/strategies/direction_down.svg"
+import eurcLogo from "@/assets/strategies/eurc_logo.svg"
+import decentralLogo from "@/assets/strategies/decentral_logo.svg"
+import primeLogo from "@/assets/strategies/prime_logo.svg"
+import gdotLogo from "@/assets/strategies/gdot_logo.svg"
 
-import primeLogo from "@/assets/tokens/prime.png"
+import primeLogoPng from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
 import { MultiplyOpenPositionModalContent } from "@/modules/borrow/multiply/components/MultiplyOpenPositionModalContent"
 import { MultiplyPositionsTile } from "@/modules/borrow/multiply/components/MultiplyPositionsTile"
@@ -66,12 +70,12 @@ const SLoopCard = styled.div(
     background: ${theme.surfaces.containers.high.primary};
     border: 1px solid ${theme.details.borders};
     border-radius: ${theme.scales.cornerRadius.xl}px;
-    padding: ${theme.scales.paddings.l}px ${theme.scales.paddings.xl}px
-      ${theme.scales.paddings.xxl}px;
+    padding: ${theme.scales.paddings.m}px ${theme.scales.paddings.l}px
+      ${theme.scales.paddings.xl}px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    min-height: 420px;
+    min-height: 320px;
     cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
     text-decoration: none;
@@ -80,6 +84,7 @@ const SLoopCard = styled.div(
     overflow: hidden;
 
     &:hover {
+      background: ${theme.surfaces.containers.high.hover};
       border-color: ${theme.details.borders};
       box-shadow: 0 4px 12px ${theme.details.borders}30;
       transform: translateY(-1px);
@@ -100,13 +105,14 @@ type FeaturedStrategyConfig = {
   id: string
   strategyName: string
   description: string
-  type: "rwa-loop" | "bull" | "bear"
+  type: "rwa-loop" | "bull" | "bear" | "partnership"
   collateral: string
   debt: string
   leverage: number
 }
 
 const FEATURED_STRATEGIES: FeaturedStrategyConfig[] = [
+  // Row 1
   {
     id: "prime-loop",
     strategyName: "Prime",
@@ -125,6 +131,27 @@ const FEATURED_STRATEGIES: FeaturedStrategyConfig[] = [
     type: "rwa-loop",
     collateral: "GDOT",
     debt: "USDC",
+    leverage: 4,
+  },
+  {
+    id: "decentral",
+    strategyName: "Decentral",
+    description:
+      "Decentral offers a unique solution for creators seeking immediate cash flow by purchasing their unpaid invoices at a discounted rate.",
+    type: "partnership",
+    collateral: "USDC",
+    debt: "HUSD",
+    leverage: 4,
+  },
+  // Row 2
+  {
+    id: "eurc-loop",
+    strategyName: "EURC Loop",
+    description:
+      "Leverage your EURC holdings with RWA-backed yield strategies. Earn enhanced returns on Euro-denominated stablecoin positions.",
+    type: "rwa-loop",
+    collateral: "EURC",
+    debt: "HUSD",
     leverage: 4,
   },
   {
@@ -169,12 +196,17 @@ const SGridCard = styled.div(
   `,
 )
 
-// Mock Strategies Config
+// Mock Strategies Config - matches Figma "All pairs" table
 const STRATEGIES = [
-  { collateral: "PRIME", debt: "HUSD", leverage: 8.3 },
-  { collateral: "GDOT", debt: "USDC", leverage: 3 },
-  { collateral: "WETH", debt: "USDC", leverage: 2.5 },
-  { collateral: "WBTC", debt: "USDC", leverage: 2.5 },
+  { collateral: "PRIME", debt: "HUSD", leverage: 3, type: "rwa-loop" as const },
+  { collateral: "GDOT", debt: "USDC", leverage: 4, type: "rwa-loop" as const },
+  { collateral: "DOT", debt: "DOT", leverage: 3, type: "bull" as const },
+  { collateral: "tBTC", debt: "USDC", leverage: 3, type: "bull" as const },
+  { collateral: "WETH", debt: "USDC", leverage: 3, type: "bull" as const },
+  { collateral: "WBTC", debt: "USDC", leverage: 3, type: "bear" as const },
+  { collateral: "USDC", debt: "HUSD", leverage: 4, type: "rwa-loop" as const },
+  { collateral: "HUSD", debt: "EURC", leverage: 1, type: "rwa-loop" as const },
+  { collateral: "EURC", debt: "HUSD", leverage: 1, type: "rwa-loop" as const },
 ]
 
 type StrategyRow = {
@@ -186,6 +218,7 @@ type StrategyRow = {
   liqAvailable: number
   supplied: number
   strategyName: string
+  strategyType: "rwa-loop" | "bull" | "bear"
 }
 
 export const MultiplyView: FC = () => {
@@ -249,8 +282,9 @@ export const MultiplyView: FC = () => {
 
       const supplyApy = Number(collateral.supplyAPY) || 0
       const borrowApy = Number(debt.variableBorrowAPY) || 0
-      const netApy =
+      const netApy = Math.max(0,
         (supplyApy + (supplyApy - borrowApy) * (s.leverage - 1)) * 100
+      )
 
       return {
         id: `${s.collateral}-${s.debt}-${idx}`,
@@ -258,9 +292,10 @@ export const MultiplyView: FC = () => {
         debtAsset: debt,
         leverage: s.leverage,
         netApy,
-        liqAvailable: 1000000 + idx * 10000,
+        liqAvailable: 12570000,
         supplied: 2400000 + idx * 100000,
         strategyName: `${collateral.symbol} Loop`,
+        strategyType: s.type,
       }
     }).filter(Boolean) as StrategyRow[]
   }, [marketAssets, tokens])
@@ -271,115 +306,133 @@ export const MultiplyView: FC = () => {
     s.debtAsset.symbol === "CASH" ? "HUSD" : s.debtAsset.symbol
 
   const columns = [
+    // Asset to Supply column
     columnHelper.display({
-      id: "pair",
-      header: "Pair",
+      id: "assetToSupply",
+      header: "Asset to Supply",
       meta: {
-        sx: { width: ["auto", "22%"] },
+        sx: { width: "14%" },
       },
       cell: ({ row }) => {
         const s = row.original
         const isPrime = s.collateralAsset.symbol === "PRIME"
-        const showMarketLabel = gte("sm")
-        const pairLabel = `${s.collateralAsset.symbol}/${debtSymbol(s)}`
-
+        const isEurc = s.collateralAsset.symbol === "EURC"
         return (
-          <Flex align="center" gap={getTokenPx("scales.paddings.base")}>
-            <Flex
-              align="center"
-              sx={{
-                position: "relative",
-                minWidth: 40,
-                height: 28,
-              }}
-            >
-              {isPrime ? (
-                <BaseAssetLogo
-                  src={primeLogo}
-                  size="medium"
-                  alt="PRIME"
-                  sx={{ position: "absolute", left: 0, zIndex: 1 }}
-                />
-              ) : (
-                <AssetLogo
-                  id={s.collateralAsset.id}
-                  size="medium"
-                  sx={{ position: "absolute", left: 0, zIndex: 1 }}
-                />
-              )}
-              <Box
-                sx={{
-                  position: "absolute",
-                  left: 16,
-                  zIndex: 0,
-                }}
-              >
-                {s.debtAsset.symbol === "HUSD" || s.debtAsset.symbol === "CASH" ? (
-                  <AssetLogo id={HOLLAR_ASSET_ID} size="medium" />
-                ) : (
-                  <AssetLogo id={s.debtAsset.id} size="medium" />
-                )}
-              </Box>
-            </Flex>
-            <Flex direction="column" sx={{ minWidth: 0 }}>
-              <Text fs="p3" fw={500}>
-                {pairLabel}
-              </Text>
-              {showMarketLabel && (
-                <Text fs="p5" color={theme.text.low} truncate>
-                  {s.collateralAsset.symbol === "PRIME" ||
-                    s.collateralAsset.symbol === "GDOT"
-                    ? "Prime Market"
-                    : "Global Market"}
-                </Text>
-              )}
-            </Flex>
+          <Flex align="center" gap={getTokenPx("scales.paddings.s")}>
+            {isPrime ? (
+              <BaseAssetLogo
+                src={primeLogoPng}
+                size="small"
+                alt="PRIME"
+              />
+            ) : isEurc ? (
+              <img src={eurcLogo} alt="EURC" style={{ width: 24, height: 24 }} />
+            ) : s.collateralAsset.symbol === "HUSD" || s.collateralAsset.symbol === "CASH" ? (
+              <AssetLogo id={HOLLAR_ASSET_ID} size="small" />
+            ) : (
+              <AssetLogo id={s.collateralAsset.id} size="small" />
+            )}
+            <Text fs="p3" fw={600}>
+              {s.collateralAsset.symbol === "CASH" ? "HUSD" : s.collateralAsset.symbol}
+            </Text>
           </Flex>
         )
       },
     }),
+    // Borrow Token column
+    columnHelper.display({
+      id: "borrowToken",
+      header: "Borrow Token",
+      meta: {
+        sx: { width: "14%" },
+      },
+      cell: ({ row }) => {
+        const s = row.original
+        const isEurc = s.debtAsset.symbol === "EURC"
+        return (
+          <Flex align="center" gap={getTokenPx("scales.paddings.s")}>
+            {s.debtAsset.symbol === "HUSD" || s.debtAsset.symbol === "CASH" ? (
+              <AssetLogo id={HOLLAR_ASSET_ID} size="small" />
+            ) : isEurc ? (
+              <img src={eurcLogo} alt="EURC" style={{ width: 24, height: 24 }} />
+            ) : (
+              <AssetLogo id={s.debtAsset.id} size="small" />
+            )}
+            <Text fs="p3" fw={600}>
+              {debtSymbol(s)}
+            </Text>
+          </Flex>
+        )
+      },
+    }),
+    // APY column
     columnHelper.accessor("netApy", {
-      header: "Max Net APY",
+      header: "APY",
       meta: {
         sx: { width: "12%", display: ["none", "table-cell"] },
       },
       cell: ({ getValue }) => (
-        <Text color={theme.details.values.positive} fw={600}>
+        <Text color={theme.details.values.positive} fw={500} fs="p4">
           {getValue().toFixed(2)}%
         </Text>
       ),
     }),
+    // Max leverage column
     columnHelper.accessor("leverage", {
-      header: "Max Leverage",
+      header: "Max leverage",
       meta: {
         sx: { width: "12%", display: ["none", "table-cell"] },
       },
-      cell: ({ getValue }) => <Text>{getValue().toFixed(2)}x</Text>,
-    }),
-    columnHelper.accessor("liqAvailable", {
-      header: "Liquidity",
-      meta: {
-        sx: { width: "12%" },
-      },
       cell: ({ getValue }) => (
-        <Text
-          sx={{
-            borderBottom: `1px dashed ${theme.text.low}`,
-            width: "fit-content",
-          }}
-        >
-          ${(getValue() / 1000).toFixed(2)}k
+        <Text fw={500} fs="p4">
+          {getValue().toFixed(2)}x
         </Text>
       ),
     }),
-    columnHelper.accessor("supplied", {
-      header: "Supplied",
+    // Liquidity column
+    columnHelper.accessor("liqAvailable", {
+      header: "Liquidity",
       meta: {
         sx: { width: "12%", display: ["none", "table-cell"] },
       },
       cell: ({ getValue }) => (
-        <Text>${(getValue() / 1000000).toFixed(2)}M</Text>
+        <Text fw={500} fs="p4">
+          {(getValue() / 1000000).toFixed(2)}M
+        </Text>
       ),
+    }),
+    // Type column
+    columnHelper.display({
+      id: "type",
+      header: "Type",
+      meta: {
+        sx: { width: "14%", display: ["none", "table-cell"] },
+      },
+      cell: ({ row }) => {
+        const s = row.original
+        const typeLabels = {
+          "rwa-loop": "RWA LOOP",
+          "bull": "CRYPTO BULL",
+          "bear": "CRYPTO BEAR",
+        }
+        const typeVariants = {
+          "rwa-loop": "info",
+          "bull": "green",
+          "bear": "danger",
+        } as const
+        return (
+          <Chip
+            variant={typeVariants[s.strategyType]}
+            size="small"
+            rounded
+            sx={{ textTransform: "uppercase" }}
+          >
+            <Text fs="p6" fw={500}>
+              {typeLabels[s.strategyType]}
+            </Text>
+          </Chip>
+        )
+      },
     }),
     columnHelper.display({
       id: "actions",
@@ -404,7 +457,7 @@ export const MultiplyView: FC = () => {
                 setSelectedStrategy(s)
               }}
             >
-              Open position
+              New position
             </Button>
             <Button
               size="small"
@@ -487,10 +540,10 @@ export const MultiplyView: FC = () => {
           mb={getTokenPx("scales.paddings.l")}
           font="primary"
         >
-          Featured Loops
+          Featured strategies
         </Text>
         <Grid
-          columns={gte("xl") ? 4 : gte("sm") ? 2 : 1}
+          columns={gte("xl") ? 3 : gte("sm") ? 2 : 1}
           gap={getTokenPx("scales.paddings.l")}
         >
           {FEATURED_STRATEGIES.map((fs) => {
@@ -525,17 +578,35 @@ export const MultiplyView: FC = () => {
                   <Flex justify="space-between" align="flex-start">
                     {/* Strategy Icon */}
                     <Box sx={{ position: "relative" }}>
-                      {fs.type === "rwa-loop" ? (
+                      {fs.type === "rwa-loop" || fs.type === "partnership" ? (
                         fs.collateral === "PRIME" ? (
-                          <BaseAssetLogo
+                          <img
                             src={primeLogo}
                             alt="PRIME"
-                            sx={{ width: 106, height: 106 }}
+                            style={{ width: 65, height: 65 }}
+                          />
+                        ) : fs.collateral === "GDOT" ? (
+                          <img
+                            src={gdotLogo}
+                            alt="GDOT"
+                            style={{ width: 65, height: 65 }}
+                          />
+                        ) : fs.collateral === "EURC" ? (
+                          <img
+                            src={eurcLogo}
+                            alt="EURC"
+                            style={{ width: 65, height: 65 }}
+                          />
+                        ) : fs.id === "decentral" ? (
+                          <img
+                            src={decentralLogo}
+                            alt="Decentral"
+                            style={{ width: 65, height: 65 }}
                           />
                         ) : (
                           <AssetLogo
-                            id={GDOT_ERC20_ID}
-                            sx={{ width: 106, height: 106 }}
+                            id={matchedStrategy?.collateralAsset?.id}
+                            sx={{ width: 65, height: 65 }}
                           />
                         )
                       ) : (
@@ -560,7 +631,7 @@ export const MultiplyView: FC = () => {
                               width: 25,
                               height: 25,
                               position: "absolute",
-                              left: 52,
+                              left: 69,
                               top: 4,
                               transform:
                                 fs.type === "bull"
@@ -590,6 +661,18 @@ export const MultiplyView: FC = () => {
                           </Text>
                         </Chip>
                       )}
+                      {fs.type === "partnership" && (
+                        <Chip
+                          variant="info"
+                          size="medium"
+                          rounded
+                          sx={{ textTransform: "uppercase" }}
+                        >
+                          <Text fs="p6" fw={500}>
+                            PARTNERSHIP
+                          </Text>
+                        </Chip>
+                      )}
                       <Chip variant="green" size="medium" rounded>
                         <Text fs="p6" fw={500}>
                           UP TO {fs.leverage}X
@@ -601,14 +684,14 @@ export const MultiplyView: FC = () => {
                   {/* Bottom Content */}
                   <Flex
                     direction="column"
-                    gap={getTokenPx("scales.paddings.xl")}
+                    gap={getTokenPx("scales.paddings.l")}
                   >
                     {/* Info Row: Net APY | Liquidity Available */}
                     <Flex
                       align="center"
-                      gap={getTokenPx("scales.paddings.l")}
+                      gap={getTokenPx("scales.paddings.m")}
                     >
-                      <Flex direction="column" gap={4}>
+                      <Flex direction="column" gap={2}>
                         <Text
                           fs="p6"
                           fw={400}
@@ -621,7 +704,7 @@ export const MultiplyView: FC = () => {
                           fw={500}
                           color={theme.details.values.positive}
                           font="primary"
-                          sx={{ fontSize: 28, lineHeight: "30px" }}
+                          sx={{ fontSize: 24, lineHeight: "26px" }}
                         >
                           {netApy.toFixed(2)}%
                         </Text>
@@ -629,7 +712,7 @@ export const MultiplyView: FC = () => {
 
                       <SInfoSeparator />
 
-                      <Flex direction="column" gap={4}>
+                      <Flex direction="column" gap={2}>
                         <Text
                           fs="p6"
                           fw={400}
@@ -641,7 +724,7 @@ export const MultiplyView: FC = () => {
                         <Text
                           fw={500}
                           font="primary"
-                          sx={{ fontSize: 28, lineHeight: "30px" }}
+                          sx={{ fontSize: 24, lineHeight: "26px" }}
                         >
                           {(liqAvailable / 1000000).toFixed(1)}m
                         </Text>
@@ -654,20 +737,20 @@ export const MultiplyView: FC = () => {
                     {/* Description Container */}
                     <Flex
                       direction="column"
-                      gap={getTokenPx("scales.paddings.base")}
+                      gap={getTokenPx("scales.paddings.xs")}
                     >
                       <Text
                         fw={500}
                         font="primary"
-                        sx={{ fontSize: 22, lineHeight: "24px" }}
+                        sx={{ fontSize: 18, lineHeight: "22px" }}
                       >
                         {fs.strategyName}
                       </Text>
                       <Text
-                        fs="p4"
+                        fs="p5"
                         fw={400}
                         color={theme.text.low}
-                        lh="18px"
+                        lh="16px"
                       >
                         {fs.description}
                       </Text>
@@ -746,7 +829,7 @@ export const MultiplyView: FC = () => {
                       }}
                     >
                       {s.collateralAsset.symbol === "PRIME" ? (
-                        <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
+                        <BaseAssetLogo src={primeLogoPng} size="medium" alt="PRIME" />
                       ) : (
                         <AssetLogo id={s.collateralAsset.id} size="medium" />
                       )}
@@ -818,7 +901,7 @@ export const MultiplyView: FC = () => {
                       <Flex key={poolIdx} align="center">
                         {s.collateralAsset.symbol === "PRIME" ? (
                           <BaseAssetLogo
-                            src={primeLogo}
+                            src={primeLogoPng}
                             size="extra-small"
                             alt="PRIME"
                           />

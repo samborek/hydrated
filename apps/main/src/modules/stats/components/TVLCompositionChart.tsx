@@ -4,6 +4,8 @@ import { SelectDropdown } from "./SelectDropdown"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { FC, useState, useMemo } from "react"
 import {
+  BarChart,
+  Bar,
   AreaChart,
   Area,
   XAxis,
@@ -12,6 +14,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts"
+import { TrendingUp, BarChart2 } from "lucide-react"
 
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
@@ -126,6 +129,7 @@ export const TVLCompositionChart: FC<Props> = ({
 }) => {
   const [timeRange, setTimeRange] = useState<TimeRange>('3M')
   const [filter, setFilter] = useState<Filter>('All')
+  const [chartType, setChartType] = useState<"line" | "bar">("line")
 
   // Generate data once with useMemo to avoid regenerating on every render
   const chartData = useMemo(() => generateMockData(), [])
@@ -170,6 +174,19 @@ export const TVLCompositionChart: FC<Props> = ({
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
+          <ToggleGroup
+            size="small"
+            type="single"
+            value={chartType}
+            onValueChange={(v: string) => v && setChartType(v as "line" | "bar")}
+          >
+            <ToggleGroupItem value="line">
+              <TrendingUp size={16} />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="bar">
+              <BarChart2 size={16} />
+            </ToggleGroupItem>
+          </ToggleGroup>
           <TimeRangeToggle
             value={timeRange}
             items={['1W', '1M', '3M']}
@@ -181,91 +198,133 @@ export const TVLCompositionChart: FC<Props> = ({
 
 
       <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={filteredData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-          <defs>
-            <linearGradient id="gradOmnipool" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={COLORS.omnipool} stopOpacity={0.8} />
-              <stop offset="95%" stopColor={COLORS.omnipool} stopOpacity={0.2} />
-            </linearGradient>
-            <linearGradient id="gradStable" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={COLORS.stablePools} stopOpacity={0.8} />
-              <stop offset="95%" stopColor={COLORS.stablePools} stopOpacity={0.2} />
-            </linearGradient>
-            <linearGradient id="gradMM" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={COLORS.moneyMarket} stopOpacity={0.8} />
-              <stop offset="95%" stopColor={COLORS.moneyMarket} stopOpacity={0.2} />
-            </linearGradient>
-            <linearGradient id="gradXYK" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={COLORS.xykPools} stopOpacity={0.8} />
-              <stop offset="95%" stopColor={COLORS.xykPools} stopOpacity={0.2} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
-          <XAxis
-            dataKey="date"
-            tick={{ fill: theme.text.medium, fontSize: 11 }}
-            axisLine={{ stroke: theme.details.separators }}
-            tickLine={false}
-          />
-          <YAxis
-            tick={{ fill: theme.text.medium, fontSize: 11 }}
-            axisLine={{ stroke: theme.details.separators }}
-            tickLine={false}
-            tickFormatter={(value) => `$${value}M`}
-            width={45}
-          />
-          <Tooltip
-            content={({ active, payload, label }) => (
-              <ChartTooltipContent
-                active={active}
-                payload={payload as any}
-                label={label}
-                valueFormatter={(v) => `$${v.toFixed(2)}M`}
+        {chartType === 'line' ? (
+          <AreaChart data={filteredData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="gradOmnipool" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={COLORS.omnipool} stopOpacity={0.8} />
+                <stop offset="95%" stopColor={COLORS.omnipool} stopOpacity={0.2} />
+              </linearGradient>
+              <linearGradient id="gradStable" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={COLORS.stablePools} stopOpacity={0.8} />
+                <stop offset="95%" stopColor={COLORS.stablePools} stopOpacity={0.2} />
+              </linearGradient>
+              <linearGradient id="gradMM" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={COLORS.moneyMarket} stopOpacity={0.8} />
+                <stop offset="95%" stopColor={COLORS.moneyMarket} stopOpacity={0.2} />
+              </linearGradient>
+              <linearGradient id="gradXYK" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={COLORS.xykPools} stopOpacity={0.8} />
+                <stop offset="95%" stopColor={COLORS.xykPools} stopOpacity={0.2} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
+            <XAxis
+              dataKey="date"
+              tick={{ fill: theme.text.medium, fontSize: 11 }}
+              axisLine={{ stroke: theme.details.separators }}
+              tickLine={false}
+            />
+            <YAxis
+              tick={{ fill: theme.text.medium, fontSize: 11 }}
+              axisLine={{ stroke: theme.details.separators }}
+              tickLine={false}
+              tickFormatter={(value) => `$${value}M`}
+              width={45}
+            />
+            <Tooltip
+              content={({ active, payload, label }) => (
+                <ChartTooltipContent
+                  active={active}
+                  payload={payload as any}
+                  label={label}
+                  valueFormatter={(v) => `$${v.toFixed(2)}M`}
+                />
+              )}
+              cursor={chartCursorStyle}
+            />
+            {(filter === 'All' || filter === 'Omnipool') && (
+              <Area
+                type="monotone"
+                dataKey="omnipool"
+                stackId="1"
+                stroke={COLORS.omnipool}
+                fill="url(#gradOmnipool)"
+                name="Omnipool"
               />
             )}
-            cursor={chartCursorStyle}
-          />
-          {(filter === 'All' || filter === 'Omnipool') && (
-            <Area
-              type="monotone"
-              dataKey="omnipool"
-              stackId="1"
-              stroke={COLORS.omnipool}
-              fill="url(#gradOmnipool)"
-              name="Omnipool"
+            {(filter === 'All' || filter === 'Stable') && (
+              <Area
+                type="monotone"
+                dataKey="stablePools"
+                stackId="1"
+                stroke={COLORS.stablePools}
+                fill="url(#gradStable)"
+                name="Stable Pools"
+              />
+            )}
+            {(filter === 'All' || filter === 'MM') && (
+              <Area
+                type="monotone"
+                dataKey="moneyMarket"
+                stackId="1"
+                stroke={COLORS.moneyMarket}
+                fill="url(#gradMM)"
+                name="Money Market"
+              />
+            )}
+            {(filter === 'All' || filter === 'XYK') && (
+              <Area
+                type="monotone"
+                dataKey="xykPools"
+                stackId="1"
+                stroke={COLORS.xykPools}
+                fill="url(#gradXYK)"
+                name="XYK Pools"
+              />
+            )}
+          </AreaChart>
+        ) : (
+          <BarChart data={filteredData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
+            <XAxis
+              dataKey="date"
+              tick={{ fill: theme.text.medium, fontSize: 11 }}
+              axisLine={{ stroke: theme.details.separators }}
+              tickLine={false}
             />
-          )}
-          {(filter === 'All' || filter === 'Stable') && (
-            <Area
-              type="monotone"
-              dataKey="stablePools"
-              stackId="1"
-              stroke={COLORS.stablePools}
-              fill="url(#gradStable)"
-              name="Stable Pools"
+            <YAxis
+              tick={{ fill: theme.text.medium, fontSize: 11 }}
+              axisLine={{ stroke: theme.details.separators }}
+              tickLine={false}
+              tickFormatter={(value) => `$${value}M`}
+              width={45}
             />
-          )}
-          {(filter === 'All' || filter === 'MM') && (
-            <Area
-              type="monotone"
-              dataKey="moneyMarket"
-              stackId="1"
-              stroke={COLORS.moneyMarket}
-              fill="url(#gradMM)"
-              name="Money Market"
+            <Tooltip
+              content={({ active, payload, label }) => (
+                <ChartTooltipContent
+                  active={active}
+                  payload={payload as any}
+                  label={label}
+                  valueFormatter={(v) => `$${v.toFixed(2)}M`}
+                />
+              )}
+              cursor={{ fill: theme.surfaces.containers.high.hover }}
             />
-          )}
-          {(filter === 'All' || filter === 'XYK') && (
-            <Area
-              type="monotone"
-              dataKey="xykPools"
-              stackId="1"
-              stroke={COLORS.xykPools}
-              fill="url(#gradXYK)"
-              name="XYK Pools"
-            />
-          )}
-        </AreaChart>
+            {(filter === 'All' || filter === 'Omnipool') && (
+              <Bar dataKey="omnipool" stackId="1" fill={COLORS.omnipool} name="Omnipool" radius={(filter === 'Omnipool' || filter === 'All') ? [4, 4, 0, 0] : undefined} />
+            )}
+            {(filter === 'All' || filter === 'Stable') && (
+              <Bar dataKey="stablePools" stackId="1" fill={COLORS.stablePools} name="Stable Pools" radius={filter === 'Stable' ? [4, 4, 0, 0] : undefined} />
+            )}
+            {(filter === 'All' || filter === 'MM') && (
+              <Bar dataKey="moneyMarket" stackId="1" fill={COLORS.moneyMarket} name="Money Market" radius={filter === 'MM' ? [4, 4, 0, 0] : undefined} />
+            )}
+            {(filter === 'All' || filter === 'XYK') && (
+              <Bar dataKey="xykPools" stackId="1" fill={COLORS.xykPools} name="XYK Pools" radius={filter === 'XYK' ? [4, 4, 0, 0] : undefined} />
+            )}
+          </BarChart>
+        )}
       </ResponsiveContainer>
 
       <SLegendRow>
@@ -288,7 +347,7 @@ export const TVLCompositionChart: FC<Props> = ({
       </SLegendRow>
 
       <SChartFooter>
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, minWidth: 100 }}>
           <SelectDropdown
             value={filter}
             onValueChange={(value: string) => setFilter(value as Filter)}
@@ -303,7 +362,21 @@ export const TVLCompositionChart: FC<Props> = ({
           />
         </div>
 
-        <div style={{ flex: 1 }}>
+        <ToggleGroup
+          size="small"
+          type="single"
+          value={chartType}
+          onValueChange={(v: string) => v && setChartType(v as "line" | "bar")}
+        >
+          <ToggleGroupItem value="line" style={{ padding: 8 }}>
+            <TrendingUp size={16} />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="bar" style={{ padding: 8 }}>
+            <BarChart2 size={16} />
+          </ToggleGroupItem>
+        </ToggleGroup>
+
+        <div style={{ flex: 1, minWidth: 100 }}>
           <SelectDropdown
             value={timeRange}
             items={['1W', '1M', '3M'].map(range => ({ key: range, label: range }))}

@@ -1,17 +1,20 @@
 import styled from "@emotion/styled"
-import { Text, ValueStats } from "@galacticcouncil/ui/components"
+import { Text, ValueStats, ToggleGroup, ToggleGroupItem } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState } from "react"
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts"
+import { TrendingUp, BarChart2 } from "lucide-react"
 
 import { ChartTooltipContent } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
@@ -78,6 +81,7 @@ export const HollarSupplyChart: FC<Props> = ({
 }) => {
   const { themeProps: theme } = useTheme()
   const [timeRange, setTimeRange] = useState<TimeRange>("30D")
+  const [chartType, setChartType] = useState<"line" | "bar">("line")
 
   // Generate data once with useMemo to avoid regenerating on every render
   const chartData = useMemo(() => generateHollarData(), [])
@@ -108,6 +112,19 @@ export const HollarSupplyChart: FC<Props> = ({
           style={{ alignItems: "flex-start" }}
         />
         <SControlsGroup>
+          <ToggleGroup
+            size="small"
+            type="single"
+            value={chartType}
+            onValueChange={(v: string) => v && setChartType(v as "line" | "bar")}
+          >
+            <ToggleGroupItem value="line">
+              <TrendingUp size={16} />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="bar">
+              <BarChart2 size={16} />
+            </ToggleGroupItem>
+          </ToggleGroup>
           <TimeRangeToggle
             value={timeRange}
             items={["7D", "30D", "MAX"]}
@@ -117,54 +134,108 @@ export const HollarSupplyChart: FC<Props> = ({
       </SChartHeader>
 
       <ResponsiveContainer width="100%" height={280}>
-        <AreaChart
-          data={filteredData}
-          margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
-        >
-          <defs>
-            <linearGradient id="hollarGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
-              <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke={theme.details.separators}
-          />
-          <XAxis
-            dataKey="date"
-            tick={{ fill: theme.text.low, fontSize: 10 }}
-            axisLine={{ stroke: theme.details.separators }}
-            tickLine={false}
-          />
-          <YAxis
-            tick={{ fill: theme.text.low, fontSize: 10 }}
-            axisLine={{ stroke: theme.details.separators }}
-            tickLine={false}
-            tickFormatter={(value) => `$${value.toFixed(0)}M`}
-          />
-          <Tooltip
-            content={({ active, payload, label }) => (
-              <ChartTooltipContent
-                active={active}
-                payload={payload as any}
-                label={label}
-                valueFormatter={(v) => `$${v.toFixed(2)}M`}
-              />
-            )}
-            cursor={{ fill: theme.surfaces.containers.high.hover }}
-          />
-          <Area
-            type="monotone"
-            dataKey="supply"
-            stroke="#8B5CF6"
-            fill="url(#hollarGrad)"
-            strokeWidth={2}
-          />
-        </AreaChart>
+        {chartType === 'line' ? (
+          <AreaChart
+            data={filteredData}
+            margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+          >
+            <defs>
+              <linearGradient id="hollarGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
+                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke={theme.details.separators}
+            />
+            <XAxis
+              dataKey="date"
+              tick={{ fill: theme.text.low, fontSize: 10 }}
+              axisLine={{ stroke: theme.details.separators }}
+              tickLine={false}
+            />
+            <YAxis
+              tick={{ fill: theme.text.low, fontSize: 10 }}
+              axisLine={{ stroke: theme.details.separators }}
+              tickLine={false}
+              tickFormatter={(value) => `$${value.toFixed(0)}M`}
+            />
+            <Tooltip
+              content={({ active, payload, label }) => (
+                <ChartTooltipContent
+                  active={active}
+                  payload={payload as any}
+                  label={label}
+                  valueFormatter={(v) => `$${v.toFixed(2)}M`}
+                />
+              )}
+              cursor={{ fill: theme.surfaces.containers.high.hover }}
+            />
+            <Area
+              type="monotone"
+              dataKey="supply"
+              stroke="#8B5CF6"
+              fill="url(#hollarGrad)"
+              strokeWidth={2}
+            />
+          </AreaChart>
+        ) : (
+          <BarChart
+            data={filteredData}
+            margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke={theme.details.separators}
+            />
+            <XAxis
+              dataKey="date"
+              tick={{ fill: theme.text.low, fontSize: 10 }}
+              axisLine={{ stroke: theme.details.separators }}
+              tickLine={false}
+            />
+            <YAxis
+              tick={{ fill: theme.text.low, fontSize: 10 }}
+              axisLine={{ stroke: theme.details.separators }}
+              tickLine={false}
+              tickFormatter={(value) => `$${value.toFixed(0)}M`}
+            />
+            <Tooltip
+              content={({ active, payload, label }) => (
+                <ChartTooltipContent
+                  active={active}
+                  payload={payload as any}
+                  label={label}
+                  valueFormatter={(v) => `$${v.toFixed(2)}M`}
+                />
+              )}
+              cursor={{ fill: theme.surfaces.containers.high.hover }}
+            />
+            <Bar
+              dataKey="supply"
+              fill="#8B5CF6"
+              radius={[4, 4, 0, 0]}
+            />
+          </BarChart>
+        )}
       </ResponsiveContainer>
 
       <SChartFooter>
+        <ToggleGroup
+          size="small"
+          type="single"
+          value={chartType}
+          onValueChange={(v: string) => v && setChartType(v as "line" | "bar")}
+        >
+          <ToggleGroupItem value="line" style={{ padding: 8 }}>
+            <TrendingUp size={16} />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="bar" style={{ padding: 8 }}>
+            <BarChart2 size={16} />
+          </ToggleGroupItem>
+        </ToggleGroup>
+
         <div style={{ flex: 1 }}>
           <SelectDropdown
             value={timeRange}

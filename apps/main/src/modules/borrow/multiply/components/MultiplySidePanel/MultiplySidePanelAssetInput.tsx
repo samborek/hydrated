@@ -6,6 +6,7 @@ import {
 import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils";
 import { FC } from "react";
 
+import eurcLogo from "@/assets/strategies/eurc_logo.svg";
 import primeLogo from "@/assets/tokens/prime.png";
 import { AssetLogo } from "@/components/AssetLogo";
 import { getReserveAssetId } from "@/modules/borrow/utils/assets";
@@ -38,6 +39,8 @@ export const MultiplySidePanelAssetInput: FC<
       selectedAssetIcon={
         asset?.symbol === "PRIME" ? (
           <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
+        ) : asset?.symbol === "EURC" ? (
+          <img src={eurcLogo} alt="EURC" style={{ width: 32, height: 32 }} />
         ) : asset?.symbol === "HUSD" ? (
           <AssetLogo id={HOLLAR_ASSET_ID} size="medium" />
         ) : asset ? (

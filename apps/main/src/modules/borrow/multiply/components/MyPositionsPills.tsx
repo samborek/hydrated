@@ -9,6 +9,7 @@ import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { ArrowDown, ArrowUp } from "lucide-react"
 import { FC, useState } from "react"
 
+import eurcLogo from "@/assets/strategies/eurc_logo.svg"
 import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
 import { PositionActionsModal } from "@/modules/borrow/multiply/components/PositionActionsModal"
@@ -74,12 +75,16 @@ const PositionPill: FC<PositionPillProps> = ({ position, onClick }) => {
             <Flex>
                 {isPrime ? (
                     <BaseAssetLogo src={primeLogo} size="extra-small" alt="PRIME" />
+                ) : p.collateralAsset.symbol === "EURC" ? (
+                    <img src={eurcLogo} alt="EURC" style={{ width: 16, height: 16 }} />
                 ) : (
                     <AssetLogo id={p.collateralAsset.id} size="extra-small" />
                 )}
                 <div style={{ marginLeft: -4 }}>
                     {p.debtAsset.symbol === "HUSD" || p.debtAsset.symbol === "CASH" ? (
                         <AssetLogo id={HOLLAR_ASSET_ID} size="extra-small" />
+                    ) : p.debtAsset.symbol === "EURC" ? (
+                        <img src={eurcLogo} alt="EURC" style={{ width: 16, height: 16 }} />
                     ) : (
                         <AssetLogo id={p.debtAsset.id} size="extra-small" />
                     )}

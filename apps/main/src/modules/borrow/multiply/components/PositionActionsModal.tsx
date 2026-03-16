@@ -16,6 +16,7 @@ import { ArrowDown, ArrowUp } from "lucide-react"
 import { FC, useState } from "react"
 import { toast } from "sonner"
 
+import eurcLogo from "@/assets/strategies/eurc_logo.svg"
 import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
 import { MultiplySidePanel } from "@/modules/borrow/multiply/components/MultiplySidePanel/MultiplySidePanel"
@@ -118,6 +119,8 @@ export const PositionActionsModal: FC<PositionActionsModalProps> = ({
                     <Flex>
                       {isPrime ? (
                         <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
+                      ) : position.collateralAsset.symbol === "EURC" ? (
+                        <img src={eurcLogo} alt="EURC" style={{ width: 32, height: 32 }} />
                       ) : (
                         <AssetLogo id={position.collateralAsset.id} size="medium" />
                       )}
@@ -125,6 +128,8 @@ export const PositionActionsModal: FC<PositionActionsModalProps> = ({
                         {position.debtAsset.symbol === "HUSD" ||
                           position.debtAsset.symbol === "CASH" ? (
                           <AssetLogo id={HOLLAR_ASSET_ID} size="medium" />
+                        ) : position.debtAsset.symbol === "EURC" ? (
+                          <img src={eurcLogo} alt="EURC" style={{ width: 32, height: 32 }} />
                         ) : (
                           <AssetLogo id={position.debtAsset.id} size="medium" />
                         )}

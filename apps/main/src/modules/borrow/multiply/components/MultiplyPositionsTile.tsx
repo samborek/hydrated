@@ -17,6 +17,7 @@ import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { ChevronDown, CircleStop } from "lucide-react"
 import { FC, useState } from "react"
 
+import eurcLogo from "@/assets/strategies/eurc_logo.svg"
 import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
 import { PositionActionsModal } from "@/modules/borrow/multiply/components/PositionActionsModal"
@@ -251,6 +252,12 @@ const PositionRow: FC<{
               size="small"
               sx={{ position: "absolute", left: 0, zIndex: 1 }}
             />
+          ) : position.collateralAsset?.symbol === "EURC" ? (
+            <img
+              src={eurcLogo}
+              alt="EURC"
+              style={{ width: 24, height: 24, position: "absolute", left: 0, zIndex: 1 }}
+            />
           ) : (
             <AssetLogo
               id={position.collateralAsset?.id ?? "0"}
@@ -264,6 +271,12 @@ const PositionRow: FC<{
               id={HOLLAR_ASSET_ID}
               size="small"
               sx={{ position: "absolute", left: 16, zIndex: 0 }}
+            />
+          ) : position.debtAsset?.symbol === "EURC" ? (
+            <img
+              src={eurcLogo}
+              alt="EURC"
+              style={{ width: 24, height: 24, position: "absolute", left: 16, zIndex: 0 }}
             />
           ) : (
             <AssetLogo

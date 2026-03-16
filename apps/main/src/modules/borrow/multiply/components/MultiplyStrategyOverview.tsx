@@ -14,6 +14,7 @@ import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
 import { Zap } from "lucide-react"
 import { FC } from "react"
 
+import eurcLogo from "@/assets/strategies/eurc_logo.svg"
 import primeLogo from "@/assets/tokens/prime.png"
 import { AssetLogo } from "@/components/AssetLogo"
 import { getReserveAssetId } from "@/modules/borrow/utils/assets"
@@ -158,6 +159,8 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
                   </Text>
                   {collateralAsset.symbol === "PRIME" ? (
                     <BaseAssetLogo src={primeLogo} size="medium" alt="PRIME" />
+                  ) : collateralAsset.symbol === "EURC" ? (
+                    <img src={eurcLogo} alt="EURC" style={{ width: 32, height: 32 }} />
                   ) : (
                     <AssetLogo
                       id={getReserveAssetId(collateralAsset)}
@@ -181,6 +184,8 @@ export const MultiplyStrategyOverview: FC<MultiplyStrategyOverviewProps> = ({
                   {debtAsset.symbol === "HUSD" ||
                     debtAsset.symbol === "CASH" ? (
                     <AssetLogo id={HOLLAR_ASSET_ID} size="medium" />
+                  ) : debtAsset.symbol === "EURC" ? (
+                    <img src={eurcLogo} alt="EURC" style={{ width: 32, height: 32 }} />
                   ) : (
                     <AssetLogo
                       id={getReserveAssetId(debtAsset)}

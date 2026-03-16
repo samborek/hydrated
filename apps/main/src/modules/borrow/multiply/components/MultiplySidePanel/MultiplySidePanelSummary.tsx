@@ -4,6 +4,7 @@ import { useTheme } from "@galacticcouncil/ui/theme";
 import { getTokenPx } from "@galacticcouncil/ui/utils";
 import { FC } from "react";
 
+import eurcLogo from "@/assets/strategies/eurc_logo.svg";
 import { AssetLogo } from "@/components/AssetLogo";
 import { getReserveAssetId } from "@/modules/borrow/utils/assets";
 
@@ -110,7 +111,11 @@ export const MultiplySidePanelSummary: FC<MultiplySidePanelSummaryProps> = ({
             Up to {yieldPercent}%
           </Text>
           {collateralAsset && (
-            <AssetLogo id={getReserveAssetId(collateralAsset)} size="small" />
+            collateralAsset.symbol === "EURC" ? (
+              <img src={eurcLogo} alt="EURC" style={{ width: 20, height: 20 }} />
+            ) : (
+              <AssetLogo id={getReserveAssetId(collateralAsset)} size="small" />
+            )
           )}
         </Flex>
       </Flex>

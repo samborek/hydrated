@@ -358,13 +358,11 @@ function StatsPage() {
         </SSection>
 
 
-        <SSection style={{ marginTop: Number(theme.scales.paddings.l) }}>
-          <TVLCompositionChart title="Hydration TVL" value="$183.59M" />
-        </SSection>
-
-        <SSection style={{ marginTop: Number(theme.scales.paddings.l) }}>
-          <VolumeChart title="24h Volume" value="$10.3M" />
-        </SSection>
+        {false && (
+          <SSection style={{ marginTop: Number(theme.scales.paddings.l) }}>
+            <VolumeChart title="24h Volume" value="$10.3M" />
+          </SSection>
+        )}
 
       </div>
 

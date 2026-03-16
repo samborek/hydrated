@@ -77,7 +77,7 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
     // APY calculations
     const supplyApy = Number(collateralAsset?.supplyAPY) || 0.12
     const borrowApy = Number(debtAsset?.variableBorrowAPY) || 0.05
-    const netApy = (supplyApy + (supplyApy - borrowApy) * (leverage - 1)) * 100
+    const netApy = Math.max(0, (supplyApy + (supplyApy - borrowApy) * (leverage - 1)) * 100)
 
     // Profit estimation (for display - simplified)
     const estimatedProfitUsd = (buyingPowerUsd * (netApy / 100)) / 12 // Monthly estimate

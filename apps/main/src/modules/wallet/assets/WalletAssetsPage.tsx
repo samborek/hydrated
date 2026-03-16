@@ -61,7 +61,7 @@ export const WalletAssetsPage = () => {
           {(isMobile || category === "all" || category === "liquidity") && (
             <MyLiquidity searchPhrase={searchPhrase} />
           )}
-          {(isMobile || category === "all" || category === "looping") && (
+          {(isMobile || category === "all" || category === "strategies") && (
             <MyLooping searchPhrase={searchPhrase} />
           )}
         </Flex>

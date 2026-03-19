@@ -3,6 +3,9 @@ import { Box, Flex, Text, ValueStats } from "@galacticcouncil/ui/components";
 import { AssetLogo as BaseAssetLogo } from "@galacticcouncil/ui/components";
 import { getToken, getTokenPx } from "@galacticcouncil/ui/utils";
 import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils";
+import { useTheme } from "@galacticcouncil/ui/theme";
+import { useNavigate } from "@tanstack/react-router";
+import { ArrowLeft } from "lucide-react";
 import { FC } from "react";
 
 import bullStrategyIcon from "@/assets/strategies/bull_strategy.svg";
@@ -23,6 +26,8 @@ export const MultiplyStrategyHeader: FC<MultiplyStrategyHeaderProps> = ({
   collateralAsset,
   debtAsset,
 }) => {
+  const { themeProps: theme } = useTheme();
+  const navigate = useNavigate();
   return (
     <Flex
       id="multiply-strategy-header"
@@ -42,6 +47,13 @@ export const MultiplyStrategyHeader: FC<MultiplyStrategyHeaderProps> = ({
         wrap
         sx={{ minWidth: 0, flex: "1 1 auto" }}
       >
+        <Box
+          sx={{ cursor: "pointer", display: "flex", alignItems: "center", mr: 2 }}
+          onClick={() => navigate({ to: "/borrow/multiply" } as any)}
+        >
+          <ArrowLeft size={24} color={theme.text.high} />
+        </Box>
+
         {collateralAsset.symbol === "WETH" ? (
           <img src={bullStrategyIcon} alt="Crypto Bull" style={{ width: 40, height: 40 }} />
         ) : collateralAsset.symbol === "WBTC" ? (
@@ -55,13 +67,11 @@ export const MultiplyStrategyHeader: FC<MultiplyStrategyHeaderProps> = ({
               <AssetLogo id={getReserveAssetId(debtAsset)} size="large" />
             </div>
           </Flex>
-        ) : collateralAsset.symbol === "PRIME" || collateralAsset.symbol === "EURC" ? (
+        ) : collateralAsset.symbol === "EURC" ? (
+          <img src={eurcLogo} alt="EURC" style={{ width: 40, height: 40 }} />
+        ) : collateralAsset.symbol === "PRIME" ? (
           <Flex style={{ position: "relative" }}>
-            {collateralAsset.symbol === "PRIME" ? (
-              <BaseAssetLogo src={primeLogo} size="large" alt="PRIME" />
-            ) : (
-              <img src={eurcLogo} alt="EURC" style={{ width: 40, height: 40 }} />
-            )}
+            <BaseAssetLogo src={primeLogo} size="large" alt="PRIME" />
             <div style={{ marginLeft: -12 }}>
               {debtAsset.symbol === "HUSD" ? (
                 <AssetLogo id={HOLLAR_ASSET_ID} size="large" />
@@ -99,7 +109,9 @@ export const MultiplyStrategyHeader: FC<MultiplyStrategyHeaderProps> = ({
                 ? "Crypto Bear"
                 : collateralAsset.symbol === "USDC" && debtAsset.symbol === "HUSD"
                   ? "Decentral"
-                  : `${collateralAsset.symbol} Loop`}
+                  : collateralAsset.symbol === "EURC"
+                    ? "EURC"
+                    : `${collateralAsset.symbol} Loop`}
           </Text>
 
           <Text fs="p3" color={getToken("text.medium")}>

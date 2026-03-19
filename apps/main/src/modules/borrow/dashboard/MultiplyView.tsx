@@ -146,7 +146,7 @@ const FEATURED_STRATEGIES: FeaturedStrategyConfig[] = [
   // Row 2
   {
     id: "eurc-loop",
-    strategyName: "EURC Loop",
+    strategyName: "EURC",
     description:
       "Leverage your EURC holdings with RWA-backed yield strategies. Earn enhanced returns on Euro-denominated stablecoin positions.",
     type: "rwa-loop",
@@ -294,7 +294,7 @@ export const MultiplyView: FC = () => {
         netApy,
         liqAvailable: 12570000,
         supplied: 2400000 + idx * 100000,
-        strategyName: `${collateral.symbol} Loop`,
+        strategyName: collateral.symbol === "EURC" ? "EURC" : `${collateral.symbol} Loop`,
         strategyType: s.type,
       }
     }).filter(Boolean) as StrategyRow[]
@@ -555,6 +555,12 @@ export const MultiplyView: FC = () => {
             )
             const netApy = matchedStrategy?.netApy ?? 8.49
             const liqAvailable = matchedStrategy?.liqAvailable ?? 1400000
+            const maxLtv = matchedStrategy?.collateralAsset?.baseLTVasCollateral
+              ? (Number(matchedStrategy.collateralAsset.baseLTVasCollateral) / 100).toFixed(0)
+              : "75"
+            const liqThreshold = matchedStrategy?.collateralAsset?.reserveLiquidationThreshold
+              ? (Number(matchedStrategy.collateralAsset.reserveLiquidationThreshold) / 100).toFixed(0)
+              : "80"
 
             return (
               <SLoopCard
@@ -729,6 +735,28 @@ export const MultiplyView: FC = () => {
                           {(liqAvailable / 1000000).toFixed(1)}m
                         </Text>
                       </Flex>
+                    </Flex>
+
+                    {/* Market Context Row */}
+                    <Flex align="center" gap={getTokenPx("scales.paddings.s")}>
+                      <Text fs="p6" color={theme.text.medium}>
+                        TVL: $2.4M
+                      </Text>
+                      <Text fs="p6" color={theme.text.low}>•</Text>
+                      <Text fs="p6" color={theme.text.medium}>
+                        Avg Lev: 3.2x
+                      </Text>
+                    </Flex>
+
+                    {/* Risk Metrics Row */}
+                    <Flex align="center" gap={getTokenPx("scales.paddings.s")}>
+                      <Text fs="p6" color={theme.text.medium}>
+                        Max LTV: {maxLtv}%
+                      </Text>
+                      <Text fs="p6" color={theme.text.low}>•</Text>
+                      <Text fs="p6" color={theme.text.medium}>
+                        Liq: {liqThreshold}%
+                      </Text>
                     </Flex>
 
                     {/* Horizontal Separator */}

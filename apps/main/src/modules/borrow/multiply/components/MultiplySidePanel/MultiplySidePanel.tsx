@@ -5,6 +5,7 @@ import { getTokenPx } from "@galacticcouncil/ui/utils"
 
 import { FC, useMemo, useState } from "react"
 import { toast } from "sonner"
+import { ArrowUp, ArrowDown } from "lucide-react"
 
 import { useMultiplySimulationStore } from "@/modules/borrow/multiply/states/useMultiplySimulationStore"
 import { getReserveAssetId } from "@/modules/borrow/utils/assets"
@@ -47,7 +48,7 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
   const [collateralAmount, setCollateralAmount] = useState(
     initialCollateralAmount,
   )
-  const [strategy] = useState<"bull" | "bear">(initialStrategy)
+  const [strategy, setStrategy] = useState<"bull" | "bear">(initialStrategy)
 
   // Placeholder balance values - wallet integration will be added later
   // Note: useWalletData hook causes big.js errors with incomplete asset data
@@ -185,6 +186,45 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
           min={1.1}
           max={5}
         />
+
+        <SMultiplySectionSeparator />
+
+        <Flex gap={getTokenPx("scales.paddings.s")(theme as never)} width="100%">
+          <Button
+            variant="secondary"
+            size="medium"
+            onClick={() => setStrategy("bull")}
+            sx={{
+              flex: 1,
+              bg: strategy === "bull" ? theme.accents.success.emphasis : theme.surfaces.containers.high.primary,
+              color: strategy === "bull" ? theme.accents.success.onEmphasis : theme.text.high,
+              border: `1px solid ${strategy === "bull" ? "transparent" : theme.details.borders}`,
+              "&:hover": {
+                bg: strategy === "bull" ? `${theme.accents.success.primary} !important` : `${theme.surfaces.containers.high.hover} !important`,
+              }
+            }}
+          >
+            <ArrowUp size={16} strokeWidth={2} style={{ marginRight: 6 }} />
+            Bull (Long)
+          </Button>
+          <Button
+            variant="secondary"
+            size="medium"
+            onClick={() => setStrategy("bear")}
+            sx={{
+              flex: 1,
+              bg: strategy === "bear" ? theme.accents.danger.emphasis : theme.surfaces.containers.high.primary,
+              color: strategy === "bear" ? theme.accents.danger.onPrimary : theme.text.high,
+              border: `1px solid ${strategy === "bear" ? "transparent" : theme.details.borders}`,
+              "&:hover": {
+                bg: strategy === "bear" ? `${theme.accents.danger.secondary} !important` : `${theme.surfaces.containers.high.hover} !important`,
+              }
+            }}
+          >
+            <ArrowDown size={16} strokeWidth={2} style={{ marginRight: 6 }} />
+            Bear (Short)
+          </Button>
+        </Flex>
 
         <SMultiplySectionSeparator />
 

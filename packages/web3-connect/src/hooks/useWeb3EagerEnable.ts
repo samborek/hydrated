@@ -72,7 +72,7 @@ export const useWeb3EagerEnable = (enabled = true) => {
             ? safeConvertSS58toH160(account.address)
             : account.address
 
-          if (!wallet.account) {
+          if (!wallet.accounts.length) {
             wallet.setAccount(address)
             await enable(wallet.provider)
           }

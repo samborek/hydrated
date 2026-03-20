@@ -5,8 +5,14 @@ import { TAssetData } from "@/api/assets"
 import { AssetLogo } from "@/components/AssetLogo"
 import { useDisplayAssetPrice } from "@/components/AssetPrice"
 import { AssetSelectEmptyState } from "@/components/AssetSelect/AssetSelectEmptyState"
-import { AssetSelectModal } from "@/components/AssetSelectModal"
 import { TAssetWithBalance } from "@/components/AssetSelectModal/AssetSelectModal.utils"
+import { lazy, Suspense } from "react"
+
+const AssetSelectModal = lazy(() =>
+  import("@/components/AssetSelectModal").then((module) => ({
+    default: module.AssetSelectModal,
+  }))
+)
 import { useAccountBalances } from "@/states/account"
 import { scaleHuman } from "@/utils/formatting"
 
@@ -80,15 +86,17 @@ export const AssetSelect = ({
         }
       />
 
-      <AssetSelectModal
-        open={openModal}
-        assets={assets}
-        sortedAssets={sortedAssets}
-        onOpenChange={setOpeModal}
-        onSelect={setSelectedAsset}
-        emptyState={<AssetSelectEmptyState />}
-        selectedAssetId={selectedAsset?.id}
-      />
+      <Suspense fallback={null}>
+        <AssetSelectModal
+          open={openModal}
+          assets={assets}
+          sortedAssets={sortedAssets}
+          onOpenChange={setOpeModal}
+          onSelect={setSelectedAsset}
+          emptyState={<AssetSelectEmptyState />}
+          selectedAssetId={selectedAsset?.id}
+        />
+      </Suspense>
     </>
   )
 }

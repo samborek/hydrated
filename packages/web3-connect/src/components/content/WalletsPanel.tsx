@@ -156,17 +156,15 @@ export const WalletsPanel: FC<Props> = ({ selectedWallet, onWalletSelect }) => {
           {(sortedWallets.length > 0 || externalWallet) && (
             <SWalletsPanelSection>
               <SWalletsPanelLabel>{t("account.wallets")}:</SWalletsPanelLabel>
-              {sortedWallets.length > 0 && (
-                <SWalletItem
-                  isActive={selectedWallet === "all"}
-                  onClick={() => onWalletSelect("all")}
-                >
-                  <Icon component={Wallet} size={20} />
-                  <Text fs="p5" fw={500}>
-                    {t("account.allWallets")}
-                  </Text>
-                </SWalletItem>
-              )}
+              <SWalletItem
+                isActive={selectedWallet === "all"}
+                onClick={() => onWalletSelect("all")}
+              >
+                <Icon component={Wallet} size={20} />
+                <Text fs="p5" fw={500}>
+                  {t("account.allWallets")}
+                </Text>
+              </SWalletItem>
 
               {externalWallet && (
                 <SWalletItem

@@ -4,7 +4,6 @@ import { getToken } from "@galacticcouncil/ui/utils"
 import { FC, useState } from "react"
 import {
     Area,
-    AreaChart as AreaChartPrimitive,
     CartesianGrid,
     Tooltip,
     XAxis,
@@ -12,12 +11,12 @@ import {
     Line,
     ComposedChart
 } from "recharts"
-import { ChartContainer } from "@galacticcouncil/ui/components"
+import { ChartContainer, type ChartConfig } from "@galacticcouncil/ui/components"
 
-import { ChartConfig, TChartData } from "@/components/Chart/types"
+type StakeChartData = { time: number; date: number; price: number; apy: number }
 
 // Mock data to emulate chart structure
-const mockData = Array.from({ length: 100 }).map((_, i) => {
+const mockData: StakeChartData[] = Array.from({ length: 100 }).map((_, i) => {
     const priceBase = 1.48
     const trend = i * 0.0015
     const noise = (Math.sin(i / 5) * 0.01) + (Math.random() * 0.005)
@@ -39,7 +38,7 @@ export const GigaStakeChart: FC = () => {
     const { themeProps } = useTheme()
     const [showSwap, setShowSwap] = useState(false)
 
-    const config: ChartConfig<TChartData> = {
+    const config: ChartConfig<StakeChartData> = {
         xAxisKey: "date",
         series: [
             { key: "price", color: themeProps.details.values.positive },
@@ -75,7 +74,7 @@ export const GigaStakeChart: FC = () => {
                                 orientation="right"
                                 axisLine={false}
                                 tickLine={false}
-                                style={{ fontSize: 12, fill: getToken("text.medium") }}
+                                style={{ fontSize: 12, fill: themeProps.text.medium }}
                                 tickFormatter={(val) => val.toFixed(4)}
                             />
                             <YAxis
@@ -88,7 +87,7 @@ export const GigaStakeChart: FC = () => {
                             />
                             <Tooltip
                                 contentStyle={{ backgroundColor: themeProps.details.tooltips, borderRadius: 8, border: "none" }}
-                                itemStyle={{ color: getToken("text.high") }}
+                                itemStyle={{ color: themeProps.text.high }}
                                 labelFormatter={(value) => new Date(value).toLocaleDateString()}
                                 formatter={(value: number, name: string) => {
                                     if (name === "price") return [value.toFixed(4), "Price"]

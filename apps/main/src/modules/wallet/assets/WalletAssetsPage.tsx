@@ -127,7 +127,7 @@ export const WalletAssetsPage = () => {
                   color={getToken("text.medium")}
                   transform="uppercase"
                 >
-                  {isCollapsed ? t("show") : t("hide")}
+                  {isCollapsed ? t("common:show") : t("common:hide")}
                 </Text>
                 <Icon
                   size="xs"

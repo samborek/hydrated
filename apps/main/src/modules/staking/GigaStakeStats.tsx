@@ -1,11 +1,9 @@
-import { Flex, Text, Paper, Tooltip, Skeleton, Separator } from "@galacticcouncil/ui/components"
+import { Flex, Text, Paper, Skeleton, Separator } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getToken } from "@galacticcouncil/ui/utils"
 import { FC } from "react"
-import { useTranslation } from "react-i18next"
 
 export const GigaStakeStats: FC = () => {
-    const { t } = useTranslation(["common", "staking"])
     const { themeProps } = useTheme()
 
     // TODO: Actual data hooks

@@ -1,6 +1,5 @@
 import { Flex, Paper, Separator } from "@galacticcouncil/ui/components"
 import { FC, useState } from "react"
-import { useTranslation } from "react-i18next"
 
 import { SHeaderTab } from "@/modules/trade/swap/components/FormHeader/FormHeader.styled"
 
@@ -8,7 +7,6 @@ export const gigastakeOptions = ["gigastake", "giga-unstake", "claim", "migrate"
 export type GigaStakeOption = (typeof gigastakeOptions)[number]
 
 export const GigaStakeForm: FC = () => {
-    const { t } = useTranslation(["common", "staking"])
     const [type, setType] = useState<GigaStakeOption>("gigastake")
 
     return (

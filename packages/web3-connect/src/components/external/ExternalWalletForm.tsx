@@ -9,7 +9,7 @@ import {
 } from "@galacticcouncil/ui/components"
 import { Controller, useFormContext } from "react-hook-form"
 import { useTranslation } from "react-i18next"
-import { first, pick } from "remeda"
+import { pick } from "remeda"
 import { useShallow } from "zustand/shallow"
 
 import { AddressBookButton } from "@/components/address-book/AddressBookButton"
@@ -21,19 +21,18 @@ import { ExternalWallet, getWallet } from "@/wallets"
 
 type ExternalWalletFormProps = {
   readonly onAddressBookOpen: () => void
+  readonly onSuccess: () => void
 }
 
 export const ExternalWalletForm: React.FC<ExternalWalletFormProps> = ({
   onAddressBookOpen,
+  onSuccess,
 }) => {
   const { t } = useTranslation()
   const { enable } = useWeb3Enable()
-  const { setAccount, toggle } = useWeb3Connect(
-    useShallow(pick(["setAccount", "toggle"])),
-  )
+  const { setAccount } = useWeb3Connect(useShallow(pick(["setAccount"])))
 
   const form = useFormContext<ExternalWalletFormValues>()
-
   const wallet = getWallet(WalletProviderType.ExternalWallet)
 
   const onSubmit = async (values: ExternalWalletFormValues) => {
@@ -45,11 +44,11 @@ export const ExternalWalletForm: React.FC<ExternalWalletFormProps> = ({
     await enable(WalletProviderType.ExternalWallet)
 
     const accounts = await wallet.getAccounts()
-    const account = first(accounts)
+    const added = accounts.find((a) => a.address === values.address.trim())
 
-    if (account) {
-      setAccount(toStoredAccount(account))
-      toggle()
+    if (added) {
+      setAccount(toStoredAccount(added))
+      onSuccess()
     }
   }
 

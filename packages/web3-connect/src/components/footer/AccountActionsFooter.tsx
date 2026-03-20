@@ -17,7 +17,7 @@ import { useAccount, useWeb3Connect, useWeb3ConnectModal } from "@/hooks"
 
 export const AccountActionsFooter = () => {
   const { t } = useTranslation()
-  const { mode, setPage, isControlled } = useWeb3ConnectContext()
+  const { mode, setPage, isControlled, page } = useWeb3ConnectContext()
   const { toggle } = useWeb3ConnectModal()
   const { disconnect } = useAccount()
 
@@ -29,10 +29,22 @@ export const AccountActionsFooter = () => {
   const connected = connectedProviders.map(prop("type"))
   const isConnected = connected.length > 0
 
+  const isAccountSelectPage = page === Web3ConnectModalPage.AccountSelect
+
   const onLogout = () => {
     disconnect()
     toggle()
   }
+
+  const onCancel = () => {
+    toggle()
+  }
+
+  // No footer for account select page - wallet management is in the left panel
+  if (isAccountSelectPage) {
+    return null
+  }
+
   return (
     <ModalFooter justify="space-between">
       {connected.length > 0 && (

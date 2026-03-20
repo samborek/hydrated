@@ -39,8 +39,8 @@ export const LINKS = {
   // statsOverview: "/stats/overview",
   // statsTreasury: "/stats/treasury",
   staking: "/staking",
-  // stakingDashboard: "/staking/dashboard",
-  // stakingGovernance: "/staking/governance",
+  stakingDashboard: "/staking",
+  gigastake: "/staking",
   // referrals: "/referrals",
   borrow: "/borrow",
   borrowDashboard: "/borrow/dashboard",
@@ -145,6 +145,19 @@ export const NAVIGATION: NavigationItem[] = [
     key: "staking",
     to: LINKS.staking,
     icon: GemIcon,
+    defaultChild: LINKS.stakingDashboard,
+    children: [
+      {
+        key: "stakingDashboard",
+        to: LINKS.stakingDashboard,
+        search: { tab: "staking" },
+      },
+      {
+        key: "gigastake",
+        to: LINKS.gigastake,
+        search: { tab: "gigastake" },
+      },
+    ],
   },
   // {
   //   key: "referrals",
@@ -234,14 +247,14 @@ export const getMenuTranslations = (t: TFunction) =>
       title: t("navigation.staking.title"),
       description: t("navigation.staking.description"),
     },
-    // stakingDashboard: {
-    //   title: t("navigation.stakingDashboard.title"),
-    //   description: "",
-    // },
-    // stakingGovernance: {
-    //   title: t("navigation.stakingGovernance.title"),
-    //   description: "",
-    // },
+    stakingDashboard: {
+      title: t("navigation.stakingDashboard.title"),
+      description: "",
+    },
+    gigastake: {
+      title: t("navigation.gigastake.title"),
+      description: "",
+    },
     // referrals: {
     //   title: t("navigation.referrals.title"),
     //   description: "",

@@ -7,12 +7,15 @@ import { useDisplayAssetPrice } from "@/components/AssetPrice"
 import { useClaimAllWalletRewards } from "@/modules/wallet/assets/Rewards/WalletRewardsSection.claim"
 import { useWalletRewardsSectionData } from "@/modules/wallet/assets/Rewards/WalletRewardsSection.data"
 import { SWalletRewardsSection } from "@/modules/wallet/assets/Rewards/WalletRewardsSection.styled"
-import { WalletRewardsSectionEmpty } from "@/modules/wallet/assets/Rewards/WalletRewardsSectionEmpty"
 
-export const WalletRewardsSection: FC = () => {
+type Props = {
+  readonly title?: string
+}
+
+export const WalletRewardsSection: FC<Props> = ({ title }) => {
   const { t } = useTranslation(["wallet", "common"])
 
-  const { incentives, farming, staking, referral, isEmpty, isLoading } =
+  const { incentives, farming, staking, isEmpty, isLoading } =
     useWalletRewardsSectionData()
 
   const claimAll = useClaimAllWalletRewards()
@@ -24,75 +27,40 @@ export const WalletRewardsSection: FC = () => {
 
   const [farmingDisplay] = useDisplayAssetPrice(farming.assetId, farming.value)
 
-  const [referralsDisplay] = useDisplayAssetPrice(
-    referral.assetId,
-    referral.value,
-  )
-
   return (
-    <SWalletRewardsSection separated>
-      <Flex justify="space-between" align="center">
-        <ValueStats
-          wrap
-          size="medium"
-          label={t("rewards.incentives")}
-          value={incentivesDisplay}
-          isLoading={incentives.loading}
-        />
-        {incentives.isEmpty && !incentives.loading && (
-          <WalletRewardsSectionEmpty link="/borrow">
-            {t("rewards.incentives.empty")}
-          </WalletRewardsSectionEmpty>
-        )}
-      </Flex>
-      <Flex justify="space-between" align="center">
-        <ValueStats
-          wrap
-          size="medium"
-          label={t("rewards.farmingRewards")}
-          value={farmingDisplay}
-          isLoading={farming.loading}
-        />
-        {farming.isEmpty && !farming.loading && (
-          <WalletRewardsSectionEmpty link="/liquidity">
-            {t("rewards.farmingRewards.empty")}
-          </WalletRewardsSectionEmpty>
-        )}
-      </Flex>
-      <Flex justify="space-between" align="center">
-        <ValueStats
-          wrap
-          size="medium"
-          label={t("rewards.allocated")}
-          value={t("common:currency", {
-            value: staking.value,
-            symbol: staking.symbol,
-          })}
-          isLoading={staking.loading}
-        />
-        {staking.isEmpty && !staking.loading && (
-          <WalletRewardsSectionEmpty link="/staking">
-            {t("rewards.allocated.empty")}
-          </WalletRewardsSectionEmpty>
-        )}
-      </Flex>
-      <Flex justify="space-between" align="center">
-        <ValueStats
-          wrap
-          size="medium"
-          label={t("rewards.referrals")}
-          value={referralsDisplay}
-          isLoading={referral.loading}
-        />
-        {referral.isEmpty && !referral.loading && (
-          <WalletRewardsSectionEmpty link="/referrals">
-            {t("rewards.referrals.empty")}
-          </WalletRewardsSectionEmpty>
-        )}
-      </Flex>
-      <Flex justify="space-between" align="center">
+    <SWalletRewardsSection gap="s">
+      {title && (
+        <Text fs="p4" fw={500} color={getToken("text.medium")}>
+          {title}
+        </Text>
+      )}
+      <ValueStats
+        wrap
+        size="small"
+        label={t("rewards.incentives")}
+        value={incentivesDisplay}
+        isLoading={incentives.loading}
+      />
+      <ValueStats
+        wrap
+        size="small"
+        label={t("rewards.farmingRewards")}
+        value={farmingDisplay}
+        isLoading={farming.loading}
+      />
+      <ValueStats
+        wrap
+        size="small"
+        label={t("rewards.allocated")}
+        value={t("common:currency", {
+          value: staking.value,
+          symbol: staking.symbol,
+        })}
+        isLoading={staking.loading}
+      />
+      <Flex direction="column" gap="xs" mt="s">
         <Button
-          width="max-content"
+          width="100%"
           disabled={isEmpty}
           onClick={() => claimAll.mutate()}
         >
@@ -100,7 +68,7 @@ export const WalletRewardsSection: FC = () => {
             ? t("rewards.claim.empty")
             : t("rewards.claim")}
         </Button>
-        <Text fs={pxToRem(9)} lh={1} color={getToken("text.low")}>
+        <Text fs={pxToRem(9)} lh={1} color={getToken("text.low")} align="center">
           {t("rewards.claim.description")}
         </Text>
       </Flex>

@@ -11,6 +11,23 @@ import logo from "./logo.svg"
 
 type DummyExtension = object
 
+const STORAGE_KEY = "web3-connect-external-wallet-accounts"
+
+const loadAccounts = (): WalletAccount[] => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+const saveAccounts = (accounts: WalletAccount[]) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(accounts))
+  } catch {}
+}
+
 export class ExternalWallet implements Wallet {
   provider = WalletProviderType.ExternalWallet
   accessor = ""
@@ -22,7 +39,7 @@ export class ExternalWallet implements Wallet {
   _signer: DummySigner | undefined = {}
   _enabled: boolean = false
 
-  account: WalletAccount | undefined
+  accounts: WalletAccount[] = loadAccounts()
 
   get extension() {
     return this._extension
@@ -57,17 +74,29 @@ export class ExternalWallet implements Wallet {
 
   setAccount = (address: string) => {
     if (isSS58Address(address) || isH160Address(address)) {
-      this.account = {
-        address,
-        name: "External Account",
-        provider: this.provider,
+      const already = this.accounts.some((a) => a.address === address)
+      if (!already) {
+        this.accounts = [
+          ...this.accounts,
+          {
+            address,
+            name: "External Account",
+            provider: this.provider,
+          },
+        ]
+        saveAccounts(this.accounts)
       }
       updateQueryString("address", address)
     }
   }
 
+  removeAccount = (address: string) => {
+    this.accounts = this.accounts.filter((a) => a.address !== address)
+    saveAccounts(this.accounts)
+  }
+
   getAccounts = async (): Promise<WalletAccount[]> => {
-    return Promise.resolve(this.account ? [this.account] : [])
+    return Promise.resolve([...this.accounts])
   }
 
   subscribeAccounts = () => {
@@ -76,7 +105,8 @@ export class ExternalWallet implements Wallet {
 
   disconnect = () => {
     this._enabled = false
-    this.account = undefined
+    this.accounts = []
+    saveAccounts([])
     updateQueryString("address", undefined)
   }
 }

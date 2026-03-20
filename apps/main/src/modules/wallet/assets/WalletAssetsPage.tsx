@@ -1,8 +1,21 @@
-import { Flex, Grid } from "@galacticcouncil/ui/components"
+import {
+  CollapsibleContent,
+  CollapsibleRoot,
+  CollapsibleTrigger,
+  Flex,
+  Grid,
+  Icon,
+  MicroButton,
+  SectionHeader,
+  Text,
+} from "@galacticcouncil/ui/components"
 import { useBreakpoints } from "@galacticcouncil/ui/theme"
+import { ChevronDown, ChevronUp } from "@galacticcouncil/ui/assets/icons"
+import { getToken } from "@galacticcouncil/ui/utils"
 import { useAccount } from "@galacticcouncil/web3-connect"
-import { useSearch } from "@tanstack/react-router"
-import { lazy } from "react"
+import { useNavigate, useSearch } from "@tanstack/react-router"
+import { lazy, useCallback, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import { useDataTableUrlPagination } from "@/hooks/useDataTableUrlPagination"
 import { useDataTableUrlSearch } from "@/hooks/useDataTableUrlSearch"
@@ -12,6 +25,7 @@ import { WalletBalances } from "@/modules/wallet/assets/Balances/WalletBalances"
 import { MyAssets } from "@/modules/wallet/assets/MyAssets/MyAssets"
 import { MyLiquidity } from "@/modules/wallet/assets/MyLiquidity/MyLiquidity"
 import { WalletRewards } from "@/modules/wallet/assets/Rewards/WalletRewards"
+import { YieldOpportunities } from "@/modules/wallet/assets/YieldOpportunities"
 import { WalletEmptyState } from "@/modules/wallet/WalletEmptyState"
 
 const WalletAssetFiltersDesktop = lazy(async () => ({
@@ -29,6 +43,9 @@ const WalletAssetFiltersMobile = lazy(async () => ({
 export const WalletAssetsPage = () => {
   const { account } = useAccount()
   const { isMobile } = useBreakpoints()
+  const navigate = useNavigate()
+  const { t } = useTranslation("common")
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
   const assetsPagination = useDataTableUrlPagination(
     "/wallet/assets",
@@ -69,9 +86,19 @@ export const WalletAssetsPage = () => {
     liquidityPagination.onPageClick(1)
   }
 
-  const { category } = useSearch({
+  const { category, chain, showSmallBalances } = useSearch({
     from: "/wallet/assets",
   })
+
+  const handleToggleSmallBalances = useCallback(
+    (checked: boolean) => {
+      navigate({
+        to: "/wallet/assets",
+        search: (prev) => ({ ...prev, showSmallBalances: checked }),
+      })
+    },
+    [navigate],
+  )
 
   if (!account) {
     return <WalletEmptyState />
@@ -80,28 +107,67 @@ export const WalletAssetsPage = () => {
   return (
     <Flex direction="column">
       <HollarBanner />
-      <Grid
-        sx={{
-          overflowX: "auto",
-        }}
-        columnGap={["base", "xl"]}
-        columnTemplate="1fr minmax(0, 25rem)"
-        pb={isMobile ? "base" : "xxl"}
+      <CollapsibleRoot
+        open={!isCollapsed}
+        onOpenChange={(open) => setIsCollapsed(!open)}
       >
-        <WalletBalances />
-        <WalletRewards />
-      </Grid>
+        <SectionHeader
+          title={t("wallet:overview.title")}
+          noTopPadding
+          actions={
+            <MicroButton
+              asChild
+              sx={{ display: "flex", alignItems: "center", gap: "s" }}
+            >
+              <CollapsibleTrigger sx={{ cursor: "pointer" }}>
+                <Text
+                  fw={500}
+                  fs="p6"
+                  lh={1.4}
+                  color={getToken("text.medium")}
+                  transform="uppercase"
+                >
+                  {isCollapsed ? t("show") : t("hide")}
+                </Text>
+                <Icon
+                  size="xs"
+                  component={isCollapsed ? ChevronDown : ChevronUp}
+                  color={getToken("icons.onContainer")}
+                />
+              </CollapsibleTrigger>
+            </MicroButton>
+          }
+        />
+
+        <CollapsibleContent>
+          <Grid
+            sx={{
+              alignItems: "stretch",
+              overflowX: ["auto", "visible"],
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": { display: "none" },
+            }}
+            columnGap={["base", "xl"]}
+            columnTemplate={[
+              "calc(100% - 60px) 280px",
+              "calc(100% - 60px) 280px",
+              "1fr minmax(0, 25rem)",
+            ]}
+            pb={isMobile ? "base" : "xxl"}
+          >
+            <WalletBalances />
+            <WalletRewards />
+          </Grid>
+        </CollapsibleContent>
+      </CollapsibleRoot>
       {isMobile ? (
         <WalletAssetFiltersMobile
-          category={category}
+          chain={chain}
           searchPhrase={searchPhrase}
           onSearchPhraseChange={changeSearch}
         />
       ) : (
-        <WalletAssetFiltersDesktop
-          searchPhrase={searchPhrase}
-          onSearchPhraseChange={changeSearch}
-        />
+        <WalletAssetFiltersDesktop />
       )}
 
       <Flex direction="column">
@@ -109,6 +175,9 @@ export const WalletAssetsPage = () => {
           <MyAssets
             key={account.address + "_assets"}
             searchPhrase={searchPhrase}
+            onSearchPhraseChange={changeSearch}
+            showSmallBalances={showSmallBalances}
+            onToggleSmallBalances={handleToggleSmallBalances}
             paginationProps={assetsPagination}
             sortingProps={assetsSorting}
           />
@@ -122,6 +191,8 @@ export const WalletAssetsPage = () => {
           />
         )}
       </Flex>
+
+      <YieldOpportunities />
     </Flex>
   )
 }

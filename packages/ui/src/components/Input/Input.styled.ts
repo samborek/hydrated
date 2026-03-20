@@ -24,7 +24,7 @@ const sizes = createVariants((theme) => ({
     font-size: ${theme.fontSizes.p6};
   `,
   medium: css`
-    height: 2.5rem;
+    height: 38px;
     padding: 0px ${theme.containers.paddings.tertiary};
     font-size: ${theme.fontSizes.p5};
   `,

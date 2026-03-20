@@ -60,6 +60,9 @@ type ModalContentProps = React.ComponentPropsWithoutRef<
   topContent?: ReactNode
   animationDurationMs?: number
   contentFit?: "hug" | "fill"
+  maxWidth?: number | string
+  maxHeight?: number | string
+  minHeight?: number | string
 }
 
 const ModalContent: FC<ModalContentProps> = ({
@@ -69,6 +72,9 @@ const ModalContent: FC<ModalContentProps> = ({
   forceMount,
   animationDurationMs,
   contentFit,
+  maxWidth,
+  maxHeight,
+  minHeight,
   ...props
 }) => (
   <ModalPortal forceMount={forceMount}>
@@ -82,9 +88,16 @@ const ModalContent: FC<ModalContentProps> = ({
         {...props}
         hasTopContent={!!topContent}
         contentFit={contentFit}
+        maxWidth={maxWidth}
       >
         {topContent && <SModalTopContent>{topContent}</SModalTopContent>}
-        <SModalPaper>{children}</SModalPaper>
+        <SModalPaper
+          maxWidth={maxWidth}
+          maxHeight={maxHeight}
+          minHeight={minHeight}
+        >
+          {children}
+        </SModalPaper>
       </SModalContent>
     </SModalWrapper>
   </ModalPortal>
@@ -257,6 +270,9 @@ export type ModalProps = React.ComponentProps<typeof ModalRoot> & {
   animationDurationMs?: number
   /** When "hug", modal paper sizes to content height instead of stretching (desktop only) */
   contentFit?: "hug" | "fill"
+  maxWidth?: number | string
+  maxHeight?: number | string
+  minHeight?: number | string
   ref?: Ref<React.ElementRef<typeof DialogPrimitive.Content>>
 }
 
@@ -268,6 +284,9 @@ const Modal = ({
   topContent,
   animationDurationMs,
   contentFit,
+  maxWidth,
+  maxHeight,
+  minHeight,
   ref,
   ...props
 }: ModalProps) => {
@@ -301,6 +320,9 @@ const Modal = ({
           onClick={(e) => e.stopPropagation()}
           topContent={topContent}
           contentFit={contentFit}
+          maxWidth={maxWidth}
+          maxHeight={maxHeight}
+          minHeight={minHeight}
           onInteractOutside={
             disableInteractOutside ? (e) => e.preventDefault() : undefined
           }

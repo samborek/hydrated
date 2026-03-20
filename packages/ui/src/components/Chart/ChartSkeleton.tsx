@@ -19,13 +19,19 @@ export const ChartSkeleton: React.FC<ChartSkeletonProps> = ({
     <Flex
       align="end"
       justify="center"
-      sx={{ position: "relative", width: "100%" }}
+      sx={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}
       className={className}
     >
       <LineChartSkeleton
-        width="95%"
-        height="80%"
-        sx={{ filter: "blur(15px)", color: color || getToken("details.chart") }}
+        preserveAspectRatio="none"
+        sx={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          filter: "blur(15px)",
+          color: color || getToken("details.chart"),
+        }}
       />
       {children && (
         <Box

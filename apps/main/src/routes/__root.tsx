@@ -12,7 +12,7 @@ import { useAccountBalanceSubscription } from "@/api/subscriptions"
 import { RouterContext } from "@/App"
 import { Loader } from "@/components/Loader/Loader"
 import { ProviderRpcSelect } from "@/components/ProviderRpcSelect/ProviderRpcSelect"
-import { UserFeedback } from "@/components/UserFeedback/UserFeedback"
+// import { UserFeedback } from "@/components/UserFeedback/UserFeedback"
 import { SStatusBar } from "@/components/StatusBar.styled"
 import { RouteError } from "@/components/RouteError"
 import { MainLayout } from "@/modules/layout/MainLayout"
@@ -79,7 +79,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       <>
         <Loader />
         <SStatusBar>
-          <UserFeedback />
           <ProviderRpcSelect />
         </SStatusBar>
       </>
@@ -134,7 +133,6 @@ function RootComponent() {
       {isConnected && <AccountSubscriptions account={account} />}
       {!hasTopNavbar && <MobileTabBar />}
       <SStatusBar>
-        <UserFeedback />
         <ProviderRpcSelect />
       </SStatusBar>
       <TransactionManager />

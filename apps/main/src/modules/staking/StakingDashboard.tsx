@@ -21,6 +21,7 @@ import { ActiveDashboard } from "@/modules/staking/ActiveDashboard"
 import { ActiveDashboardSkeleton } from "@/modules/staking/ActiveDashboardSkeleton"
 import { DashboardStats } from "@/modules/staking/DashboardStats"
 import { DashboardStatsSkeleton } from "@/modules/staking/DashboardStatsSkeleton"
+import { GigaStake } from "@/modules/staking/GigaStake"
 import { HowToStake } from "@/modules/staking/HowToStake"
 import { OngoingReferenda } from "@/modules/staking/OngoingReferenda"
 import { Stake } from "@/modules/staking/Stake"
@@ -28,6 +29,7 @@ import { useAssets } from "@/providers/assetsProvider"
 import { useRpcProvider } from "@/providers/rpcProvider"
 import { useAccountBalances } from "@/states/account"
 import { toDecimal } from "@/utils/formatting"
+import { useSearch } from "@tanstack/react-router"
 
 export const StakingDashboard: FC = () => {
   const { t } = useTranslation("staking")
@@ -86,13 +88,27 @@ export const StakingDashboard: FC = () => {
 
   const isLoading = !!account && stakingPositionsPending
 
+  const { tab } = useSearch({ from: "/staking" })
+
+  const activeTab = tab || (hasPosition ? "staking" : "gigastake")
+
+  if (activeTab === "gigastake") {
+    return (
+      <Flex direction="column" gap="base">
+        <GigaStake />
+      </Flex>
+    )
+  }
+
   if (isMobile || isTablet) {
     return (
       <Flex direction="column" gap="base">
         <OngoingReferenda votes={votesData} isVotesLoading={votesIsLoading} />
         <Flex direction="column" gap="xl">
           <Box>
-            <SectionHeader title={t("dashboard.title")} />
+            <Flex direction="column" gap="xs">
+              <SectionHeader title={t("dashboard.title")} />
+            </Flex>
             <Stake
               key={address}
               staked={staked}
@@ -149,11 +165,16 @@ export const StakingDashboard: FC = () => {
       >
         <ClassNames>
           {({ css }) => (
-            <SectionHeader
-              noTopPadding
-              containerClassName={css({ gridColumn: "1/-1" })}
-              title={t("dashboard.title")}
-            />
+            <Flex
+              direction="column"
+              gap="xs"
+              className={css({ gridColumn: "1/-1" })}
+            >
+              <SectionHeader
+                noTopPadding
+                title={t("dashboard.title")}
+              />
+            </Flex>
           )}
         </ClassNames>
 

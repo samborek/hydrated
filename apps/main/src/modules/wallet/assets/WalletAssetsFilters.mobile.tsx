@@ -11,17 +11,17 @@ import { useNavigate } from "@tanstack/react-router"
 import { FC, useId, useState } from "react"
 import { useTranslation } from "react-i18next"
 
-import { walletAssetFiltersItems } from "@/modules/wallet/assets/WalletAssetFilters.items"
-import { WalletAssetsCategory } from "@/routes/wallet/assets"
+import { walletChainFiltersItems } from "@/modules/wallet/assets/WalletAssetFilters.items"
+import { WalletAssetsChain } from "@/routes/wallet/assets"
 
 type Props = {
-  readonly category: WalletAssetsCategory
+  readonly chain: WalletAssetsChain
   readonly searchPhrase: string
   readonly onSearchPhraseChange: (searchPhrase: string) => void
 }
 
 export const WalletAssetFiltersMobile: FC<Props> = ({
-  category,
+  chain,
   searchPhrase,
   onSearchPhraseChange,
 }) => {
@@ -31,9 +31,9 @@ export const WalletAssetFiltersMobile: FC<Props> = ({
 
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
 
-  const selectItems = walletAssetFiltersItems.map<SelectItem<string>>(
+  const selectItems = walletChainFiltersItems.map<SelectItem<string>>(
     (item) => ({
-      key: item.search.category,
+      key: item.search.chain,
       label: item.title,
     }),
   )
@@ -43,16 +43,16 @@ export const WalletAssetFiltersMobile: FC<Props> = ({
       {!isSearchExpanded && (
         <Select
           items={selectItems}
-          value={category}
-          onValueChange={(category) => {
-            const item = walletAssetFiltersItems.find(
-              (item) => item.search.category === category,
+          value={chain}
+          onValueChange={(chain) => {
+            const item = walletChainFiltersItems.find(
+              (item) => item.search.chain === chain,
             )
 
             if (item) {
               navigate({
                 to: item.to,
-                search: item.search,
+                search: (prev) => ({ ...prev, chain: item.search.chain }),
                 resetScroll: item.resetScroll,
               })
             }

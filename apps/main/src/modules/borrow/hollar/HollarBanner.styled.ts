@@ -76,3 +76,32 @@ export const SText = styled.div(
     }
   `,
 )
+
+export const SCloseButton = styled.button(
+  ({ theme }) => css`
+    position: absolute;
+    top: ${theme.space.s};
+    right: ${theme.space.s};
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: ${theme.space.xs};
+    border: none;
+    border-radius: ${theme.containers.cornerRadius.containersPrimary};
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    &:focus-visible {
+      outline: 2px solid ${theme.colors.accent["700"]};
+      outline-offset: 2px;
+    }
+  `,
+)

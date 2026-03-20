@@ -1,8 +1,9 @@
 import { ComputedReserveData } from "@galacticcouncil/money-market/hooks"
 import HollarCans from "@galacticcouncil/ui/assets/images/HollarCans.webp"
-import { Button, Text, ValueStats } from "@galacticcouncil/ui/components"
+import { Button, Icon, Text, ValueStats } from "@galacticcouncil/ui/components"
 import { Link } from "@tanstack/react-router"
 import Big from "big.js"
+import { X } from "lucide-react"
 import { FC } from "react"
 import { useTranslation } from "react-i18next"
 import { isArray } from "remeda"
@@ -11,6 +12,7 @@ import { useGhoReserveData } from "@/api/borrow"
 import { useRpcProvider } from "@/providers/rpcProvider"
 
 import {
+  SCloseButton,
   SContainer,
   SContent,
   SText,
@@ -20,11 +22,13 @@ import {
 type HollarBannerProps = {
   readonly reserve: ComputedReserveData | null | undefined
   readonly isLoadingReserves: boolean
+  readonly onDismiss?: () => void
 }
 
 export const HollarBannerDesktop: FC<HollarBannerProps> = ({
   reserve,
   isLoadingReserves,
+  onDismiss,
 }) => {
   const { t } = useTranslation()
 
@@ -112,6 +116,11 @@ export const HollarBannerDesktop: FC<HollarBannerProps> = ({
           )}
         </SValuesContainer>
       </SContent>
+      {onDismiss && (
+        <SCloseButton onClick={onDismiss} aria-label="Dismiss banner">
+          <Icon component={X} size="s" color="#1B1E1B" />
+        </SCloseButton>
+      )}
     </SContainer>
   )
 }

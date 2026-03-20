@@ -103,6 +103,9 @@ export const Web3ConnectModal: FC<Props> = (props) => {
         open={open}
         onOpenChange={onOpenChange}
         disableInteractOutside
+        maxWidth="600px"
+        minHeight="350px"
+        maxHeight="600px"
       >
         <Web3ConnectModalContent {...props} />
       </Modal>

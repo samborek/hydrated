@@ -118,6 +118,7 @@ export const useWalletBalancesSectionData = () => {
     farms: farmingTotal.toString(),
     isLiquidityLoading: isLoadingIsolatedPoolsLiquidity || isLoadingPositions,
     supply: userBorrowSummary?.totalLiquidityUSD ?? "",
+    isSupplyLoading: isLoadingBorrowSummary,
     borrow: userBorrowSummary?.totalBorrowsUSD ?? "",
     isBorrowLoading: isLoadingBorrowSummary,
   }

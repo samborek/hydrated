@@ -18,7 +18,10 @@ const shouldForwardProp = (prop: string) =>
   prop !== "animationDurationMs" &&
   prop !== "hasTopContent" &&
   prop !== "noPadding" &&
-  prop !== "contentFit"
+  prop !== "contentFit" &&
+  prop !== "maxWidth" &&
+  prop !== "maxHeight" &&
+  prop !== "minHeight"
 
 export const SModalOverlay = styled(Overlay, {
   shouldForwardProp,
@@ -77,8 +80,9 @@ export const SModalContent = styled(Content, {
 })<{
   hasTopContent?: boolean
   contentFit?: "hug" | "fill"
+  maxWidth?: number | string
 }>(
-  ({ theme, hasTopContent, contentFit }) => css`
+  ({ theme, hasTopContent, contentFit, maxWidth }) => css`
     --modal-content-padding: ${theme.space.xl};
     --modal-content-inset: calc(var(--modal-content-padding) * -1);
     --modal-top-content-height: ${hasTopContent ? theme.sizes["2xl"] : "0px"};
@@ -109,7 +113,9 @@ export const SModalContent = styled(Content, {
       position: relative;
       inset: auto;
 
-      max-width: ${theme.sizes["6xl"]};
+      max-width: ${typeof maxWidth === "number"
+        ? `${maxWidth}px`
+        : maxWidth ?? theme.sizes["6xl"]};
       height: auto;
       ${contentFit === "hug" &&
       css`
@@ -142,11 +148,23 @@ export const SModalContent = styled(Content, {
   `,
 )
 
-export const SModalPaper = styled(Paper)`
+export const SModalPaper = styled(Paper, { shouldForwardProp })<{
+  maxWidth?: number | string
+  maxHeight?: number | string
+  minHeight?: number | string
+}>`
   display: flex;
   flex-direction: column;
 
-  max-width: ${({ theme }) => theme.sizes["6xl"]};
+  max-width: ${({ theme, maxWidth }) =>
+    typeof maxWidth === "number"
+      ? `${maxWidth}px`
+      : maxWidth ?? theme.sizes["6xl"]};
+  min-height: ${({ minHeight }) =>
+    typeof minHeight === "number" ? `${minHeight}px` : minHeight ?? "auto"};
+  max-height: ${({ maxHeight }) =>
+    typeof maxHeight === "number" ? `${maxHeight}px` : maxHeight ?? "none"};
+  overflow: ${({ maxHeight }) => (maxHeight ? "hidden" : "visible")};
   padding-bottom: env(safe-area-inset-bottom);
 
   ${mq("max-xs")} {

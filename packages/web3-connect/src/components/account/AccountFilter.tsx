@@ -56,7 +56,7 @@ export const AccountFilter: React.FC<AccountFilterProps> = ({
     : defaultBlacklist
 
   return (
-    <Flex gap="base">
+    <Flex gap="base" sx={{ mb: "12px" }}>
       <Button
         variant={active === WalletMode.Default ? "secondary" : "muted"}
         outline={active !== WalletMode.Default}

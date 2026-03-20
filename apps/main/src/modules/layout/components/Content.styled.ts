@@ -19,11 +19,11 @@ export const SContentContainer = styled.div(
 
     padding-block: ${theme.space.base};
     margin-top: ${theme.space["-m"]};
-    margin-bottom: ${theme.space.xl};
+    margin-bottom: ${theme.space.m};
 
     ${mq("lg")} {
       margin-top: ${theme.space["-xxl"]};
-      margin-bottom: ${theme.space.xxl};
+      margin-bottom: ${theme.space.l};
     }
 
     display: flex;

@@ -75,7 +75,7 @@ export const NetWorth: FC<Props> = ({
   const chartDisplayValue = !isEmpty && !isError ? netWorth : ""
 
   return (
-    <Grid minWidth={320} rowTemplate="auto 1fr" align="center">
+    <Grid sx={{ minWidth: 0, width: "100%" }} rowTemplate="auto 1fr auto" align="center">
       <ValueStats
         wrap={isLaptop}
         size="medium"
@@ -85,8 +85,7 @@ export const NetWorth: FC<Props> = ({
       <Flex
         align="center"
         justify="center"
-        sx={{ textAlign: "center" }}
-        height="100%"
+        sx={{ textAlign: "center", aspectRatio: "3 / 1", maxHeight: 200 }}
         width="100%"
       >
         <ChartState isError={isError} isLoading={isLoading} isEmpty={isEmpty}>

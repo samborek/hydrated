@@ -3,16 +3,18 @@ import { ArrowRightLong } from "@galacticcouncil/ui/assets/icons"
 import HollarCans from "@galacticcouncil/ui/assets/images/HollarCans.webp"
 import { Flex, Icon, Text } from "@galacticcouncil/ui/components"
 import { Link } from "@tanstack/react-router"
+import { X } from "lucide-react"
 import { FC } from "react"
 import { useTranslation } from "react-i18next"
 
-import { SContainer, SContent, SText } from "./HollarBanner.styled"
+import { SCloseButton, SContainer, SContent, SText } from "./HollarBanner.styled"
 
 type Props = {
   readonly reserve: ComputedReserveData | null | undefined
+  readonly onDismiss?: () => void
 }
 
-export const HollarBannerMobile: FC<Props> = ({ reserve }) => {
+export const HollarBannerMobile: FC<Props> = ({ reserve, onDismiss }) => {
   const { t } = useTranslation()
 
   return (
@@ -43,6 +45,11 @@ export const HollarBannerMobile: FC<Props> = ({ reserve }) => {
         sx={{ size: "3xl", mr: "base", mt: "-base", zIndex: 1 }}
         src={HollarCans}
       />
+      {onDismiss && (
+        <SCloseButton onClick={onDismiss} aria-label="Dismiss banner">
+          <Icon component={X} size="s" color="#1B1E1B" />
+        </SCloseButton>
+      )}
     </SContainer>
   )
 }

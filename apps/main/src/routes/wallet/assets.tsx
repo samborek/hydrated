@@ -11,6 +11,9 @@ import { WalletAssetsPage } from "@/modules/wallet/assets/WalletAssetsPage"
 
 const searchSchema = z.object({
   category: z.enum(["all", "assets", "liquidity"]).default("all"),
+  chain: z
+    .enum(["all", "hydration", "ethereum", "solana", "base"])
+    .default("all"),
   assetsPage: z.number().optional(),
   assetsSort: dataTableSortSchema,
   liquidityPage: z.number().optional(),
@@ -18,9 +21,11 @@ const searchSchema = z.object({
     { id: MyLiquidityTableColumnId.CurrentValue, desc: true },
   ]),
   search: z.string().optional(),
+  showSmallBalances: z.boolean().default(false),
 })
 
 export type WalletAssetsCategory = z.infer<typeof searchSchema>["category"]
+export type WalletAssetsChain = z.infer<typeof searchSchema>["chain"]
 
 const WalletAssetsSkeleton = () => {
   const { isMobile } = useBreakpoints()

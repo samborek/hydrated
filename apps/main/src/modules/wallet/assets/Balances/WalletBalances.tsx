@@ -1,4 +1,4 @@
-import { Grid, Separator, ValueStats } from "@galacticcouncil/ui/components"
+import { Separator, ValueStats } from "@galacticcouncil/ui/components"
 import { useBreakpoints } from "@galacticcouncil/ui/theme"
 import { FC } from "react"
 import { useTranslation } from "react-i18next"

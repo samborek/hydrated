@@ -24,7 +24,7 @@ export const GigaStakeStats: FC = () => {
                         {isLoading ? (
                             <Skeleton height={18} />
                         ) : (
-                            <Text font="primary" fw={500} fs="h7" lh={1} color={themeProps.colors.positive}>
+                            <Text font="primary" fw={500} fs="h7" lh={1} color={themeProps.details.values.positive}>
                                 22.5%
                             </Text>
                         )}
@@ -59,7 +59,7 @@ export const GigaStakeStats: FC = () => {
                             <Skeleton height={18} />
                         ) : (
                             <Text font="primary" fw={500} fs="h7" lh={1} color={getToken("text.high")}>
-                                <span style={{ color: themeProps.colors.positive }}>Available</span>
+                                <span style={{ color: themeProps.details.values.positive }}>Available</span>
                             </Text>
                         )}
                     </Flex>

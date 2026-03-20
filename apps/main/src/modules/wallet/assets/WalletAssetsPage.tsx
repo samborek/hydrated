@@ -44,7 +44,7 @@ export const WalletAssetsPage = () => {
   const { account } = useAccount()
   const { isMobile } = useBreakpoints()
   const navigate = useNavigate()
-  const { t } = useTranslation("common")
+  const { t } = useTranslation(["wallet", "common"])
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const assetsPagination = useDataTableUrlPagination(

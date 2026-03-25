@@ -189,44 +189,48 @@ export const MultiplySidePanel: FC<MultiplySidePanelProps> = ({
 
         <SMultiplySectionSeparator />
 
-        <Flex gap={getTokenPx("scales.paddings.s")(theme as never)} width="100%">
-          <Button
-            variant="secondary"
-            size="medium"
-            onClick={() => setStrategy("bull")}
-            sx={{
-              flex: 1,
-              bg: strategy === "bull" ? theme.accents.success.emphasis : theme.surfaces.containers.high.primary,
-              color: strategy === "bull" ? theme.accents.success.onEmphasis : theme.text.high,
-              border: `1px solid ${strategy === "bull" ? "transparent" : theme.details.borders}`,
-              "&:hover": {
-                bg: strategy === "bull" ? `${theme.accents.success.primary} !important` : `${theme.surfaces.containers.high.hover} !important`,
-              }
-            }}
-          >
-            <ArrowUp size={16} strokeWidth={2} style={{ marginRight: 6 }} />
-            Bull (Long)
-          </Button>
-          <Button
-            variant="secondary"
-            size="medium"
-            onClick={() => setStrategy("bear")}
-            sx={{
-              flex: 1,
-              bg: strategy === "bear" ? theme.accents.danger.emphasis : theme.surfaces.containers.high.primary,
-              color: strategy === "bear" ? theme.accents.danger.onPrimary : theme.text.high,
-              border: `1px solid ${strategy === "bear" ? "transparent" : theme.details.borders}`,
-              "&:hover": {
-                bg: strategy === "bear" ? `${theme.accents.danger.secondary} !important` : `${theme.surfaces.containers.high.hover} !important`,
-              }
-            }}
-          >
-            <ArrowDown size={16} strokeWidth={2} style={{ marginRight: 6 }} />
-            Bear (Short)
-          </Button>
-        </Flex>
+        {collateralAsset?.symbol === "EURC" && (
+          <>
+            <Flex gap={getTokenPx("scales.paddings.s")(theme as never)} width="100%">
+              <Button
+                variant="secondary"
+                size="medium"
+                onClick={() => setStrategy("bull")}
+                sx={{
+                  flex: 1,
+                  bg: strategy === "bull" ? theme.accents.success.emphasis : theme.surfaces.containers.high.primary,
+                  color: strategy === "bull" ? theme.accents.success.onEmphasis : theme.text.high,
+                  border: `1px solid ${strategy === "bull" ? "transparent" : theme.details.borders}`,
+                  "&:hover": {
+                    bg: strategy === "bull" ? `${theme.accents.success.primary} !important` : `${theme.surfaces.containers.high.hover} !important`,
+                  }
+                }}
+              >
+                <ArrowUp size={16} strokeWidth={2} style={{ marginRight: 6 }} />
+                Bull (Long)
+              </Button>
+              <Button
+                variant="secondary"
+                size="medium"
+                onClick={() => setStrategy("bear")}
+                sx={{
+                  flex: 1,
+                  bg: strategy === "bear" ? theme.accents.danger.emphasis : theme.surfaces.containers.high.primary,
+                  color: strategy === "bear" ? theme.accents.danger.onPrimary : theme.text.high,
+                  border: `1px solid ${strategy === "bear" ? "transparent" : theme.details.borders}`,
+                  "&:hover": {
+                    bg: strategy === "bear" ? `${theme.accents.danger.secondary} !important` : `${theme.surfaces.containers.high.hover} !important`,
+                  }
+                }}
+              >
+                <ArrowDown size={16} strokeWidth={2} style={{ marginRight: 6 }} />
+                Bear (Short)
+              </Button>
+            </Flex>
 
-        <SMultiplySectionSeparator />
+            <SMultiplySectionSeparator />
+          </>
+        )}
 
 
 

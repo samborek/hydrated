@@ -1,15 +1,12 @@
 import { ArrowDownToLine } from "lucide-react"
 
 import { Close } from "@/assets/icons"
-import {
-  AccountAvatar,
-  AccountAvatarTheme,
-  ButtonIcon,
-  Flex,
-  Grid,
-  Icon,
-  Input,
-} from "@/components"
+import { AccountAvatar, type AccountAvatarTheme } from "../AccountAvatar"
+import { ButtonIcon } from "../Button"
+import { Flex } from "../Flex"
+import { Grid } from "../Grid"
+import { Icon } from "../Icon"
+import { Input } from "../Input"
 import { getTokenPx } from "@/utils"
 
 export type AccountInputProps = Omit<

@@ -1,8 +1,8 @@
 import { ResponsiveStyleValue, ThemeUICSSProperties } from "@theme-ui/core"
 import { FC, Ref } from "react"
 
-import { Box, BoxProps } from "@/components"
-import { ThemeFont, ThemeProps } from "@/theme"
+import { Box, type BoxProps } from "../Box"
+import { type ThemeFont, type ThemeProps } from "../../theme"
 import { getToken } from "@/utils"
 
 export type TextSize = keyof ThemeProps["typography"]["text"]["size"]

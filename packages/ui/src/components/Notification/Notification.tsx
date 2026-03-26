@@ -11,14 +11,14 @@ import {
 import {
   ButtonIcon,
   ButtonTransparent,
-  ExternalLink,
-  Flex,
-  Icon,
-  Spinner,
-  Stack,
-  Text,
-  Tooltip,
-} from "@/components"
+} from "../Button"
+import { ExternalLink } from "../ExternalLink"
+import { Flex } from "../Flex"
+import { Icon } from "../Icon"
+import { Spinner } from "../Spinner"
+import { Stack } from "../Stack"
+import { Text } from "../Text"
+import { Tooltip } from "../Tooltip"
 import { getToken } from "@/utils"
 
 import {

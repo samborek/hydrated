@@ -1,4 +1,4 @@
-import { Text, TextProps } from "@/components"
+import { Text, type TextProps } from "../Text"
 
 export type LabelProps = Omit<TextProps, "as"> &
   Omit<React.LabelHTMLAttributes<HTMLLabelElement>, "color">

@@ -1,11 +1,11 @@
 import { FC, Ref } from "react"
 
-import { ChartCrosshair } from "@/components"
-import { dateFormatter, timeFormatter } from "@/components/Chart/utils"
+import { ChartCrosshair } from "../../Chart"
+import { dateFormatter, timeFormatter } from "../../Chart/utils"
 import {
   CrosshairCallbackData,
   parseTradingViewTime,
-} from "@/components/TradingViewChart/utils"
+} from "../utils"
 
 export const Crosshair: FC<
   Partial<NonNullable<CrosshairCallbackData>> & { ref?: Ref<HTMLDivElement> }

@@ -9,14 +9,17 @@ import {
   ValueType,
 } from "recharts/types/component/DefaultTooltipContent"
 
-import { Flex, Grid, Text } from "@/components"
-import { ChartCrosshair, useChart } from "@/components/Chart"
+import { Flex } from "../Flex"
+import { Grid } from "../Grid"
+import { Text } from "../Text"
+import { ChartCrosshair } from "./ChartCrosshair"
+import { useChart } from "./ChartContainer"
 import { STooltipContainer } from "@/components/Chart/ChartTooltip.styled"
 import {
   dateFormatter,
   getColorSet,
   timeFormatter,
-} from "@/components/Chart/utils"
+} from "./utils"
 import { useTheme } from "@/theme"
 import { getToken } from "@/utils"
 
@@ -77,7 +80,7 @@ export const ChartTooltipLegendType = ({
       <Grid gap={4}>
         {payload.map((item, index) => {
           const key = `${item.name || item.dataKey || "value"}`
-          const itemConfig = config.series.find((s) => s.key === key)
+          const itemConfig = config.series.find((s: { key: string }) => s.key === key)
 
           const colors = getColorSet(itemConfig?.color, theme.details.chart)
 

@@ -1,6 +1,8 @@
 import { ReactNode } from "react"
 
-import { Flex, FlexProps, Skeleton, Text } from "@/components"
+import { Flex, type FlexProps } from "../Flex"
+import { Skeleton } from "../Skeleton"
+import { Text } from "../Text"
 import { getToken } from "@/utils"
 
 export type ChartValuesProps = {

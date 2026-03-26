@@ -2,7 +2,9 @@ import * as CollapsiblePrimitive from "@radix-ui/react-collapsible"
 import React, { isValidElement } from "react"
 
 import { ChevronDown } from "@/assets/icons"
-import { Flex, Icon, Text } from "@/components"
+import { Flex } from "../Flex"
+import { Icon } from "../Icon"
+import { Text } from "../Text"
 import {
   SActionLabel,
   SActionLabelWhenOpen,

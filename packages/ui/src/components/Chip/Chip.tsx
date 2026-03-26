@@ -1,7 +1,7 @@
 import { FC } from "react"
 
-import { BoxProps } from "@/components"
-import { SChip, SChipProps } from "@/components/Chip/Chip.styled"
+import { type BoxProps } from "../Box"
+import { SChip, type SChipProps } from "./Chip.styled"
 
 export type ChipProps = BoxProps &
   SChipProps & {

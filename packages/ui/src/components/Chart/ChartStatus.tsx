@@ -1,4 +1,6 @@
-import { Box, Flex, Text } from "@/components"
+import { Box } from "../Box"
+import { Flex } from "../Flex"
+import { Text } from "../Text"
 import { getToken } from "@/utils"
 
 export type ChartStatusProps = {

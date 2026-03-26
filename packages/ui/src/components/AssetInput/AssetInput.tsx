@@ -3,8 +3,12 @@ import Big from "big.js"
 import { ChevronDown } from "lucide-react"
 import { ReactNode } from "react"
 
-import { Flex, Icon, MicroButton, Skeleton, Text } from "@/components"
-import { FormError } from "@/components/FormError"
+import { MicroButton } from "../Button"
+import { Flex } from "../Flex"
+import { Icon } from "../Icon"
+import { Skeleton } from "../Skeleton"
+import { Text } from "../Text"
+import { FormError } from "../FormError"
 import { getToken } from "@/utils"
 
 import {

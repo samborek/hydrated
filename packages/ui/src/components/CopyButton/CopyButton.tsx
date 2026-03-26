@@ -1,7 +1,7 @@
 import { useCopy } from "@galacticcouncil/utils"
 
 import { CheckIcon, CopyIcon } from "@/assets/icons"
-import { Icon } from "@/components"
+import { Icon } from "../Icon"
 
 type RenderProps = {
   copied: boolean

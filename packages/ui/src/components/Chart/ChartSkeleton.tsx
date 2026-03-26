@@ -1,7 +1,8 @@
 import { StylePropertyValue } from "@theme-ui/css"
 
 import { LineChartSkeleton } from "@/assets/visuals"
-import { Box, Flex } from "@/components"
+import { Box } from "../Box"
+import { Flex } from "../Flex"
 import { getToken } from "@/utils"
 
 export type ChartSkeletonProps = {

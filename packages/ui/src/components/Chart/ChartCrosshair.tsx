@@ -1,4 +1,5 @@
-import { Box, Text } from "@/components"
+import { Box } from "../Box"
+import { Text } from "../Text"
 import { getToken } from "@/utils"
 
 export type ChartCrosshairProps = {

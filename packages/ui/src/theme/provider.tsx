@@ -10,13 +10,7 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
 import { GlobalStyles } from "@/styles"
-import {
-  ThemeName,
-  ThemePreference,
-  ThemeProps,
-  themes,
-  ThemeToken,
-} from "@/theme"
+import { ThemeName, ThemePreference, ThemeProps, themes, ThemeToken } from "./themes"
 
 const getSystemTheme = (): ThemeName => {
   return window.matchMedia("(prefers-color-scheme: dark)").matches

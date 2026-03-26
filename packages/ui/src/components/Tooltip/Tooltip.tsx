@@ -8,15 +8,14 @@ import { FC, ReactNode, useState } from "react"
 
 import { CircleInfo } from "@/assets/icons"
 import {
-  BoxProps,
-  ButtonIcon,
-  DrawerHeader,
-  Icon,
-  Modal,
-  ModalBody,
-  Text,
-} from "@/components"
-import { useBreakpoints } from "@/theme"
+  type BoxProps,
+} from "../Box"
+import { ButtonIcon } from "../Button"
+import { DrawerHeader } from "../Drawer"
+import { Icon } from "../Icon"
+import { Modal, ModalBody } from "../Modal"
+import { Text } from "../Text"
+import { useBreakpoints } from "../../theme"
 import { getToken } from "@/utils"
 
 import { SContent, STrigger } from "./Tooltip.styled"

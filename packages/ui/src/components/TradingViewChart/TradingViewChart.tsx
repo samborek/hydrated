@@ -2,9 +2,9 @@ import { hexToRgba } from "@galacticcouncil/utils"
 import { createChart, LineType, SeriesType } from "lightweight-charts"
 import { useEffect, useRef, useState } from "react"
 
-import { Box } from "@/components"
-import { Crosshair } from "@/components/TradingViewChart/components/Crosshair"
-import { PriceIndicator } from "@/components/TradingViewChart/components/PriceIndicator"
+import { Box } from "../Box"
+import { Crosshair } from "./components/Crosshair"
+import { PriceIndicator } from "./components/PriceIndicator"
 import {
   crosshair,
   grid,
@@ -12,14 +12,14 @@ import {
   leftPriceScale,
   rightPriceScale,
   timeScale,
-} from "@/components/TradingViewChart/config"
+} from "./config"
 import {
   BaselineChartData,
   CrosshairCallbackData,
   OhlcData,
   renderSeries,
   subscribeCrosshairMove,
-} from "@/components/TradingViewChart/utils"
+} from "./utils"
 import { useTheme } from "@/theme"
 
 type ChartTypeProps =

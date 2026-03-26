@@ -1,7 +1,9 @@
 import { Children, cloneElement, isValidElement } from "react"
 
 import { TriangleAlert } from "@/assets/icons"
-import { LogoProps, LogoSize, Skeleton, Tooltip } from "@/components"
+import { type LogoProps, type LogoSize } from "../Logo"
+import { Skeleton } from "../Skeleton"
+import { Tooltip } from "../Tooltip"
 
 import {
   LOGO_DIAMETER,

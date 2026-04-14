@@ -128,6 +128,12 @@ export const NAVIGATION: NavigationItem[] = [
     key: "stats",
     to: LINKS.stats,
     icon: ChartPieIcon,
+    children: [
+      { key: "statsOverview", to: LINKS.statsOverview },
+      { key: "statsTreasury", to: LINKS.statsTreasury },
+      { key: "statsHollar", to: LINKS.statsHollar },
+      { key: "statsFees", to: LINKS.statsFees },
+    ],
   },
   {
     key: "staking",

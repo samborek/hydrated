@@ -1,0 +1,186 @@
+import styled from "@emotion/styled"
+import { Text, Flex } from "@galacticcouncil/ui/components"
+import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
+import { useTheme } from "@galacticcouncil/ui/theme"
+import { FC, useMemo, useState } from "react"
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  ReferenceLine
+} from "recharts"
+
+import { ChartTooltipContent } from "./StatsChartTooltip"
+import { SelectDropdown } from "./SelectDropdown"
+import { SChartHeader } from "./ChartLayout"
+import { AssetLogo } from "@/components/AssetLogo"
+import { HOLLAR_ASSET_ID, USDT_ASSET_ID, SUSDE_ASSET_ID, SUSDS_ASSET_ID } from "@galacticcouncil/utils"
+
+const SChartContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`
+
+const SControlsGroup = styled.div`
+  display: flex;
+  gap: 6px;
+  align-items: center;
+
+  @media (max-width: 576px) {
+    display: none;
+  }
+`
+
+const SChartFooter = styled.div`
+  display: none;
+
+  @media (max-width: 576px) {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+`
+
+const SSpotPriceCard = styled.div<{ $color: string }>`
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid ${({ theme }) => theme.details.borders};
+  background: ${({ theme }) => theme.surfaces.containers.high.primary};
+  border-left: 4px solid ${({ $color }) => $color};
+  flex: 1;
+  min-width: 160px;
+`
+
+// Mock Peg Historical Data (❗️ Needs Indexer)
+const generatePegData = () => {
+  const data = []
+  const now = new Date()
+
+  for (let i = 90; i >= 0; i--) {
+    const date = new Date(now)
+    date.setDate(date.getDate() - i)
+
+    // Minor fluctuations around $1.00
+    data.push({
+      date: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      aUSDT: 1.0 + (Math.random() - 0.5) * 0.005,
+      aUSDC: 1.0 + (Math.random() - 0.5) * 0.003,
+      sUSDe: 1.0 + (Math.random() - 0.5) * 0.008,
+      sUSDS: 1.0 + (Math.random() - 0.5) * 0.006,
+    })
+  }
+
+  return data
+}
+
+type TimeRange = "7D" | "30D" | "90D" | "MAX"
+
+export const HollarPegChart: FC = () => {
+  const { themeProps: theme } = useTheme()
+  const [timeRange, setTimeRange] = useState<TimeRange>("30D")
+
+  const chartData = useMemo(() => generatePegData(), [])
+
+  const filteredData = useMemo(() => {
+    const days = timeRange === "7D" ? 7 : timeRange === "30D" ? 30 : timeRange === "90D" ? 90 : chartData.length
+    return chartData.slice(-days)
+  }, [chartData, timeRange])
+
+  // Map tokens to specific colors
+  const pegConfig = [
+    { id: "aUSDT", label: "HOLLAR/aUSDT", assetId: USDT_ASSET_ID, color: "#26A17B", spot: "$1.0001" },
+    { id: "aUSDC", label: "HOLLAR/aUSDC", assetId: "22", color: "#2775CA", spot: "$1.0005" },
+    { id: "sUSDe", label: "HOLLAR/sUSDe", assetId: SUSDE_ASSET_ID, color: "#8B5CF6", spot: "$0.9998" },
+    { id: "sUSDS", label: "HOLLAR/sUSDS", assetId: SUSDS_ASSET_ID, color: "#F4B731", spot: "$1.0012" },
+  ]
+
+  return (
+    <SChartContainer>
+      <Flex direction="column" gap={16} sx={{ mb: 20 }}>
+        <Text fs={18} fw={600} font="primary" color="text.primary">Hollar Peg</Text>
+        <Flex gap={16} wrap={true}>
+          {pegConfig.map(config => (
+            <SSpotPriceCard key={config.id} $color={config.color}>
+              <Flex gap={8} align="center">
+                <AssetLogo id={[HOLLAR_ASSET_ID, config.assetId]} size="small" />
+                <Text fs={13} color="text.medium" style={{ textTransform: 'uppercase' }}>{config.label}</Text>
+              </Flex>
+              <Text fs={20} fw={600} color="text.primary" style={{ marginTop: 4 }}>{config.spot}</Text>
+            </SSpotPriceCard>
+          ))}
+        </Flex>
+      </Flex>
+
+      <SChartHeader $align="flex-start" style={{ marginBottom: 12 }}>
+         <div /> {/* push controls to right */}
+        <SControlsGroup>
+          <TimeRangeToggle
+            value={timeRange}
+            items={["7D", "30D", "90D", "MAX"]}
+            onValueChange={(v: string) => setTimeRange(v as TimeRange)}
+          />
+        </SControlsGroup>
+      </SChartHeader>
+
+      <ResponsiveContainer width="100%" height={320}>
+        <LineChart data={filteredData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke={theme.details.separators} />
+          <XAxis
+            dataKey="date"
+            tick={{ fill: theme.text.low, fontSize: 10 }}
+            axisLine={{ stroke: theme.details.separators }}
+            tickLine={false}
+          />
+          <YAxis
+            domain={[0.985, 1.015]}
+            tick={{ fill: theme.text.low, fontSize: 10 }}
+            axisLine={{ stroke: theme.details.separators }}
+            tickLine={false}
+            tickFormatter={(value) => `$${value.toFixed(3)}`}
+          />
+          <Tooltip
+            content={({ active, payload, label }) => (
+              <ChartTooltipContent
+                active={active}
+                payload={payload as any}
+                label={label}
+                valueFormatter={(v) => `$${v.toFixed(4)}`}
+              />
+            )}
+            cursor={{ stroke: theme.surfaces.containers.high.hover, strokeWidth: 1 }}
+          />
+          <ReferenceLine y={1.000} stroke={theme.text.medium} strokeDasharray="5 5" strokeOpacity={0.8} />
+
+          {pegConfig.map((config) => (
+            <Line
+              key={config.id}
+              type="monotone"
+              dataKey={config.id}
+              stroke={config.color}
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 4 }}
+              name={config.label}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+
+      <SChartFooter>
+        <SelectDropdown
+          value={timeRange}
+          items={['7D', '30D', '90D', 'MAX'].map(range => ({ key: range, label: range }))}
+          onValueChange={(val: string) => setTimeRange(val as TimeRange)}
+        />
+      </SChartFooter>
+    </SChartContainer>
+  )
+}

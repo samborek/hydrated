@@ -433,7 +433,7 @@ export const FeesOverviewChart: FC = () => {
         </SControlsGroup>
       </SChartHeader>
 
-      <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
+      <div style={{ flex: 1, minHeight: 400, position: 'relative' }}>
         <ResponsiveContainer width="100%" height="100%">
         {viewMode === 'revenue' ? (
           // REVENUE MODE: Stacked Bar Chart with absolute $ values

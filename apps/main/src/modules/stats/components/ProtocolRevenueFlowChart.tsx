@@ -88,30 +88,34 @@ const NODE_NAMES = {
   trades: "Trades",
   supplyBorrow: "Supply & Borrow",
   hollar: "HOLLAR",
-  liquidations: "Liquidations",
-  assetReserve: "Asset reserve",
-  borrowApr: "Borrow APR",
-  hsmRevenue: "HSM revenue",
-  users: "Users",
   protocol: "Protocol",
+  borrowApr: "Borrow APR",
+  liquidations: "Liquidations",
+  hollarBorrowApr: "Hollar Borrow APR",
+  hsmRevenue: "HSM revenue",
+  hdx: "HDX",
   staking: "Staking",
   referrals: "Referrals",
-  burned: "Burned",
+  traders: "Traders",
+  lps: "Liquidity providers",
+  treasury: "Treasury",
 } as const
 
 const getFeeFlowColors = (colors: ReturnType<typeof getFeeColors>) => ({
   [NODE_NAMES.trades]: colors.tradingFees,
   [NODE_NAMES.supplyBorrow]: colors.supplyBorrowFees,
   [NODE_NAMES.hollar]: colors.hollarFees,
-  [NODE_NAMES.liquidations]: colors.liquidationPenalty,
-  [NODE_NAMES.assetReserve]: colors.assetReserve,
-  [NODE_NAMES.borrowApr]: colors.supplyBorrowFees,
-  [NODE_NAMES.hsmRevenue]: colors.hollarFees,
-  [NODE_NAMES.users]: colors.users,
   [NODE_NAMES.protocol]: colors.protocol,
+  [NODE_NAMES.borrowApr]: colors.supplyBorrowFees,
+  [NODE_NAMES.liquidations]: colors.liquidationPenalty,
+  [NODE_NAMES.hollarBorrowApr]: colors.hollar,
+  [NODE_NAMES.hsmRevenue]: colors.treasury,
+  [NODE_NAMES.hdx]: colors.stakers,
   [NODE_NAMES.staking]: colors.stakers,
   [NODE_NAMES.referrals]: colors.lps,
-  [NODE_NAMES.burned]: colors.burned,
+  [NODE_NAMES.traders]: colors.users,
+  [NODE_NAMES.lps]: colors.lps,
+  [NODE_NAMES.treasury]: colors.treasury,
 })
 
 const splitLabel = (label: string, isMobile: boolean) => {
@@ -196,18 +200,26 @@ export const ProtocolRevenueFlowChart: FC<Props> = ({
       { name: NODE_NAMES.trades, value: tradesTotal, depth: 0 },
       { name: NODE_NAMES.supplyBorrow, value: mmTotal, depth: 0 },
       { name: NODE_NAMES.hollar, value: hollarTotal, depth: 0 },
-      { name: NODE_NAMES.liquidations, value: mmTotal * 0.5, depth: 1 },
-      { name: NODE_NAMES.assetReserve, value: mmTotal * 0.5, depth: 1 },
-      { name: NODE_NAMES.borrowApr, value: hollarTotal * 0.5, depth: 1 },
-      { name: NODE_NAMES.hsmRevenue, value: hollarTotal * 0.5, depth: 1 },
-      { name: NODE_NAMES.users, depth: 2, value: tradesTotal * 0.2 },
-      { name: NODE_NAMES.staking, depth: 2, value: tradesTotal * 0.2 },
-      { name: NODE_NAMES.referrals, depth: 2, value: tradesTotal * 0.2 },
-      { name: NODE_NAMES.burned, depth: 2, value: tradesTotal * 0.2 },
+
+      { name: NODE_NAMES.protocol, value: tradesTotal * 0.5, depth: 1 },
+      { name: NODE_NAMES.borrowApr, value: mmTotal * 0.8, depth: 1 },
+      { name: NODE_NAMES.liquidations, value: mmTotal * 0.2, depth: 1 },
+      { name: NODE_NAMES.hollarBorrowApr, value: hollarTotal * 0.7, depth: 1 },
+      { name: NODE_NAMES.hsmRevenue, value: hollarTotal * 0.3, depth: 1 },
+
+      { name: NODE_NAMES.hdx, depth: 2, value: tradesTotal * 0.125 },
+      { name: NODE_NAMES.staking, depth: 2, value: tradesTotal * 0.125 },
+      { name: NODE_NAMES.referrals, depth: 2, value: tradesTotal * 0.125 },
+      { name: NODE_NAMES.traders, depth: 2, value: tradesTotal * 0.125 },
       {
-        name: NODE_NAMES.protocol,
+        name: NODE_NAMES.lps,
         depth: 2,
-        value: tradesTotal * 0.2 + mmTotal + hollarTotal,
+        value: tradesTotal * 0.5 + mmTotal * 0.4,
+      },
+      {
+        name: NODE_NAMES.treasury,
+        depth: 2,
+        value: mmTotal * 0.6 + hollarTotal,
       },
     ]
 
@@ -278,61 +290,61 @@ export const ProtocolRevenueFlowChart: FC<Props> = ({
     })
 
     const links = [
-      buildLink(NODE_NAMES.trades, NODE_NAMES.users, tradesTotal * 0.2),
-      buildLink(NODE_NAMES.trades, NODE_NAMES.staking, tradesTotal * 0.2),
-      buildLink(NODE_NAMES.trades, NODE_NAMES.referrals, tradesTotal * 0.2),
-      buildLink(NODE_NAMES.trades, NODE_NAMES.burned, tradesTotal * 0.2),
-      buildLink(NODE_NAMES.trades, NODE_NAMES.protocol, tradesTotal * 0.2),
+      buildLink(NODE_NAMES.trades, NODE_NAMES.protocol, tradesTotal * 0.5),
+      buildLink(NODE_NAMES.trades, NODE_NAMES.lps, tradesTotal * 0.5),
 
+      buildLink(NODE_NAMES.protocol, NODE_NAMES.hdx, tradesTotal * 0.125, true),
       buildLink(
-        NODE_NAMES.supplyBorrow,
-        NODE_NAMES.liquidations,
-        mmTotal * 0.5,
-        true,
-      ),
-      buildLink(
-        NODE_NAMES.supplyBorrow,
-        NODE_NAMES.assetReserve,
-        mmTotal * 0.5,
-        true,
-      ),
-      buildLink(
-        NODE_NAMES.liquidations,
         NODE_NAMES.protocol,
-        mmTotal * 0.5,
+        NODE_NAMES.staking,
+        tradesTotal * 0.125,
         true,
       ),
       buildLink(
-        NODE_NAMES.assetReserve,
         NODE_NAMES.protocol,
-        mmTotal * 0.5,
+        NODE_NAMES.referrals,
+        tradesTotal * 0.125,
+        true,
+      ),
+      buildLink(
+        NODE_NAMES.protocol,
+        NODE_NAMES.traders,
+        tradesTotal * 0.125,
         true,
       ),
 
       buildLink(
-        NODE_NAMES.hollar,
+        NODE_NAMES.supplyBorrow,
         NODE_NAMES.borrowApr,
-        hollarTotal * 0.5,
+        mmTotal * 0.8,
         true,
       ),
+      buildLink(
+        NODE_NAMES.supplyBorrow,
+        NODE_NAMES.liquidations,
+        mmTotal * 0.2,
+        true,
+      ),
+
+      buildLink(NODE_NAMES.borrowApr, NODE_NAMES.lps, mmTotal * 0.4, true),
+      buildLink(NODE_NAMES.borrowApr, NODE_NAMES.treasury, mmTotal * 0.4, true),
+      buildLink(NODE_NAMES.liquidations, NODE_NAMES.treasury, mmTotal * 0.2, true),
+
       buildLink(
         NODE_NAMES.hollar,
-        NODE_NAMES.hsmRevenue,
-        hollarTotal * 0.5,
+        NODE_NAMES.hollarBorrowApr,
+        hollarTotal * 0.7,
         true,
       ),
+      buildLink(NODE_NAMES.hollar, NODE_NAMES.hsmRevenue, hollarTotal * 0.3, true),
+
       buildLink(
-        NODE_NAMES.borrowApr,
-        NODE_NAMES.protocol,
-        hollarTotal * 0.5,
+        NODE_NAMES.hollarBorrowApr,
+        NODE_NAMES.treasury,
+        hollarTotal * 0.7,
         true,
       ),
-      buildLink(
-        NODE_NAMES.hsmRevenue,
-        NODE_NAMES.protocol,
-        hollarTotal * 0.5,
-        true,
-      ),
+      buildLink(NODE_NAMES.hsmRevenue, NODE_NAMES.treasury, hollarTotal * 0.3, true),
     ]
 
     return {

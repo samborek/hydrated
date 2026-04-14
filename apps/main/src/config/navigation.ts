@@ -137,9 +137,7 @@ export const NAVIGATION: NavigationItem[] = [
     children: [
       { key: "statsOverview", to: LINKS.statsOverview },
       { key: "statsTreasury", to: LINKS.statsTreasury },
-      { key: "statsMoneyMarket", to: LINKS.statsMoneyMarket },
       { key: "statsHollar", to: LINKS.statsHollar },
-      { key: "statsAmm", to: LINKS.statsAmm },
       { key: "statsFees", to: LINKS.statsFees },
     ],
   },

@@ -48,6 +48,13 @@ const SFeesOverviewGrid = styled.div(
 
     @media (max-width: 1000px) {
       grid-template-columns: 1fr;
+
+      & > :first-child {
+        order: 1;
+      }
+      & > :last-child {
+        order: 2;
+      }
     }
   `,
 )

@@ -1,13 +1,11 @@
-import { SectionHeader } from "@galacticcouncil/ui/components"
-import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { FeesStackedChart } from "@/modules/stats/components/FeesStackedChart"
-import { RecentTrades } from "@/modules/stats/components/RecentTrades"
 import { StatsHeader } from "@/modules/stats/components/StatsHeader"
-import { TVLCompositionChart } from "@/modules/stats/components/TVLCompositionChart"
-import { VolumeChart } from "@/modules/stats/components/VolumeChart"
+import { MultiMetricChart } from "@/modules/stats/components/MultiMetricChart"
+import { ProductCards } from "@/modules/stats/components/ProductCards"
+import { useAggregatedPlatformStats } from "@/modules/stats/hooks/useAggregatedPlatformStats"
+import { formatUSD } from "@/api/stats"
 
 const SPageContainer = styled.div`
   display: flex;
@@ -31,29 +29,43 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
   `,
 )
 
-const SChartsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${({ theme }) => theme.scales.paddings.l}px;
 
-  @media (max-width: 1200px) {
-    grid-template-columns: 1fr;
-  }
-`
 
 function PlatformOverview() {
-  const { themeProps: theme } = useTheme()
+  const { stats: aggregatedStats, isLoading } = useAggregatedPlatformStats()
 
   const stats = [
     {
       label: "Total Value Locked",
-      value: "$183.59M",
-      valueColor: theme.secondaryColors.pink.coralPink,
+      value: formatUSD(aggregatedStats.totalTvl),
+      isLoading
     },
-    { label: "24h Volume", value: "$10.3M" },
-    { label: "Fee APY (7D)", value: "2.02-29.75%" }, // <--- Edit this line
-    { label: "Transactions (24h)", value: "12,453" },
-    { label: "Protocol Revenue (24h)", value: "$45.2K" },
+    { 
+      label: "24h Volume", 
+      value: formatUSD(aggregatedStats.totalVolume),
+      isLoading 
+    },
+    { 
+      label: "Capital Efficiency", 
+      value: `${aggregatedStats.capitalEfficiency.toFixed(2)}%`,
+      isLoading 
+    },
+    { 
+      label: "Protocol Revenue (24h)", 
+      value: formatUSD(aggregatedStats.protocolRevenue),
+      isLoading 
+    },
+    { 
+      label: "HDX Price", 
+      value: `$${aggregatedStats.hdxPrice.toFixed(4)}`,
+      bottomLabel: `${aggregatedStats.hdxChange > 0 ? "+" : ""}${aggregatedStats.hdxChange}%`,
+      isLoading 
+    },
+    { 
+      label: "Hollar Supply", 
+      value: formatUSD(aggregatedStats.hollarSupply),
+      isLoading 
+    },
   ]
 
   return (
@@ -61,28 +73,14 @@ function PlatformOverview() {
       {/* Key Metrics */}
       <StatsHeader stats={stats} />
 
-      {/* TVL Chart - Full width */}
+      {/* Multi Metric Interactive Chart */}
       <SSection>
-        <TVLCompositionChart title="Hydration TVL" value="$183.59M" />
+        <MultiMetricChart />
       </SSection>
 
-      {/* Volume + Fees Charts - Side by side */}
-      <SChartsGrid>
-        <SSection>
-          <VolumeChart title="24h Volume" value="$10.3M" />
-        </SSection>
-        <SSection>
-          <FeesStackedChart title="Protocol Fees" />
-        </SSection>
-      </SChartsGrid>
+      {/* Protocol Products Overview */}
+      <ProductCards />
 
-      {/* Recent Trades */}
-      <div>
-        <SectionHeader pt={theme.scales.paddings.m}>Recent trades</SectionHeader>
-        <SSection style={{ paddingTop: 0 }}>
-          <RecentTrades />
-        </SSection>
-      </div>
     </SPageContainer>
   )
 }

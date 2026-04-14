@@ -1,20 +1,7 @@
-import {
-  AssetLabel,
-  Flex,
-  SectionHeader,
-  Separator,
-  Text,
-} from "@galacticcouncil/ui/components"
+import { SectionHeader } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { css, styled } from "@galacticcouncil/ui/utils"
-import {
-  HOLLAR_ASSET_ID,
-  SUSDE_ASSET_ID,
-  SUSDS_ASSET_ID,
-  USDT_ASSET_ID,
-} from "@galacticcouncil/utils"
 import { createFileRoute } from "@tanstack/react-router"
-import { Fragment } from "react"
 
 import { StatsHeader } from "@/modules/stats/components/StatsHeader"
 import { useAggregatedPlatformStats } from "@/modules/stats/hooks/useAggregatedPlatformStats"
@@ -86,7 +73,7 @@ function HollarStats() {
     {
       label: "Hollar Price",
       value: `$${hollarPrice.toFixed(4)}`,
-      valueColor: isPegged ? theme.details.values.positive : theme.details.values.attention || theme.colors.attention?.["500"],
+      valueColor: isPegged ? theme.details.values.positive : theme.colors.utility.warningSecondary[500],
       isLoading
     },
     { 

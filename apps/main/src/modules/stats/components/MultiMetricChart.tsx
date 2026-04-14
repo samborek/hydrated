@@ -146,7 +146,7 @@ export const MultiMetricChart: FC<Props> = ({ className }) => {
     
     // In a real app we would compute the prior period exactly to compare
     const totalRev = filteredData.reduce((acc, curr) => acc + curr.Revenue, 0)
-    const currentTvl = filteredData[filteredData.length - 1].TVL
+    const currentTvl = filteredData[filteredData.length - 1]!.TVL
     
     return {
       Revenue: totalRev,
@@ -207,7 +207,7 @@ export const MultiMetricChart: FC<Props> = ({ className }) => {
               <Text fs={20} fw={600}>
                 ${aggregates[metric].toFixed(2)}M
               </Text>
-              <Text fs={12} style={{ color: aggregates.diffs[metric as keyof typeof aggregates.diffs].startsWith("+") ? theme.secondaryColors.greens?.brightGreen || "#00FF00" : theme.secondaryColors.pink?.coralRed || "#FF0000" }}>
+              <Text fs={12} style={{ color: aggregates.diffs[metric as keyof typeof aggregates.diffs]!.startsWith("+") ? theme.secondaryColors.greens?.brightGreen || "#00FF00" : theme.secondaryColors.pink?.coralRed || "#FF0000" }}>
                 {aggregates.diffs[metric as keyof typeof aggregates.diffs]}
               </Text>
             </div>

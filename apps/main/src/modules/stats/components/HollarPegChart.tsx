@@ -106,7 +106,7 @@ export const HollarPegChart: FC = () => {
     <SChartContainer>
       <Flex direction="column" gap={16} sx={{ mb: 20 }}>
         <Text fs={18} fw={600} font="primary" color="text.primary">Hollar Peg</Text>
-        <Flex gap={16} wrap="wrap">
+        <Flex gap={16} wrap={true}>
           {pegConfig.map(config => (
             <SSpotPriceCard key={config.id} $color={config.color}>
               <Flex gap={8} align="center">

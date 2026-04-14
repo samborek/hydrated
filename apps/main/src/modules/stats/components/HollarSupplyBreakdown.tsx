@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Text, ValueStats, Flex } from "@galacticcouncil/ui/components"
+import { Text, Flex } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState } from "react"
@@ -134,7 +134,7 @@ export const HollarSupplyBreakdown: FC<Props> = ({
 
   // Provide fallback coloring
   const mmColor = theme.colors.lavender?.["700"] || "#8B5CF6"
-  const hsmColor = theme.colors.pink?.["500"] || "#EC4899"
+  const hsmColor = "#EC4899"
   const COLORS = [mmColor, hsmColor]
 
   const chartData = useMemo(() => generateHollarStackedData(), [])
@@ -166,14 +166,14 @@ export const HollarSupplyBreakdown: FC<Props> = ({
                  paddingAngle={2}
                  dataKey="value"
                >
-                 {donutData.map((entry, index) => (
+                 {donutData.map((_entry, index) => (
                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                  ))}
                </Pie>
                <Tooltip 
-                 formatter={(value: number) => formatUSD(value)} 
+                 formatter={((value: number) => formatUSD(value)) as any}
                  contentStyle={{ borderRadius: 8, background: theme.surfaces.containers.high.primary, border: `1px solid ${theme.details.borders}` }} 
-                 itemStyle={{ color: theme.text.primary, fontSize: 13 }} 
+                 itemStyle={{ color: theme.text.high, fontSize: 13 }}
                />
              </PieChart>
            </ResponsiveContainer>
@@ -191,7 +191,7 @@ export const HollarSupplyBreakdown: FC<Props> = ({
                return (
                  <Flex justify="space-between" align="center" key={item.name}>
                     <Flex align="center" gap={8}>
-                       <SLegendDot $color={COLORS[index % COLORS.length]} />
+                       <SLegendDot $color={COLORS[index % COLORS.length]!} />
                        <Text fs={14} color="text.medium">{item.name}</Text>
                     </Flex>
                     <Flex align="center" gap={12}>

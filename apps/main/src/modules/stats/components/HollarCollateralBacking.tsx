@@ -41,7 +41,7 @@ const SProgressBarWrapper = styled.div`
   width: 100%;
   height: 8px;
   border-radius: 4px;
-  background: ${({ theme }) => theme.surfaces.containers.low.dim};
+  background: ${({ theme }) => theme.surfaces.containers.dim.dimOnBg};
   overflow: hidden;
   margin-top: 12px;
 `
@@ -127,12 +127,12 @@ export const HollarCollateralBacking: FC = () => {
 
   // Colors Arrays
   const mmColors = [
-    theme.colors.pink?.["500"] || "#EC4899",
-    theme.colors.turquoise?.["500"] || "#14B8A6",
+    "#EC4899",
+    "#14B8A6",
     theme.colors.lavender?.["500"] || "#8B5CF6",
-    theme.colors.blue?.["500"] || "#3B82F6",
-    theme.colors.attention?.["500"] || "#F59E0B",
-    theme.colors.success?.["500"] || "#10B981",
+    "#3B82F6",
+    "#F59E0B",
+    "#10B981",
   ]
   
   const hsmColors = [
@@ -172,7 +172,7 @@ export const HollarCollateralBacking: FC = () => {
           <SProgressBarWrapper>
             <SProgressBarFill 
                $progress={hsmBucketProgress} 
-               $color={theme.colors.pink?.["600"] || "#EC4899"} 
+               $color="#EC4899"
             />
           </SProgressBarWrapper>
         </SCard>
@@ -197,12 +197,12 @@ export const HollarCollateralBacking: FC = () => {
                    paddingAngle={2}
                    dataKey="value"
                  >
-                   {mmCollaterals.map((entry, index) => (
+                   {mmCollaterals.map((_entry, index) => (
                      <Cell key={`cell-${index}`} fill={mmColors[index % mmColors.length]} />
                    ))}
                  </Pie>
                  <Tooltip 
-                   formatter={(value: number) => formatUSD(value)} 
+                   formatter={((value: number) => formatUSD(value)) as any}
                    contentStyle={{ borderRadius: 8, background: theme.surfaces.containers.high.primary, border: `1px solid ${theme.details.borders}` }} 
                  />
                </PieChart>
@@ -221,7 +221,7 @@ export const HollarCollateralBacking: FC = () => {
                  return (
                    <Flex justify="space-between" align="center" key={item.name}>
                       <Flex align="center" gap={8}>
-                         <SLegendDot $color={mmColors[index % mmColors.length]} />
+                         <SLegendDot $color={mmColors[index % mmColors.length]!} />
                          <Text fs={13} color="text.medium">{item.name}</Text>
                       </Flex>
                       <Flex align="center" gap={12}>
@@ -252,12 +252,12 @@ export const HollarCollateralBacking: FC = () => {
                    paddingAngle={2}
                    dataKey="value"
                  >
-                   {hsmCollaterals.map((entry, index) => (
+                   {hsmCollaterals.map((_entry, index) => (
                      <Cell key={`cell-${index}`} fill={hsmColors[index % hsmColors.length]} />
                    ))}
                  </Pie>
                  <Tooltip 
-                   formatter={(value: number) => formatUSD(value)} 
+                   formatter={((value: number) => formatUSD(value)) as any}
                    contentStyle={{ borderRadius: 8, background: theme.surfaces.containers.high.primary, border: `1px solid ${theme.details.borders}` }} 
                  />
                </PieChart>
@@ -276,7 +276,7 @@ export const HollarCollateralBacking: FC = () => {
                  return (
                    <Flex justify="space-between" align="center" key={item.name}>
                       <Flex align="center" gap={8}>
-                         <SLegendDot $color={hsmColors[index % hsmColors.length]} />
+                         <SLegendDot $color={hsmColors[index % hsmColors.length]!} />
                          <Text fs={13} color="text.medium">{item.name}</Text>
                       </Flex>
                       <Flex align="center" gap={12}>

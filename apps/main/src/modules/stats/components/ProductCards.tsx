@@ -1,4 +1,3 @@
-import { css } from "@emotion/react"
 import styled from "@emotion/styled"
 import { Flex, Separator, Text, ValueStats } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
@@ -49,7 +48,7 @@ const SPegDot = styled.span<{ $stable: boolean }>`
   border-radius: 50%;
   flex-shrink: 0;
   background: ${({ theme, $stable }) =>
-    $stable ? theme.accents.success.emphasis : theme.accents.warning.emphasis};
+    $stable ? theme.accents.success.emphasis : theme.accents.alertAlt.primary};
 `
 
 const SIconWrapper = styled.div`
@@ -140,13 +139,14 @@ export const ProductCards = () => {
               <Fragment key={m.label}>
                 <ValueStats
                   label={m.label}
-                  value={
+                  value={m.isStable === undefined ? m.value : undefined}
+                  customValue={
                     m.isStable !== undefined ? (
                       <Flex align="center" gap={6}>
                         <SPegDot $stable={m.isStable} />
                         {m.value}
                       </Flex>
-                    ) : m.value
+                    ) : undefined
                   }
                   isLoading={isLoading}
                   size="medium"

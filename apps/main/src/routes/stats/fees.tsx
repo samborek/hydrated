@@ -8,12 +8,13 @@ import { LiquidityFeesChart } from "@/modules/stats/components/LiquidityFeesChar
 import { ProtocolRevenueFlowChart } from "@/modules/stats/components/ProtocolRevenueFlowChart"
 import { SupplyBorrowFeesChart } from "@/modules/stats/components/SupplyBorrowFeesChart"
 import { TradingFeesChart } from "@/modules/stats/components/TradingFeesChart"
+import { MainContent } from "@/modules/layout/components/Content"
 
-const SPageContainer = styled.div`
+const SPageContainer = styled(MainContent)`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 0 0 24px 0;
+  padding-bottom: 24px;
 
   @media (max-width: 576px) {
     gap: 8px;

@@ -8,16 +8,17 @@ import { useAggregatedPlatformStats } from "@/modules/stats/hooks/useAggregatedP
 import { useGhoReserveData, useBorrowReserves } from "@/api/borrow"
 import { formatUSD } from "@/api/stats"
 import { getGhoReserve } from "@galacticcouncil/money-market/utils"
+import { MainContent } from "@/modules/layout/components/Content"
 
 import { HollarSupplyBreakdown } from "@/modules/stats/components/HollarSupplyBreakdown"
 import { HollarPegChart } from "@/modules/stats/components/HollarPegChart"
 import { HollarCollateralBacking } from "@/modules/stats/components/HollarCollateralBacking"
 
-const SPageContainer = styled.div`
+const SPageContainer = styled(MainContent)`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 0 0 24px 0;
+  padding-bottom: 24px;
 
   @media (max-width: 576px) {
     gap: 8px;

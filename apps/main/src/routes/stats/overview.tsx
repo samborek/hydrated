@@ -6,12 +6,13 @@ import { MultiMetricChart } from "@/modules/stats/components/MultiMetricChart"
 import { ProductCards } from "@/modules/stats/components/ProductCards"
 import { useAggregatedPlatformStats } from "@/modules/stats/hooks/useAggregatedPlatformStats"
 import { formatUSD } from "@/api/stats"
+import { MainContent } from "@/modules/layout/components/Content"
 
-const SPageContainer = styled.div`
+const SPageContainer = styled(MainContent)`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.scales.paddings.l}px;
-  padding: 0 0 ${({ theme }) => theme.scales.paddings.l}px 0;
+  padding-bottom: ${({ theme }) => theme.scales.paddings.l}px;
 `
 
 const SSection = styled.section<{ hasHeader?: boolean }>(

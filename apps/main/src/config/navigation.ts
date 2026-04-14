@@ -34,6 +34,7 @@ export const LINKS = {
   otc: "/trade/otc",
   stats: "/stats",
   statsOverview: "/stats/overview",
+  statsTreasury: "/stats/treasury",
   statsHollar: "/stats/hollar",
   statsFees: "/stats/fees",
   staking: "/staking",
@@ -133,6 +134,7 @@ export const NAVIGATION: NavigationItem[] = [
     icon: ChartPieIcon,
     children: [
       { key: "statsOverview", to: LINKS.statsOverview },
+      { key: "statsTreasury", to: LINKS.statsTreasury },
       { key: "statsHollar", to: LINKS.statsHollar },
       { key: "statsFees", to: LINKS.statsFees },
     ],
@@ -207,6 +209,10 @@ export const getMenuTranslations = (t: TFunction) =>
       description: t("navigation.stats.description"),
     },
     statsOverview: {
+      title: t("navigation.stats.title"),
+      description: t("navigation.stats.description"),
+    },
+    statsTreasury: {
       title: t("navigation.stats.title"),
       description: t("navigation.stats.description"),
     },

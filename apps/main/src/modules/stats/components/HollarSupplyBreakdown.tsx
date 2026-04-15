@@ -16,7 +16,7 @@ import {
   Cell
 } from "recharts"
 
-import { ChartTooltipContent } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
 import { SChartHeader } from "./ChartLayout"
 import { formatUSD } from "@/api/stats"
@@ -179,10 +179,16 @@ export const HollarSupplyBreakdown: FC<Props> = ({
                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                  ))}
                </Pie>
-               <Tooltip 
-                 formatter={((value: number) => formatUSD(value)) as any}
-                 contentStyle={{ borderRadius: 8, background: theme.surfaces.containers.high.primary, border: `1px solid ${theme.details.borders}` }} 
-                 itemStyle={{ color: theme.text.high, fontSize: 13 }}
+               <Tooltip
+                 content={({ active, payload }) => (
+                   <ChartTooltipContent
+                     active={active}
+                     payload={payload?.map(p => ({ ...p, dataKey: p.name, value: p.value as number, color: p.payload?.fill || (p as any).color })) as any}
+                     label=""
+                     valueFormatter={(v) => formatUSD(v)}
+                   />
+                 )}
+                 cursor={chartCursorStyle}
                />
              </PieChart>
            </ResponsiveContainer>

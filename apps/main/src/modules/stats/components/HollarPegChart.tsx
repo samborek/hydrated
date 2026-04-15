@@ -1,6 +1,4 @@
 import styled from "@emotion/styled"
-import { Text, Flex } from "@galacticcouncil/ui/components"
-import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState } from "react"
 import {
@@ -17,8 +15,10 @@ import {
 import { ChartTooltipContent } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
 import { SChartHeader } from "./ChartLayout"
-import { AssetLogo } from "@/components/AssetLogo"
+import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { HOLLAR_ASSET_ID, USDT_ASSET_ID, SUSDE_ASSET_ID, SUSDS_ASSET_ID } from "@galacticcouncil/utils"
+
+export { HOLLAR_ASSET_ID, USDT_ASSET_ID, SUSDE_ASSET_ID, SUSDS_ASSET_ID }
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -47,18 +47,6 @@ const SChartFooter = styled.div`
   }
 `
 
-const SSpotPriceCard = styled.div<{ $color: string }>`
-  display: flex;
-  flex-direction: column;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.details.borders};
-  background: ${({ theme }) => theme.surfaces.containers.high.primary};
-  border-left: 4px solid ${({ $color }) => $color};
-  flex: 1;
-  min-width: 160px;
-`
-
 // Mock Peg Historical Data (❗️ Needs Indexer)
 const generatePegData = () => {
   const data = []
@@ -68,7 +56,6 @@ const generatePegData = () => {
     const date = new Date(now)
     date.setDate(date.getDate() - i)
 
-    // Minor fluctuations around $1.00
     data.push({
       date: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
       aUSDT: 1.0 + (Math.random() - 0.5) * 0.005,
@@ -83,6 +70,13 @@ const generatePegData = () => {
 
 type TimeRange = "7D" | "30D" | "90D" | "MAX"
 
+export const PEG_CONFIG = [
+  { id: "aUSDT", label: "HOLLAR/aUSDT", assetId: USDT_ASSET_ID, color: "#26A17B", spot: "$1.0001" },
+  { id: "aUSDC", label: "HOLLAR/aUSDC", assetId: "22",           color: "#2775CA", spot: "$1.0005" },
+  { id: "sUSDe", label: "HOLLAR/sUSDe", assetId: SUSDE_ASSET_ID, color: "#8B5CF6", spot: "$0.9998" },
+  { id: "sUSDS", label: "HOLLAR/sUSDS", assetId: SUSDS_ASSET_ID, color: "#F4B731", spot: "$1.0012" },
+] as const
+
 export const HollarPegChart: FC = () => {
   const { themeProps: theme } = useTheme()
   const [timeRange, setTimeRange] = useState<TimeRange>("30D")
@@ -94,33 +88,10 @@ export const HollarPegChart: FC = () => {
     return chartData.slice(-days)
   }, [chartData, timeRange])
 
-  // Map tokens to specific colors
-  const pegConfig = [
-    { id: "aUSDT", label: "HOLLAR/aUSDT", assetId: USDT_ASSET_ID, color: "#26A17B", spot: "$1.0001" },
-    { id: "aUSDC", label: "HOLLAR/aUSDC", assetId: "22", color: "#2775CA", spot: "$1.0005" },
-    { id: "sUSDe", label: "HOLLAR/sUSDe", assetId: SUSDE_ASSET_ID, color: "#8B5CF6", spot: "$0.9998" },
-    { id: "sUSDS", label: "HOLLAR/sUSDS", assetId: SUSDS_ASSET_ID, color: "#F4B731", spot: "$1.0012" },
-  ]
-
   return (
     <SChartContainer>
-      <Flex direction="column" gap={16} sx={{ mb: 20 }}>
-        <Text fs={18} fw={600} font="primary" color="text.primary">Hollar Peg</Text>
-        <Flex gap={16} wrap={true}>
-          {pegConfig.map(config => (
-            <SSpotPriceCard key={config.id} $color={config.color}>
-              <Flex gap={8} align="center">
-                <AssetLogo id={[HOLLAR_ASSET_ID, config.assetId]} size="small" />
-                <Text fs={13} color="text.medium" style={{ textTransform: 'uppercase' }}>{config.label}</Text>
-              </Flex>
-              <Text fs={20} fw={600} color="text.primary" style={{ marginTop: 4 }}>{config.spot}</Text>
-            </SSpotPriceCard>
-          ))}
-        </Flex>
-      </Flex>
-
       <SChartHeader $align="flex-start" style={{ marginBottom: 12 }}>
-         <div /> {/* push controls to right */}
+        <div />
         <SControlsGroup>
           <TimeRangeToggle
             value={timeRange}
@@ -159,7 +130,7 @@ export const HollarPegChart: FC = () => {
           />
           <ReferenceLine y={1.000} stroke={theme.text.medium} strokeDasharray="5 5" strokeOpacity={0.8} />
 
-          {pegConfig.map((config) => (
+          {PEG_CONFIG.map((config) => (
             <Line
               key={config.id}
               type="monotone"

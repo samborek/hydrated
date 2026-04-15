@@ -171,7 +171,8 @@ export const HollarSupplyBreakdown: FC<Props> = ({
                  innerRadius={80}
                  outerRadius={105}
                  stroke="none"
-                 paddingAngle={2}
+                 paddingAngle={4}
+                 cornerRadius={6}
                  dataKey="value"
                >
                  {donutData.map((_entry, index) => (

@@ -9,11 +9,9 @@ import { useGhoReserveData, useBorrowReserves } from "@/api/borrow"
 import { formatUSD } from "@/api/stats"
 import { getGhoReserve } from "@galacticcouncil/money-market/utils"
 import { MainContent } from "@/modules/layout/components/Content"
-import { AssetLogo } from "@/components/AssetLogo"
-import { Flex, Text } from "@galacticcouncil/ui/components"
 
 import { HollarSupplyBreakdown } from "@/modules/stats/components/HollarSupplyBreakdown"
-import { HollarPegChart, PEG_CONFIG, HOLLAR_ASSET_ID } from "@/modules/stats/components/HollarPegChart"
+import { HollarPegChart } from "@/modules/stats/components/HollarPegChart"
 import { HollarCollateralBacking } from "@/modules/stats/components/HollarCollateralBacking"
 
 const SPageContainer = styled(MainContent)`
@@ -41,15 +39,6 @@ const SSection = styled.section<{ hasHeader?: boolean }>(
     }
   `,
 )
-
-const SPegStatsRow = styled.div`
-  display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-  &::-webkit-scrollbar { display: none; }
-  scrollbar-width: none;
-`
 
 function HollarStats() {
   const { themeProps: theme } = useTheme()
@@ -91,46 +80,18 @@ function HollarStats() {
     { label: "Borrow APY",      value: formattedApy, isLoading },
   ]
 
-  const pegStats = PEG_CONFIG.map((config) => ({
-    label: config.label,
-    value: config.spot,
-    customLabel: (
-      <Flex gap={6} align="center">
-        <AssetLogo id={[HOLLAR_ASSET_ID, config.assetId]} size="small" />
-        <Text
-          fs={11}
-          fw={500}
-          color="text.medium"
-          css={{ textTransform: "uppercase", letterSpacing: "0.04em" }}
-        >
-          {config.label}
-        </Text>
-      </Flex>
-    ),
-    valueColor: config.color,
-  }))
-
   return (
     <SPageContainer>
-      {/* Section 1 - Main metrics */}
       <StatsHeader stats={stats} />
 
-      {/* Section 2 - Supply Breakdown */}
       <SSection>
         <HollarSupplyBreakdown totalBorrowedValue={mmBorrowedUSD} totalHsmValue={hsmBorrowedUSD} isLoading={isLoading} />
       </SSection>
 
-      {/* Section 3 - Peg spot prices (above chart container) */}
-      <SPegStatsRow>
-        <StatsHeader stats={pegStats} justify="flex-start" gap={40} sx={{ py: 0 }} />
-      </SPegStatsRow>
-
-      {/* Section 4 - Hollar Peg Chart */}
       <SSection>
         <HollarPegChart />
       </SSection>
 
-      {/* Section 5 - Collateral Backing */}
       <div>
         <SectionHeader>Collateral Backing</SectionHeader>
         <HollarCollateralBacking />

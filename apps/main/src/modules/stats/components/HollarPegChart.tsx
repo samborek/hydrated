@@ -1,4 +1,5 @@
 import styled from "@emotion/styled"
+import { Text, Flex } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState } from "react"
 import {
@@ -16,9 +17,10 @@ import { ChartTooltipContent } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
 import { SChartHeader } from "./ChartLayout"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
+import { AssetLogo } from "@/components/AssetLogo"
 import { HOLLAR_ASSET_ID, USDT_ASSET_ID, SUSDE_ASSET_ID, SUSDS_ASSET_ID } from "@galacticcouncil/utils"
 
-export { HOLLAR_ASSET_ID, USDT_ASSET_ID, SUSDE_ASSET_ID, SUSDS_ASSET_ID }
+export { HOLLAR_ASSET_ID }
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -45,6 +47,17 @@ const SChartFooter = styled.div`
     gap: 8px;
     margin-top: 16px;
   }
+`
+
+const SSpotPriceCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid ${({ theme }) => theme.details.borders};
+  background: ${({ theme }) => theme.surfaces.containers.high.primary};
+  flex: 1;
+  min-width: 160px;
 `
 
 // Mock Peg Historical Data (❗️ Needs Indexer)
@@ -90,6 +103,25 @@ export const HollarPegChart: FC = () => {
 
   return (
     <SChartContainer>
+      <Flex direction="column" gap={16} sx={{ mb: 20 }}>
+        <Text fs={18} fw={600} font="primary" color="text.primary">Hollar Peg</Text>
+        <Flex gap={12} wrap={true}>
+          {PEG_CONFIG.map((config) => (
+            <SSpotPriceCard key={config.id}>
+              <Flex gap={8} align="center">
+                <AssetLogo id={[HOLLAR_ASSET_ID, config.assetId]} size="small" />
+                <Text fs={11} fw={500} color="text.medium" css={{ textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                  {config.label}
+                </Text>
+              </Flex>
+              <Text fs={20} fw={600} style={{ marginTop: 6, color: config.color }}>
+                {config.spot}
+              </Text>
+            </SSpotPriceCard>
+          ))}
+        </Flex>
+      </Flex>
+
       <SChartHeader $align="flex-start" style={{ marginBottom: 12 }}>
         <div />
         <SControlsGroup>

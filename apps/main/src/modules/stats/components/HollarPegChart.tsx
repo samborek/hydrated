@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Text, Flex } from "@galacticcouncil/ui/components"
+import { Text, Flex, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { FC, useMemo, useState } from "react"
 import {
@@ -108,15 +108,22 @@ export const HollarPegChart: FC = () => {
         <Flex gap={12} wrap={true}>
           {PEG_CONFIG.map((config) => (
             <SSpotPriceCard key={config.id}>
-              <Flex gap={8} align="center">
-                <AssetLogo id={[HOLLAR_ASSET_ID, config.assetId]} size="small" />
-                <Text fs={11} fw={500} color="text.medium" css={{ textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                  {config.label}
-                </Text>
-              </Flex>
-              <Text fs={20} fw={600} style={{ marginTop: 6, color: config.color }}>
-                {config.spot}
-              </Text>
+              <ValueStats
+                font="primary"
+                customLabel={
+                  <Flex gap={8} align="center">
+                    <AssetLogo id={[HOLLAR_ASSET_ID, config.assetId]} size="small" />
+                    <Text fs={11} fw={500} color="text.medium" css={{ textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                      {config.label}
+                    </Text>
+                  </Flex>
+                }
+                customValue={
+                  <ValueStatsValue font="primary" style={{ color: config.color }}>
+                    {config.spot}
+                  </ValueStatsValue>
+                }
+              />
             </SSpotPriceCard>
           ))}
         </Flex>

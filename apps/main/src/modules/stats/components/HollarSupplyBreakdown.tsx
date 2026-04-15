@@ -116,21 +116,29 @@ type TimeRange = "7D" | "30D" | "90D" | "MAX"
 type Props = {
   totalBorrowedValue: number
   totalHsmValue: number
+  isLoading?: boolean
 }
 
 export const HollarSupplyBreakdown: FC<Props> = ({
   totalBorrowedValue,
   totalHsmValue,
+  isLoading = false,
 }) => {
   const { themeProps: theme } = useTheme()
   const [timeRange, setTimeRange] = useState<TimeRange>("30D")
 
   const totalSupply = totalBorrowedValue + totalHsmValue
   
-  const donutData = [
-    { name: "Borrowed (MM)", value: totalBorrowedValue },
-    { name: "HSM", value: totalHsmValue },
-  ].filter(d => d.value > 0) // Ensure no 0-value slices render if there's no data
+  // During loading, show equal placeholder slices so the donut isn't empty
+  const donutData = isLoading
+    ? [
+        { name: "Borrowed (MM)", value: 1 },
+        { name: "HSM", value: 1 },
+      ]
+    : [
+        { name: "Borrowed (MM)", value: totalBorrowedValue },
+        { name: "HSM", value: totalHsmValue },
+      ].filter(d => d.value > 0)
 
   // Provide fallback coloring
   const mmColor = theme.colors.lavender?.["700"] || "#8B5CF6"

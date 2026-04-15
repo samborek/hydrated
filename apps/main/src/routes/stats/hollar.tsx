@@ -51,8 +51,10 @@ function HollarStats() {
   const { ghoBorrowApyRange } = gho ?? {}
   const ghoReserve = reserves?.formattedReserves ? getGhoReserve(reserves.formattedReserves) : null
 
-  const mmBorrowedUSD = ghoReserve ? parseFloat(ghoReserve.totalDebtUSD) : 0
-  const hsmBorrowedUSD = aggregatedStats?.hollarSupply > mmBorrowedUSD ? aggregatedStats.hollarSupply - mmBorrowedUSD : 0
+  // MM slice: use the facilitator bucket level (how much Hollar has been minted via MM)
+  const mmBorrowedUSD = gho?.formattedGhoReserveData?.aaveFacilitatorBucketLevel ?? 0
+  // HSM slice: mocked until indexer data is available
+  const hsmBorrowedUSD = 3_300_000
   const hollarPrice = ghoReserve ? parseFloat(ghoReserve.priceInUSD) : 1
 
   const isPegged = hollarPrice >= 0.999 && hollarPrice <= 1.001
@@ -101,7 +103,7 @@ function HollarStats() {
 
       {/* Section 2 - Supply Breakdown */}
       <SSection>
-        <HollarSupplyBreakdown totalBorrowedValue={mmBorrowedUSD} totalHsmValue={hsmBorrowedUSD} />
+        <HollarSupplyBreakdown totalBorrowedValue={mmBorrowedUSD} totalHsmValue={hsmBorrowedUSD} isLoading={isLoading} />
       </SSection>
 
       {/* Section 3 - Hollar Peg Chart */}

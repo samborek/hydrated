@@ -3,6 +3,7 @@ import styled from "@emotion/styled"
 import { Flex, Text } from "@galacticcouncil/ui/components"
 import { AssetLogo } from "@/components/AssetLogo"
 import { useEffect, useState } from "react"
+import type { TooltipContentProps } from "recharts"
 
 /**
  * Styled tooltip container matching Figma "breakdown" tooltip variant
@@ -42,6 +43,7 @@ export const SChartTooltipContainer = styled.div(
 export const chartTooltipProps = {
   isAnimationActive: false,
   offset: 14,
+  allowEscapeViewBox: { x: true, y: true },
   wrapperStyle: {
     transition: "none",
     pointerEvents: "none" as const,
@@ -64,6 +66,13 @@ type ChartTooltipContentProps = {
   valueFormatter?: (value: number, name: string) => string
   labelFormatter?: (label: string | number) => string
   nameFormatter?: (name: string) => string
+}
+
+type TooltipCoordinate = Pick<TooltipContentProps<number, string>, "coordinate">["coordinate"]
+
+type ChartTooltipContentWithPositionProps = ChartTooltipContentProps & {
+  coordinate?: TooltipCoordinate
+  onPositionChange?: (position: { x: number; y: number } | null) => void
 }
 
 /**
@@ -141,6 +150,26 @@ export const ChartTooltipContent = ({
       ))}
     </SChartTooltipContainer>
   )
+}
+
+export const ChartTooltipContentWithPosition = ({
+  coordinate,
+  onPositionChange,
+  ...props
+}: ChartTooltipContentWithPositionProps) => {
+  useEffect(() => {
+    if (!coordinate || !onPositionChange) {
+      onPositionChange?.(null)
+      return
+    }
+
+    onPositionChange({
+      x: coordinate.x + 16,
+      y: coordinate.y,
+    })
+  }, [coordinate, onPositionChange])
+
+  return <ChartTooltipContent {...props} />
 }
 
 /**

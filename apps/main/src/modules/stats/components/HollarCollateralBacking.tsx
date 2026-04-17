@@ -1,24 +1,41 @@
 import styled from "@emotion/styled"
-import { Text, Flex, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
+import { getGhoReserve } from "@galacticcouncil/money-market/utils"
+import {
+  Flex,
+  Text,
+  ValueStats,
+  ValueStatsValue,
+} from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
+import {
+  DOT_ASSET_ID,
+  getAssetIdFromAddress,
+  SUSDE_ASSET_ID,
+  SUSDS_ASSET_ID,
+  USDT_ASSET_ID,
+  VDOT_ASSET_ID,
+} from "@galacticcouncil/utils"
 import React, { FC, useState } from "react"
 import {
-  PieChart,
-  Pie,
   Cell,
-  Sector,
+  Pie,
+  PieChart,
   ResponsiveContainer,
-  Tooltip
+  Sector,
+  Tooltip,
 } from "recharts"
 
-import { hollarColors } from "@/modules/stats/utils/hollarColors"
-import { getBackingAssetColor } from "@/modules/stats/utils/backingAssetColors"
 import { useBorrowReserves, useGhoReserveData } from "@/api/borrow"
-import { getGhoReserve } from "@galacticcouncil/money-market/utils"
 import { formatUSD } from "@/api/stats"
-import { ChartTooltipContent, chartCursorStyle, chartTooltipProps } from "./StatsChartTooltip"
 import { AssetLogo } from "@/components/AssetLogo"
-import { USDT_ASSET_ID, SUSDE_ASSET_ID, SUSDS_ASSET_ID, VDOT_ASSET_ID, DOT_ASSET_ID, getAssetIdFromAddress } from "@galacticcouncil/utils"
+import { getBackingAssetColor } from "@/modules/stats/utils/backingAssetColors"
+import { hollarColors } from "@/modules/stats/utils/hollarColors"
+
+import {
+  chartCursorStyle,
+  ChartTooltipContentWithPosition,
+  chartTooltipProps,
+} from "./StatsChartTooltip"
 
 const HSM_ASSET_IDS: Record<string, string> = {
   aUSDT: USDT_ASSET_ID,
@@ -149,13 +166,17 @@ export const HollarCollateralBacking: FC = () => {
   const { themeProps: theme } = useTheme()
   const [mmActiveIndex, setMmActiveIndex] = useState<number | null>(null)
   const [hsmActiveIndex, setHsmActiveIndex] = useState<number | null>(null)
+  const [mmTooltipPosition, setMmTooltipPosition] = useState<{ x: number; y: number } | null>(null)
+  const [hsmTooltipPosition, setHsmTooltipPosition] = useState<{ x: number; y: number } | null>(null)
 
   const { data: gho } = useGhoReserveData()
   const { data: reserves } = useBorrowReserves()
 
   // --- MM Facilitator Bucket (❗️ mock fallback until indexer is wired) ---
-  const aaveFacilLevel = gho?.formattedGhoReserveData?.aaveFacilitatorBucketLevel || 6_200_000
-  const aaveFacilMax = gho?.formattedGhoReserveData?.aaveFacilitatorBucketMaxCapacity || 15_000_000
+  const aaveFacilLevel =
+    gho?.formattedGhoReserveData?.aaveFacilitatorBucketLevel || 6_200_000
+  const aaveFacilMax =
+    gho?.formattedGhoReserveData?.aaveFacilitatorBucketMaxCapacity || 15_000_000
   const mmBucketProgress = (aaveFacilLevel / aaveFacilMax) * 100
 
   // --- HSM Facilitator Bucket (Mocked) ---
@@ -164,15 +185,23 @@ export const HollarCollateralBacking: FC = () => {
   const hsmBucketProgress = (hsmFacilLevel / hsmFacilMax) * 100
 
   // --- MM Collateral math ---
-  const mmTotalDebt = reserves?.formattedReserves?.reduce((acc, r) => acc + parseFloat(r.totalDebtUSD), 0) || 0
-  const ghoReserve = reserves?.formattedReserves ? getGhoReserve(reserves.formattedReserves) : null
+  const mmTotalDebt =
+    reserves?.formattedReserves?.reduce(
+      (acc, r) => acc + parseFloat(r.totalDebtUSD),
+      0,
+    ) || 0
+  const ghoReserve = reserves?.formattedReserves
+    ? getGhoReserve(reserves.formattedReserves)
+    : null
   const hollarDebtLive = ghoReserve ? parseFloat(ghoReserve.totalDebtUSD) : 0
   const hollarShare = mmTotalDebt > 0 ? hollarDebtLive / mmTotalDebt : 0
 
   const liveCollaterals = (
     reserves?.formattedReserves
-      ?.filter(r => r.symbol !== "HOLLAR" && parseFloat(r.totalLiquidityUSD) > 0)
-      .map(r => ({
+      ?.filter(
+        (r) => r.symbol !== "HOLLAR" && parseFloat(r.totalLiquidityUSD) > 0,
+      )
+      .map((r) => ({
         name: r.symbol,
         assetId: getAssetIdFromAddress(r.underlyingAsset),
         value: parseFloat(r.totalLiquidityUSD) * hollarShare,
@@ -183,20 +212,22 @@ export const HollarCollateralBacking: FC = () => {
   // ❗️ Mock MM collateral — replace with live data once indexer is wired
   const MOCK_MM_HOLLAR_DEBT = 6_200_000
   const MOCK_MM_COLLATERALS = [
-    { name: "USDC",  assetId: MM_ASSET_IDS.USDC,  value: 5_100_000 },
-    { name: "USDT",  assetId: MM_ASSET_IDS.USDT,  value: 3_800_000 },
-    { name: "WBTC",  assetId: MM_ASSET_IDS.WBTC,  value: 1_900_000 },
-    { name: "DOT",   assetId: MM_ASSET_IDS.DOT,   value: 1_200_000 },
-    { name: "vDOT",  assetId: MM_ASSET_IDS.vDOT,  value:   700_000 },
-    { name: "tBTC",  assetId: undefined,           value:   600_000 },
+    { name: "USDC", assetId: MM_ASSET_IDS.USDC, value: 5_100_000 },
+    { name: "USDT", assetId: MM_ASSET_IDS.USDT, value: 3_800_000 },
+    { name: "WBTC", assetId: MM_ASSET_IDS.WBTC, value: 1_900_000 },
+    { name: "DOT", assetId: MM_ASSET_IDS.DOT, value: 1_200_000 },
+    { name: "vDOT", assetId: MM_ASSET_IDS.vDOT, value: 700_000 },
+    { name: "tBTC", assetId: undefined, value: 600_000 },
   ]
 
-  const hasLiveData = liveCollaterals.length > 0 && liveCollaterals.some(c => c.value > 0)
+  const hasLiveData =
+    liveCollaterals.length > 0 && liveCollaterals.some((c) => c.value > 0)
   const mmCollaterals = hasLiveData ? liveCollaterals : MOCK_MM_COLLATERALS
   const hollarDebt = hasLiveData ? hollarDebtLive : MOCK_MM_HOLLAR_DEBT
 
   const mmTotalCollateral = mmCollaterals.reduce((acc, c) => acc + c.value, 0)
-  const mmOvercollateralization = hollarDebt > 0 ? (mmTotalCollateral / hollarDebt).toFixed(2) : "–"
+  const mmOvercollateralization =
+    hollarDebt > 0 ? (mmTotalCollateral / hollarDebt).toFixed(2) : "–"
 
   // --- HSM Collateral (Mocked) ---
   const hsmCollaterals = [
@@ -219,20 +250,35 @@ export const HollarCollateralBacking: FC = () => {
     <Flex direction="column" gap={24}>
       {/* Facilitator Buckets — unified card */}
       <SBucketsCard>
-        <Text fs={16} fw={600} font="primary" color="text.primary">Facilitator Buckets</Text>
+        <Text fs={16} fw={600} font="primary" color="text.primary">
+          Facilitator Buckets
+        </Text>
 
         <SBucketRow>
           <Flex justify="space-between" align="center">
             <Flex align="center" gap={8}>
               <SLegendDot $color={mmColor} />
-              <Text fs={14} fw={500} color="text.primary">Money Market</Text>
+              <Text fs={14} fw={500} color="text.primary">
+                Money Market
+              </Text>
             </Flex>
             <Flex align="center" gap={6}>
-              <Text fs={13} fw={600} color="text.primary" style={{ fontFamily: "Gazpacho, sans-serif" }}>
+              <Text
+                fs={13}
+                fw={600}
+                color="text.primary"
+                style={{ fontFamily: "Gazpacho, sans-serif" }}
+              >
                 {formatUSD(aaveFacilLevel)}
               </Text>
-              <Text fs={13} color="text.medium">/ {formatUSD(aaveFacilMax)}</Text>
-              <Text fs={12} color="text.medium" style={{ minWidth: 42, textAlign: "right", opacity: 0.7 }}>
+              <Text fs={13} color="text.medium">
+                / {formatUSD(aaveFacilMax)}
+              </Text>
+              <Text
+                fs={12}
+                color="text.medium"
+                style={{ minWidth: 42, textAlign: "right", opacity: 0.7 }}
+              >
                 {mmBucketProgress.toFixed(1)}%
               </Text>
             </Flex>
@@ -248,20 +294,36 @@ export const HollarCollateralBacking: FC = () => {
           <Flex justify="space-between" align="center">
             <Flex align="center" gap={8}>
               <SLegendDot $color={hollarColors.buckets.hsm} />
-              <Text fs={14} fw={500} color="text.primary">HSM</Text>
+              <Text fs={14} fw={500} color="text.primary">
+                HSM
+              </Text>
             </Flex>
             <Flex align="center" gap={6}>
-              <Text fs={13} fw={600} color="text.primary" style={{ fontFamily: "Gazpacho, sans-serif" }}>
+              <Text
+                fs={13}
+                fw={600}
+                color="text.primary"
+                style={{ fontFamily: "Gazpacho, sans-serif" }}
+              >
                 {formatUSD(hsmFacilLevel)}
               </Text>
-              <Text fs={13} color="text.medium">/ {formatUSD(hsmFacilMax)}</Text>
-              <Text fs={12} color="text.medium" style={{ minWidth: 42, textAlign: "right", opacity: 0.7 }}>
+              <Text fs={13} color="text.medium">
+                / {formatUSD(hsmFacilMax)}
+              </Text>
+              <Text
+                fs={12}
+                color="text.medium"
+                style={{ minWidth: 42, textAlign: "right", opacity: 0.7 }}
+              >
                 {hsmBucketProgress.toFixed(1)}%
               </Text>
             </Flex>
           </Flex>
           <SProgressBarWrapper>
-            <SProgressBarFill $progress={hsmBucketProgress} $color={hollarColors.buckets.hsm} />
+            <SProgressBarFill
+              $progress={hsmBucketProgress}
+              $color={hollarColors.buckets.hsm}
+            />
           </SProgressBarWrapper>
         </SBucketRow>
       </SBucketsCard>
@@ -283,7 +345,7 @@ export const HollarCollateralBacking: FC = () => {
                     activeIndex={mmActiveIndex ?? undefined}
                     activeShape={renderHoveredSlice}
                     isAnimationActive={true}
-                    animationDuration={650}
+                    animationDuration={950}
                     animationEasing="ease-in-out"
                     stroke="none"
                     paddingAngle={4}
@@ -300,17 +362,23 @@ export const HollarCollateralBacking: FC = () => {
                       />
                     ))}
                   </Pie>
-                  <Tooltip {...chartTooltipProps}
-                    content={({ active, payload }) => (
-                      <ChartTooltipContent
+                  <Tooltip
+                    {...chartTooltipProps}
+                    position={mmTooltipPosition ?? undefined}
+                    content={({ active, payload, coordinate }) => (
+                      <ChartTooltipContentWithPosition
                         active={active}
-                        payload={payload?.map(p => ({
-                          ...p,
-                          dataKey: p.name,
-                          value: p.value as number,
-                          color: p.payload?.fill || (p as any).color,
-                          assetId: p.payload?.assetId,
-                        })) as any}
+                        coordinate={coordinate}
+                        onPositionChange={setMmTooltipPosition}
+                        payload={
+                          payload?.map((p) => ({
+                            ...p,
+                            dataKey: p.name,
+                            value: p.value as number,
+                            color: p.payload?.fill || (p as any).color,
+                            assetId: p.payload?.assetId,
+                          })) as any
+                        }
                         label=""
                         valueFormatter={(v) => formatUSD(v)}
                       />
@@ -320,29 +388,55 @@ export const HollarCollateralBacking: FC = () => {
                 </PieChart>
               </ResponsiveContainer>
               <SDonutInner>
-                <Text fs={15} fw={500} color="text.medium">Total</Text>
-                <Text fs={22} fw={500} color="text.primary" style={{ fontFamily: "Gazpacho, sans-serif" }}>
+                <Text fs={15} fw={500} color="text.medium">
+                  Total
+                </Text>
+                <Text
+                  fs={22}
+                  fw={500}
+                  color="text.primary"
+                  style={{ fontFamily: "Gazpacho, sans-serif" }}
+                >
                   {formatUSD(mmTotalCollateral)}
                 </Text>
               </SDonutInner>
             </SDonutWrapper>
 
-            <Flex direction="column" justify="space-between" style={{ flex: 1, minWidth: 0 }}>
+            <Flex
+              direction="column"
+              justify="space-between"
+              style={{ flex: 1, minWidth: 0 }}
+            >
               <Flex direction="column" gap={4}>
-                <Text fs={18} fw={500} font="primary" color="text.primary">Backing via Money Market</Text>
-                <Text fs={13} color="text.medium">Overcollateralized proportional backing</Text>
+                <Text fs={18} fw={500} font="primary" color="text.primary">
+                  Backing via Money Market
+                </Text>
+                <Text fs={13} color="text.medium">
+                  Overcollateralized proportional backing
+                </Text>
               </Flex>
 
               <ValueStats
                 font="primary"
                 wrap={true}
                 customLabel={
-                  <Text fs={11} fw={500} color="text.medium" css={{ textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                  <Text
+                    fs={11}
+                    fw={500}
+                    color="text.medium"
+                    css={{
+                      textTransform: "uppercase",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
                     Collateral Ratio
                   </Text>
                 }
                 customValue={
-                  <ValueStatsValue font="primary" style={{ color: theme.details.values.positive }}>
+                  <ValueStatsValue
+                    font="primary"
+                    style={{ color: theme.details.values.positive }}
+                  >
                     {mmOvercollateralization}x
                   </ValueStatsValue>
                 }
@@ -350,7 +444,10 @@ export const HollarCollateralBacking: FC = () => {
 
               <Flex direction="column" gap={8}>
                 {mmCollaterals.map((item, index) => {
-                  const pct = mmTotalCollateral > 0 ? ((item.value / mmTotalCollateral) * 100).toFixed(1) : "0"
+                  const pct =
+                    mmTotalCollateral > 0
+                      ? ((item.value / mmTotalCollateral) * 100).toFixed(1)
+                      : "0"
                   return (
                     <React.Fragment key={item.name}>
                       {index > 0 && <SDivider />}
@@ -363,21 +460,45 @@ export const HollarCollateralBacking: FC = () => {
                           padding: "6px 8px",
                           margin: "-6px -8px",
                           borderRadius: 10,
-                          background: mmActiveIndex === index ? theme.surfaces.containers.dim.dimOnHigh : "transparent",
-                          transition: "background 180ms cubic-bezier(0.22, 1, 0.36, 1)",
+                          background:
+                            mmActiveIndex === index
+                              ? theme.surfaces.containers.dim.dimOnHigh
+                              : "transparent",
+                          transition:
+                            "background 180ms cubic-bezier(0.22, 1, 0.36, 1)",
                         }}
                       >
                         <Flex align="center" gap={8}>
                           {item.assetId ? (
                             <AssetLogo id={item.assetId} size="small" />
                           ) : (
-                            <SLegendDot $color={getMmColor(item.assetId, item.name, index)} />
+                            <SLegendDot
+                              $color={getMmColor(
+                                item.assetId,
+                                item.name,
+                                index,
+                              )}
+                            />
                           )}
-                          <Text fs={13} color="text.medium">{item.name}</Text>
+                          <Text fs={13} color="text.medium">
+                            {item.name}
+                          </Text>
                         </Flex>
                         <Flex align="center" gap={12}>
-                          <Text fs={13} color="text.primary">{formatUSD(item.value)}</Text>
-                          <Text fs={12} color="text.medium" style={{ opacity: 0.7, width: 38, textAlign: "right" }}>{pct}%</Text>
+                          <Text fs={13} color="text.primary">
+                            {formatUSD(item.value)}
+                          </Text>
+                          <Text
+                            fs={12}
+                            color="text.medium"
+                            style={{
+                              opacity: 0.7,
+                              width: 38,
+                              textAlign: "right",
+                            }}
+                          >
+                            {pct}%
+                          </Text>
                         </Flex>
                       </Flex>
                     </React.Fragment>
@@ -420,17 +541,23 @@ export const HollarCollateralBacking: FC = () => {
                       />
                     ))}
                   </Pie>
-                  <Tooltip {...chartTooltipProps}
-                    content={({ active, payload }) => (
-                      <ChartTooltipContent
+                  <Tooltip
+                    {...chartTooltipProps}
+                    position={hsmTooltipPosition ?? undefined}
+                    content={({ active, payload, coordinate }) => (
+                      <ChartTooltipContentWithPosition
                         active={active}
-                        payload={payload?.map(p => ({
-                          ...p,
-                          dataKey: p.name,
-                          value: p.value as number,
-                          color: p.payload?.fill || (p as any).color,
-                          assetId: p.payload?.assetId,
-                        })) as any}
+                        coordinate={coordinate}
+                        onPositionChange={setHsmTooltipPosition}
+                        payload={
+                          payload?.map((p) => ({
+                            ...p,
+                            dataKey: p.name,
+                            value: p.value as number,
+                            color: p.payload?.fill || (p as any).color,
+                            assetId: p.payload?.assetId,
+                          })) as any
+                        }
                         label=""
                         valueFormatter={(v) => formatUSD(v)}
                       />
@@ -440,29 +567,55 @@ export const HollarCollateralBacking: FC = () => {
                 </PieChart>
               </ResponsiveContainer>
               <SDonutInner>
-                <Text fs={15} fw={500} color="text.medium">1:1 Backed</Text>
-                <Text fs={22} fw={500} color="text.primary" style={{ fontFamily: "Gazpacho, sans-serif" }}>
+                <Text fs={15} fw={500} color="text.medium">
+                  1:1 Backed
+                </Text>
+                <Text
+                  fs={22}
+                  fw={500}
+                  color="text.primary"
+                  style={{ fontFamily: "Gazpacho, sans-serif" }}
+                >
                   {formatUSD(hsmTotal)}
                 </Text>
               </SDonutInner>
             </SDonutWrapper>
 
-            <Flex direction="column" justify="space-between" style={{ flex: 1, minWidth: 0 }}>
+            <Flex
+              direction="column"
+              justify="space-between"
+              style={{ flex: 1, minWidth: 0 }}
+            >
               <Flex direction="column" gap={4}>
-                <Text fs={18} fw={500} font="primary" color="text.primary">Backing via HSM</Text>
-                <Text fs={13} color="text.medium">1:1 backing from Stablepool deposits</Text>
+                <Text fs={18} fw={500} font="primary" color="text.primary">
+                  Backing via HSM
+                </Text>
+                <Text fs={13} color="text.medium">
+                  1:1 backing from Stablepool deposits
+                </Text>
               </Flex>
 
               <ValueStats
                 font="primary"
                 wrap={true}
                 customLabel={
-                  <Text fs={11} fw={500} color="text.medium" css={{ textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                  <Text
+                    fs={11}
+                    fw={500}
+                    color="text.medium"
+                    css={{
+                      textTransform: "uppercase",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
                     Backing Ratio
                   </Text>
                 }
                 customValue={
-                  <ValueStatsValue font="primary" style={{ color: theme.details.values.positive }}>
+                  <ValueStatsValue
+                    font="primary"
+                    style={{ color: theme.details.values.positive }}
+                  >
                     1:1
                   </ValueStatsValue>
                 }
@@ -470,7 +623,10 @@ export const HollarCollateralBacking: FC = () => {
 
               <Flex direction="column" gap={8}>
                 {hsmCollaterals.map((item, index) => {
-                  const pct = hsmTotal > 0 ? ((item.value / hsmTotal) * 100).toFixed(1) : "0"
+                  const pct =
+                    hsmTotal > 0
+                      ? ((item.value / hsmTotal) * 100).toFixed(1)
+                      : "0"
                   const assetId = HSM_ASSET_IDS[item.name]
                   return (
                     <React.Fragment key={item.name}>
@@ -484,21 +640,41 @@ export const HollarCollateralBacking: FC = () => {
                           padding: "6px 8px",
                           margin: "-6px -8px",
                           borderRadius: 10,
-                          background: hsmActiveIndex === index ? theme.surfaces.containers.dim.dimOnHigh : "transparent",
-                          transition: "background 180ms cubic-bezier(0.22, 1, 0.36, 1)",
+                          background:
+                            hsmActiveIndex === index
+                              ? theme.surfaces.containers.dim.dimOnHigh
+                              : "transparent",
+                          transition:
+                            "background 180ms cubic-bezier(0.22, 1, 0.36, 1)",
                         }}
                       >
                         <Flex align="center" gap={8}>
                           {assetId ? (
                             <AssetLogo id={assetId} size="small" />
                           ) : (
-                            <SLegendDot $color={getHsmColor(assetId, item.name, index)} />
+                            <SLegendDot
+                              $color={getHsmColor(assetId, item.name, index)}
+                            />
                           )}
-                          <Text fs={13} color="text.medium">{item.name}</Text>
+                          <Text fs={13} color="text.medium">
+                            {item.name}
+                          </Text>
                         </Flex>
                         <Flex align="center" gap={12}>
-                          <Text fs={13} color="text.primary">{formatUSD(item.value)}</Text>
-                          <Text fs={12} color="text.medium" style={{ opacity: 0.7, width: 38, textAlign: "right" }}>{pct}%</Text>
+                          <Text fs={13} color="text.primary">
+                            {formatUSD(item.value)}
+                          </Text>
+                          <Text
+                            fs={12}
+                            color="text.medium"
+                            style={{
+                              opacity: 0.7,
+                              width: 38,
+                              textAlign: "right",
+                            }}
+                          >
+                            {pct}%
+                          </Text>
                         </Flex>
                       </Flex>
                     </React.Fragment>

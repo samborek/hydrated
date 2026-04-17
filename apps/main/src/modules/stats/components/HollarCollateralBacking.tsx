@@ -148,41 +148,49 @@ const SLegendDot = styled.div<{ $color: string }>`
 type SliceMotionConfig = {
   duration: number
   easing: "linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"
-  hoverExpand: number
+  hoverScale: number
   cornerRadius: number
 }
 
 export const HOLLAR_SLICE_MOTION = {
   mm: {
     duration: 950,
-    easing: "ease-in-out",
-    hoverExpand: 4,
+    easing: "ease-in",
+    hoverScale: 1.045,
     cornerRadius: 8,
   },
   hsm: {
-    duration: 650,
-    easing: "ease-in-out",
-    hoverExpand: 4,
+    duration: 950,
+    easing: "ease-in",
+    hoverScale: 1.045,
     cornerRadius: 8,
   },
 } as const satisfies Record<string, SliceMotionConfig>
 
-const renderHoveredSlice =
-  (motion: SliceMotionConfig) =>
-  (props: any) => {
+const createSliceShape =
+  (motion: SliceMotionConfig, activeIndex: number | null) =>
+  (props: any, index: number) => {
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } =
       props
+    const isActive = index === activeIndex
 
     return (
       <Sector
         cx={cx}
         cy={cy}
         innerRadius={innerRadius}
-        outerRadius={outerRadius + motion.hoverExpand}
+        outerRadius={outerRadius}
         startAngle={startAngle}
         endAngle={endAngle}
         fill={fill}
         cornerRadius={motion.cornerRadius}
+        style={{
+          transformBox: "fill-box",
+          transformOrigin: "center",
+          transform: `scale(${isActive ? motion.hoverScale : 1})`,
+          transition: `transform ${motion.duration}ms ${motion.easing}`,
+          willChange: "transform",
+        }}
       />
     )
   }
@@ -270,8 +278,14 @@ export const HollarCollateralBacking: FC = () => {
   const hsmTotal = hsmCollaterals.reduce((acc, c) => acc + c.value, 0)
 
   const mmColor = hollarColors.buckets.mm
-  const mmHoveredSlice = renderHoveredSlice(HOLLAR_SLICE_MOTION.mm)
-  const hsmHoveredSlice = renderHoveredSlice(HOLLAR_SLICE_MOTION.hsm)
+  const mmSliceShape = createSliceShape(
+    HOLLAR_SLICE_MOTION.mm,
+    mmActiveIndex,
+  )
+  const hsmSliceShape = createSliceShape(
+    HOLLAR_SLICE_MOTION.hsm,
+    hsmActiveIndex,
+  )
   const getMmColor = (assetId?: string, symbol?: string, index?: number) =>
     getBackingAssetColor({ assetId, symbol, index })
   const getHsmColor = (assetId?: string, symbol?: string, index?: number) =>
@@ -375,11 +389,8 @@ export const HollarCollateralBacking: FC = () => {
                     cy="50%"
                     innerRadius={85}
                     outerRadius={115}
-                    activeIndex={mmActiveIndex ?? undefined}
-                    activeShape={mmHoveredSlice}
-                    isAnimationActive={true}
-                    animationDuration={HOLLAR_SLICE_MOTION.mm.duration}
-                    animationEasing={HOLLAR_SLICE_MOTION.mm.easing}
+                    shape={mmSliceShape}
+                    isAnimationActive={false}
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}
@@ -554,11 +565,8 @@ export const HollarCollateralBacking: FC = () => {
                     cy="50%"
                     innerRadius={85}
                     outerRadius={115}
-                    activeIndex={hsmActiveIndex ?? undefined}
-                    activeShape={hsmHoveredSlice}
-                    isAnimationActive={true}
-                    animationDuration={HOLLAR_SLICE_MOTION.hsm.duration}
-                    animationEasing={HOLLAR_SLICE_MOTION.hsm.easing}
+                    shape={hsmSliceShape}
+                    isAnimationActive={false}
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}

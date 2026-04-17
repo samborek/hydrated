@@ -279,6 +279,7 @@ export const HollarCollateralBacking: FC = () => {
                           dataKey: p.name,
                           value: p.value as number,
                           color: p.payload?.fill || (p as any).color,
+                          assetId: p.payload?.assetId,
                         })) as any}
                         label=""
                         valueFormatter={(v) => formatUSD(v)}
@@ -378,6 +379,7 @@ export const HollarCollateralBacking: FC = () => {
                           dataKey: p.name,
                           value: p.value as number,
                           color: p.payload?.fill || (p as any).color,
+                          assetId: p.payload?.assetId,
                         })) as any}
                         label=""
                         valueFormatter={(v) => formatUSD(v)}

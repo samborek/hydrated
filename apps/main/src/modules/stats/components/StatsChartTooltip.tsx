@@ -1,6 +1,7 @@
 import { css } from "@emotion/react"
 import styled from "@emotion/styled"
 import { Flex, Text } from "@galacticcouncil/ui/components"
+import { AssetLogo } from "@/components/AssetLogo"
 
 /**
  * Styled tooltip container matching Figma "breakdown" tooltip variant
@@ -18,16 +19,37 @@ export const SChartTooltipContainer = styled.div(
     border-radius: ${theme.radii.lg}px;
     background-color: ${theme.details.tooltips};
     border: 1px solid rgba(124, 127, 138, 0.2);
-    padding: 12px 16px;
+    padding: ${theme.containers.paddings.secondary}px;
     box-shadow: 0px 8px 30px 0px rgba(41, 41, 60, 0.41);
+    animation: tooltipFadeIn 0.12s ease-out both;
+    pointer-events: none;
+
+    @keyframes tooltipFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
   `,
 )
+
+/** Spread onto every Recharts <Tooltip> to disable position animation and pin near cursor */
+export const chartTooltipProps = {
+  isAnimationActive: false,
+  offset: 14,
+  wrapperStyle: { transition: "none", pointerEvents: "none" as const },
+} as const
 
 type TooltipPayloadItem = {
   name: string
   value: number
   color: string
   dataKey: string
+  assetId?: string
 }
 
 type ChartTooltipContentProps = {
@@ -60,15 +82,19 @@ export const ChartTooltipContent = ({
       </Text>
       {payload.map((entry) => (
         <Flex key={entry.dataKey} gap={8} align="center">
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              backgroundColor: entry.color,
-              borderRadius: 2,
-              flexShrink: 0,
-            }}
-          />
+          {entry.assetId ? (
+            <AssetLogo id={entry.assetId} size="small" />
+          ) : (
+            <div
+              style={{
+                width: 8,
+                height: 8,
+                backgroundColor: entry.color,
+                borderRadius: 2,
+                flexShrink: 0,
+              }}
+            />
+          )}
           <Flex
             justify="space-between"
             gap={16}

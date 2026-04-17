@@ -278,7 +278,7 @@ export const HollarCollateralBacking: FC = () => {
                           outline: "none",
                           transform: mmActiveIndex === null || mmActiveIndex === index
                             ? "scale(1.02)"
-                            : "scale(0.975)",
+                            : "scale(1)",
                           transformOrigin: "center",
                           opacity: mmActiveIndex === null || mmActiveIndex === index ? 1 : 0.65,
                           transition: "transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
@@ -402,7 +402,7 @@ export const HollarCollateralBacking: FC = () => {
                           outline: "none",
                           transform: hsmActiveIndex === null || hsmActiveIndex === index
                             ? "scale(1.02)"
-                            : "scale(0.975)",
+                            : "scale(1)",
                           transformOrigin: "center",
                           opacity: hsmActiveIndex === null || hsmActiveIndex === index ? 1 : 0.65,
                           transition: "transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",

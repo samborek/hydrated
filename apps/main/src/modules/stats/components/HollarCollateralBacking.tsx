@@ -128,8 +128,6 @@ const SLegendDot = styled.div<{ $color: string }>`
   flex-shrink: 0;
 `
 
-const sliceHoverTransition = "transform 420ms ease-in-out"
-
 const renderHoveredSlice = (props: any) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props
 
@@ -138,10 +136,11 @@ const renderHoveredSlice = (props: any) => {
       cx={cx}
       cy={cy}
       innerRadius={innerRadius}
-      outerRadius={outerRadius + 6}
+      outerRadius={outerRadius + 4}
       startAngle={startAngle}
       endAngle={endAngle}
       fill={fill}
+      cornerRadius={8}
     />
   )
 }
@@ -283,6 +282,9 @@ export const HollarCollateralBacking: FC = () => {
                     outerRadius={115}
                     activeIndex={mmActiveIndex ?? undefined}
                     activeShape={renderHoveredSlice}
+                    isAnimationActive={true}
+                    animationDuration={650}
+                    animationEasing="ease-in-out"
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}
@@ -294,11 +296,7 @@ export const HollarCollateralBacking: FC = () => {
                       <Cell
                         key={`cell-${index}`}
                         fill={getMmColor(_entry.assetId, _entry.name, index)}
-                        style={{
-                          cursor: "pointer",
-                          outline: "none",
-                          transition: sliceHoverTransition,
-                        }}
+                        style={{ cursor: "pointer", outline: "none" }}
                       />
                     ))}
                   </Pie>
@@ -404,6 +402,9 @@ export const HollarCollateralBacking: FC = () => {
                     outerRadius={115}
                     activeIndex={hsmActiveIndex ?? undefined}
                     activeShape={renderHoveredSlice}
+                    isAnimationActive={true}
+                    animationDuration={650}
+                    animationEasing="ease-in-out"
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}
@@ -415,11 +416,7 @@ export const HollarCollateralBacking: FC = () => {
                       <Cell
                         key={`cell-${index}`}
                         fill={getHsmColor(_entry.assetId, _entry.name, index)}
-                        style={{
-                          cursor: "pointer",
-                          outline: "none",
-                          transition: sliceHoverTransition,
-                        }}
+                        style={{ cursor: "pointer", outline: "none" }}
                       />
                     ))}
                   </Pie>

@@ -6,6 +6,7 @@ import {
   PieChart,
   Pie,
   Cell,
+  Sector,
   ResponsiveContainer,
   Tooltip
 } from "recharts"
@@ -128,6 +129,22 @@ const SLegendDot = styled.div<{ $color: string }>`
 `
 
 const sliceHoverTransition = "transform 420ms ease-in-out"
+
+const renderHoveredSlice = (props: any) => {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props
+
+  return (
+    <Sector
+      cx={cx}
+      cy={cy}
+      innerRadius={innerRadius}
+      outerRadius={outerRadius + 6}
+      startAngle={startAngle}
+      endAngle={endAngle}
+      fill={fill}
+    />
+  )
+}
 
 export const HollarCollateralBacking: FC = () => {
   const { themeProps: theme } = useTheme()
@@ -264,6 +281,8 @@ export const HollarCollateralBacking: FC = () => {
                     cy="50%"
                     innerRadius={85}
                     outerRadius={115}
+                    activeIndex={mmActiveIndex ?? undefined}
+                    activeShape={renderHoveredSlice}
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}
@@ -278,11 +297,6 @@ export const HollarCollateralBacking: FC = () => {
                         style={{
                           cursor: "pointer",
                           outline: "none",
-                          transform: mmActiveIndex === null || mmActiveIndex === index
-                            ? "scale(1.04)"
-                            : "scale(1)",
-                          transformOrigin: "center",
-                          opacity: 1,
                           transition: sliceHoverTransition,
                         }}
                       />
@@ -388,6 +402,8 @@ export const HollarCollateralBacking: FC = () => {
                     cy="50%"
                     innerRadius={85}
                     outerRadius={115}
+                    activeIndex={hsmActiveIndex ?? undefined}
+                    activeShape={renderHoveredSlice}
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}
@@ -402,11 +418,6 @@ export const HollarCollateralBacking: FC = () => {
                         style={{
                           cursor: "pointer",
                           outline: "none",
-                          transform: hsmActiveIndex === null || hsmActiveIndex === index
-                            ? "scale(1.04)"
-                            : "scale(1)",
-                          transformOrigin: "center",
-                          opacity: 1,
                           transition: sliceHoverTransition,
                         }}
                       />

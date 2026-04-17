@@ -145,29 +145,60 @@ const SLegendDot = styled.div<{ $color: string }>`
   flex-shrink: 0;
 `
 
-const renderHoveredSlice = (props: any) => {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props
-
-  return (
-    <Sector
-      cx={cx}
-      cy={cy}
-      innerRadius={innerRadius}
-      outerRadius={outerRadius + 4}
-      startAngle={startAngle}
-      endAngle={endAngle}
-      fill={fill}
-      cornerRadius={8}
-    />
-  )
+type SliceMotionConfig = {
+  duration: number
+  easing: "linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"
+  hoverExpand: number
+  cornerRadius: number
 }
+
+export const HOLLAR_SLICE_MOTION = {
+  mm: {
+    duration: 950,
+    easing: "ease-in-out",
+    hoverExpand: 4,
+    cornerRadius: 8,
+  },
+  hsm: {
+    duration: 650,
+    easing: "ease-in-out",
+    hoverExpand: 4,
+    cornerRadius: 8,
+  },
+} as const satisfies Record<string, SliceMotionConfig>
+
+const renderHoveredSlice =
+  (motion: SliceMotionConfig) =>
+  (props: any) => {
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } =
+      props
+
+    return (
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius + motion.hoverExpand}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+        cornerRadius={motion.cornerRadius}
+      />
+    )
+  }
 
 export const HollarCollateralBacking: FC = () => {
   const { themeProps: theme } = useTheme()
   const [mmActiveIndex, setMmActiveIndex] = useState<number | null>(null)
   const [hsmActiveIndex, setHsmActiveIndex] = useState<number | null>(null)
-  const [mmTooltipPosition, setMmTooltipPosition] = useState<{ x: number; y: number } | null>(null)
-  const [hsmTooltipPosition, setHsmTooltipPosition] = useState<{ x: number; y: number } | null>(null)
+  const [mmTooltipPosition, setMmTooltipPosition] = useState<{
+    x: number
+    y: number
+  } | null>(null)
+  const [hsmTooltipPosition, setHsmTooltipPosition] = useState<{
+    x: number
+    y: number
+  } | null>(null)
 
   const { data: gho } = useGhoReserveData()
   const { data: reserves } = useBorrowReserves()
@@ -239,6 +270,8 @@ export const HollarCollateralBacking: FC = () => {
   const hsmTotal = hsmCollaterals.reduce((acc, c) => acc + c.value, 0)
 
   const mmColor = hollarColors.buckets.mm
+  const mmHoveredSlice = renderHoveredSlice(HOLLAR_SLICE_MOTION.mm)
+  const hsmHoveredSlice = renderHoveredSlice(HOLLAR_SLICE_MOTION.hsm)
   const getMmColor = (assetId?: string, symbol?: string, index?: number) =>
     getBackingAssetColor({ assetId, symbol, index })
   const getHsmColor = (assetId?: string, symbol?: string, index?: number) =>
@@ -343,10 +376,10 @@ export const HollarCollateralBacking: FC = () => {
                     innerRadius={85}
                     outerRadius={115}
                     activeIndex={mmActiveIndex ?? undefined}
-                    activeShape={renderHoveredSlice}
+                    activeShape={mmHoveredSlice}
                     isAnimationActive={true}
-                    animationDuration={950}
-                    animationEasing="ease-in-out"
+                    animationDuration={HOLLAR_SLICE_MOTION.mm.duration}
+                    animationEasing={HOLLAR_SLICE_MOTION.mm.easing}
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}
@@ -522,10 +555,10 @@ export const HollarCollateralBacking: FC = () => {
                     innerRadius={85}
                     outerRadius={115}
                     activeIndex={hsmActiveIndex ?? undefined}
-                    activeShape={renderHoveredSlice}
+                    activeShape={hsmHoveredSlice}
                     isAnimationActive={true}
-                    animationDuration={650}
-                    animationEasing="ease-in-out"
+                    animationDuration={HOLLAR_SLICE_MOTION.hsm.duration}
+                    animationEasing={HOLLAR_SLICE_MOTION.hsm.easing}
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}

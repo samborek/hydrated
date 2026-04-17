@@ -1,7 +1,7 @@
 import styled from "@emotion/styled"
 import { Text, Flex, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
-import React, { FC } from "react"
+import React, { FC, useState } from "react"
 import {
   PieChart,
   Pie,
@@ -129,6 +129,8 @@ const SLegendDot = styled.div<{ $color: string }>`
 
 export const HollarCollateralBacking: FC = () => {
   const { themeProps: theme } = useTheme()
+  const [mmActiveIndex, setMmActiveIndex] = useState<number | null>(null)
+  const [hsmActiveIndex, setHsmActiveIndex] = useState<number | null>(null)
 
   const { data: gho } = useGhoReserveData()
   const { data: reserves } = useBorrowReserves()
@@ -192,6 +194,8 @@ export const HollarCollateralBacking: FC = () => {
     getBackingAssetColor({ assetId, symbol, index })
   const getHsmColor = (assetId?: string, symbol?: string, index?: number) =>
     getBackingAssetColor({ assetId, symbol, index })
+  const clearMmHover = () => setMmActiveIndex(null)
+  const clearHsmHover = () => setHsmActiveIndex(null)
 
   return (
     <Flex direction="column" gap={24}>
@@ -257,16 +261,28 @@ export const HollarCollateralBacking: FC = () => {
                     cx="50%"
                     cy="50%"
                     innerRadius={85}
-                    outerRadius={115}
+                    outerRadius={mmActiveIndex !== null ? 120 : 115}
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}
                     dataKey="value"
+                    onMouseEnter={(_, index) => setMmActiveIndex(index)}
+                    onMouseLeave={clearMmHover}
                   >
                     {mmCollaterals.map((_entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={getMmColor(_entry.assetId, _entry.name, index)}
+                        style={{
+                          cursor: "pointer",
+                          outline: "none",
+                          transform: mmActiveIndex === null || mmActiveIndex === index
+                            ? "scale(1.03)"
+                            : "scale(0.96)",
+                          transformOrigin: "center",
+                          opacity: mmActiveIndex === null || mmActiveIndex === index ? 1 : 0.65,
+                          transition: "transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms cubic-bezier(0.22, 1, 0.36, 1)",
+                        }}
                       />
                     ))}
                   </Pie>
@@ -324,7 +340,19 @@ export const HollarCollateralBacking: FC = () => {
                   return (
                     <React.Fragment key={item.name}>
                       {index > 0 && <SDivider />}
-                      <Flex justify="space-between" align="center">
+                      <Flex
+                        justify="space-between"
+                        align="center"
+                        onMouseEnter={() => setMmActiveIndex(index)}
+                        onMouseLeave={clearMmHover}
+                        style={{
+                          padding: "6px 8px",
+                          margin: "-6px -8px",
+                          borderRadius: 10,
+                          background: mmActiveIndex === index ? theme.surfaces.containers.dim.dimOnHigh : "transparent",
+                          transition: "background 180ms cubic-bezier(0.22, 1, 0.36, 1)",
+                        }}
+                      >
                         <Flex align="center" gap={8}>
                           {item.assetId ? (
                             <AssetLogo id={item.assetId} size="small" />
@@ -357,16 +385,28 @@ export const HollarCollateralBacking: FC = () => {
                     cx="50%"
                     cy="50%"
                     innerRadius={85}
-                    outerRadius={115}
+                    outerRadius={hsmActiveIndex !== null ? 120 : 115}
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}
                     dataKey="value"
+                    onMouseEnter={(_, index) => setHsmActiveIndex(index)}
+                    onMouseLeave={clearHsmHover}
                   >
                     {hsmCollaterals.map((_entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={getHsmColor(_entry.assetId, _entry.name, index)}
+                        style={{
+                          cursor: "pointer",
+                          outline: "none",
+                          transform: hsmActiveIndex === null || hsmActiveIndex === index
+                            ? "scale(1.03)"
+                            : "scale(0.96)",
+                          transformOrigin: "center",
+                          opacity: hsmActiveIndex === null || hsmActiveIndex === index ? 1 : 0.65,
+                          transition: "transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms cubic-bezier(0.22, 1, 0.36, 1)",
+                        }}
                       />
                     ))}
                   </Pie>
@@ -425,7 +465,19 @@ export const HollarCollateralBacking: FC = () => {
                   return (
                     <React.Fragment key={item.name}>
                       {index > 0 && <SDivider />}
-                      <Flex justify="space-between" align="center">
+                      <Flex
+                        justify="space-between"
+                        align="center"
+                        onMouseEnter={() => setHsmActiveIndex(index)}
+                        onMouseLeave={clearHsmHover}
+                        style={{
+                          padding: "6px 8px",
+                          margin: "-6px -8px",
+                          borderRadius: 10,
+                          background: hsmActiveIndex === index ? theme.surfaces.containers.dim.dimOnHigh : "transparent",
+                          transition: "background 180ms cubic-bezier(0.22, 1, 0.36, 1)",
+                        }}
+                      >
                         <Flex align="center" gap={8}>
                           {assetId ? (
                             <AssetLogo id={assetId} size="small" />

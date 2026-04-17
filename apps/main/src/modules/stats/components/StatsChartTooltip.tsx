@@ -3,6 +3,7 @@ import styled from "@emotion/styled"
 import { Flex, Text } from "@galacticcouncil/ui/components"
 import { AssetLogo } from "@/components/AssetLogo"
 import { useEffect, useState } from "react"
+import type { Dispatch, SetStateAction } from "react"
 import type { TooltipContentProps } from "recharts"
 
 /**
@@ -72,7 +73,7 @@ type TooltipCoordinate = Pick<TooltipContentProps<number, string>, "coordinate">
 
 type ChartTooltipContentWithPositionProps = ChartTooltipContentProps & {
   coordinate?: TooltipCoordinate
-  onPositionChange?: (position: { x: number; y: number } | null) => void
+  onPositionChange?: Dispatch<SetStateAction<{ x: number; y: number } | null>>
 }
 
 /**
@@ -163,10 +164,18 @@ export const ChartTooltipContentWithPosition = ({
       return
     }
 
-    onPositionChange({
+    const nextPosition = {
       x: coordinate.x + 16,
       y: coordinate.y,
-    })
+    }
+
+    onPositionChange((current) =>
+      current &&
+      current.x === nextPosition.x &&
+      current.y === nextPosition.y
+        ? current
+        : nextPosition,
+    )
   }, [coordinate, onPositionChange])
 
   return <ChartTooltipContent {...props} />

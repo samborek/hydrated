@@ -1,4 +1,4 @@
-import { AccountAvatarTheme } from "@/components";
+import { type AccountAvatarTheme } from "../AccountAvatar";
 export type AccountInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> & {
     value: string;
     onChange: (value: string) => void;

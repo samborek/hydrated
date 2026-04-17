@@ -166,7 +166,7 @@ export const ChartTooltipContentWithPosition = ({
 
     const nextPosition = {
       x: coordinate.x + 16,
-      y: coordinate.y,
+      y: coordinate.y - 12,
     }
 
     onPositionChange((current) =>

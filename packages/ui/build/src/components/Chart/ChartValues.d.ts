@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { FlexProps } from "@/components";
+import { type FlexProps } from "../Flex";
 export type ChartValuesProps = {
     value?: ReactNode;
     displayValue?: ReactNode;

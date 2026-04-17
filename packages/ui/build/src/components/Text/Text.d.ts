@@ -1,7 +1,7 @@
 import { ResponsiveStyleValue, ThemeUICSSProperties } from "@theme-ui/core";
 import { FC, Ref } from "react";
-import { BoxProps } from "@/components";
-import { ThemeFont, ThemeProps } from "@/theme";
+import { type BoxProps } from "../Box";
+import { type ThemeFont, type ThemeProps } from "../../theme";
 export type TextSize = keyof ThemeProps["typography"]["text"]["size"];
 export type TextProps = BoxProps & {
     fw?: ResponsiveStyleValue<400 | 500 | 600 | 700>;

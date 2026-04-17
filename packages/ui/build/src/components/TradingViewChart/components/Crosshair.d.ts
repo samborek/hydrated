@@ -1,5 +1,5 @@
 import { FC, Ref } from "react";
-import { CrosshairCallbackData } from "@/components/TradingViewChart/utils";
+import { CrosshairCallbackData } from "../utils";
 export declare const Crosshair: FC<Partial<NonNullable<CrosshairCallbackData>> & {
     ref?: Ref<HTMLDivElement>;
 }>;

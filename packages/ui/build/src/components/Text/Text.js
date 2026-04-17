@@ -1,5 +1,5 @@
 import { jsx as _jsx } from "@galacticcouncil/ui/jsx/jsx-runtime";
-import { Box } from "@/components";
+import { Box } from "../Box";
 import { getToken } from "@/utils";
 export const getFontSizeProps = (fs) => {
     if (typeof fs === "string") {

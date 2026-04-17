@@ -2,11 +2,11 @@ import { jsx as _jsx, jsxs as _jsxs } from "@galacticcouncil/ui/jsx/jsx-runtime"
 import { hexToRgba } from "@galacticcouncil/utils";
 import { createChart, LineType } from "lightweight-charts";
 import { useEffect, useRef, useState } from "react";
-import { Box } from "@/components";
-import { Crosshair } from "@/components/TradingViewChart/components/Crosshair";
-import { PriceIndicator } from "@/components/TradingViewChart/components/PriceIndicator";
-import { crosshair, grid, layout, leftPriceScale, rightPriceScale, timeScale, } from "@/components/TradingViewChart/config";
-import { renderSeries, subscribeCrosshairMove, } from "@/components/TradingViewChart/utils";
+import { Box } from "../Box";
+import { Crosshair } from "./components/Crosshair";
+import { PriceIndicator } from "./components/PriceIndicator";
+import { crosshair, grid, layout, leftPriceScale, rightPriceScale, timeScale, } from "./config";
+import { renderSeries, subscribeCrosshairMove, } from "./utils";
 import { useTheme } from "@/theme";
 export const TradingViewChart = ({ data, type = "Baseline", height = 400, hidePriceIndicator, preventTouchDrag, onCrosshairMove, }) => {
     const chartContainerRef = useRef(null);

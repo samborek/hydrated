@@ -47,7 +47,7 @@ const SFeesOverviewGrid = styled.div(
     width: 100%;
     min-width: 0;
 
-    @media (max-width: 1000px) {
+    @media (max-width: 1400px) {
       grid-template-columns: 1fr;
 
       & > :first-child {

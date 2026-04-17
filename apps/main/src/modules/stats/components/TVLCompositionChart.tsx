@@ -17,7 +17,7 @@ import {
 import { TrendingUp, BarChart2 } from "lucide-react"
 
 import { useTheme } from "@galacticcouncil/ui/theme"
-import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartCursorStyle, chartTooltipProps } from "./StatsChartTooltip"
 import { SChartHeader } from "./ChartLayout"
 import { getTvlColors } from "../utils/feeColors"
 
@@ -232,7 +232,7 @@ export const TVLCompositionChart: FC<Props> = ({
               tickFormatter={(value) => `$${value}M`}
               width={45}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}
@@ -300,7 +300,7 @@ export const TVLCompositionChart: FC<Props> = ({
               tickFormatter={(value) => `$${value}M`}
               width={45}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}

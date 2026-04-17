@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { BoxProps } from "@/components";
-import { SChipProps } from "@/components/Chip/Chip.styled";
+import { type BoxProps } from "../Box";
+import { type SChipProps } from "./Chip.styled";
 export type ChipProps = BoxProps & SChipProps & {
     ref?: React.Ref<HTMLDivElement>;
 };

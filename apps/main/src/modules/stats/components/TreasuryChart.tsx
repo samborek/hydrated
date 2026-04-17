@@ -16,7 +16,7 @@ import {
 } from "recharts"
 import { TrendingUp, BarChart2 } from "lucide-react"
 
-import { ChartTooltipContent } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartTooltipProps } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
 import { SChartHeader } from "./ChartLayout"
 import { getFeeColors } from "../utils/feeColors"
@@ -173,7 +173,7 @@ export const TreasuryChart: FC<Props> = ({
               tickFormatter={(value) => `$${value.toFixed(1)}M`}
               width={45}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}
@@ -214,7 +214,7 @@ export const TreasuryChart: FC<Props> = ({
               tickFormatter={(value) => `$${value.toFixed(1)}M`}
               width={45}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}

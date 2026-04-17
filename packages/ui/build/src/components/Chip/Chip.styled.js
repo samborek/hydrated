@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Box } from "@/components";
+import { Box } from "../Box";
 import { createVariants } from "@/utils";
 const variantStyles = (color, bg) => css `
   background-color: ${bg};

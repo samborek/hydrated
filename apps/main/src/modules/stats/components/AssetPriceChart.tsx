@@ -13,7 +13,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts"
-import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartCursorStyle, chartTooltipProps } from "./StatsChartTooltip"
 
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { SChartHeader } from "./ChartLayout"
@@ -187,7 +187,7 @@ export const AssetPriceChart: FC<Props> = ({ symbol }) => {
               hide
               domain={['auto', 'auto']}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}

@@ -2,7 +2,9 @@ import { jsx as _jsx, jsxs as _jsxs } from "@galacticcouncil/ui/jsx/jsx-runtime"
 import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
 import { isValidElement } from "react";
 import { ChevronDown } from "@/assets/icons";
-import { Flex, Icon, Text } from "@/components";
+import { Flex } from "../Flex";
+import { Icon } from "../Icon";
+import { Text } from "../Text";
 import { SActionLabel, SActionLabelWhenOpen, SCollapsibleContent, SCollapsibleTrigger, } from "@/components/Collapsible/Collapsible.styled";
 import { getToken } from "@/utils";
 const CollapsibleRoot = ({ ...props }) => {

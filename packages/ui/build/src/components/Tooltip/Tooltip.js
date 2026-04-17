@@ -2,8 +2,12 @@ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "@galacticcoun
 import { Portal, Root, Trigger, } from "@radix-ui/react-tooltip";
 import { useState } from "react";
 import { CircleInfo } from "@/assets/icons";
-import { ButtonIcon, DrawerHeader, Icon, Modal, ModalBody, Text, } from "@/components";
-import { useBreakpoints } from "@/theme";
+import { ButtonIcon } from "../Button";
+import { DrawerHeader } from "../Drawer";
+import { Icon } from "../Icon";
+import { Modal, ModalBody } from "../Modal";
+import { Text } from "../Text";
+import { useBreakpoints } from "../../theme";
 import { getToken } from "@/utils";
 import { SContent, STrigger } from "./Tooltip.styled";
 export const Tooltip = ({ text, children, side = "bottom", align = "center", sideOffset = 3, alignOffset = -10, asChild = false, preventDefault, iconColor, }) => {

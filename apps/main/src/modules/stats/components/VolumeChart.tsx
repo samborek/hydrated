@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts"
 
-import { ChartTooltipContent } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartTooltipProps } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
 import { SChartHeader } from "./ChartLayout"
 
@@ -138,7 +138,7 @@ export const VolumeChart: FC<Props> = ({
             tickFormatter={(value) => `$${value}M`}
             width={45}
           />
-          <Tooltip
+          <Tooltip {...chartTooltipProps}
             content={({ active, payload, label }) => (
               <ChartTooltipContent
                 active={active}

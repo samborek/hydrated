@@ -1,4 +1,4 @@
-import { LogoProps, LogoSize } from "@/components";
+import { type LogoProps, type LogoSize } from "../Logo";
 export type AssetLogoBadge = "red" | "yellow";
 export type AssetLogoDecoration = "none" | "atoken";
 export type AssetLogoProps = LogoProps & {

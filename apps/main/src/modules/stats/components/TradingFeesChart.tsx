@@ -17,7 +17,7 @@ import {
   Legend,
 } from "recharts"
 import { ChevronDown, BarChart2, TrendingUp } from "lucide-react"
-import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartCursorStyle, chartTooltipProps } from "./StatsChartTooltip"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { getFeeColors } from "@/modules/stats/utils/feeColors"
 import { SChartHeader } from "./ChartLayout"
@@ -258,7 +258,7 @@ export const TradingFeesChart: FC = () => {
               tickLine={false}
               tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}
@@ -349,7 +349,7 @@ export const TradingFeesChart: FC = () => {
               tickLine={false}
               tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}

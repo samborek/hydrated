@@ -15,7 +15,7 @@ import {
   Bar,
   Legend,
 } from "recharts"
-import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartCursorStyle, chartTooltipProps } from "./StatsChartTooltip"
 import { css } from "@galacticcouncil/ui/utils"
 import { useTheme } from "@galacticcouncil/ui/theme"
 import { SChartHeader } from "./ChartLayout"
@@ -194,7 +194,7 @@ export const PriceVolumeChart: FC<Props> = ({
               tickFormatter={(value) => `$${value.toFixed(3)} `}
               domain={['auto', 'auto']}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}
@@ -254,7 +254,7 @@ export const PriceVolumeChart: FC<Props> = ({
               tickLine={false}
               tickFormatter={(value) => `$${(value / 1000).toFixed(0)} K`}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}

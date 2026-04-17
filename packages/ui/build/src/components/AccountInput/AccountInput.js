@@ -1,7 +1,12 @@
 import { jsx as _jsx, jsxs as _jsxs } from "@galacticcouncil/ui/jsx/jsx-runtime";
 import { ArrowDownToLine } from "lucide-react";
 import { Close } from "@/assets/icons";
-import { AccountAvatar, ButtonIcon, Flex, Grid, Icon, Input, } from "@/components";
+import { AccountAvatar } from "../AccountAvatar";
+import { ButtonIcon } from "../Button";
+import { Flex } from "../Flex";
+import { Grid } from "../Grid";
+import { Icon } from "../Icon";
+import { Input } from "../Input";
 import { getTokenPx } from "@/utils";
 export const AccountInput = ({ value, onChange, avatarTheme = "auto", className, ref, ...props }) => {
     const handlePaste = async () => {

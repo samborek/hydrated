@@ -27,7 +27,7 @@ import { getFeeColors } from "@/modules/stats/utils/feeColors"
 
 import { SChartHeader } from "./ChartLayout"
 import { SelectDropdown } from "./SelectDropdown"
-import { ChartTooltipContent } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartTooltipProps } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -188,7 +188,7 @@ export const HollarFeesChart: FC = () => {
               tickLine={false}
               tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}
@@ -269,7 +269,7 @@ export const HollarFeesChart: FC = () => {
               tickLine={false}
               tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}

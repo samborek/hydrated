@@ -16,7 +16,7 @@ import {
 
 import { getTvlColors } from "../utils/feeColors"
 import { SChartHeader } from "./ChartLayout"
-import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartCursorStyle, chartTooltipProps } from "./StatsChartTooltip"
 
 const SChartContainer = styled.div`
   width: 100%;
@@ -245,7 +245,7 @@ export const MultiMetricChart: FC<Props> = ({ className }) => {
             />
           )}
           
-          <Tooltip
+          <Tooltip {...chartTooltipProps}
             content={({ active, payload, label }) => (
               <ChartTooltipContent
                 active={active}

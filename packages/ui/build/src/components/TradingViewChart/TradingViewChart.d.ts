@@ -1,5 +1,5 @@
 import { SeriesType } from "lightweight-charts";
-import { BaselineChartData, OhlcData } from "@/components/TradingViewChart/utils";
+import { BaselineChartData, OhlcData } from "./utils";
 type ChartTypeProps = {
     type: Extract<SeriesType, "Candlestick">;
     onCrosshairMove?: (data: OhlcData | null) => void;

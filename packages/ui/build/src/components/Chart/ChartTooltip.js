@@ -1,8 +1,11 @@
 import { jsx as _jsx, jsxs as _jsxs } from "@galacticcouncil/ui/jsx/jsx-runtime";
-import { Flex, Grid, Text } from "@/components";
-import { ChartCrosshair, useChart } from "@/components/Chart";
+import { Flex } from "../Flex";
+import { Grid } from "../Grid";
+import { Text } from "../Text";
+import { ChartCrosshair } from "./ChartCrosshair";
+import { useChart } from "./ChartContainer";
 import { STooltipContainer } from "@/components/Chart/ChartTooltip.styled";
-import { dateFormatter, getColorSet, timeFormatter, } from "@/components/Chart/utils";
+import { dateFormatter, getColorSet, timeFormatter, } from "./utils";
 import { useTheme } from "@/theme";
 import { getToken } from "@/utils";
 const ChartTooltipLegendLabel = ({ payload = [], labelFormatter, }) => {

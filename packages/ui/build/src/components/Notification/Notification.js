@@ -1,6 +1,13 @@
 import { jsx as _jsx, jsxs as _jsxs } from "@galacticcouncil/ui/jsx/jsx-runtime";
 import { CircleAlert, CircleCheck, CircleClose, MoveUpRight, QuestionCircleRegular, Send, SquareQuestion, TriangleAlert, } from "@/assets/icons";
-import { ButtonIcon, ButtonTransparent, ExternalLink, Flex, Icon, Spinner, Stack, Text, Tooltip, } from "@/components";
+import { ButtonIcon, ButtonTransparent, } from "../Button";
+import { ExternalLink } from "../ExternalLink";
+import { Flex } from "../Flex";
+import { Icon } from "../Icon";
+import { Spinner } from "../Spinner";
+import { Stack } from "../Stack";
+import { Text } from "../Text";
+import { Tooltip } from "../Tooltip";
 import { getToken } from "@/utils";
 import { SCloseIcon, SIconVariant, SNotification, SProgress, SProgressContainer, } from "./Notification.styled";
 export const DEFAULT_AUTO_CLOSE_TIME = 3000;

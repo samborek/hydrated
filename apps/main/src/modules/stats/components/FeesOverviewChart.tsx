@@ -19,7 +19,7 @@ import {
   ResponsiveContainer,
 
 } from "recharts"
-import { SChartTooltipContainer } from "./StatsChartTooltip"
+import { SChartTooltipContainer, chartTooltipProps } from "./StatsChartTooltip"
 import { SChartHeader } from "./ChartLayout"
 
 const SChartContainer = styled.div`
@@ -465,7 +465,7 @@ export const FeesOverviewChart: FC = () => {
               tickFormatter={(value) => `$${(value / 1000).toFixed(1)}K`}
               width={45}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={CustomTooltipContent}
               cursor={{ fill: theme.surfaces.containers.high.hover }}
             />
@@ -539,7 +539,7 @@ export const FeesOverviewChart: FC = () => {
                 User said "Also for Revenue, can we...". I'll assume standard for now for Fees, but maybe apply same style.
                 Actually, let's keep the standard one for Fees mode to avoid breaking it, unless requested.
             */}
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ payload, label }) => (
                 <SChartTooltipContainer className="chart-tooltip">
                   <Text fs={12} fw={600} color="text.high" style={{ marginBottom: 4 }}>

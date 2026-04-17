@@ -16,7 +16,7 @@ import {
 } from "recharts"
 import { TrendingUp, BarChart2 } from "lucide-react"
 
-import { ChartTooltipContent } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartTooltipProps } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
 import { SChartHeader } from "./ChartLayout"
 
@@ -101,7 +101,7 @@ export const HollarSupplyChart: FC<Props> = ({
             <Text
               fs={28}
               fw={700}
-              color="#8B5CF6"
+              color="#b3cf92"
               style={{ fontFamily: "Gazpacho, sans-serif", lineHeight: 1 }}
             >
               {value}
@@ -141,8 +141,8 @@ export const HollarSupplyChart: FC<Props> = ({
           >
             <defs>
               <linearGradient id="hollarGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.6} />
-                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
+                <stop offset="5%" stopColor="#b3cf92" stopOpacity={0.6} />
+                <stop offset="95%" stopColor="#b3cf92" stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -161,7 +161,7 @@ export const HollarSupplyChart: FC<Props> = ({
               tickLine={false}
               tickFormatter={(value) => `$${value.toFixed(0)}M`}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}
@@ -175,7 +175,7 @@ export const HollarSupplyChart: FC<Props> = ({
             <Area
               type="monotone"
               dataKey="supply"
-              stroke="#8B5CF6"
+              stroke="#b3cf92"
               fill="url(#hollarGrad)"
               strokeWidth={2}
             />
@@ -201,7 +201,7 @@ export const HollarSupplyChart: FC<Props> = ({
               tickLine={false}
               tickFormatter={(value) => `$${value.toFixed(0)}M`}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}
@@ -214,7 +214,7 @@ export const HollarSupplyChart: FC<Props> = ({
             />
             <Bar
               dataKey="supply"
-              fill="#8B5CF6"
+              fill="#b3cf92"
               radius={[4, 4, 0, 0]}
             />
           </BarChart>

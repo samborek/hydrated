@@ -1,6 +1,6 @@
 import { ThemeUIContextValue } from "@theme-ui/core";
 import React from "react";
-import { ThemeName, ThemePreference, ThemeProps, ThemeToken } from "@/theme";
+import { ThemeName, ThemePreference, ThemeProps, ThemeToken } from "./themes";
 type ThemeProviderProps = {
     children: React.ReactNode;
 };

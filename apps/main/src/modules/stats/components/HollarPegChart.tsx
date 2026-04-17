@@ -1,7 +1,7 @@
 import styled from "@emotion/styled"
-import { Text, Flex, ValueStats, ValueStatsValue } from "@galacticcouncil/ui/components"
+import { Text, Flex, ValueStats, ValueStatsValue, Separator } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
-import { FC, useMemo, useState } from "react"
+import { FC, Fragment, useMemo, useState } from "react"
 import {
   LineChart,
   Line,
@@ -13,12 +13,13 @@ import {
   ReferenceLine
 } from "recharts"
 
-import { ChartTooltipContent } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartTooltipProps } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
 import { SChartHeader } from "./ChartLayout"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { AssetLogo } from "@/components/AssetLogo"
-import { HOLLAR_ASSET_ID, USDT_ASSET_ID, SUSDE_ASSET_ID, SUSDS_ASSET_ID } from "@galacticcouncil/utils"
+import { HOLLAR_ASSET_ID } from "@galacticcouncil/utils"
+import { useHollarPegPrices } from "@/modules/stats/hooks/useHollarPegPrices"
 
 export { HOLLAR_ASSET_ID }
 
@@ -49,15 +50,14 @@ const SChartFooter = styled.div`
   }
 `
 
-const SSpotPriceCard = styled.div`
+const SPegPricesRow = styled.div`
   display: flex;
-  flex-direction: column;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.details.borders};
-  background: ${({ theme }) => theme.surfaces.containers.high.primary};
-  flex: 1;
-  min-width: 160px;
+  align-items: stretch;
+  overflow-x: auto;
+
+  @media (max-width: 576px) {
+    gap: 0;
+  }
 `
 
 // Mock Peg Historical Data (❗️ Needs Indexer)
@@ -83,16 +83,10 @@ const generatePegData = () => {
 
 type TimeRange = "7D" | "30D" | "90D" | "MAX"
 
-export const PEG_CONFIG = [
-  { id: "aUSDT", label: "HOLLAR/aUSDT", assetId: USDT_ASSET_ID, color: "#26A17B", spot: "$1.0001" },
-  { id: "aUSDC", label: "HOLLAR/aUSDC", assetId: "22",           color: "#2775CA", spot: "$1.0005" },
-  { id: "sUSDe", label: "HOLLAR/sUSDe", assetId: SUSDE_ASSET_ID, color: "#8B5CF6", spot: "$0.9998" },
-  { id: "sUSDS", label: "HOLLAR/sUSDS", assetId: SUSDS_ASSET_ID, color: "#F4B731", spot: "$1.0012" },
-] as const
-
 export const HollarPegChart: FC = () => {
   const { themeProps: theme } = useTheme()
   const [timeRange, setTimeRange] = useState<TimeRange>("30D")
+  const { data: pegPrices = [] } = useHollarPegPrices()
 
   const chartData = useMemo(() => generatePegData(), [])
 
@@ -105,28 +99,39 @@ export const HollarPegChart: FC = () => {
     <SChartContainer>
       <Flex direction="column" gap={16} sx={{ mb: 20 }}>
         <Text fs={18} fw={600} font="primary" color="text.primary">Hollar Peg</Text>
-        <Flex gap={12} wrap={true}>
-          {PEG_CONFIG.map((config) => (
-            <SSpotPriceCard key={config.id}>
-              <ValueStats
-                font="primary"
-                customLabel={
-                  <Flex gap={8} align="center">
-                    <AssetLogo id={[HOLLAR_ASSET_ID, config.assetId]} size="small" />
-                    <Text fs={11} fw={500} color="text.medium" css={{ textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                      {config.label}
-                    </Text>
-                  </Flex>
-                }
-                customValue={
-                  <ValueStatsValue font="primary" style={{ color: config.color }}>
-                    {config.spot}
-                  </ValueStatsValue>
-                }
-              />
-            </SSpotPriceCard>
+
+        {/* Peg prices — separator style, no bordered cards */}
+        <SPegPricesRow>
+          {pegPrices.map((config, index) => (
+            <Fragment key={config.id}>
+              <Flex sx={{ pl: index === 0 ? 0 : 20, pr: 20, py: 4 }}>
+                <ValueStats
+                  font="primary"
+                  wrap={true}
+                  customLabel={
+                    <Flex gap={8} align="center">
+                      <AssetLogo id={[HOLLAR_ASSET_ID, config.assetId]} size="small" />
+                      <Text fs={11} fw={500} color="text.medium" css={{ textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                        {config.label}
+                      </Text>
+                    </Flex>
+                  }
+                  customValue={
+                    <ValueStatsValue font="primary" style={{ color: config.color }}>
+                      {config.priceStr}
+                    </ValueStatsValue>
+                  }
+                />
+              </Flex>
+              {index < pegPrices.length - 1 && (
+                <Separator
+                  orientation="vertical"
+                  sx={{ my: 4, flexShrink: 0 }}
+                />
+              )}
+            </Fragment>
           ))}
-        </Flex>
+        </SPegPricesRow>
       </Flex>
 
       <SChartHeader $align="flex-start" style={{ marginBottom: 12 }}>
@@ -156,7 +161,7 @@ export const HollarPegChart: FC = () => {
             tickLine={false}
             tickFormatter={(value) => `$${value.toFixed(3)}`}
           />
-          <Tooltip
+          <Tooltip {...chartTooltipProps}
             content={({ active, payload, label }) => (
               <ChartTooltipContent
                 active={active}
@@ -169,7 +174,7 @@ export const HollarPegChart: FC = () => {
           />
           <ReferenceLine y={1.000} stroke={theme.text.medium} strokeDasharray="5 5" strokeOpacity={0.8} />
 
-          {PEG_CONFIG.map((config) => (
+          {pegPrices.map((config) => (
             <Line
               key={config.id}
               type="monotone"

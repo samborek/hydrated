@@ -16,7 +16,7 @@ import {
 } from "recharts"
 import { TrendingUp, BarChart2 } from "lucide-react"
 
-import { ChartTooltipContent } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartTooltipProps } from "./StatsChartTooltip"
 import { SChartHeader } from "./ChartLayout"
 import { getFeeColors } from "../utils/feeColors"
 
@@ -203,7 +203,7 @@ export const SupplyBorrowChart: FC = () => {
               tickFormatter={(value) => `$${value.toFixed(0)}M`}
               width={45}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}
@@ -253,7 +253,7 @@ export const SupplyBorrowChart: FC = () => {
               tickFormatter={(value) => `$${value.toFixed(0)}M`}
               width={45}
             />
-            <Tooltip
+            <Tooltip {...chartTooltipProps}
               content={({ active, payload, label }) => (
                 <ChartTooltipContent
                   active={active}

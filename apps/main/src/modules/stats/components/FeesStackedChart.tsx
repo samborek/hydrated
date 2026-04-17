@@ -14,7 +14,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts"
-import { ChartTooltipContent } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartTooltipProps } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
 import { SChartHeader } from "./ChartLayout"
 
@@ -151,7 +151,7 @@ export const FeesStackedChart: FC<Props> = ({
             tickFormatter={(value) => `$${(value / 1000).toFixed(1)} K`}
             width={45}
           />
-          <Tooltip
+          <Tooltip {...chartTooltipProps}
             content={({ active, payload, label }) => (
               <ChartTooltipContent
                 active={active}

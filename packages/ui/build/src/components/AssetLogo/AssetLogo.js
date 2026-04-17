@@ -1,7 +1,8 @@
 import { jsx as _jsx, jsxs as _jsxs } from "@galacticcouncil/ui/jsx/jsx-runtime";
 import { Children, cloneElement, isValidElement } from "react";
 import { TriangleAlert } from "@/assets/icons";
-import { Skeleton, Tooltip } from "@/components";
+import { Skeleton } from "../Skeleton";
+import { Tooltip } from "../Tooltip";
 import { LOGO_DIAMETER, SAssetBadge, SAssetChainLogo, SAssetLogo, SBadgeSlot, SDecorationContainer, } from "./AssetLogo.styled";
 export const AssetLogo = ({ src, size = "medium", alt, chainSrc, badge, badgeTooltip, isLoading, decoration = "none", className, }) => {
     if (isLoading) {

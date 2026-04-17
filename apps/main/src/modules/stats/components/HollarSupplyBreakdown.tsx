@@ -16,10 +16,11 @@ import {
   Cell
 } from "recharts"
 
-import { ChartTooltipContent, chartCursorStyle } from "./StatsChartTooltip"
+import { ChartTooltipContent, chartCursorStyle, chartTooltipProps } from "./StatsChartTooltip"
 import { SelectDropdown } from "./SelectDropdown"
 import { SChartHeader } from "./ChartLayout"
 import { formatUSD } from "@/api/stats"
+import { hollarColors } from "@/modules/stats/utils/hollarColors"
 
 const SContainer = styled.div`
   display: grid;
@@ -140,9 +141,8 @@ export const HollarSupplyBreakdown: FC<Props> = ({
         { name: "HSM", value: totalHsmValue },
       ].filter(d => d.value > 0)
 
-  // Provide fallback coloring
-  const mmColor = theme.colors.lavender?.["700"] || "#8B5CF6"
-  const hsmColor = "#EC4899"
+  const mmColor = hollarColors.supply.mm
+  const hsmColor = hollarColors.supply.hsm
   const COLORS = [mmColor, hsmColor]
 
   const chartData = useMemo(() => generateHollarStackedData(), [])
@@ -179,7 +179,7 @@ export const HollarSupplyBreakdown: FC<Props> = ({
                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                  ))}
                </Pie>
-               <Tooltip
+               <Tooltip {...chartTooltipProps}
                  content={({ active, payload }) => (
                    <ChartTooltipContent
                      active={active}
@@ -267,7 +267,7 @@ export const HollarSupplyBreakdown: FC<Props> = ({
                 tickLine={false}
                 tickFormatter={(value) => `$${value.toFixed(0)}M`}
               />
-              <Tooltip
+              <Tooltip {...chartTooltipProps}
                 content={({ active, payload, label }) => (
                   <ChartTooltipContent
                     active={active}

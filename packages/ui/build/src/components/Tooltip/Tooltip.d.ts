@@ -1,6 +1,6 @@
 import { TooltipContentProps } from "@radix-ui/react-tooltip";
 import { FC, ReactNode } from "react";
-import { BoxProps } from "@/components";
+import { type BoxProps } from "../Box";
 export type InfoTooltipProps = {
     text: ReactNode | string;
     children?: ReactNode;

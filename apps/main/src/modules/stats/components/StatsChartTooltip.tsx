@@ -2,6 +2,7 @@ import { css } from "@emotion/react"
 import styled from "@emotion/styled"
 import { Flex, Text } from "@galacticcouncil/ui/components"
 import { AssetLogo } from "@/components/AssetLogo"
+import { useEffect, useState } from "react"
 
 /**
  * Styled tooltip container matching Figma "breakdown" tooltip variant
@@ -15,24 +16,24 @@ export const SChartTooltipContainer = styled.div(
   ({ theme }) => css`
     display: grid;
     align-items: start;
-    gap: 8px;
+    gap: ${theme.scales.paddings.s}px;
+    position: relative;
     border-radius: ${theme.radii.lg}px;
     background-color: ${theme.details.tooltips};
     border: 1px solid rgba(124, 127, 138, 0.2);
-    padding: ${theme.containers.paddings.secondary}px;
+    padding: ${theme.scales.paddings.l}px;
     box-shadow: 0px 8px 30px 0px rgba(41, 41, 60, 0.41);
-    animation: tooltipFadeIn 0.12s ease-out both;
+    z-index: 9999;
     pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+    transition:
+      opacity 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
 
-    @keyframes tooltipFadeIn {
-      from {
-        opacity: 0;
-        transform: scale(0.97);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+    &[data-state="visible"] {
+      opacity: 1;
+      transform: translateY(0) scale(1);
     }
   `,
 )
@@ -41,7 +42,11 @@ export const SChartTooltipContainer = styled.div(
 export const chartTooltipProps = {
   isAnimationActive: false,
   offset: 14,
-  wrapperStyle: { transition: "none", pointerEvents: "none" as const },
+  wrapperStyle: {
+    transition: "none",
+    pointerEvents: "none" as const,
+    zIndex: 9999,
+  },
 } as const
 
 type TooltipPayloadItem = {
@@ -73,14 +78,34 @@ export const ChartTooltipContent = ({
   labelFormatter = (l) => String(l),
   nameFormatter = (n) => n,
 }: ChartTooltipContentProps) => {
-  if (!active || !payload?.length) return null
+  const [renderedPayload, setRenderedPayload] = useState(payload)
+  const [isVisible, setIsVisible] = useState(Boolean(active && payload?.length))
+
+  useEffect(() => {
+    if (active && payload?.length) {
+      setRenderedPayload(payload)
+      setIsVisible(true)
+      return
+    }
+
+    setIsVisible(false)
+    const timeout = globalThis.setTimeout(() => {
+      setRenderedPayload(undefined)
+    }, 180)
+
+    return () => globalThis.clearTimeout(timeout)
+  }, [active, payload])
+
+  const content = renderedPayload ?? payload
+
+  if (!content?.length) return null
 
   return (
-    <SChartTooltipContainer>
+    <SChartTooltipContainer data-state={isVisible ? "visible" : "hidden"}>
       <Text fs={12} fw={500} color="text.high">
         {labelFormatter(label || "")}
       </Text>
-      {payload.map((entry) => (
+      {content.map((entry) => (
         <Flex key={entry.dataKey} gap={8} align="center">
           {entry.assetId ? (
             <AssetLogo id={entry.assetId} size="small" />

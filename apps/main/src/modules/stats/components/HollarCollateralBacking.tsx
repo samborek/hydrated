@@ -261,7 +261,7 @@ export const HollarCollateralBacking: FC = () => {
                     cx="50%"
                     cy="50%"
                     innerRadius={85}
-                    outerRadius={mmActiveIndex !== null ? 120 : 115}
+                    outerRadius={115}
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}
@@ -277,11 +277,11 @@ export const HollarCollateralBacking: FC = () => {
                           cursor: "pointer",
                           outline: "none",
                           transform: mmActiveIndex === null || mmActiveIndex === index
-                            ? "scale(1.03)"
-                            : "scale(0.96)",
+                            ? "scale(1.02)"
+                            : "scale(0.975)",
                           transformOrigin: "center",
                           opacity: mmActiveIndex === null || mmActiveIndex === index ? 1 : 0.65,
-                          transition: "transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms cubic-bezier(0.22, 1, 0.36, 1)",
+                          transition: "transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
                         }}
                       />
                     ))}
@@ -385,7 +385,7 @@ export const HollarCollateralBacking: FC = () => {
                     cx="50%"
                     cy="50%"
                     innerRadius={85}
-                    outerRadius={hsmActiveIndex !== null ? 120 : 115}
+                    outerRadius={115}
                     stroke="none"
                     paddingAngle={4}
                     cornerRadius={6}
@@ -401,11 +401,11 @@ export const HollarCollateralBacking: FC = () => {
                           cursor: "pointer",
                           outline: "none",
                           transform: hsmActiveIndex === null || hsmActiveIndex === index
-                            ? "scale(1.03)"
-                            : "scale(0.96)",
+                            ? "scale(1.02)"
+                            : "scale(0.975)",
                           transformOrigin: "center",
                           opacity: hsmActiveIndex === null || hsmActiveIndex === index ? 1 : 0.65,
-                          transition: "transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms cubic-bezier(0.22, 1, 0.36, 1)",
+                          transition: "transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)",
                         }}
                       />
                     ))}

@@ -105,13 +105,17 @@ const SCard = styled.div`
   border: 1px solid ${({ theme }) => theme.details.borders};
   border-radius: 16px;
   padding: 28px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `
 
 const SCardInner = styled.div`
   display: flex;
   flex-direction: row;
   gap: 32px;
-  align-items: stretch;
+  align-items: center;
 
   @media (max-width: 700px) {
     flex-direction: column;
@@ -133,7 +137,7 @@ const SDonutInner = styled.div`
 const SDonutWrapper = styled.div`
   position: relative;
   width: 288px;
-  min-height: 288px;
+  height: 288px;
   flex-shrink: 0;
 `
 
@@ -147,23 +151,23 @@ const SLegendDot = styled.div<{ $color: string }>`
 
 type SliceMotionConfig = {
   duration: number
-  easing: "linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out"
+  easing: string
   hoverScale: number
   cornerRadius: number
 }
 
 export const HOLLAR_SLICE_MOTION = {
   mm: {
-    duration: 950,
-    easing: "ease-in",
+    duration: 450,
+    easing: "cubic-bezier(0.22, 1, 0.36, 1)",
     hoverScale: 1.045,
-    cornerRadius: 8,
+    cornerRadius: 10,
   },
   hsm: {
-    duration: 950,
-    easing: "ease-in",
+    duration: 450,
+    easing: "cubic-bezier(0.22, 1, 0.36, 1)",
     hoverScale: 1.045,
-    cornerRadius: 8,
+    cornerRadius: 10,
   },
 } as const satisfies Record<string, SliceMotionConfig>
 
@@ -203,7 +207,15 @@ export const HollarCollateralBacking: FC = () => {
     x: number
     y: number
   } | null>(null)
+  const [mmMouseCoordinate, setMmMouseCoordinate] = useState<{
+    x: number
+    y: number
+  } | null>(null)
   const [hsmTooltipPosition, setHsmTooltipPosition] = useState<{
+    x: number
+    y: number
+  } | null>(null)
+  const [hsmMouseCoordinate, setHsmMouseCoordinate] = useState<{
     x: number
     y: number
   } | null>(null)
@@ -382,7 +394,17 @@ export const HollarCollateralBacking: FC = () => {
           <SCardInner>
             <SDonutWrapper>
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+                <PieChart
+                  onMouseMove={(e) => {
+                    if (e.chartX && e.chartY) {
+                      setMmMouseCoordinate({ x: e.chartX, y: e.chartY })
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    setMmMouseCoordinate(null)
+                    clearMmHover()
+                  }}
+                >
                   <Pie
                     data={mmCollaterals}
                     cx="50%"
@@ -393,10 +415,9 @@ export const HollarCollateralBacking: FC = () => {
                     isAnimationActive={false}
                     stroke="none"
                     paddingAngle={4}
-                    cornerRadius={6}
+                    cornerRadius={10}
                     dataKey="value"
                     onMouseEnter={(_, index) => setMmActiveIndex(index)}
-                    onMouseLeave={clearMmHover}
                   >
                     {mmCollaterals.map((_entry, index) => (
                       <Cell
@@ -412,7 +433,7 @@ export const HollarCollateralBacking: FC = () => {
                     content={({ active, payload, coordinate }) => (
                       <ChartTooltipContentWithPosition
                         active={active}
-                        coordinate={coordinate}
+                        coordinate={mmMouseCoordinate ?? coordinate}
                         onPositionChange={setMmTooltipPosition}
                         payload={
                           payload?.map((p) => ({
@@ -446,45 +467,43 @@ export const HollarCollateralBacking: FC = () => {
               </SDonutInner>
             </SDonutWrapper>
 
-            <Flex
-              direction="column"
-              justify="space-between"
-              style={{ flex: 1, minWidth: 0 }}
-            >
-              <Flex direction="column" gap={4}>
-                <Text fs={18} fw={500} font="primary" color="text.primary">
-                  Backing via Money Market
-                </Text>
-                <Text fs={13} color="text.medium">
-                  Overcollateralized proportional backing
-                </Text>
-              </Flex>
-
-              <ValueStats
-                font="primary"
-                wrap={true}
-                customLabel={
-                  <Text
-                    fs={11}
-                    fw={500}
-                    color="text.medium"
-                    css={{
-                      textTransform: "uppercase",
-                      letterSpacing: "0.04em",
-                    }}
-                  >
-                    Collateral Ratio
+            <Flex direction="column" gap={24} style={{ flex: 1, minWidth: 0 }}>
+              <Flex direction="column" gap={12}>
+                <Flex direction="column" gap={4}>
+                  <Text fs={18} fw={500} font="primary" color="text.primary">
+                    Backing via Money Market
                   </Text>
-                }
-                customValue={
-                  <ValueStatsValue
-                    font="primary"
-                    style={{ color: theme.details.values.positive }}
-                  >
-                    {mmOvercollateralization}x
-                  </ValueStatsValue>
-                }
-              />
+                  <Text fs={13} color="text.medium">
+                    Overcollateralized proportional backing
+                  </Text>
+                </Flex>
+
+                <ValueStats
+                  font="primary"
+                  wrap={true}
+                  customLabel={
+                    <Text
+                      fs={11}
+                      fw={500}
+                      color="text.medium"
+                      css={{
+                        textTransform: "uppercase",
+                        letterSpacing: "0.04em",
+                      }}
+                    >
+                      Collateral Ratio
+                    </Text>
+                  }
+                  customValue={
+                    <ValueStatsValue
+                      font="primary"
+                      style={{ color: theme.details.values.positive }}
+                    >
+                      {mmOvercollateralization}x
+                    </ValueStatsValue>
+                  }
+                />
+              </Flex>
 
               <Flex direction="column" gap={8}>
                 {mmCollaterals.map((item, index) => {
@@ -558,7 +577,17 @@ export const HollarCollateralBacking: FC = () => {
           <SCardInner>
             <SDonutWrapper>
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+                <PieChart
+                  onMouseMove={(e) => {
+                    if (e.chartX && e.chartY) {
+                      setHsmMouseCoordinate({ x: e.chartX, y: e.chartY })
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    setHsmMouseCoordinate(null)
+                    clearHsmHover()
+                  }}
+                >
                   <Pie
                     data={hsmCollaterals}
                     cx="50%"
@@ -569,10 +598,9 @@ export const HollarCollateralBacking: FC = () => {
                     isAnimationActive={false}
                     stroke="none"
                     paddingAngle={4}
-                    cornerRadius={6}
+                    cornerRadius={14}
                     dataKey="value"
                     onMouseEnter={(_, index) => setHsmActiveIndex(index)}
-                    onMouseLeave={clearHsmHover}
                   >
                     {hsmCollaterals.map((_entry, index) => (
                       <Cell
@@ -588,7 +616,7 @@ export const HollarCollateralBacking: FC = () => {
                     content={({ active, payload, coordinate }) => (
                       <ChartTooltipContentWithPosition
                         active={active}
-                        coordinate={coordinate}
+                        coordinate={hsmMouseCoordinate ?? coordinate}
                         onPositionChange={setHsmTooltipPosition}
                         payload={
                           payload?.map((p) => ({
@@ -622,45 +650,43 @@ export const HollarCollateralBacking: FC = () => {
               </SDonutInner>
             </SDonutWrapper>
 
-            <Flex
-              direction="column"
-              justify="space-between"
-              style={{ flex: 1, minWidth: 0 }}
-            >
-              <Flex direction="column" gap={4}>
-                <Text fs={18} fw={500} font="primary" color="text.primary">
-                  Backing via HSM
-                </Text>
-                <Text fs={13} color="text.medium">
-                  1:1 backing from Stablepool deposits
-                </Text>
-              </Flex>
-
-              <ValueStats
-                font="primary"
-                wrap={true}
-                customLabel={
-                  <Text
-                    fs={11}
-                    fw={500}
-                    color="text.medium"
-                    css={{
-                      textTransform: "uppercase",
-                      letterSpacing: "0.04em",
-                    }}
-                  >
-                    Backing Ratio
+            <Flex direction="column" gap={24} style={{ flex: 1, minWidth: 0 }}>
+              <Flex direction="column" gap={12}>
+                <Flex direction="column" gap={4}>
+                  <Text fs={18} fw={500} font="primary" color="text.primary">
+                    Backing via HSM
                   </Text>
-                }
-                customValue={
-                  <ValueStatsValue
-                    font="primary"
-                    style={{ color: theme.details.values.positive }}
-                  >
-                    1:1
-                  </ValueStatsValue>
-                }
-              />
+                  <Text fs={13} color="text.medium">
+                    1:1 backing from Stablepool deposits
+                  </Text>
+                </Flex>
+
+                <ValueStats
+                  font="primary"
+                  wrap={true}
+                  customLabel={
+                    <Text
+                      fs={11}
+                      fw={500}
+                      color="text.medium"
+                      css={{
+                        textTransform: "uppercase",
+                        letterSpacing: "0.04em",
+                      }}
+                    >
+                      Backing Ratio
+                    </Text>
+                  }
+                  customValue={
+                    <ValueStatsValue
+                      font="primary"
+                      style={{ color: theme.details.values.positive }}
+                    >
+                      1:1
+                    </ValueStatsValue>
+                  }
+                />
+              </Flex>
 
               <Flex direction="column" gap={8}>
                 {hsmCollaterals.map((item, index) => {

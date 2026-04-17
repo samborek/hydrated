@@ -396,8 +396,12 @@ export const HollarCollateralBacking: FC = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart
                   onMouseMove={(e) => {
-                    if (e.chartX && e.chartY) {
-                      setMmMouseCoordinate({ x: e.chartX, y: e.chartY })
+                    const { chartX, chartY } = e as unknown as {
+                      chartX?: number
+                      chartY?: number
+                    }
+                    if (chartX && chartY) {
+                      setMmMouseCoordinate({ x: chartX, y: chartY })
                     }
                   }}
                   onMouseLeave={() => {
@@ -579,8 +583,12 @@ export const HollarCollateralBacking: FC = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart
                   onMouseMove={(e) => {
-                    if (e.chartX && e.chartY) {
-                      setHsmMouseCoordinate({ x: e.chartX, y: e.chartY })
+                    const { chartX, chartY } = e as unknown as {
+                      chartX?: number
+                      chartY?: number
+                    }
+                    if (chartX && chartY) {
+                      setHsmMouseCoordinate({ x: chartX, y: chartY })
                     }
                   }}
                   onMouseLeave={() => {

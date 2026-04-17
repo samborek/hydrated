@@ -39,15 +39,15 @@ export const getBackingAssetColor = ({
   assetId,
   symbol,
   index = 0,
-}: BackingAssetColorInput) => {
+}: BackingAssetColorInput): string => {
   if (assetId && BACKING_ASSET_COLORS_BY_ID[assetId]) {
-    return BACKING_ASSET_COLORS_BY_ID[assetId]
+    return BACKING_ASSET_COLORS_BY_ID[assetId]!
   }
 
   if (symbol && BACKING_ASSET_COLORS_BY_SYMBOL[symbol]) {
-    return BACKING_ASSET_COLORS_BY_SYMBOL[symbol]
+    return BACKING_ASSET_COLORS_BY_SYMBOL[symbol]!
   }
 
-  return BACKING_FALLBACK_COLORS[index % BACKING_FALLBACK_COLORS.length]
+  return BACKING_FALLBACK_COLORS[index % BACKING_FALLBACK_COLORS.length]!
 }
 

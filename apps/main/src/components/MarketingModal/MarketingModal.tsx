@@ -1,3 +1,4 @@
+import { getToken } from "@galacticcouncil/ui/utils"
 import { css, Global } from "@emotion/react"
 import styled from "@emotion/styled"
 import { AssetIcon, Close } from "@galacticcouncil/ui/assets/icons"
@@ -729,7 +730,7 @@ const MarketingModalContent: FC<Props> = ({
                       >
                         Deposit from Centralized Exchange
                       </Text>
-                      <Text fs={13} color="neutral.gray.400">
+                      <Text fs={13} color={getToken("text.medium")}>
                         Some short description here so all less and more
                         experienced people would understand the choice
                       </Text>
@@ -752,7 +753,7 @@ const MarketingModalContent: FC<Props> = ({
                       >
                         On-chain transfer
                       </Text>
-                      <Text fs={13} color="neutral.gray.400">
+                      <Text fs={13} color={getToken("text.medium")}>
                         Some short description here so all less and more
                         experienced people would understand the choice
                       </Text>
@@ -775,7 +776,7 @@ const MarketingModalContent: FC<Props> = ({
                       >
                         Fund with crypto
                       </Text>
-                      <Text fs={13} color="neutral.gray.400">
+                      <Text fs={13} color={getToken("text.medium")}>
                         Some short description here so all less and more
                         experienced people would understand the choice
                       </Text>

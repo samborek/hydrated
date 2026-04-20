@@ -2,6 +2,7 @@ import styled from "@emotion/styled"
 import { Text, Flex } from "@galacticcouncil/ui/components"
 import { TimeRangeToggle } from "@galacticcouncil/ui/components/TimeRangeToggle"
 import { useTheme } from "@galacticcouncil/ui/theme"
+import { getToken } from "@galacticcouncil/ui/utils"
 import { FC, useMemo, useState } from "react"
 import {
   Area,
@@ -157,7 +158,7 @@ export const HollarSupplyBreakdown: FC<Props> = ({
     <SContainer>
       {/* 1/3 Donut Chart */}
       <SChartContainer>
-         <Text fs={18} fw={600} font="primary" color="text.primary">
+         <Text fs={18} fw={600} font="primary" color={getToken("text.high")}>
             Supply Breakdown
          </Text>
 
@@ -194,7 +195,7 @@ export const HollarSupplyBreakdown: FC<Props> = ({
            </ResponsiveContainer>
            <SDonutInner>
               <Text fs={12} color="text.medium" style={{ textTransform: "uppercase" }}>Total Supply</Text>
-              <Text fs={24} fw={700} color="text.primary" style={{ fontFamily: "Gazpacho, sans-serif" }}>
+              <Text fs={24} fw={700} color={getToken("text.high")} style={{ fontFamily: "Gazpacho, sans-serif" }}>
                  {formatUSD(totalSupply)}
               </Text>
            </SDonutInner>
@@ -210,7 +211,7 @@ export const HollarSupplyBreakdown: FC<Props> = ({
                        <Text fs={14} color="text.medium">{item.name}</Text>
                     </Flex>
                     <Flex align="center" gap={12}>
-                       <Text fs={14} color="text.primary">{formatUSD(item.value)}</Text>
+                       <Text fs={14} color={getToken("text.high")}>{formatUSD(item.value)}</Text>
                        <Text fs={12} color="text.medium" style={{ opacity: 0.7, width: 40, textAlign: "right" }}>{percentage}%</Text>
                     </Flex>
                  </Flex>
@@ -223,7 +224,7 @@ export const HollarSupplyBreakdown: FC<Props> = ({
       <SChartContainer>
           <SChartHeader $align="flex-start" style={{ marginBottom: 12 }}>
             <Flex direction="column">
-               <Text fs={18} fw={600} font="primary" color="text.primary">
+               <Text fs={18} fw={600} font="primary" color={getToken("text.high")}>
                   Supply Over Time
                </Text>
             </Flex>

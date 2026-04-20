@@ -44,7 +44,7 @@ export const ThemePreference: FC = () => {
       <MenuItemLabel>{t("theme.title")}</MenuItemLabel>
       <MenuItemDescription>
         {t("theme.description", {
-          theme: t(`theme.${themePreference as "light" | "dark" | "system"}`),
+          theme: t(`theme.${themePreference}`),
         })}
       </MenuItemDescription>
       <MenuItemAction>
@@ -57,7 +57,7 @@ export const ThemePreference: FC = () => {
           {themeOptions.map((theme) => (
             <ToggleGroupItem key={theme} value={theme}>
               <Tooltip
-                text={t(`theme.${theme as "light" | "dark" | "system"}`)}
+                text={t(`theme.${theme}`)}
                 side="top"
                 sideOffset={10}
                 asChild

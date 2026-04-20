@@ -1,6 +1,7 @@
 import styled from "@emotion/styled"
 import { Text, Flex, ValueStats, ValueStatsValue, Separator } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
+import { getToken } from "@galacticcouncil/ui/utils"
 import { FC, Fragment, useMemo, useState } from "react"
 import {
   LineChart,
@@ -98,7 +99,7 @@ export const HollarPegChart: FC = () => {
   return (
     <SChartContainer>
       <Flex direction="column" gap={16} sx={{ mb: 20 }}>
-        <Text fs={18} fw={600} font="primary" color="text.primary">Hollar Peg</Text>
+        <Text fs={18} fw={600} font="primary" color={getToken("text.high")}>Hollar Peg</Text>
 
         {/* Peg prices — separator style, no bordered cards */}
         <SPegPricesRow>

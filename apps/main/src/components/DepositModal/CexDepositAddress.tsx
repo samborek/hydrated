@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
 import { Button, Icon, Text } from "@galacticcouncil/ui/components"
+import { getToken } from "@galacticcouncil/ui/utils"
 import { useAccount } from "@galacticcouncil/web3-connect"
 import { Copy, Info, Loader2 } from "lucide-react"
 import { FC } from "react"
@@ -156,7 +157,7 @@ export const CexDepositAddress: FC<Props> = ({
   return (
     <Container>
       <FromRow>
-        <Text color="neutral.gray.300" fs={14}>
+        <Text color={getToken("text.medium")} fs={14}>
           From
         </Text>
         <div
@@ -193,7 +194,7 @@ export const CexDepositAddress: FC<Props> = ({
 
       <AddressCard>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <Text color="neutral.gray.400" fs={13}>
+          <Text color={getToken("text.medium")} fs={13}>
             Deposit to
           </Text>
           <div
@@ -247,7 +248,7 @@ export const CexDepositAddress: FC<Props> = ({
             alignItems: "center",
           }}
         >
-          <Text color="neutral.gray.400" fs={12}>
+          <Text color={getToken("text.medium")} fs={12}>
             Minimal deposit amount:
           </Text>
           <Text fw={600} fs={12}>
@@ -278,7 +279,7 @@ export const CexDepositAddress: FC<Props> = ({
                 Login to your CEX account
               </Text>
               <Text
-                color="neutral.gray.400"
+                color={getToken("text.medium")}
                 fs={13}
                 style={{ lineHeight: 1.4 }}
               >
@@ -293,7 +294,7 @@ export const CexDepositAddress: FC<Props> = ({
                 Select 'Withdraw'
               </Text>
               <Text
-                color="neutral.gray.400"
+                color={getToken("text.medium")}
                 fs={13}
                 style={{ lineHeight: 1.4 }}
               >
@@ -309,7 +310,7 @@ export const CexDepositAddress: FC<Props> = ({
                 Chose Polkadot network
               </Text>
               <Text
-                color="neutral.gray.400"
+                color={getToken("text.medium")}
                 fs={13}
                 style={{ lineHeight: 1.4 }}
               >
@@ -324,7 +325,7 @@ export const CexDepositAddress: FC<Props> = ({
                 Don't have HDX?
               </Text>
               <Text
-                color="neutral.gray.400"
+                color={getToken("text.medium")}
                 fs={13}
                 style={{ lineHeight: 1.4 }}
               >
@@ -339,7 +340,7 @@ export const CexDepositAddress: FC<Props> = ({
                 Enter the amount
               </Text>
               <Text
-                color="neutral.gray.400"
+                color={getToken("text.medium")}
                 fs={13}
                 style={{ lineHeight: 1.4 }}
               >

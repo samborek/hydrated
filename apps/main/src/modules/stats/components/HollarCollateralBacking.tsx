@@ -7,6 +7,7 @@ import {
   ValueStatsValue,
 } from "@galacticcouncil/ui/components"
 import { useTheme } from "@galacticcouncil/ui/theme"
+import { getToken } from "@galacticcouncil/ui/utils"
 import {
   DOT_ASSET_ID,
   getAssetIdFromAddress,
@@ -309,7 +310,7 @@ export const HollarCollateralBacking: FC = () => {
     <Flex direction="column" gap={24}>
       {/* Facilitator Buckets — unified card */}
       <SBucketsCard>
-        <Text fs={16} fw={600} font="primary" color="text.primary">
+        <Text fs={16} fw={600} font="primary" color={getToken("text.high")}>
           Facilitator Buckets
         </Text>
 
@@ -317,7 +318,7 @@ export const HollarCollateralBacking: FC = () => {
           <Flex justify="space-between" align="center">
             <Flex align="center" gap={8}>
               <SLegendDot $color={mmColor} />
-              <Text fs={14} fw={500} color="text.primary">
+              <Text fs={14} fw={500} color={getToken("text.high")}>
                 Money Market
               </Text>
             </Flex>
@@ -325,7 +326,7 @@ export const HollarCollateralBacking: FC = () => {
               <Text
                 fs={13}
                 fw={600}
-                color="text.primary"
+                color={getToken("text.high")}
                 style={{ fontFamily: "Gazpacho, sans-serif" }}
               >
                 {formatUSD(aaveFacilLevel)}
@@ -353,7 +354,7 @@ export const HollarCollateralBacking: FC = () => {
           <Flex justify="space-between" align="center">
             <Flex align="center" gap={8}>
               <SLegendDot $color={hollarColors.buckets.hsm} />
-              <Text fs={14} fw={500} color="text.primary">
+              <Text fs={14} fw={500} color={getToken("text.high")}>
                 HSM
               </Text>
             </Flex>
@@ -361,7 +362,7 @@ export const HollarCollateralBacking: FC = () => {
               <Text
                 fs={13}
                 fw={600}
-                color="text.primary"
+                color={getToken("text.high")}
                 style={{ fontFamily: "Gazpacho, sans-serif" }}
               >
                 {formatUSD(hsmFacilLevel)}
@@ -463,7 +464,7 @@ export const HollarCollateralBacking: FC = () => {
                 <Text
                   fs={22}
                   fw={500}
-                  color="text.primary"
+                  color={getToken("text.high")}
                   style={{ fontFamily: "Gazpacho, sans-serif" }}
                 >
                   {formatUSD(mmTotalCollateral)}
@@ -474,7 +475,7 @@ export const HollarCollateralBacking: FC = () => {
             <Flex direction="column" gap={24} style={{ flex: 1, minWidth: 0 }}>
               <Flex direction="column" gap={12}>
                 <Flex direction="column" gap={4}>
-                  <Text fs={18} fw={500} font="primary" color="text.primary">
+                  <Text fs={18} fw={500} font="primary" color={getToken("text.high")}>
                     Backing via Money Market
                   </Text>
                   <Text fs={13} color="text.medium">
@@ -552,7 +553,7 @@ export const HollarCollateralBacking: FC = () => {
                           </Text>
                         </Flex>
                         <Flex align="center" gap={12}>
-                          <Text fs={13} color="text.primary">
+                          <Text fs={13} color={getToken("text.high")}>
                             {formatUSD(item.value)}
                           </Text>
                           <Text
@@ -650,7 +651,7 @@ export const HollarCollateralBacking: FC = () => {
                 <Text
                   fs={22}
                   fw={500}
-                  color="text.primary"
+                  color={getToken("text.high")}
                   style={{ fontFamily: "Gazpacho, sans-serif" }}
                 >
                   {formatUSD(hsmTotal)}
@@ -661,7 +662,7 @@ export const HollarCollateralBacking: FC = () => {
             <Flex direction="column" gap={24} style={{ flex: 1, minWidth: 0 }}>
               <Flex direction="column" gap={12}>
                 <Flex direction="column" gap={4}>
-                  <Text fs={18} fw={500} font="primary" color="text.primary">
+                  <Text fs={18} fw={500} font="primary" color={getToken("text.high")}>
                     Backing via HSM
                   </Text>
                   <Text fs={13} color="text.medium">
@@ -736,7 +737,7 @@ export const HollarCollateralBacking: FC = () => {
                           </Text>
                         </Flex>
                         <Flex align="center" gap={12}>
-                          <Text fs={13} color="text.primary">
+                          <Text fs={13} color={getToken("text.high")}>
                             {formatUSD(item.value)}
                           </Text>
                           <Text

@@ -15,6 +15,39 @@ const pxToRem = (pxValue: string): string => {
   return `${px / 16}rem`
 }
 
+const SEMANTIC_COLOR_KEYS = [
+  "text",
+  "icons",
+  "secondaryColors",
+  "surfaces",
+  "details",
+  "buttons",
+  "textButtons",
+  "accents",
+  "controls",
+  "info",
+  "border",
+  "charts",
+  "chart",
+  "containers",
+  "inputs",
+  "elements",
+  "misc",
+  "uiControls",
+  "card",
+  "containerPrimary",
+  "alarmRed",
+] as const
+
+function buildColors(json: typeof lightJSON) {
+  const semantic = Object.fromEntries(
+    SEMANTIC_COLOR_KEYS.map((k) => [k, (json as Record<string, unknown>)[k]]).filter(
+      ([, v]) => v !== undefined,
+    ),
+  )
+  return { ...json.colors, ...semantic }
+}
+
 const base = makeTheme({
   breakpoints: BREAKPOINTS_VALUES,
   space: [],
@@ -66,11 +99,13 @@ const base = makeTheme({
 const light = {
   ...base,
   ...lightJSON,
+  colors: buildColors(lightJSON),
 } as unknown as ThemeProps
 
 const dark = {
   ...base,
   ...darkJSON,
+  colors: buildColors(darkJSON),
 } as unknown as ThemeProps
 
 export const themes = {
@@ -82,7 +117,8 @@ export type ThemeBaseProps = Omit<typeof base, "buttons" | "text">
 export type ThemeProps = ThemeBaseProps & typeof lightJSON
 export type ThemeName = keyof typeof themes
 export type ThemePreference = ThemeName | "system"
-export type ThemeColor = Join<Paths<ThemeProps["colors"]>, ".">
+type MergedColors = ReturnType<typeof buildColors>
+export type ThemeColor = Join<Paths<MergedColors>, ".">
 export type ThemeToken = Join<Paths<ThemeProps>, ".">
 export type ThemeFont = "mono" | keyof ThemeProps["fontFamilies1"]
 

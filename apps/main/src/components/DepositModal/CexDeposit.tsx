@@ -109,7 +109,7 @@ export const CexDeposit: FC<Props> = ({ onSelect }) => {
           iconStart={Search}
         />
         <Text
-          color="neutral.gray.300"
+          color={getToken("text.medium")}
           fw={500}
           fs={12}
           style={{ marginTop: 4 }}
@@ -172,7 +172,7 @@ export const CexDeposit: FC<Props> = ({ onSelect }) => {
           iconStart={Search}
         />
         <Text
-          color="neutral.gray.300"
+          color={getToken("text.medium")}
           fw={500}
           fs={12}
           style={{ marginTop: 4 }}

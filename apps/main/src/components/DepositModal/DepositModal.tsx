@@ -1,3 +1,4 @@
+import { getToken } from "@galacticcouncil/ui/utils"
 import styled from "@emotion/styled"
 import {
   Icon,
@@ -105,7 +106,7 @@ export const DepositModal: FC<Props> = ({ open, onOpenChange }) => {
                   <Text fw={600} style={{ marginBottom: 4 }}>
                     Deposit from Centralized Exchange
                   </Text>
-                  <Text fs={12} color="neutral.gray.400">
+                  <Text fs={12} color={getToken("text.medium")}>
                     Transfer assets from exchanges like Kraken, Binance, etc.
                   </Text>
                 </div>
@@ -121,7 +122,7 @@ export const DepositModal: FC<Props> = ({ open, onOpenChange }) => {
                   <Text fw={600} style={{ marginBottom: 4 }}>
                     On-chain transfer
                   </Text>
-                  <Text fs={12} color="neutral.gray.400">
+                  <Text fs={12} color={getToken("text.medium")}>
                     Bridge assets from other chains
                   </Text>
                 </div>
@@ -137,7 +138,7 @@ export const DepositModal: FC<Props> = ({ open, onOpenChange }) => {
                   <Text fw={600} style={{ marginBottom: 4 }}>
                     Fund with crypto
                   </Text>
-                  <Text fs={12} color="neutral.gray.400">
+                  <Text fs={12} color={getToken("text.medium")}>
                     Use existing crypto to fund your account
                   </Text>
                 </div>

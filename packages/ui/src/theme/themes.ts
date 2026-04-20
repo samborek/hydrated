@@ -39,7 +39,7 @@ const SEMANTIC_COLOR_KEYS = [
   "alarmRed",
 ] as const
 
-function buildColors(json: typeof lightJSON) {
+function buildColors(json: typeof lightJSON | typeof darkJSON) {
   const semantic = Object.fromEntries(
     SEMANTIC_COLOR_KEYS.map((k) => [k, (json as Record<string, unknown>)[k]]).filter(
       ([, v]) => v !== undefined,

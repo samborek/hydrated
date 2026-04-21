@@ -6,6 +6,8 @@ import { createFileRoute } from "@tanstack/react-router"
 import { MainContent } from "@/modules/layout/components/Content"
 import { StatsHeader } from "@/modules/stats/components/StatsHeader"
 import { TreasuryChart } from "@/modules/stats/components/TreasuryChart"
+import { TreasuryCompositionChart } from "@/modules/stats/components/TreasuryCompositionChart"
+import { TreasuryAssetsTable } from "@/modules/stats/components/TreasuryAssetsTable"
 
 const SPageContainer = styled(MainContent)`
   display: flex;
@@ -31,19 +33,25 @@ const SSection = styled.section(
   `,
 )
 
+const SDivider = styled.div`
+  height: 1px;
+  background: ${({ theme }) => theme.details.borders};
+  margin: 4px 0;
+`
+
 function TreasuryStats() {
   const { themeProps: theme } = useTheme()
 
-  const treasuryColor = theme.colors.accent?.["600"] || theme.details.values.positive
+  const treasuryColor = theme.secondaryColors.pink.coralPink
 
   const stats = [
     {
       label: "Total Treasury Value",
-      value: "$2,852,500",
+      value: "$13.3M",
       valueColor: treasuryColor,
     },
-    { label: "LP Positions Value", value: "$1,200,000" },
-    { label: "Staked Assets Value", value: "$225,000" },
+    { label: "LP Positions Value", value: "$2.0M" },
+    { label: "Staked Assets Value", value: "$225K" },
   ]
 
   return (
@@ -52,8 +60,18 @@ function TreasuryStats() {
 
       <div>
         <SectionHeader>Treasury</SectionHeader>
+
         <SSection style={{ marginTop: 16 }}>
-          <TreasuryChart title="Treasury Value History" value="$2.85M" />
+          <TreasuryCompositionChart />
+          <SDivider style={{ margin: "24px 0" }} />
+          <TreasuryChart title="Treasury Value History" value="$13.3M" />
+        </SSection>
+      </div>
+
+      <div>
+        <SectionHeader>Treasury Assets</SectionHeader>
+        <SSection style={{ marginTop: 16 }}>
+          <TreasuryAssetsTable />
         </SSection>
       </div>
     </SPageContainer>

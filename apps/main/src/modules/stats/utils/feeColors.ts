@@ -47,12 +47,8 @@ export const getFeeColors = (theme: ThemeProps) => ({
  * (This file historically started as fee colors, but it's now the shared palette source.)
  */
 export const getTvlColors = (theme: ThemeProps) => ({
-  omnipool: theme.text.tint.secondary,
-
-  // TODO: migrate remaining hardcoded colors to theme tokens
-  stablePools: "#22C55E",
-  xykPools: "#A855F7",
-
-  // Requested token: colors.azureBlue.500
-  moneyMarket: theme.colors.azureBlue[500],
+  omnipool:     theme.charts.colors.tvl.omnipool,
+  stablePools:  theme.charts.colors.tvl.stablePools,
+  xykPools:     theme.charts.colors.tvl.xykPools,
+  moneyMarket:  theme.charts.colors.tvl.moneyMarket,
 })

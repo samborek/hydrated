@@ -5,9 +5,9 @@ import { FC, useState } from "react"
 
 import { AssetLogo } from "@/components/AssetLogo"
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 8
 
-type TreasuryAsset = {
+export type TreasuryAsset = {
   id: string
   name: string
   balance: string
@@ -15,7 +15,7 @@ type TreasuryAsset = {
 }
 
 // Mock data matching Figma design — replace with live data once indexer is wired
-const TREASURY_ASSETS: TreasuryAsset[] = [
+export const ALL_TREASURY_ASSETS: TreasuryAsset[] = [
   { id: "0", name: "HDX", balance: "2 020 204 791", usdValue: "$6 208 203" },
   { id: "5", name: "DOT", balance: "781 107", usdValue: "$999 418" },
   { id: "1", name: "H2O", balance: "147 501", usdValue: "$1 116 451" },
@@ -86,11 +86,16 @@ const SPageBtn = styled.button<{ $active?: boolean }>`
   }
 `
 
-export const TreasuryAssetsTable: FC = () => {
+type Props = {
+  assets: TreasuryAsset[]
+  columnLabel?: string
+}
+
+export const TreasuryAssetsTable: FC<Props> = ({ assets, columnLabel = "Asset" }) => {
   const [page, setPage] = useState(1)
-  const totalPages = Math.ceil(TREASURY_ASSETS.length / PAGE_SIZE)
+  const totalPages = Math.ceil(assets.length / PAGE_SIZE)
   const start = (page - 1) * PAGE_SIZE
-  const visible = TREASURY_ASSETS.slice(start, start + PAGE_SIZE)
+  const visible = assets.slice(start, start + PAGE_SIZE)
 
   return (
     <STable>
@@ -101,7 +106,7 @@ export const TreasuryAssetsTable: FC = () => {
           color={getToken("text.low")}
           css={{ textTransform: "uppercase", letterSpacing: "0.06em" }}
         >
-          Asset
+          {columnLabel}
         </Text>
         <Text
           fs={11}

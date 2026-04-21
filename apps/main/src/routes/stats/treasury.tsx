@@ -7,17 +7,16 @@ import { MainContent } from "@/modules/layout/components/Content"
 import { StatsHeader } from "@/modules/stats/components/StatsHeader"
 import { TreasuryChart } from "@/modules/stats/components/TreasuryChart"
 import { TreasuryCompositionChart } from "@/modules/stats/components/TreasuryCompositionChart"
-import { TreasuryAssetsTable } from "@/modules/stats/components/TreasuryAssetsTable"
+import {
+  TreasuryAssetsTable,
+  ALL_TREASURY_ASSETS,
+} from "@/modules/stats/components/TreasuryAssetsTable"
 
 const SPageContainer = styled(MainContent)`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 0;
   padding-bottom: 24px;
-
-  @media (max-width: 576px) {
-    gap: 8px;
-  }
 `
 
 const SSection = styled.section(
@@ -27,16 +26,37 @@ const SSection = styled.section(
     border-radius: 16px;
     padding: ${theme.containers.paddings.primary}px;
 
-    @media (max-width: 576px) {
+    @media (max-width: 480px) {
       padding: ${theme.containers.paddings.secondary}px;
     }
   `,
 )
 
-const SDivider = styled.div`
-  height: 1px;
-  background: ${({ theme }) => theme.details.borders};
-  margin: 4px 0;
+// Desktop: paddingTop 28px, no horizontal padding
+// Mobile (≤480px): paddingTop 16px, paddingBottom 12px — matches Figma mobile sectionHeader/variants
+const SHeader = styled(SectionHeader)`
+  && {
+    padding-top: ${({ theme }) => theme.scales.paddings.xxl}px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  @media (max-width: 480px) {
+    && {
+      padding-top: ${({ theme }) => theme.scales.paddings.l}px;
+      padding-bottom: ${({ theme }) => theme.containers.paddings.tertiary}px;
+    }
+  }
+`
+
+const SAssetsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `
 
 function TreasuryStats() {
@@ -54,26 +74,41 @@ function TreasuryStats() {
     { label: "Staked Assets Value", value: "$225K" },
   ]
 
+  const mid = Math.ceil(ALL_TREASURY_ASSETS.length / 2)
+  const treasuryAssets = ALL_TREASURY_ASSETS.slice(0, mid)
+  const liquidityAssets = ALL_TREASURY_ASSETS.slice(mid)
+
   return (
     <SPageContainer>
       <StatsHeader stats={stats} />
 
       <div>
-        <SectionHeader>Treasury</SectionHeader>
+        <SHeader>Treasury</SHeader>
 
-        <SSection style={{ marginTop: 16 }}>
+        <SSection>
           <TreasuryCompositionChart />
-          <SDivider style={{ margin: "24px 0" }} />
+        </SSection>
+
+        <SSection style={{ marginTop: 20 }}>
           <TreasuryChart title="Treasury Value History" value="$13.3M" />
         </SSection>
       </div>
 
-      <div>
-        <SectionHeader>Treasury Assets</SectionHeader>
-        <SSection style={{ marginTop: 16 }}>
-          <TreasuryAssetsTable />
-        </SSection>
-      </div>
+      <SAssetsGrid>
+        <div>
+          <SHeader>Treasury assets</SHeader>
+          <SSection>
+            <TreasuryAssetsTable assets={treasuryAssets} columnLabel="Asset" />
+          </SSection>
+        </div>
+
+        <div>
+          <SHeader>Liquidity positions</SHeader>
+          <SSection>
+            <TreasuryAssetsTable assets={liquidityAssets} columnLabel="Account" />
+          </SSection>
+        </div>
+      </SAssetsGrid>
     </SPageContainer>
   )
 }
